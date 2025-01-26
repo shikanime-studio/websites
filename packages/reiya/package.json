@@ -1,7 +1,8 @@
 {
   "name": "@shikanime/reiya",
-  "type": "module",
   "version": "2025.01",
+  "private": true,
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",

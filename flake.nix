@@ -1,9 +1,9 @@
 {
   inputs = {
-    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-    flake-parts.url = "github:hercules-ci/flake-parts";
-    treefmt-nix.url = "github:numtide/treefmt-nix";
     devenv.url = "github:cachix/devenv";
+    flake-parts.url = "github:hercules-ci/flake-parts";
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   nixConfig = {
@@ -17,80 +17,24 @@
     ];
   };
 
-  outputs = inputs@{ flake-parts, ... }:
+  outputs =
+    inputs@{
+      devenv,
+      flake-parts,
+      treefmt-nix,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
-        inputs.devenv.flakeModule
-        inputs.treefmt-nix.flakeModule
+        devenv.flakeModule
+        treefmt-nix.flakeModule
+        ./nix/devenv.nix
       ];
       systems = [
         "x86_64-linux"
-        "i686-linux"
         "x86_64-darwin"
         "aarch64-linux"
         "aarch64-darwin"
       ];
-      perSystem = { pkgs, ... }: {
-        treefmt = {
-          projectRootFile = "flake.nix";
-          enableDefaultExcludes = true;
-          programs = {
-            actionlint.enable = true;
-            statix.enable = true;
-            deadnix.enable = true;
-            shfmt.enable = true;
-            nixpkgs-fmt.enable = true;
-            prettier = {
-              enable = true;
-              includes = [
-                "*.astro"
-                "*.js"
-                "*.json"
-                "*.jsx"
-                "*.md"
-                "*.mjs"
-                "*.ts"
-                "*.tsx"
-                "*.webmanifest"
-                "*.xml"
-                "*.yaml"
-              ];
-              settings.plugins = [
-                "@prettier/plugin-xml"
-                "prettier-plugin-astro"
-                "prettier-plugin-tailwindcss"
-              ];
-            };
-          };
-          settings.global.excludes = [
-            "*.ico"
-            "*.png"
-            "*.svg"
-            "*.txt"
-            "*.webp"
-            "**/node_modules"
-          ];
-        };
-        devenv.shells.default = {
-          containers = pkgs.lib.mkForce { };
-          languages = {
-            nix.enable = true;
-            javascript = {
-              enable = true;
-              npm = {
-                enable = true;
-                install.enable = true;
-              };
-            };
-          };
-          cachix = {
-            enable = true;
-            push = "shikanime";
-          };
-          packages = [
-            pkgs.gh
-          ];
-        };
-      };
     };
 }
