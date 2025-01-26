@@ -1,13 +1,13 @@
 {
-  "name": "@shikanime/www",
-  "version": "2024.10",
+  "name": "@shikanime/reiya",
+  "version": "2025.01",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "astro dev",
-    "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "astro": "astro"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.2.1",
