@@ -28,4 +28,5 @@ jobs:
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Check Nix Flake
         run: |
+          nix develop --impure -c npm ci --include=dev
           nix flake check --show-trace --all-systems --impure
