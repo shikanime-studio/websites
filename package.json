@@ -1,8 +1,8 @@
 {
   "name": "@shikanime/websites",
   "workspaces": [
-    "packages/shikanime.studio",
-    "packages/links.shikanime.studio"
+    "packages/www",
+    "packages/links"
   ],
   "devDependencies": {
     "@prettier/plugin-xml": "^3.4.1",
