@@ -98,7 +98,7 @@ export default async function Maker({ params }: Props) {
               />
             ) : (
               <div className="avatar placeholder">
-                <div className="-h-40 w-40 rounded-full bg-neutral-focus text-neutral-content">
+                <div className="-h-40 bg-neutral-focus text-neutral-content w-40 rounded-full">
                   <span className="text-3xl">
                     {maker.display_name.slice(0, 1)}
                   </span>

@@ -54,7 +54,7 @@ function SidebarSecondaryMenu() {
 
 function SidebarInfo() {
   return (
-    <div id="dropdown-cta" className="rounded-lg bg-secondary p-4" role="alert">
+    <div id="dropdown-cta" className="bg-secondary rounded-lg p-4" role="alert">
       <div className="mb-3 flex items-center">
         <div className="badge badge-primary mr-2 rounded px-2.5 py-0.5 text-sm font-semibold">
           Notice
@@ -71,7 +71,7 @@ function SidebarInfo() {
 
 function SideBarCopyright() {
   return (
-    <div className="text-xs text-neutral">
+    <div className="text-neutral text-xs">
       <p>
         Made with{" "}
         <span role="img" aria-label="heart">
@@ -87,11 +87,11 @@ export default function Sidebar() {
   return (
     <aside
       id="logo-sidebar"
-      className="fixed left-0 top-0 z-40  h-screen w-64 -translate-x-full border-r border-base-200 bg-base-100 pt-14 transition-transform sm:translate-x-0"
+      className="border-base-200 bg-base-100 fixed left-0  top-0 z-40 h-screen w-64 -translate-x-full border-r pt-14 transition-transform sm:translate-x-0"
       aria-label="Sidebar"
     >
       <div className="flex h-full flex-col gap-6 overflow-y-auto px-3 py-4">
-        <div className="flex grow flex-col gap-4 divide-y divide-base-200">
+        <div className="divide-base-200 flex grow flex-col gap-4 divide-y">
           <SidebarPrimaryMenu />
           <SidebarSecondaryMenu />
           <SidebarInfo />

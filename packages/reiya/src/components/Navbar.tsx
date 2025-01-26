@@ -64,7 +64,7 @@ async function UserMenu() {
       </label>
       <ul
         tabIndex={0}
-        className="menu dropdown-content rounded-box z-50 w-52 bg-base-100 p-2 shadow"
+        className="menu dropdown-content rounded-box bg-base-100 z-50 w-52 p-2 shadow"
       >
         <li>
           <NextLink href="/account">
@@ -94,7 +94,7 @@ function SignInMenu() {
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
+    <nav className="border-base-200 bg-base-100 fixed top-0 z-50 w-full border-b">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <NavbarStart />
