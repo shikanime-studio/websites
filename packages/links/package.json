@@ -1,5 +1,5 @@
 {
-  "name": "links.shikanime.studio",
+  "name": "@shikanime/links",
   "version": "2024.10",
   "private": true,
   "type": "module",
