@@ -8,14 +8,14 @@ import react from "@astrojs/react";
 // https://astro.build/config
 export default defineConfig({
   integrations: [
-    tailwind(),
-    sitemap(),
     partytown({
       config: {
         forward: ["dataLayer.push"],
       },
     }),
     react(),
+    sitemap(),
+    tailwind(),
   ],
   output: "server",
   adapter: cloudflare({
