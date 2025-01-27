@@ -1,8 +1,5 @@
-import { defineConfig } from "astro/config";
-import tailwind from "@astrojs/tailwind";
-import sitemap from "@astrojs/sitemap";
-import partytown from "@astrojs/partytown";
 import cloudflare from "@astrojs/cloudflare";
+import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 
 // https://astro.build/config

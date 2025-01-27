@@ -26,6 +26,7 @@
             ];
             settings.plugins = [
               "@prettier/plugin-xml"
+              "@trivago/prettier-plugin-sort-imports"
               "prettier-plugin-astro"
               "prettier-plugin-tailwindcss"
             ];
