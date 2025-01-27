@@ -1,0 +1,8 @@
+name = "reiya"
+compatibility_date = "2025-01-27"
+routes = [{ pattern = "reiya.shikanime.studio", custom_domain = true }]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "reiya"
+database_id = "9ea7bf4f-f6ff-4805-8b14-30ca55f145db"
