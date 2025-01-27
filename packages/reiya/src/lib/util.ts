@@ -1,4 +1,5 @@
 import type { AstroCookies } from "astro";
+import { drizzle } from "drizzle-orm/d1";
 
 export function getRedirectTo(url: URL) {
   const redirectTo = url.searchParams.get("redirectTo");
@@ -23,4 +24,10 @@ export function getRedirectToSession(cookies: AstroCookies) {
     return "/";
   }
   return redirectTo.value;
+}
+
+export function getD1Database(locals: App.Locals) {
+  return drizzle(locals.runtime.env.DB, {
+    logger: true,
+  });
 }

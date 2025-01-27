@@ -1,13 +1,14 @@
-import { drizzle } from "drizzle-orm/d1";
-import { accountTable, sessionTable } from "../schema";
+import { DrizzleD1Database } from "drizzle-orm/d1";
+import { accountsTable } from "../schema";
 import { eq } from "drizzle-orm";
 import type { TokenInfo } from "./google";
 
-const db = drizzle(import.meta.env.DB);
-
-export async function createAccountFromGoogleTokenInfo(tokenInfo: TokenInfo) {
+export async function createAccountFromGoogleTokenInfo(
+  db: DrizzleD1Database,
+  tokenInfo: TokenInfo,
+) {
   return await db
-    .insert(accountTable)
+    .insert(accountsTable)
     .values({
       googleId: tokenInfo.sub,
       email: tokenInfo.email,
@@ -15,23 +16,23 @@ export async function createAccountFromGoogleTokenInfo(tokenInfo: TokenInfo) {
       pictureUrl: tokenInfo.picture,
     })
     .returning({
-      id: accountTable.id,
+      id: accountsTable.id,
     })
     .get();
 }
 
-export function getAccountFromGoogle(googleId: string) {
+export function getAccountFromGoogle(db: DrizzleD1Database, googleId: string) {
   return db
     .select()
-    .from(accountTable)
-    .where(eq(accountTable.googleId, googleId))
+    .from(accountsTable)
+    .where(eq(accountsTable.googleId, googleId))
     .get();
 }
 
-export function getAccount(userId: number) {
+export function getAccount(db: DrizzleD1Database, userId: number) {
   return db
     .select()
-    .from(accountTable)
-    .where(eq(accountTable.id, userId))
+    .from(accountsTable)
+    .where(eq(accountsTable.id, userId))
     .get();
 }

@@ -8,7 +8,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply reiya"
+    "db:migrate": "wrangler d1 migrations apply reiya",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.2.1",
@@ -30,6 +31,7 @@
   },
   "devDependencies": {
     "arctic": "^3.2.1",
+    "better-sqlite3": "^11.8.1",
     "drizzle-kit": "^0.30.3",
     "wrangler": "^3.105.1"
   }

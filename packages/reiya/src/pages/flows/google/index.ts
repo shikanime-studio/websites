@@ -5,8 +5,10 @@ import {
 import { generateCodeVerifier, generateState } from "arctic";
 import { getRedirectTo, setRedirectToSession } from "../../../lib/util";
 import type { APIContext } from "astro";
+import { getD1Database } from "../../../lib/util";
 
 export async function GET(context: APIContext) {
+  const db = getD1Database(context.locals);
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const url = createAuthorizationURL(state, codeVerifier);

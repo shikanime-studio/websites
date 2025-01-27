@@ -87,3 +87,8 @@ export async function validateLoginFlowSession(
   );
   return tokenInfoSchema.parse(decodeIdToken(tokens.idToken()));
 }
+
+export function deleteLoginFlowSession(cookies: AstroCookies) {
+  cookies.delete("google_oauth_state");
+  cookies.delete("google_code_verifier");
+}

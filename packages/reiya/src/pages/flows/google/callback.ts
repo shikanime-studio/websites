@@ -3,9 +3,10 @@ import {
   getAccountFromGoogle,
 } from "../../../lib/account";
 import { createSession } from "../../../lib/session";
-import { getRedirectToSession } from "../../../lib/util";
+import { getD1Database, getRedirectToSession } from "../../../lib/util";
 import type { APIContext } from "astro";
 import {
+  deleteLoginFlowSession,
   getAuthorizationCode,
   getLoginFlowSession,
   validateLoginFlowSession,
@@ -25,12 +26,15 @@ export async function GET(context: APIContext) {
   } catch (error) {
     return new Response("Invalid session token", { status: 401 });
   }
-  const existingAccount = await getAccountFromGoogle(tokenInfo.sub);
+  const db = getD1Database(context.locals);
+  const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);
+  console.log(existingAccount);
   if (existingAccount) {
-    await createSession(context, existingAccount.id);
+    await createSession(db, context, existingAccount.id);
   } else {
-    const account = await createAccountFromGoogleTokenInfo(tokenInfo);
-    await createSession(context, account.id);
+    const account = await createAccountFromGoogleTokenInfo(db, tokenInfo);
+    await createSession(db, context, account.id);
   }
+  deleteLoginFlowSession(context.cookies);
   return context.redirect(getRedirectToSession(context.cookies));
 }

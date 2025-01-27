@@ -23,5 +23,5 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  site: "https://reiya.shikanime.studio",
+  site: process.env.SITE || "https://reiya.shikanime.studio",
 });
