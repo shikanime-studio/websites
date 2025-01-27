@@ -65,13 +65,11 @@
         };
         git-hooks.hooks = {
           deadnix.enable = true;
+          denolint.enable = true;
           flake-checker.enable = true;
           shellcheck.enable = true;
           tflint.enable = true;
         };
-        packages = [
-          pkgs.gh
-        ];
       };
     };
 }
