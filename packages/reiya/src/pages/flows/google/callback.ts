@@ -11,20 +11,27 @@ import {
   getLoginFlowSession,
   validateLoginFlowSession,
 } from "../../../lib/google";
+import { ZodError } from "zod";
 
 export async function GET(context: APIContext) {
   let flow, authCode;
   try {
     flow = getLoginFlowSession(context.cookies);
     authCode = getAuthorizationCode(context.url);
-  } catch (error) {
-    return new Response("Invalid session token", { status: 400 });
+  } catch (e) {
+    if (e instanceof ZodError) {
+      return new Response("Invalid session token", { status: 400 });
+    }
+    throw e;
   }
   let tokenInfo;
   try {
     tokenInfo = await validateLoginFlowSession(flow, authCode);
-  } catch (error) {
-    return new Response("Invalid session token", { status: 401 });
+  } catch (e) {
+    if (e instanceof Error && e.message === "Invalid state") {
+      return new Response("Invalid session token", { status: 401 });
+    }
+    throw e;
   }
   const db = getD1Database(context.locals);
   const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);
