@@ -39,15 +39,10 @@ function createRemoteConfig() {
   } satisfies Config;
 }
 
-const config = process.env.LOCAL !== "true"
-  ? createLocalConfig()
-  : process.env.REMOTE !== "true"
-  ? createRemoteConfig()
-  : undefined;
-if (!config) {
-  throw new Error(
-    "Please set either LOCAL or REMOTE environment variables to true",
-  );
-}
-
-export default defineConfig(config);
+export default defineConfig(
+  process.env.LOCAL !== "true"
+    ? createLocalConfig()
+    : process.env.REMOTE !== "true"
+      ? createRemoteConfig()
+      : createLocalConfig(),
+);

@@ -11,7 +11,7 @@ let session;
 try {
   session = await validateSession(db, Astro.cookies);
 } catch (e) {
-  if (e instanceof Error && e.message === "No session found") {
+  if (e instanceof Error && e.message === "No session") {
     session = null;
   } else {
     throw e;
