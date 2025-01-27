@@ -7,9 +7,8 @@
         enableDefaultExcludes = true;
         programs = {
           actionlint.enable = true;
-          terraform.enable = true;
-          statix.enable = true;
-          shfmt.enable = true;
+          hclfmt.enable = true;
+          nixfmt.enable = true;
           prettier = {
             enable = true;
             includes = [
@@ -31,8 +30,10 @@
               "prettier-plugin-tailwindcss"
             ];
           };
-          nixfmt.enable = true;
-          hclfmt.enable = true;
+          shfmt.enable = true;
+          statix.enable = true;
+          taplo.enable = true;
+          terraform.enable = true;
         };
         settings.global.excludes = [
           "*.ico"
