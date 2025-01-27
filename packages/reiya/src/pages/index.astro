@@ -2,6 +2,13 @@
 import "@fontsource-variable/inter";
 import Home from "../components/Home.tsx";
 import HomeLayout from "../layouts/HomeLayout.astro";
+import { desc } from "drizzle-orm";
+import { drizzle } from "drizzle-orm/d1";
+import { linkShare } from "../schema";
+
+const db = drizzle(Astro.locals.runtime.env.DB);
+
+const links = await db.select().from(linkShare);
 ---
 
 <html lang="en">

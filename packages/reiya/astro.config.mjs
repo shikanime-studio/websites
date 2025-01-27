@@ -20,9 +20,9 @@ export default defineConfig({
   output: "server",
   adapter: cloudflare({
     platformProxy: {
-			enabled: true,
+      enabled: true,
     },
-    imageService: "compile"
+    imageService: "compile",
   }),
   site: "https://reiya.shikanime.studio",
 });

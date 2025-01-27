@@ -35,7 +35,7 @@ export default async function Home() {
         badges: ["badge3", "badge4"],
         status: "active",
       },
-    ]
+    ],
   };
   return (
     <>
