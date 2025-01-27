@@ -2,15 +2,15 @@ import {
   createAccountFromGoogleTokenInfo,
   getAccountFromGoogle,
 } from "../../../lib/account";
-import { createSession } from "../../../lib/session";
-import { getD1Database, getRedirectToSession } from "../../../lib/util";
-import type { APIContext } from "astro";
 import {
   deleteLoginFlowSession,
   getAuthorizationCode,
   getLoginFlowSession,
   validateLoginFlowSession,
 } from "../../../lib/google";
+import { createSession } from "../../../lib/session";
+import { getD1Database, getRedirectToSession } from "../../../lib/util";
+import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
 export async function GET(context: APIContext) {

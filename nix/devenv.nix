@@ -43,7 +43,6 @@
           "*.svg"
           "*.txt"
           "*.webp"
-          "*.webp"
           "**/node_modules"
         ];
       };

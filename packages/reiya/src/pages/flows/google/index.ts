@@ -2,13 +2,11 @@ import {
   createAuthorizationURL,
   setLoginFlowSession,
 } from "../../../lib/google";
-import { generateCodeVerifier, generateState } from "arctic";
 import { getRedirectTo, setRedirectToSession } from "../../../lib/util";
+import { generateCodeVerifier, generateState } from "arctic";
 import type { APIContext } from "astro";
-import { getD1Database } from "../../../lib/util";
 
-export async function GET(context: APIContext) {
-  const db = getD1Database(context.locals);
+export function GET(context: APIContext) {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
   const url = createAuthorizationURL(state, codeVerifier);

@@ -1,22 +1,6 @@
 import { MakerCard } from "../components/MakerCard";
-import zod from "zod";
 
-export const dynamic = "force-dynamic";
-
-const schema = zod.object({
-  username: zod.string(),
-  display_name: zod.string(),
-  biography: zod.string(),
-  avatar_url: zod.string(),
-  badges: zod.array(zod.string()),
-  status: zod.string(),
-});
-
-const querySchema = zod.object({
-  makers: zod.array(schema),
-});
-
-export default async function Home() {
+export default function Home() {
   const makers = {
     makers: [
       {

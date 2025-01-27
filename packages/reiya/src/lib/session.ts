@@ -1,7 +1,7 @@
-import { DrizzleD1Database } from "drizzle-orm/d1";
 import { sessionsTable } from "../schema";
 import type { APIContext, AstroCookies } from "astro";
 import { eq } from "drizzle-orm";
+import { DrizzleD1Database } from "drizzle-orm/d1";
 
 export async function createSession(
   db: DrizzleD1Database,

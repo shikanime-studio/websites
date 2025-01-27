@@ -1,8 +1,8 @@
+import { getGoogleConfig } from "./config";
 import { Google } from "arctic";
+import { decodeIdToken } from "arctic";
 import type { AstroCookies } from "astro";
 import z from "zod";
-import { decodeIdToken } from "arctic";
-import { getGoogleConfig } from "./config";
 
 const googleConfig = getGoogleConfig();
 

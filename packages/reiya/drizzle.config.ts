@@ -1,7 +1,8 @@
 import { defineConfig } from "drizzle-kit";
+import type { Config } from "drizzle-kit";
 import fs from "node:fs";
 import path from "node:path";
-import type { Config } from "drizzle-kit";
+import process from "node:process";
 
 function createLocalConfig() {
   const wranglerDir = path.join(
@@ -38,12 +39,11 @@ function createRemoteConfig() {
   } satisfies Config;
 }
 
-const config =
-  process.env.LOCAL !== "true"
-    ? createLocalConfig()
-    : process.env.REMOTE !== "true"
-      ? createRemoteConfig()
-      : undefined;
+const config = process.env.LOCAL !== "true"
+  ? createLocalConfig()
+  : process.env.REMOTE !== "true"
+  ? createRemoteConfig()
+  : undefined;
 if (!config) {
   throw new Error(
     "Please set either LOCAL or REMOTE environment variables to true",

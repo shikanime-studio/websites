@@ -1,5 +1,4 @@
 import {
-  BsBellFill,
   BsHouseFill,
   BsLifePreserver,
   BsLock,

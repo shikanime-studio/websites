@@ -4,6 +4,7 @@ import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 import cloudflare from "@astrojs/cloudflare";
 import react from "@astrojs/react";
+import process from "node:process";
 
 // https://astro.build/config
 export default defineConfig({

@@ -1,7 +1,7 @@
-import { DrizzleD1Database } from "drizzle-orm/d1";
 import { accountsTable } from "../schema";
-import { eq } from "drizzle-orm";
 import type { TokenInfo } from "./google";
+import { eq } from "drizzle-orm";
+import { DrizzleD1Database } from "drizzle-orm/d1";
 
 export async function createAccountFromGoogleTokenInfo(
   db: DrizzleD1Database,
