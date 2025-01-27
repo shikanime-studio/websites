@@ -9,10 +9,5 @@
     "@prettier/plugin-xml": "^3.4.1",
     "prettier-plugin-astro": "^0.13.0",
     "prettier-plugin-tailwindcss": "^0.5.4"
-  },
-  "dependencies": {
-    "arctic": "^3.2.1",
-    "google-auth-library": "^9.15.1",
-    "googleapis": "^144.0.0"
   }
 }

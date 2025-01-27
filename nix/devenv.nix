@@ -36,7 +36,6 @@
           terraform.enable = true;
         };
         settings.global.excludes = [
-
           "*.gif"
           "*.ico"
           "*.jpg"
