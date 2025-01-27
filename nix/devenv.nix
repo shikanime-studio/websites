@@ -68,9 +68,6 @@
           shellcheck.enable = true;
           tflint.enable = true;
         };
-        packages = [
-          pkgs.gh
-        ];
       };
     };
 }
