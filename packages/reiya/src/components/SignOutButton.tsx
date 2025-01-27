@@ -1,6 +1,6 @@
-"use client";
-
-import { signOut } from "next-auth/react";
+function signOut(provider: string) {
+  throw new Error("Function not implemented.");
+}
 
 type Props = {
   children: React.ReactNode;

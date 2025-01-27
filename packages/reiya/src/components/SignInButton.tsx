@@ -1,6 +1,6 @@
-"use client";
-
-import { signIn } from "next-auth/react";
+function signIn(provider: string) {
+  throw new Error("Function not implemented.");
+}
 
 type Props = {
   children: React.ReactNode;

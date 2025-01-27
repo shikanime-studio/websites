@@ -1,5 +1,4 @@
-import NextLink from "next/link";
-import { MakerCard } from "@/components/MakerCard";
+import { MakerCard } from "../components/MakerCard";
 import zod from "zod";
 
 export const dynamic = "force-dynamic";
@@ -18,16 +17,26 @@ const querySchema = zod.object({
 });
 
 export default async function Home() {
-  const makers = await fetch(
-    `${process.env.HASURA_PROJECT_ENDPOINT!}/api/rest/Makers`,
-    {
-      headers: {
-        "x-hasura-admin-secret": process.env.HASURA_ADMIN_SECRET!,
+  const makers = {
+    makers: [
+      {
+        username: "maker1",
+        display_name: "Maker 1",
+        biography: "Maker 1 biography",
+        avatar_url: "https://via.placeholder.com/150",
+        badges: ["badge1", "badge2"],
+        status: "active",
       },
-    },
-  )
-    .then((res) => res.json())
-    .then((res) => querySchema.parse(res));
+      {
+        username: "maker2",
+        display_name: "Maker 2",
+        biography: "Maker 2 biography",
+        avatar_url: "https://via.placeholder.com/150",
+        badges: ["badge3", "badge4"],
+        status: "active",
+      },
+    ]
+  };
   return (
     <>
       <div className="flex flex-wrap justify-center gap-4">
@@ -47,12 +56,12 @@ export default async function Home() {
           </div>
         </div>
         {makers.makers.map((maker) => (
-          <NextLink
+          <a
             href={`https://instagram.com/${maker.username}`}
             key={maker.username}
           >
             <MakerCard {...maker} />
-          </NextLink>
+          </a>
         ))}
       </div>
     </>

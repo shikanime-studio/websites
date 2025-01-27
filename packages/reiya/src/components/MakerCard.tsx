@@ -1,5 +1,4 @@
-import NextImage from "next/image";
-import MakerBadges from "@/components/MakerBadges";
+import MakerBadges from "./MakerBadges";
 
 type MakerCardProps = {
   username: string;
@@ -21,12 +20,7 @@ export function MakerCard({
     <div className="card image-full h-full w-96 shadow-xl">
       <figure className="relative">
         {avatar_url && (
-          <NextImage
-            src={avatar_url}
-            alt={display_name}
-            fill={true}
-            sizes="100%"
-          />
+          <img src={avatar_url} alt={display_name} fill={true} sizes="100%" />
         )}
       </figure>
       <div className="card-body">

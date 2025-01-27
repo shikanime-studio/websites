@@ -1,7 +1,7 @@
 ---
 import "@fontsource-variable/inter";
-import Home from "../components/Home.tsx";
-import HomeLayout from "../layouts/HomeLayout.astro";
+import HomeLayout from "../../layouts/HomeLayout.astro";
+import PrivacyNotice from "../components/PrivacyNotice.tsx";
 ---
 
 <html lang="en">
@@ -9,11 +9,11 @@ import HomeLayout from "../layouts/HomeLayout.astro";
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
-    <title>Reiya</title>
+    <title>Privacy Notice - Reiya</title>
   </head>
   <body>
     <HomeLayout>
-      <Home />
+      <PrivacyNotice />
     </HomeLayout>
   </body>
 </html>

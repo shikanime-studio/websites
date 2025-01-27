@@ -1,6 +1,4 @@
-import { getServerSession } from "next-auth/next";
-import NextImage from "next/image";
-import NextLink from "next/link";
+import logo from "../assets/logo.png";
 import {
   BsBoxArrowRight,
   BsInstagram,
@@ -8,14 +6,17 @@ import {
 } from "react-icons/bs";
 import SignInButton from "./SignInButton";
 import SignOutButton from "./SignOutButton";
-import auth from "@/lib/auth";
+import auth from "../lib/auth";
 
+function getServerSession() {
+  return null;
+}
 function NavbarStart() {
   return (
     <div className="flex items-center justify-start">
-      <NextLink href="/" className="ml-2 flex md:mr-24">
-        <NextImage
-          src="/logo.png"
+      <a href="/" className="ml-2 flex md:mr-24">
+        <img
+          src={logo.src}
           className="mr-3 h-8"
           alt="Cosplay Garden Logo"
           width={32}
@@ -24,7 +25,7 @@ function NavbarStart() {
         <span className="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl">
           Cosplay Garden
         </span>
-      </NextLink>
+      </a>
     </div>
   );
 }
@@ -51,7 +52,7 @@ async function UserMenu() {
       <label tabIndex={0} className="avatar btn btn-circle btn-ghost btn-sm">
         {session?.user?.image && (
           <div className="rounded-full">
-            <NextImage
+            <img
               src={session.user.image}
               alt={`${
                 session?.user?.name ?? session?.user?.email ?? "Me"
@@ -64,13 +65,13 @@ async function UserMenu() {
       </label>
       <ul
         tabIndex={0}
-        className="menu dropdown-content rounded-box bg-base-100 z-50 w-52 p-2 shadow"
+        className="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
       >
         <li>
-          <NextLink href="/account">
+          <a href="/account">
             <BsFillPersonVcardFill />
             Account
-          </NextLink>
+          </a>
         </li>
         <li>
           <SignOutButton>
@@ -94,7 +95,7 @@ function SignInMenu() {
 
 export default function Navbar() {
   return (
-    <nav className="border-base-200 bg-base-100 fixed top-0 z-50 w-full border-b">
+    <nav className="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
       <div className="px-3 py-3 lg:px-5 lg:pl-3">
         <div className="flex items-center justify-between">
           <NavbarStart />

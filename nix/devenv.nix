@@ -36,9 +36,11 @@
         };
         settings.global.excludes = [
           "*.ico"
+          "*.jpg"
           "*.png"
           "*.svg"
           "*.txt"
+          "*.webp"
           "*.webp"
           "**/node_modules"
         ];
