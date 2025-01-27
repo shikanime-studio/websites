@@ -28,6 +28,6 @@ export function getRedirectToSession(cookies: AstroCookies) {
 
 export function getD1Database(locals: App.Locals) {
   return drizzle(locals.runtime.env.DB, {
-    logger: true,
+    logger: import.meta.env.DEV,
   });
 }

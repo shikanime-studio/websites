@@ -3,8 +3,6 @@ import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import sentry from "@sentry/astro";
-import spotlightjs from "@spotlightjs/astro";
 import { defineConfig } from "astro/config";
 import process from "node:process";
 
@@ -19,8 +17,6 @@ export default defineConfig({
     react(),
     sitemap(),
     tailwind(),
-    sentry(),
-    spotlightjs(),
   ],
   output: "server",
   adapter: cloudflare({
