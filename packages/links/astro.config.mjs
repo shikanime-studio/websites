@@ -16,6 +16,6 @@ export default defineConfig({
     }),
   ],
   output: "server",
-  adapter: cloudflare({ imageService: "compile" }),
+  adapter: cloudflare(),
   site: "https://links.shikanime.studio",
 });
