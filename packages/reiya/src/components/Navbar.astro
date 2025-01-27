@@ -1,0 +1,33 @@
+---
+import { Image } from "astro:image";
+const session = null;
+---
+
+<nav class="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
+  <div class="px-3 py-3 lg:px-5 lg:pl-3">
+    <div class="flex items-center justify-between">
+      <div class="flex items-center justify-start">
+        <a href="/" class="ml-2 flex md:mr-24">
+          <Image
+            src="/logo.png"
+            class="mr-3 h-8"
+            alt="Cosplay Garden Logo"
+            width="32"
+            height="32"
+          />
+          <span
+            class="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl"
+          >
+            Cosplay Garden
+          </span>
+        </a>
+      </div>
+      <div class="flex items-center justify-center"></div>
+      <div class="flex items-center">
+        <div class="ml-3 flex items-center">
+          <div>{session ? <UserMenu /> : <SignInMenu />}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

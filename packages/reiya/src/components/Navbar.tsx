@@ -6,7 +6,7 @@ import {
 } from "react-icons/bs";
 import SignInButton from "./SignInButton";
 import SignOutButton from "./SignOutButton";
-import auth from "../lib/auth";
+import auth from "../lib/google";
 
 function getServerSession() {
   return null;
