@@ -1,90 +1,89 @@
 import { Google } from "arctic";
-import { generateCodeVerifier, generateState } from "arctic";
-import type { APIContext } from "astro";
+import type { AstroCookies } from "astro";
 import z from "zod";
 import { decodeIdToken } from "arctic";
 import { getGoogleConfig } from "./config";
 
 const googleConfig = getGoogleConfig();
 
-const google = new Google(
+export const google = new Google(
   googleConfig.clientId,
   googleConfig.clientSecret,
   `${import.meta.env.SITE}/flows/google/callback`,
 );
 
-export class OAuth2Error extends Error {}
-
-const authorizationFlowSchema = z.object({
-  redirectTo: z.string().optional(),
-});
-
-export function createAuthorizationSession(context: APIContext) {
-  const state = generateState();
-  const codeVerifier = generateCodeVerifier();
-  const url = google.createAuthorizationURL(state, codeVerifier, [
+export function createAuthorizationURL(state: string, codeVerifier: string) {
+  return google.createAuthorizationURL(state, codeVerifier, [
     "openid",
     "profile",
     "email",
   ]);
-  context.cookies.set("google_oauth_state", state, {
+}
+
+const loginFlowSessionSchema = z.object({
+  storedState: z.string(),
+  codeVerifier: z.string(),
+});
+
+export function setLoginFlowSession(
+  cookies: AstroCookies,
+  state: string,
+  codeVerifier: string,
+) {
+  cookies.set("google_oauth_state", state, {
     httpOnly: true,
     maxAge: 60 * 10,
     secure: import.meta.env.PROD,
     path: "/",
     sameSite: "lax",
   });
-  context.cookies.set("google_code_verifier", codeVerifier, {
+  cookies.set("google_code_verifier", codeVerifier, {
     httpOnly: true,
     maxAge: 60 * 10,
     secure: import.meta.env.PROD,
     path: "/",
     sameSite: "lax",
   });
-  return url;
 }
 
-const validationFlowSchema = z
-  .object({
-    storedState: z.string(),
-    codeVerifier: z.string(),
-    code: z.string(),
-    state: z.string(),
-  })
-  .refine((data) => data.storedState === data.state, {
-    message: "Invalid state",
-    path: ["state"],
+export function getLoginFlowSession(cookies: AstroCookies) {
+  return loginFlowSessionSchema.parse({
+    storedState: cookies.get("google_oauth_state")?.value ?? null,
+    codeVerifier: cookies.get("google_code_verifier")?.value ?? null,
   });
-
-export async function getSessionToken(context: APIContext) {
-  const result = validationFlowSchema.parse({
-    storedState: context.cookies.get("google_oauth_state")?.value ?? null,
-    codeVerifier: context.cookies.get("google_code_verifier")?.value ?? null,
-    code: context.url.searchParams.get("code"),
-    state: context.url.searchParams.get("state"),
-  });
-
-  try {
-    return await google.validateAuthorizationCode(
-      result.code,
-      result.codeVerifier,
-    );
-  } catch (e) {
-    throw new OAuth2Error("Could not validate authorization code");
-  }
 }
 
-const sessionTokenInfoSchema = z.object({
+const authorizationCodeSchema = z.object({
+  code: z.string(),
+  state: z.string(),
+});
+
+export function getAuthorizationCode(url: URL) {
+  return authorizationCodeSchema.parse({
+    code: url.searchParams.get("code"),
+    state: url.searchParams.get("state"),
+  });
+}
+
+const tokenInfoSchema = z.object({
   sub: z.string(),
   name: z.string(),
   picture: z.string(),
   email: z.string(),
 });
 
-export type SessionTokenInfo = z.infer<typeof sessionTokenInfoSchema>;
+export type TokenInfo = z.infer<typeof tokenInfoSchema>;
 
-export async function getSessionTokenInfo(context: APIContext) {
-  const token = await getSessionToken(context);
-  const claims = decodeIdToken(token.idToken());
-  return sessionTokenInfoSchema.parse(claims);
+export async function validateLoginFlowSession(
+  sessionFlow: z.infer<typeof loginFlowSessionSchema>,
+  authorizationCode: z.infer<typeof authorizationCodeSchema>,
+) {
+  if (sessionFlow.storedState !== authorizationCode.state) {
+    throw new Error("Invalid state");
+  }
+  const tokens = await google.validateAuthorizationCode(
+    authorizationCode.code,
+    sessionFlow.codeVerifier,
+  );
+  return tokenInfoSchema.parse(decodeIdToken(tokens.idToken()));
 }

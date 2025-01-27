@@ -5,14 +5,14 @@ function signIn(provider: string) {
 type Props = {
   children: React.ReactNode;
 } & React.DetailedHTMLProps<
-  React.ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
+  React.ButtonHTMLAttributes<HTMLAnchorElement>,
+  HTMLAnchorElement
 >;
 
 export default function SignInButton({ children, ...props }: Props) {
   return (
-    <button onClick={() => signIn("instagram")} {...props}>
+    <a href="/flows/google" {...props}>
       {children}
-    </button>
+    </a>
   );
 }

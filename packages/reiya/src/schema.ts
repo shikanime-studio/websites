@@ -13,7 +13,7 @@ export const sessionTable = sqliteTable("session", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  userId: integer("user_id")
+  accountId: integer("account_id")
     .notNull()
     .references(() => accountTable.id),
   expiresAt: integer("expires_at", {

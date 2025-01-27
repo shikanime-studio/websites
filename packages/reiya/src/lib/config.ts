@@ -6,5 +6,8 @@ const googleConfigSchema = z.object({
 });
 
 export function getGoogleConfig() {
-  return googleConfigSchema.parse(import.meta.env);
+  return googleConfigSchema.parse({
+    clientId: import.meta.env.GOOGLE_CLIENT_ID,
+    clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET,
+  });
 }

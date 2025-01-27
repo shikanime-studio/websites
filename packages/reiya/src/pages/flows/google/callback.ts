@@ -1,28 +1,36 @@
-import { createAccountFromGoogleFlow, getAccountFromGoogleFlow } from "../../../lib/account";
-import { createSession, getRedirectTo as getRedirectTo } from "../../../lib/session";
-import { ZodError } from "zod";
+import {
+  createAccountFromGoogleTokenInfo,
+  getAccountFromGoogle,
+} from "../../../lib/account";
+import { createSession } from "../../../lib/session";
+import { getRedirectToSession } from "../../../lib/util";
 import type { APIContext } from "astro";
-import { getSessionTokenInfo, OAuth2Error } from "../../../lib/google";
+import {
+  getAuthorizationCode,
+  getLoginFlowSession,
+  validateLoginFlowSession,
+} from "../../../lib/google";
 
-export async function GET(context: APIContext){
-	let tokenInfo;
-    try {
-		tokenInfo = await getSessionTokenInfo(context);
-	} catch (error) {
-		if (error instanceof ZodError) {
-			return new Response("Invalid session token", { status: 400 });
-        } else if (error instanceof OAuth2Error) {
-            return new Response("Invalid session token", { status: 401 });
-		}
-		throw error;
-	}
-    const redirectTo = getRedirectTo(context)
-	const existingAccount =await getAccountFromGoogleFlow(tokenInfo.sub);
-	if (existingAccount) {
-        await createSession(context, existingAccount.id);
-        return context.redirect(redirectTo || "/");
-	}
-	const account = await createAccountFromGoogleFlow(tokenInfo);
+export async function GET(context: APIContext) {
+  let flow, authCode;
+  try {
+    flow = getLoginFlowSession(context.cookies);
+    authCode = getAuthorizationCode(context.url);
+  } catch (error) {
+    return new Response("Invalid session token", { status: 400 });
+  }
+  let tokenInfo;
+  try {
+    tokenInfo = await validateLoginFlowSession(flow, authCode);
+  } catch (error) {
+    return new Response("Invalid session token", { status: 401 });
+  }
+  const existingAccount = await getAccountFromGoogle(tokenInfo.sub);
+  if (existingAccount) {
+    await createSession(context, existingAccount.id);
+  } else {
+    const account = await createAccountFromGoogleTokenInfo(tokenInfo);
     await createSession(context, account.id);
-       return context.redirect(redirectTo || "/");
+  }
+  return context.redirect(getRedirectToSession(context.cookies));
 }

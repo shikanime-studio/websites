@@ -1,6 +1,16 @@
 ---
-import { Image } from "astro:image";
-const session = null;
+import { Image } from "astro:assets";
+import { validateSession } from "../lib/session";
+import UserMenuMenu from "./NavbarUserMenu.astro";
+import { BsInstagram } from "react-icons/bs";
+import logoImage from "../assets/logo.png";
+
+let session;
+try {
+  session = await validateSession(Astro.cookies);
+} catch (e) {
+  session = null;
+}
 ---
 
 <nav class="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
@@ -9,23 +19,34 @@ const session = null;
       <div class="flex items-center justify-start">
         <a href="/" class="ml-2 flex md:mr-24">
           <Image
-            src="/logo.png"
+            src={logoImage}
             class="mr-3 h-8"
-            alt="Cosplay Garden Logo"
+            alt="Reiya Logo"
             width="32"
             height="32"
           />
           <span
             class="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl"
           >
-            Cosplay Garden
+            Reiya
           </span>
         </a>
       </div>
       <div class="flex items-center justify-center"></div>
       <div class="flex items-center">
         <div class="ml-3 flex items-center">
-          <div>{session ? <UserMenu /> : <SignInMenu />}</div>
+          <div>
+            {
+              session ? (
+                <UserMenu accountId={session.accountId} />
+              ) : (
+                <a href="/flows/google" class="btn btn-sm">
+                  <BsInstagram />
+                  Sign in
+                </a>
+              )
+            }
+          </div>
         </div>
       </div>
     </div>

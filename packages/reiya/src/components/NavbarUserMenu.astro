@@ -1,0 +1,40 @@
+---
+import { BsBoxArrowRight, BsFillPersonVcardFill } from "react-icons/bs";
+import { getAccount } from "../lib/account";
+
+const account = getAccount(Astro.props.accountId);
+---
+
+<div className="dropdown dropdown-end">
+  <label tabIndex={0} className="avatar btn btn-circle btn-ghost btn-sm">
+    {
+      account.image && (
+        <div className="rounded-full">
+          <img
+            src={account.pictureUrl}
+            alt={`${account.name ?? account.email ?? "Me"} Avatar`}
+            width={32}
+            height={32}
+          />
+        </div>
+      )
+    }
+  </label>
+  <ul
+    tabIndex={0}
+    className="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
+  >
+    <li>
+      <a href="/account">
+        <BsFillPersonVcardFill />
+        Account
+      </a>
+    </li>
+    <li>
+      <a href={`/logout?redirect=${Astro.url.toString()}`}>
+        <BsBoxArrowRight />
+        Logout
+      </a>
+    </li>
+  </ul>
+</div>
