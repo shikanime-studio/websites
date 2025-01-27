@@ -6,12 +6,12 @@ import { getD1Database } from "../lib/util";
 
 const db = getD1Database(Astro.locals);
 const account = await getAccount(db, Astro.props.accountId);
-console.log(account);
 ---
 
 <div class="dropdown dropdown-end">
   <label tabIndex={0} class="avatar btn btn-circle btn-ghost btn-sm">
     {
+      (
         <div class="rounded-full">
           <Image
             src={account.pictureUrl}
@@ -21,6 +21,24 @@ console.log(account);
             loading="eager"
           />
         </div>
+      )
     }
   </label>
+  <ul
+    tabIndex={0}
+    class="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
+  >
+    <li>
+      <a href="/account">
+        <BsFillPersonVcardFill />
+        Account
+      </a>
+    </li>
+    <li>
+      <a href={`/logout?redirect=${Astro.url.toString()}`}>
+        <BsBoxArrowRight />
+        Logout
+      </a>
+    </li>
+  </ul>
 </div>

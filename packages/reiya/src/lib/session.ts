@@ -49,17 +49,17 @@ export async function validateSession(
   return session;
 }
 
-const deleteSessionSchema = z.object({
-  id: z.string(),
-});
-
 export async function deleteSession(
   db: DrizzleD1Database,
   cookies: AstroCookies,
 ) {
-  const sessionId = deleteSessionSchema.parse({
-    id: cookies.get("session"),
-  });
-  await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId.id));
+  const sessionId = cookies.get("session");
+  if (!sessionId) {
+    throw new Error("No session");
+  }
+  await db
+    .delete(sessionsTable)
+    .where(eq(sessionsTable.id, sessionId.value))
+    .run();
   cookies.delete("session");
 }
