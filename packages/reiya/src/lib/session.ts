@@ -18,7 +18,6 @@ export async function createSession(
       id: sessionsTable.id,
       expiresAt: sessionsTable.expiresAt,
     });
-  console.log(session);
   context.cookies.set("session", session.id, {
     httpOnly: true,
     path: "/",

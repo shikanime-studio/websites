@@ -28,7 +28,6 @@ export async function GET(context: APIContext) {
   }
   const db = getD1Database(context.locals);
   const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);
-  console.log(existingAccount);
   if (existingAccount) {
     await createSession(db, context, existingAccount.id);
   } else {

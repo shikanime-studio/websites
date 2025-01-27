@@ -1,12 +1,15 @@
 ---
 import { Image } from "astro:assets";
 import { validateSession } from "../lib/session";
-import UserMenuMenu from "./NavbarUserMenu.astro";
+import UserMenu from "./NavbarUserMenu.astro";
 import logoImage from "../assets/logo.png";
+import { getD1Database } from "../lib/util";
+
+const db = getD1Database(Astro.locals);
 
 let session;
 try {
-  session = await validateSession(Astro.cookies);
+  session = await validateSession(db, Astro.cookies);
 } catch (e) {
   session = null;
 }

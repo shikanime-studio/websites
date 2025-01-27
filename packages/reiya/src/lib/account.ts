@@ -29,10 +29,10 @@ export function getAccountFromGoogle(db: DrizzleD1Database, googleId: string) {
     .get();
 }
 
-export function getAccount(db: DrizzleD1Database, userId: number) {
+export function getAccount(db: DrizzleD1Database, accountId: number) {
   return db
     .select()
     .from(accountsTable)
-    .where(eq(accountsTable.id, userId))
+    .where(eq(accountsTable.id, accountId))
     .get();
 }
