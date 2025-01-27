@@ -3,6 +3,7 @@ import tailwind from "@astrojs/tailwind";
 import sitemap from "@astrojs/sitemap";
 import partytown from "@astrojs/partytown";
 import cloudflare from "@astrojs/cloudflare";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
@@ -14,6 +15,7 @@ export default defineConfig({
         forward: ["dataLayer.push"],
       },
     }),
+    react(),
   ],
   output: "server",
   adapter: cloudflare({
