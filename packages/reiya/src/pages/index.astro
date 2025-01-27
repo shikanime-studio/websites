@@ -1,7 +1,7 @@
 ---
 import "@fontsource-variable/inter";
-import Home from "../components/Home.tsx";
-import HomeLayout from "../layouts/HomeLayout.astro";
+import Wip from "../components/Wip.astro";
+import Navbar from "../components/Navbar.astro";
 ---
 
 <html lang="en">
@@ -12,8 +12,11 @@ import HomeLayout from "../layouts/HomeLayout.astro";
     <title>Reiya</title>
   </head>
   <body>
-    <HomeLayout>
-      <Home />
-    </HomeLayout>
+    <Navbar />
+    <section
+      class="fadein m mx-auto mb-6 mt-20 flex w-full max-w-screen-xl flex-col justify-center gap-8 md:mt-32 md:w-4/5 lg:w-4/5 xl:w-3/5"
+    >
+      <Wip />
+    </section>
   </body>
 </html>

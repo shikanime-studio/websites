@@ -2,7 +2,6 @@
 import { Image } from "astro:assets";
 import { validateSession } from "../lib/session";
 import UserMenuMenu from "./NavbarUserMenu.astro";
-import { BsInstagram } from "react-icons/bs";
 import logoImage from "../assets/logo.png";
 
 let session;
@@ -13,41 +12,39 @@ try {
 }
 ---
 
-<nav class="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
-  <div class="px-3 py-3 lg:px-5 lg:pl-3">
-    <div class="flex items-center justify-between">
-      <div class="flex items-center justify-start">
-        <a href="/" class="ml-2 flex md:mr-24">
-          <Image
-            src={logoImage}
-            class="mr-3 h-8"
-            alt="Reiya Logo"
-            width="32"
-            height="32"
-          />
-          <span
-            class="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl"
-          >
-            Reiya
-          </span>
-        </a>
-      </div>
-      <div class="flex items-center justify-center"></div>
-      <div class="flex items-center">
-        <div class="ml-3 flex items-center">
-          <div>
-            {
-              session ? (
-                <UserMenu accountId={session.accountId} />
-              ) : (
-                <a href="/flows/google" class="btn btn-sm">
-                  <BsInstagram />
-                  Sign in
-                </a>
-              )
-            }
-          </div>
-        </div>
+<nav
+  class="z-20 mx-auto flex w-full justify-between md:w-4/5 lg:w-4/5 xl:w-3/5"
+>
+  <div class="navbar">
+    <div class="navbar-start">
+      <a href="/" class="ml-2 flex md:mr-24">
+        <Image
+          src={logoImage}
+          class="mr-3 h-8"
+          alt="Reiya Logo"
+          width="32"
+          loading="eager"
+          height="32"
+        />
+        <span
+          class="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl"
+        >
+          Reiya
+        </span>
+      </a>
+    </div>
+    <div class="navbar-center"></div>
+    <div class="navbar-end">
+      <div class="ml-3 flex items-center">
+        {
+          session ? (
+            <UserMenu accountId={session.accountId} />
+          ) : (
+            <a class="btn btn-primary rounded-full" href="/flows/google">
+              Sign up free
+            </a>
+          )
+        }
       </div>
     </div>
   </div>
