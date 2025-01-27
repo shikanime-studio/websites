@@ -1,11 +1,16 @@
----
-import FooterCopyright from "./FooterCopyright.astro";
-import FooterSocial from "./FooterSocial.astro";
-import FooterLinks from "./FooterLinks.astro";
----
-
 <footer class="footer footer-center bg-base-100 p-10 text-base-content">
-  <FooterLinks />
-  <FooterSocial />
-  <FooterCopyright />
+  <nav class="grid grid-flow-col gap-4">
+    <a
+      class="link-hover link"
+      href="https://linkedin.com/company/infinity-horizons/jobs">Careers</a
+    >
+    <a class="link-hover link" href="mailto:contact@shikanime.studio">Contact</a
+    >
+  </nav>
+
+  <aside>
+    <p>
+      Copyright © {new Date().getFullYear()} - All right reserved by Shikanime Studio
+    </p>
+  </aside>
 </footer>
