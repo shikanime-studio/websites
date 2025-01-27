@@ -25,7 +25,9 @@ export async function GET(context: APIContext) {
     }
     throw e;
   }
-  let tokenInfo: Awaited<ReturnType<typeof validateLoginFlowSession>> | undefined;
+  let tokenInfo:
+    | Awaited<ReturnType<typeof validateLoginFlowSession>>
+    | undefined;
   try {
     tokenInfo = await validateLoginFlowSession(flow, authCode);
   } catch (e) {
