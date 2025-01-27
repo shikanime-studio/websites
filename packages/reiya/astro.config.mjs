@@ -22,7 +22,6 @@ export default defineConfig({
     platformProxy: {
       enabled: true,
     },
-    imageService: "compile",
   }),
   site: "https://reiya.shikanime.studio",
 });
