@@ -26,11 +26,16 @@
             ];
             settings.plugins = [
               "@prettier/plugin-xml"
+              "@trivago/prettier-plugin-sort-imports"
               "prettier-plugin-astro"
               "prettier-plugin-tailwindcss"
             ];
           };
           shfmt.enable = true;
+          sqlfluff = {
+            enable = true;
+            dialect = "sqlite";
+          };
           statix.enable = true;
           taplo.enable = true;
           terraform.enable = true;
