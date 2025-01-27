@@ -14,7 +14,8 @@ import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
 export async function GET(context: APIContext) {
-  let flow, authCode;
+  let flow: Awaited<ReturnType<typeof getLoginFlowSession>> | undefined;
+  let authCode: Awaited<ReturnType<typeof getAuthorizationCode>> | undefined;
   try {
     flow = getLoginFlowSession(context.cookies);
     authCode = getAuthorizationCode(context.url);
@@ -24,14 +25,14 @@ export async function GET(context: APIContext) {
     }
     throw e;
   }
-  let tokenInfo;
+  let tokenInfo: Awaited<ReturnType<typeof validateLoginFlowSession>> | undefined;
   try {
     tokenInfo = await validateLoginFlowSession(flow, authCode);
   } catch (e) {
-    if (e instanceof Error && e.message === "Invalid state") {
-      return new Response("Invalid session token", { status: 401 });
+    if (e instanceof Error && e.message !== "Invalid state") {
+      throw e;
     }
-    throw e;
+    return new Response("Invalid session token", { status: 401 });
   }
   const db = getD1Database(context.locals);
   const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);

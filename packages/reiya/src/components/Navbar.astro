@@ -7,13 +7,11 @@ import { getD1Database } from "../lib/util";
 
 const db = getD1Database(Astro.locals);
 
-let session;
+let session: Awaited<ReturnType<typeof validateSession>> | undefined
 try {
   session = await validateSession(db, Astro.cookies);
 } catch (e) {
-  if (e instanceof Error && e.message === "No session") {
-    session = null;
-  } else {
+  if (e instanceof Error && e.message !== "No session") {
     throw e;
   }
 }
