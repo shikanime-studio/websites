@@ -2,16 +2,16 @@
 import "@fontsource-variable/inter";
 import Footer from "../components/Footer.astro";
 import Navbar from "../components/Navbar.astro";
-import { getSessionForNavbar } from "../lib/session";
+import { getSessionForHome } from "../lib/session";
 import { getD1Database } from "../lib/util";
 
 const db = getD1Database(Astro.locals);
 
-let session: Awaited<ReturnType<typeof getSessionForNavbar>> | undefined;
+let session: Awaited<ReturnType<typeof getSessionForHome>> | undefined;
 const sessionId = Astro.cookies.get("session");
 if (sessionId) {
   try {
-    session = await getSessionForNavbar(db, sessionId.value);
+    session = await getSessionForHome(db, sessionId.value);
   } catch (e) {
     if (e instanceof Error && e.message !== "No session") {
       throw e;

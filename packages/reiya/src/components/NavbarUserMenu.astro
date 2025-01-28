@@ -1,11 +1,11 @@
 ---
 import { BsBoxArrowRight, BsFillPersonVcardFill } from "react-icons/bs";
 import { Image } from "astro:assets";
-import type { getSessionForNavbar } from "../lib/session";
+import type { getSessionForHome } from "../lib/session";
 
 interface Props {
   account: NonNullable<
-    Awaited<ReturnType<typeof getSessionForNavbar>>
+    Awaited<ReturnType<typeof getSessionForHome>>
   >["account"];
 }
 ---
