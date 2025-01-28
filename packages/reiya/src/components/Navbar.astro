@@ -2,10 +2,10 @@
 import { Image } from "astro:assets";
 import UserMenu from "./NavbarUserMenu.astro";
 import logoImage from "../assets/logo.png";
-import type { getSessionForNavbar } from "../lib/session";
+import type { getSessionForHome } from "../lib/session";
 
 interface Props {
-  session: Awaited<ReturnType<typeof getSessionForNavbar>>;
+  session: Awaited<ReturnType<typeof getSessionForHome>>;
 }
 ---
 
