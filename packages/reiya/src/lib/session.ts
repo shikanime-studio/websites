@@ -1,13 +1,9 @@
 import { accountsTable, sessionsTable } from "../schema";
-import type { APIContext, AstroCookies } from "astro";
+import type { AstroCookies } from "astro";
 import { eq, sql, and } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 
-export async function createSession(
-  db: DrizzleD1Database,
-  context: APIContext,
-  accountId: number,
-) {
+export async function createSession(db: DrizzleD1Database, accountId: number) {
   const [session] = await db
     .insert(sessionsTable)
     .values({
@@ -17,12 +13,20 @@ export async function createSession(
       id: sessionsTable.id,
       expiresAt: sessionsTable.expiresAt,
     });
-  context.cookies.set("session", session.id, {
+  return session;
+}
+
+export async function setSessionCookies(
+  cookies: AstroCookies,
+  sessionId: string,
+  expiresAt: Date,
+) {
+  cookies.set("session", sessionId, {
     httpOnly: true,
     path: "/",
     secure: import.meta.env.PROD,
     sameSite: "lax",
-    expires: new Date(session.expiresAt),
+    expires: new Date(expiresAt),
   });
 }
 
@@ -48,17 +52,10 @@ export async function getSessionForHome(
     .get();
 }
 
-export async function deleteSession(
-  db: DrizzleD1Database,
-  cookies: AstroCookies,
-) {
-  const sessionId = cookies.get("session");
-  if (!sessionId) {
-    throw new Error("No session");
-  }
-  await db
-    .delete(sessionsTable)
-    .where(eq(sessionsTable.id, sessionId.value))
-    .run();
+export function deleteSession(db: DrizzleD1Database, sessionId: string) {
+  return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId)).run();
+}
+
+export function deleteSessionCookies(cookies: AstroCookies) {
   cookies.delete("session");
 }
