@@ -32,12 +32,18 @@
             ];
           };
           shfmt.enable = true;
+          sqlfluff = {
+            enable = true;
+            dialect = "sqlite";
+          };
           statix.enable = true;
           taplo.enable = true;
           terraform.enable = true;
         };
         settings.global.excludes = [
+          "*.gif"
           "*.ico"
+          "*.jpg"
           "*.png"
           "*.svg"
           "*.txt"

@@ -1,0 +1,51 @@
+---
+import { Image } from "astro:assets";
+import UserMenu from "./NavbarUserMenu.astro";
+import logoImage from "../assets/logo.png";
+import type { getSessionForHome } from "../lib/session";
+
+interface Props {
+  session?: Awaited<ReturnType<typeof getSessionForHome>>;
+}
+---
+
+<nav
+  class="z-20 mx-auto flex w-full justify-between md:w-4/5 lg:w-4/5 xl:w-3/5"
+>
+  <div class="navbar">
+    <div class="navbar-start">
+      <a href="/" class="ml-2 flex md:mr-24">
+        <Image
+          src={logoImage}
+          class="mr-3"
+          alt="Reiya Logo"
+          width="46"
+          height="46"
+          loading="eager"
+        />
+        <span
+          class="self-center whitespace-nowrap text-xl font-semibold sm:text-2xl"
+        >
+          Reiya
+        </span>
+      </a>
+    </div>
+    <div class="navbar-center"></div>
+    <div class="navbar-end">
+      <ul class="menu menu-horizontal px-1">
+        <li><a href="https://shikanime.medium.com">Blog</a></li>
+      </ul>
+      <div class="ml-3 flex items-center">
+        {
+          Astro.props.session ? (
+            <UserMenu account={Astro.props.session.account} />
+          ) : (
+            <a class="btn btn-primary rounded-full" href="/flows/google">
+              Sign up for free
+            </a>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</nav>
