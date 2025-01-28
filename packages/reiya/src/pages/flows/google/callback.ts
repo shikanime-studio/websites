@@ -9,7 +9,11 @@ import {
   validateLoginFlow,
 } from "../../../lib/google";
 import { createSession, setSessionCookies } from "../../../lib/session";
-import { deleteRedirectToCookies, getD1Database, getRedirectToCookies } from "../../../lib/util";
+import {
+  deleteRedirectToCookies,
+  getD1Database,
+  getRedirectToCookies,
+} from "../../../lib/util";
 import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
