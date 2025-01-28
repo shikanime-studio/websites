@@ -25,7 +25,7 @@ const loginFlowSchema = z.object({
   codeVerifier: z.string(),
 });
 
-export function setLoginFlowSession(
+export function setLoginFlowSessionCookies(
   cookies: AstroCookies,
   state: string,
   codeVerifier: string,
@@ -88,7 +88,7 @@ export async function validateLoginFlow(
   return tokenInfoSchema.parse(decodeIdToken(tokens.idToken()));
 }
 
-export function deleteLoginFlow(cookies: AstroCookies) {
+export function deleteLoginFlowCookies(cookies: AstroCookies) {
   cookies.delete("google_oauth_state");
   cookies.delete("google_code_verifier");
 }
