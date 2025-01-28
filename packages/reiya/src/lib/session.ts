@@ -1,6 +1,6 @@
 import { accountsTable, sessionsTable } from "../schema";
 import type { APIContext, AstroCookies } from "astro";
-import { eq } from "drizzle-orm";
+import { eq, sql, and } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 
 export async function createSession(
@@ -39,30 +39,13 @@ export async function getSessionForHome(
     })
     .from(sessionsTable)
     .innerJoin(accountsTable, eq(sessionsTable.accountId, accountsTable.id))
-    .where(eq(sessionsTable.id, sessionId))
+    .where(
+      and(
+        eq(sessionsTable.id, sessionId),
+        sql`${sessionsTable.expiresAt} > datetime('now')`,
+      ),
+    )
     .get();
-}
-
-export async function validateSession(
-  db: DrizzleD1Database,
-  cookies: AstroCookies,
-) {
-  const sessionId = cookies.get("session");
-  if (!sessionId) {
-    throw new Error("No session");
-  }
-  const session = await db
-    .select()
-    .from(sessionsTable)
-    .where(eq(sessionsTable.id, sessionId.value))
-    .get();
-  if (!session) {
-    throw new Error("No session");
-  }
-  if (new Date() > new Date(session.expiresAt)) {
-    throw new Error("Session expired");
-  }
-  return session;
 }
 
 export async function deleteSession(
