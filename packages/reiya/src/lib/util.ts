@@ -9,7 +9,7 @@ export function getRedirectTo(url: URL) {
   return redirectTo;
 }
 
-export function setRedirectToSession(cookies: AstroCookies, url: string) {
+export function setRedirectToCookies(cookies: AstroCookies, url: string) {
   cookies.set("redirect_to", url, {
     httpOnly: true,
     path: "/",
@@ -18,12 +18,16 @@ export function setRedirectToSession(cookies: AstroCookies, url: string) {
   });
 }
 
-export function getRedirectToSession(cookies: AstroCookies) {
+export function getRedirectToCookies(cookies: AstroCookies) {
   const redirectTo = cookies.get("redirect_to");
   if (!redirectTo) {
     return "/";
   }
-  return redirectTo.value;
+  return new URL(redirectTo.value);
+}
+
+export function deleteRedirectToCookies(cookies: AstroCookies) {
+  cookies.delete("redirect_to");
 }
 
 export function getD1Database(locals: App.Locals) {
