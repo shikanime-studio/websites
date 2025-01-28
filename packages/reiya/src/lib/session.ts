@@ -26,7 +26,7 @@ export async function setSessionCookies(
     path: "/",
     secure: import.meta.env.PROD,
     sameSite: "lax",
-    expires: new Date(expiresAt),
+    expires: expiresAt,
   });
 }
 
