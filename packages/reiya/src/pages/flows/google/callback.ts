@@ -8,7 +8,7 @@ import {
   getLoginFlow,
   validateLoginFlow,
 } from "../../../lib/google";
-import { createSession, setSessionCookie } from "../../../lib/session";
+import { createSession, setSessionCookies } from "../../../lib/session";
 import { getD1Database, getRedirectToSession } from "../../../lib/util";
 import type { APIContext } from "astro";
 import { ZodError } from "zod";
