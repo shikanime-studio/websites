@@ -5,7 +5,7 @@ import logoImage from "../assets/logo.png";
 import type { getSessionForHome } from "../lib/session";
 
 interface Props {
-  session: Awaited<ReturnType<typeof getSessionForHome>>;
+  session?: Awaited<ReturnType<typeof getSessionForHome>>;
 }
 ---
 
