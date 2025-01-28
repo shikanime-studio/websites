@@ -3,10 +3,10 @@ import {
   getAccountFromGoogle,
 } from "../../../lib/account";
 import {
-  deleteLoginFlow,
+  deleteLoginFlowSession,
   getAuthorizationCode,
-  getLoginFlow ,
-  validateLoginFlow,
+  getLoginFlowSession,
+  validateLoginFlowSession as validateLoginFlow,
 } from "../../../lib/google";
 import { createSession } from "../../../lib/session";
 import { getD1Database, getRedirectToSession } from "../../../lib/util";
@@ -14,10 +14,10 @@ import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
 export async function GET(context: APIContext) {
-  let flow: Awaited<ReturnType<typeof getLoginFlow>> | undefined;
+  let flow: Awaited<ReturnType<typeof getLoginFlowSession>> | undefined;
   let authCode: Awaited<ReturnType<typeof getAuthorizationCode>> | undefined;
   try {
-    flow = getLoginFlow(context.cookies);
+    flow = getLoginFlowSession(context.cookies);
     authCode = getAuthorizationCode(context.url);
   } catch (e) {
     if (e instanceof ZodError) {
@@ -44,6 +44,6 @@ export async function GET(context: APIContext) {
     const account = await createAccountFromGoogleTokenInfo(db, tokenInfo);
     await createSession(db, context, account.id);
   }
-  deleteLoginFlow(context.cookies);
+  deleteLoginFlowSession(context.cookies);
   return context.redirect(getRedirectToSession(context.cookies));
 }

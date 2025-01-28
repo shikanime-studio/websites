@@ -20,7 +20,7 @@ export function createAuthorizationURL(state: string, codeVerifier: string) {
   ]);
 }
 
-const loginFlowSchema = z.object({
+const loginFlowSessionSchema = z.object({
   storedState: z.string(),
   codeVerifier: z.string(),
 });
@@ -46,8 +46,8 @@ export function setLoginFlowSession(
   });
 }
 
-export function getLoginFlow(cookies: AstroCookies) {
-  return loginFlowSchema.parse({
+export function getLoginFlowSession(cookies: AstroCookies) {
+  return loginFlowSessionSchema.parse({
     storedState: cookies.get("google_oauth_state")?.value ?? null,
     codeVerifier: cookies.get("google_code_verifier")?.value ?? null,
   });
@@ -74,8 +74,8 @@ const tokenInfoSchema = z.object({
 
 export type TokenInfo = z.infer<typeof tokenInfoSchema>;
 
-export async function validateLoginFlow(
-  sessionFlow: z.infer<typeof loginFlowSchema>,
+export async function validateLoginFlowSession(
+  sessionFlow: z.infer<typeof loginFlowSessionSchema>,
   authorizationCode: z.infer<typeof authorizationCodeSchema>,
 ) {
   if (sessionFlow.storedState !== authorizationCode.state) {
@@ -88,7 +88,7 @@ export async function validateLoginFlow(
   return tokenInfoSchema.parse(decodeIdToken(tokens.idToken()));
 }
 
-export function deleteLoginFlow(cookies: AstroCookies) {
+export function deleteLoginFlowSession(cookies: AstroCookies) {
   cookies.delete("google_oauth_state");
   cookies.delete("google_code_verifier");
 }
