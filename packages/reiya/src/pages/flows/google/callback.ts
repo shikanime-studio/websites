@@ -6,7 +6,7 @@ import {
   deleteLoginFlowSession,
   getAuthorizationCode,
   getLoginFlowSession,
-  validateLoginFlowSession,
+  validateLoginFlowSession as validateLoginFlow,
 } from "../../../lib/google";
 import { createSession } from "../../../lib/session";
 import { getD1Database, getRedirectToSession } from "../../../lib/util";
@@ -26,10 +26,10 @@ export async function GET(context: APIContext) {
     throw e;
   }
   let tokenInfo:
-    | Awaited<ReturnType<typeof validateLoginFlowSession>>
+    | Awaited<ReturnType<typeof validateLoginFlow>>
     | undefined;
   try {
-    tokenInfo = await validateLoginFlowSession(flow, authCode);
+    tokenInfo = await validateLoginFlow(flow, authCode);
   } catch (e) {
     if (e instanceof Error && e.message !== "Invalid state") {
       throw e;
