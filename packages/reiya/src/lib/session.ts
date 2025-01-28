@@ -26,7 +26,7 @@ export async function createSession(
   });
 }
 
-export async function getSessionForNavbar(
+export async function getSessionForHome(
   db: DrizzleD1Database,
   sessionId: string,
 ) {
