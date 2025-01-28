@@ -9,7 +9,7 @@ import {
   validateLoginFlow,
 } from "../../../lib/google";
 import { createSession, setSessionCookies } from "../../../lib/session";
-import { getD1Database, getRedirectToSession } from "../../../lib/util";
+import { getD1Database, getRedirectToCookies } from "../../../lib/util";
 import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
@@ -45,5 +45,5 @@ export async function GET(context: APIContext) {
     setSessionCookies(context.cookies, session.id, new Date(session.expiresAt));
   }
   deleteLoginFlowCookies(context.cookies);
-  return context.redirect(getRedirectToSession(context.cookies));
+  return context.redirect(getRedirectToCookies(context.cookies));
 }
