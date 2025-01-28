@@ -25,7 +25,7 @@ const loginFlowSchema = z.object({
   codeVerifier: z.string(),
 });
 
-export function setLoginFlowSessionCookies(
+export function setLoginFlowCookies(
   cookies: AstroCookies,
   state: string,
   codeVerifier: string,
