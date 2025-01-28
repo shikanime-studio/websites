@@ -27,8 +27,8 @@ try {
           src={logoImage}
           class="mr-3"
           alt="Reiya Logo"
-          width="40"
-          height="40"
+          width="46"
+          height="46"
           loading="eager"
         />
         <span
@@ -40,13 +40,16 @@ try {
     </div>
     <div class="navbar-center"></div>
     <div class="navbar-end">
+      <ul class="menu menu-horizontal px-1">
+        <li><a href="https://shikanime.medium.com">Blog</a></li>
+      </ul>
       <div class="ml-3 flex items-center">
         {
           session ? (
             <UserMenu accountId={session.accountId} />
           ) : (
             <a class="btn btn-primary rounded-full" href="/flows/google">
-              Sign up free
+              Sign up for free
             </a>
           )
         }
