@@ -1,4 +1,4 @@
-import { sessionsTable } from "../schema";
+import { accountsTable, sessionsTable } from "../schema";
 import type { APIContext, AstroCookies } from "astro";
 import { eq } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
@@ -24,6 +24,23 @@ export async function createSession(
     sameSite: "lax",
     expires: new Date(session.expiresAt),
   });
+}
+
+export async function getSessionForNavbar(
+  db: DrizzleD1Database,
+  sessionId: string,
+) {
+  return db
+    .select({
+      id: sessionsTable.id,
+      accountId: sessionsTable.accountId,
+      expiresAt: sessionsTable.expiresAt,
+      account: accountsTable,
+    })
+    .from(sessionsTable)
+    .innerJoin(accountsTable, eq(sessionsTable.accountId, accountsTable.id))
+    .where(eq(sessionsTable.id, sessionId))
+    .get();
 }
 
 export async function validateSession(

@@ -1,28 +1,26 @@
 ---
 import { BsBoxArrowRight, BsFillPersonVcardFill } from "react-icons/bs";
-import { getAccount } from "../lib/account";
 import { Image } from "astro:assets";
-import { getD1Database } from "../lib/util";
+import type { getSessionForNavbar } from "../lib/session";
 
-const db = getD1Database(Astro.locals);
-const account = await getAccount(db, Astro.props.accountId);
+interface Props {
+  account: NonNullable<
+    Awaited<ReturnType<typeof getSessionForNavbar>>
+  >["account"];
+}
 ---
 
 <div class="dropdown dropdown-end">
   <div tabindex="0" role="button" class="avatar btn btn-circle btn-ghost">
-    {
-      account && (
-        <div class="w-10 rounded-full">
-          <Image
-            src={account.pictureUrl}
-            alt={`${account.name} Avatar`}
-            width="40"
-            height="40"
-            loading="eager"
-          />
-        </div>
-      )
-    }
+    <div class="w-10 rounded-full">
+      <Image
+        src={Astro.props.account.pictureUrl}
+        alt={`${Astro.props.account.name} Avatar`}
+        width="40"
+        height="40"
+        loading="eager"
+      />
+    </div>
   </div>
   <ul
     class="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
