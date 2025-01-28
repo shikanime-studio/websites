@@ -3,21 +3,21 @@ import {
   getAccountFromGoogle,
 } from "../../../lib/account";
 import {
-  deleteLoginFlowSession,
+  deleteLoginFlowCookies,
   getAuthorizationCode,
-  getLoginFlowSession,
-  validateLoginFlowSession as validateLoginFlow,
+  getLoginFlow,
+  validateLoginFlow,
 } from "../../../lib/google";
-import { createSession } from "../../../lib/session";
+import { createSession, setSessionCookie } from "../../../lib/session";
 import { getD1Database, getRedirectToSession } from "../../../lib/util";
 import type { APIContext } from "astro";
 import { ZodError } from "zod";
 
 export async function GET(context: APIContext) {
-  let flow: Awaited<ReturnType<typeof getLoginFlowSession>> | undefined;
+  let flow: Awaited<ReturnType<typeof getLoginFlow>> | undefined;
   let authCode: Awaited<ReturnType<typeof getAuthorizationCode>> | undefined;
   try {
-    flow = getLoginFlowSession(context.cookies);
+    flow = getLoginFlow(context.cookies);
     authCode = getAuthorizationCode(context.url);
   } catch (e) {
     if (e instanceof ZodError) {
@@ -25,9 +25,7 @@ export async function GET(context: APIContext) {
     }
     throw e;
   }
-  let tokenInfo:
-    | Awaited<ReturnType<typeof validateLoginFlow>>
-    | undefined;
+  let tokenInfo: Awaited<ReturnType<typeof validateLoginFlow>> | undefined;
   try {
     tokenInfo = await validateLoginFlow(flow, authCode);
   } catch (e) {
@@ -39,11 +37,13 @@ export async function GET(context: APIContext) {
   const db = getD1Database(context.locals);
   const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);
   if (existingAccount) {
-    await createSession(db, context, existingAccount.id);
+    const session = await createSession(db, existingAccount.id);
+    setSessionCookies(context.cookies, session.id, new Date(session.expiresAt));
   } else {
     const account = await createAccountFromGoogleTokenInfo(db, tokenInfo);
-    await createSession(db, context, account.id);
+    const session = await createSession(db, account.id);
+    setSessionCookies(context.cookies, session.id, new Date(session.expiresAt));
   }
-  deleteLoginFlowSession(context.cookies);
+  deleteLoginFlowCookies(context.cookies);
   return context.redirect(getRedirectToSession(context.cookies));
 }
