@@ -2,6 +2,7 @@
 import "@fontsource-variable/inter";
 import Wip from "../components/Wip.astro";
 import Footer from "../components/Footer.astro";
+import { ClientRouter } from "astro:transitions";
 import Navbar from "../components/Navbar.astro";
 ---
 
@@ -11,6 +12,7 @@ import Navbar from "../components/Navbar.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <title>Reiya</title>
+    <ClientRouter />
   </head>
   <body>
     <Navbar />

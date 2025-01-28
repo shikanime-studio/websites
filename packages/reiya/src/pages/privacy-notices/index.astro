@@ -2,6 +2,7 @@
 import "@fontsource-variable/inter";
 import Footer from "../../components/Footer.astro";
 import Navbar from "../../components/Navbar.astro";
+import { ClientRouter } from "astro:transitions";
 ---
 
 <html lang="en">
@@ -10,6 +11,7 @@ import Navbar from "../../components/Navbar.astro";
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
     <title>Privacy Notice - Reiya</title>
+    <ClientRouter />
   </head>
   <body>
     <Navbar />
