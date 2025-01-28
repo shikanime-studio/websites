@@ -47,5 +47,5 @@ export async function GET(context: APIContext) {
   deleteLoginFlowCookies(context.cookies);
   const url = getRedirectToCookies(context.cookies);
   deleteRedirectToCookies(context.cookies);
-  return context.redirect(url);
+  return context.redirect(url.toString());
 }

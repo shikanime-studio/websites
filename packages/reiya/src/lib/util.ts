@@ -23,7 +23,7 @@ export function getRedirectToCookies(cookies: AstroCookies) {
   if (!redirectTo) {
     return "/";
   }
-  return redirectTo.value;
+  return new URL(redirectTo.value);
 }
 
 export function deleteRedirectToCookies(cookies: AstroCookies) {
