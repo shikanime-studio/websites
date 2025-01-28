@@ -1,19 +1,11 @@
 ---
 import { Image } from "astro:assets";
-import { validateSession } from "../lib/session";
 import UserMenu from "./NavbarUserMenu.astro";
 import logoImage from "../assets/logo.png";
-import { getD1Database } from "../lib/util";
+import type { getSessionForNavbar } from "../lib/session";
 
-const db = getD1Database(Astro.locals);
-
-let session: Awaited<ReturnType<typeof validateSession>> | undefined;
-try {
-  session = await validateSession(db, Astro.cookies);
-} catch (e) {
-  if (e instanceof Error && e.message !== "No session") {
-    throw e;
-  }
+interface Props {
+  session: Awaited<ReturnType<typeof getSessionForNavbar>>;
 }
 ---
 
@@ -45,8 +37,8 @@ try {
       </ul>
       <div class="ml-3 flex items-center">
         {
-          session ? (
-            <UserMenu accountId={session.accountId} />
+          Astro.props.session ? (
+            <UserMenu account={Astro.props.session.account} />
           ) : (
             <a class="btn btn-primary rounded-full" href="/flows/google">
               Sign up for free
