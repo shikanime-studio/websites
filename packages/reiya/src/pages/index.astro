@@ -1,51 +1,99 @@
 ---
-import "@fontsource-variable/inter";
-import { ClientRouter } from "astro:transitions";
-import ScaffoldLayout from "../layouts/ScaffoldLayout.astro";
+import Layout from "../layouts/Layout.astro";
+import Navigation from "../components/Navigation.astro";
+import Hero from "../components/Hero.astro";
+import Flow from "../components/Flow.astro";
+import Features from "../components/Features.astro";
+import Testimonial from "../components/Testimonial.astro";
+import { Image } from "astro:assets";
+import workInProgressImage from "../assets/work-in-progress.gif";
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Reiya</title>
-    <ClientRouter />
-  </head>
-  <body>
-    <ScaffoldLayout>
-      <section
-        class="fadein m mx-auto mb-6 mt-20 flex w-full max-w-screen-xl flex-col justify-center gap-8 md:mt-32 md:w-4/5 lg:w-4/5 xl:w-3/5"
-      >
-        <section
-          class="flex flex-1 flex-col items-center justify-center px-6 py-12"
-        >
-          <h1
-            class="mb-8 text-center text-4xl font-bold text-gray-900 md:text-6xl"
-          >
-            Make money
-            <br />
-            doing what you love
-          </h1>
-          <div class="flex w-full max-w-3xl">
-            <div class="relative flex flex-1">
-              <input
-                type="text"
-                placeholder="MyPage"
-                class="input input-bordered h-20 w-full rounded-full pl-[115px] pr-[100px] text-xl"
-              />
-              <div class="absolute left-6 top-1/2 -translate-y-[50%]">
-                <span class="text-lg text-gray-500">reiya.com/</span>
-              </div>
-              <div class="absolute right-2 top-1/2 -translate-y-[50%]">
-                <button class="btn btn-primary h-16 rounded-full px-8 text-xl">
-                  Claim
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-      </section>
-    </ScaffoldLayout>
-  </body>
-</html>
+<Layout title="Reiya - From Cosplay Newbie to Pro">
+  <Navigation />
+
+  <main
+    class="w-full divide-y divide-black overflow-hidden border-y border-black"
+  >
+    <Hero />
+
+    <section class="px-8 py-16 text-center">
+      <h2 class="mx-auto max-w-6xl text-4xl md:text-5xl">
+        Your passion for cosplay is unique.
+        <br />
+        We're here to help you explore, experiment, and discover your path to success.
+      </h2>
+      <div class="mt-12">
+        <Flow />
+      </div>
+    </section>
+
+    <section class="grid grid-cols-1 divide-x divide-black md:grid-cols-2">
+      <div class="bg-purple-600 p-8 text-center text-white md:p-16">
+        <h3 class="text-3xl font-bold">
+          Don't let inexperience hold you back.<br />That's limiting!
+        </h3>
+      </div>
+      <div class="bg-pink-400 p-8 text-center md:p-16">
+        <h3 class="text-3xl font-bold">
+          Learn, grow, and take on challenges.<br />That's empowering!
+        </h3>
+      </div>
+    </section>
+
+    <Features />
+
+    <section>
+      <div class="mx-auto max-w-3xl px-8 py-16 text-center">
+        <h2 class="mb-6 text-4xl font-bold">Craft your cosplay journey</h2>
+        <p class="text-xl">
+          Whether you're just starting out or looking to take your cosplay to
+          the professional level, Reiya is here to support you. we make it
+          easier to chart your path. You don't need to be a tech wizard or
+          business guru. Just start with your cosplay skills and share them with
+          the world.
+        </p>
+      </div>
+    </section>
+
+    <section class="bg-white px-8 py-16">
+      <div class="mx-auto grid max-w-6xl grid-cols-1 gap-12 md:grid-cols-2">
+        <div class="space-y-4">
+          <Image
+            src={workInProgressImage}
+            alt="Reiya platform dashboard"
+            class="rounded-lg shadow-lg"
+          />
+        </div>
+        <div class="flex flex-col justify-center">
+          <h2 class="mb-6 text-3xl font-bold">
+            Everything you need to succeed in cosplay
+          </h2>
+          <p class="mb-8 text-xl text-gray-700">
+            From your first creation to your hundredth masterpiece, Reiya
+            provides the tools to support your growth in your cosplay journey.
+          </p>
+          <ul class="space-y-3 text-gray-700">
+            {
+              [
+                "Showcase your special skills and creations",
+                "Connect with fellow artisans in your niche",
+                "Receive commissions tailored to your skills",
+                "Collaborate on projects within your specialty",
+                "Share your techniques and grow your reputation",
+                "Turn your unique cosplay talent into a career!",
+              ].map((item) => (
+                <li class="flex items-center gap-2">
+                  <span class="text-secondary">✓</span>
+                  {item}
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <Testimonial />
+  </main>
+</Layout>

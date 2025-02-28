@@ -1,0 +1,80 @@
+---
+const steps = [
+  { text: "Hone Your Craft", position: "top" },
+  { text: "Showcase Work", position: "right" },
+  { text: "Connect with Community", position: "bottom" },
+  { text: "Grow Your Career", position: "left" },
+];
+---
+
+<div class="relative mx-auto w-full max-w-3xl py-16">
+  <!-- Yellow background track -->
+  <div class="relative h-24 rounded-full bg-yellow-400">
+    <!-- Pink mascot (could be a chibi cosplayer with various tools) -->
+    <div class="absolute left-1/4 top-1/2 h-16 w-16 -translate-y-1/2">
+      <div class="relative h-full w-full rounded-full bg-pink-400">
+        <!-- Add cute cosplay character face details if needed -->
+        <div class="absolute left-1/4 top-1/3 h-1 w-1 rounded-full bg-black">
+        </div>
+        <div class="absolute right-1/4 top-1/3 h-1 w-1 rounded-full bg-black">
+        </div>
+      </div>
+    </div>
+
+    <!-- Step markers and labels -->
+    <div class="absolute inset-0">
+      <div
+        class="relative flex h-full w-full items-center justify-between px-8"
+      >
+        {
+          steps.map((step) => (
+            <div class="group relative">
+              <div class="h-3 w-3 rounded-full bg-black" />
+              <span
+                class={`
+              absolute whitespace-nowrap text-sm font-medium
+              ${
+                step.position === "top"
+                  ? "-top-8"
+                  : step.position === "bottom"
+                    ? "top-8"
+                    : step.position === "left"
+                      ? "left-8"
+                      : "right-8"
+              }
+            `}
+              >
+                {step.text}
+              </span>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+
+  <!-- Arrows -->
+  <div
+    class="pointer-events-none absolute inset-0 flex items-center justify-between px-4"
+  >
+    {
+      Array(3)
+        .fill(null)
+        .map(() => (
+          <svg
+            class="h-6 w-6 text-black"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        ))
+    }
+  </div>
+</div>
