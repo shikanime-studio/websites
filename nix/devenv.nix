@@ -54,15 +54,9 @@
       devenv.shells.default = {
         containers = pkgs.lib.mkForce { };
         languages = {
+          deno.enable = true;
           opentofu.enable = true;
           nix.enable = true;
-          javascript = {
-            enable = true;
-            npm = {
-              enable = true;
-              install.enable = true;
-            };
-          };
         };
         cachix = {
           enable = true;

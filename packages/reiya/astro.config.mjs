@@ -3,8 +3,7 @@ import partytown from "@astrojs/partytown";
 import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import { defineConfig } from "astro/config";
-import process from "node:process";
+import { defineConfig, passthroughImageService } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -20,11 +19,12 @@ export default defineConfig({
   ],
   output: "server",
   adapter: cloudflare({
+    imageService: "passthrough",
     platformProxy: {
       enabled: true,
     },
   }),
-  site: process.env.SITE || "https://reiya.shikanime.studio",
+  site: import.meta.env.SITE || "https://reiya.shikanime.studio",
   vite: {
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.

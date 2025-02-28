@@ -2,7 +2,7 @@ import cloudflare from "@astrojs/cloudflare";
 import partytown from "@astrojs/partytown";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
-import { defineConfig } from "astro/config";
+import { defineConfig, passthroughImageService } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
@@ -16,6 +16,8 @@ export default defineConfig({
     }),
   ],
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: "passthrough",
+  }),
   site: "https://shikanime.studio",
 });
