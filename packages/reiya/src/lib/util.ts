@@ -32,6 +32,6 @@ export function deleteRedirectToCookies(cookies: AstroCookies) {
 
 export function getD1Database(locals: App.Locals) {
   return drizzle(locals.runtime.env.DB, {
-    logger: locals.runtime.env.DEV,
+    logger: import.meta.env.DEV,
   });
 }
