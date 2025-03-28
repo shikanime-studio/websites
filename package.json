@@ -2,7 +2,6 @@
   "name": "@shikanime/websites",
   "workspaces": [
     "packages/links",
-    "packages/reiya",
     "packages/www"
   ],
   "devDependencies": {
