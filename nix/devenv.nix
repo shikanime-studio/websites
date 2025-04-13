@@ -77,8 +77,6 @@
         };
         packages = [
           pkgs.gitnr
-          pkgs.gnugrep
-          pkgs.gnused
         ];
       };
     };
