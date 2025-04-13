@@ -5,10 +5,6 @@ interface Props {
   title?: string;
   description?: string;
 }
-
-const { title = "Shikanime", description = "Shikanime" } = Astro.props;
-
-export const prerender = true;
 ---
 
 <html lang="en">
@@ -16,8 +12,8 @@ export const prerender = true;
     <meta charset="utf-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width" />
-    <title>{title}</title>
-    <meta name="description" content={description} />
+    <title>{Astro.props.title}</title>
+    <meta name="description" content={Astro.props.description} />
     <script
       type="text/partytown"
       src="https://www.googletagmanager.com/gtag/js?id=G-YZBXJ1P5JM"></script>

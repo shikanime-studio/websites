@@ -3,9 +3,11 @@ import { Image } from "astro:assets";
 import Layout from "../../layouts/Layout.astro";
 import Avatar from "../../assets/avatar.webp";
 import AvatarHappy from "../../assets/avatar-happy.webp";
+
+export const prerender = true;
 ---
 
-<Layout>
+<Layout title="Shikanime" description="もう一度人生を楽しくしましょう！">
   <label class="swap">
     <input type="checkbox" />
     <div class="swap-on">
@@ -36,18 +38,6 @@ import AvatarHappy from "../../assets/avatar-happy.webp";
     <p class="mt-2 font-mono text-white">もう一度人生を楽しくしましょう！</p>
   </div>
 
-  <a
-    href="https://github.com/shikanime"
-    class="btn btn-circle btn-primary w-full"
-  >
-    💾 Github
-  </a>
-  <a
-    href="https://shikanime.medium.com"
-    class="btn btn-circle btn-primary w-full"
-  >
-    📖 Blog
-  </a>
   <a
     href="https://instagram.com/shikanime"
     class="btn btn-circle btn-primary w-full"
