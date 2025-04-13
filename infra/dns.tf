@@ -10,11 +10,11 @@ resource "cloudflare_dns_record" "default" {
 }
 
 resource "cloudflare_dns_record" "www" {
-  zone_id  = var.zone
-  comment  = "Managed by Terraform"
-  content  = data.cloudflare_pages_project.default["shikanime-studio"].subdomain
-  name     = "www"
-  proxied  = true
-  ttl      = 1
-  type     = "CNAME"
+  zone_id = var.zone
+  comment = "Managed by Terraform"
+  content = data.cloudflare_pages_project.default["shikanime-studio"].subdomain
+  name    = "www"
+  proxied = true
+  ttl     = 1
+  type    = "CNAME"
 }

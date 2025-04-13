@@ -1,0 +1,59 @@
+---
+import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
+import Avatar from "../../assets/avatar.webp";
+import AvatarHappy from "../../assets/avatar-happy.webp";
+
+export const prerender = true;
+---
+
+<Layout title="Shikanime" description="もう一度人生を楽しくしましょう！">
+  <label class="swap">
+    <input type="checkbox" />
+    <div class="swap-on">
+      <Image
+        src={AvatarHappy}
+        alt="avatar happy"
+        width="150"
+        height="150"
+        class="rounded-full border-2 border-white"
+        quality="max"
+      />
+    </div>
+    <div class="swap-off">
+      <Image
+        src={Avatar}
+        alt="avatar"
+        width="150"
+        height="150"
+        class="rounded-full border-2 border-white"
+        quality="max"
+        loading="eager"
+      />
+    </div>
+  </label>
+
+  <div class="text-center">
+    <h2 class="font-mono text-2xl font-bold text-white">@Shikanime</h2>
+    <p class="mt-2 font-mono text-white">もう一度人生を楽しくしましょう！</p>
+  </div>
+
+  <a
+    href="https://instagram.com/shikanime"
+    class="btn btn-circle btn-primary w-full"
+  >
+    📸 Instagram
+  </a>
+  <a
+    href="https://myanimelist.net/profile/freakyshika"
+    class="btn btn-circle btn-primary w-full"
+  >
+    🎏 MyAnimeList
+  </a>
+  <a
+    href="https://discord.gg/6DtT9mJy"
+    class="btn btn-circle btn-primary w-full"
+  >
+    🥖 Baguetto
+  </a>
+</Layout>
