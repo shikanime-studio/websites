@@ -1,36 +1,11 @@
 ---
-import "@fontsource-variable/inter";
 import { Image } from "astro:assets";
+import Layout from "../../layouts/Layout.astro";
 import Avatar from "../assets/avatar.webp";
 import AvatarHappy from "../assets/avatar-happy.webp";
-
-export const prerender = true;
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <title>Shikanime</title>
-    <meta name="description" content="Shikanime" />
-    <script
-      type="text/partytown"
-      src="https://www.googletagmanager.com/gtag/js?id=G-YZBXJ1P5JM"></script>
-    <script type="text/partytown">
-      window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag("js", new Date());
-
-      gtag("config", "G-YZBXJ1P5JM");
-    </script>
-    <link rel="sitemap" href="/sitemap-index.xml" />
-  </head>
-  <body>
-    <div class="hero min-h-screen">
-      <div class="hero-content my-4 flex-col space-y-2">
+<Layout>
         <label class="swap">
           <input type="checkbox" />
           <div class="swap-on">
@@ -70,12 +45,6 @@ export const prerender = true;
           💾 Github
         </a>
         <a
-          href="https://linkedin.com/in/williamphetsinorath"
-          class="btn btn-circle btn-primary w-full"
-        >
-          🗺️ LinkedIn
-        </a>
-        <a
           href="https://shikanime.medium.com"
           class="btn btn-circle btn-primary w-full"
         >
@@ -94,6 +63,4 @@ export const prerender = true;
           🎏 MyAnimeList
         </a>
       </div>
-    </div>
-  </body>
-</html>
+</Layout>
