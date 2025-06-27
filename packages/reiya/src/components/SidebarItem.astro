@@ -1,0 +1,16 @@
+---
+type SidebarItemProps = {
+  href: string;
+  label: string;
+  children: any; // Use 'any' or a more specific Astro component type if available
+};
+
+const { href, label, children } = Astro.props;
+---
+
+<li>
+  <a href={href} class="flex items-center p-2">
+    <slot />
+    <span class="ml-3">{label}</span>
+  </a>
+</li>

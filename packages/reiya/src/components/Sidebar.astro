@@ -1,0 +1,72 @@
+---
+import {
+  BsBellFill,
+  BsHouseFill,
+  BsLifePreserver,
+  BsLock,
+  BsSendFill,
+} from "react-icons/bs";
+import SidebarItem from "./SidebarItem.astro";
+---
+
+<li>
+  <a href={Astro.props.href} class="flex items-center p-2">
+    <slot />
+    <span class="ml-3">{Astro.props.label}</span>
+  </a>
+</li>
+
+<aside
+  id="logo-sidebar"
+  class="fixed left-0 top-0 z-40 h-screen w-64 -translate-x-full border-r border-base-200 bg-base-100 pt-14 transition-transform sm:translate-x-0"
+  aria-label="Sidebar"
+>
+  <div class="flex h-full flex-col gap-6 overflow-y-auto px-3 py-4">
+    <div class="flex grow flex-col gap-4 divide-y divide-base-200">
+      <!-- Primary Menu -->
+      <ul class="flex flex-col gap-2 font-medium">
+        <SidebarItem href="/" label="Home">
+          <BsHouseFill />
+        </SidebarItem>
+        <SidebarItem href="https://forms.gle/2uYf78xCByBFa3ec9" label="Requests">
+          <BsSendFill />
+        </SidebarItem>
+      </ul>
+
+      <!-- Secondary Menu -->
+      <ul class="flex flex-col gap-2 pt-4 font-medium">
+        <SidebarItem href="https://forms.gle/69v3nkmt8NXJctvP6" label="Feedback">
+          <BsLifePreserver />
+        </SidebarItem>
+        <SidebarItem href="/privacy-notices" label="Privacy">
+          <BsLock />
+        </SidebarItem>
+      </ul>
+
+      <!-- Info Section -->
+      <div id="dropdown-cta" class="rounded-lg bg-secondary p-4" role="alert">
+        <div class="mb-3 flex items-center">
+          <div class="badge badge-primary mr-2 rounded px-2.5 py-0.5 text-sm font-semibold">
+            Notice
+          </div>
+        </div>
+        <p class="mb-3 text-sm">
+          Reiya is still in the early stages of development. If you would
+          like to be included in the list of makers, please contact us via the
+          request form.
+        </p>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div>
+      <div class="text-xs text-neutral">
+        <p>
+          Made with
+          <span role="img" aria-label="heart">❤️</span>
+          by <a href="https://shikanime.studio">Shikanime Studio</a>
+        </p>
+      </div>
+    </div>
+  </div>
+</aside>

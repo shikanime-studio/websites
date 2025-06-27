@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import MakerBadges from "../components/MakerBadges.astro";
+
+interface Props {
+  username: string;
+  display_name: string;
+  avatar_url: string | null;
+  biography: string | null;
+  status: string | null;
+  badges: string[];
+}
+
+const { username, display_name, avatar_url, biography, status, badges } = Astro.props;
+---
+
+<div class="card image-full h-full w-96 shadow-xl">
+  <figure class="relative">
+    {avatar_url && (
+      <Image
+        src={avatar_url}
+        alt={display_name}
+        width={384}
+        height={384}
+        class="object-cover"
+      />
+    )}
+  </figure>
+  <div class="card-body">
+    <h2 class="card-title">{display_name}</h2>
+    <p>{biography}</p>
+    <div class="card-actions justify-end">
+      <MakerBadges status={status} badges={badges} />
+    </div>
+  </div>
+</div>
