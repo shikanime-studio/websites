@@ -105,7 +105,9 @@ export const accountsToCharactersRelations = relations(
 );
 
 export const sessions = sqliteTable("sessions", {
-  id: integer("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
   accountId: integer("account_id")
     .notNull()
     .references(() => accounts.id),

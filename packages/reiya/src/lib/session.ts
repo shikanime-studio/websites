@@ -1,17 +1,17 @@
-import { accountsTable, sessionsTable } from "../schema";
+import {  accounts,  sessions } from "../schema";
 import type { AstroCookies } from "astro";
 import { eq, sql, and } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 
 export async function createSession(db: DrizzleD1Database, accountId: number) {
   const [session] = await db
-    .insert(sessionsTable)
+    .insert(sessions)
     .values({
       accountId,
     })
     .returning({
-      id: sessionsTable.id,
-      expiresAt: sessionsTable.expiresAt,
+      id: sessions.id,
+      expiresAt: sessions.expiresAt,
     });
   return session;
 }
@@ -36,24 +36,24 @@ export async function getSessionForHome(
 ) {
   return db
     .select({
-      id: sessionsTable.id,
-      accountId: sessionsTable.accountId,
-      expiresAt: sessionsTable.expiresAt,
-      account: accountsTable,
+      id: sessions.id,
+      accountId: sessions.accountId,
+      expiresAt: sessions.expiresAt,
+      account: accounts,
     })
-    .from(sessionsTable)
-    .innerJoin(accountsTable, eq(sessionsTable.accountId, accountsTable.id))
+    .from(sessions)
+    .innerJoin(accounts, eq(sessions.accountId, accounts.id))
     .where(
       and(
-        eq(sessionsTable.id, sessionId),
-        sql`${sessionsTable.expiresAt} > datetime('now')`,
+        eq(sessions.id, sessionId),
+        sql`${sessions.expiresAt} > datetime('now')`,
       ),
     )
     .get();
 }
 
 export function deleteSession(db: DrizzleD1Database, sessionId: string) {
-  return db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId)).run();
+  return db.delete(sessions).where(eq(sessions.id, sessionId)).run();
 }
 
 export function deleteSessionCookies(cookies: AstroCookies) {
