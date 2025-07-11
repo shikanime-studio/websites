@@ -22,7 +22,5 @@ const statusBadge = getStatusBadge(status);
 
 <div class="flex flex-wrap gap-2">
   <div class={`badge ${statusBadge.class}`}>{statusBadge.text}</div>
-  {badges?.map((badge) => (
-    <div class="badge">{badge}</div>
-  ))}
+  {badges?.map((badge) => <div class="badge">{badge}</div>)}
 </div>

@@ -1,5 +1,5 @@
-import NextLink from "next/link";
 import { MakerCard } from "../components/MakerCard";
+import NextLink from "next/link";
 import zod from "zod";
 
 export const dynamic = "force-dynamic";

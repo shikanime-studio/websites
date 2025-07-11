@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8dec4d58-5453-43bc-9227-3523d7ca83ca",
+  "id": "3c651719-dd39-4648-8e19-275d3cf262c8",
   "prevId": "b6e0ec66-27e3-4d3d-82cf-eb26d9eeefe3",
   "tables": {
     "accounts": {
@@ -81,12 +81,8 @@
           "name": "accounts_to_characters_account_id_accounts_id_fk",
           "tableFrom": "accounts_to_characters",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -94,22 +90,15 @@
           "name": "accounts_to_characters_character_id_characters_id_fk",
           "tableFrom": "accounts_to_characters",
           "tableTo": "characters",
-          "columnsFrom": [
-            "character_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["character_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "accounts_to_characters_account_id_character_id_pk": {
-          "columns": [
-            "account_id",
-            "character_id"
-          ],
+          "columns": ["account_id", "character_id"],
           "name": "accounts_to_characters_account_id_character_id_pk"
         }
       },
@@ -148,12 +137,8 @@
           "name": "accounts_to_licenses_account_id_accounts_id_fk",
           "tableFrom": "accounts_to_licenses",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -161,30 +146,23 @@
           "name": "accounts_to_licenses_license_id_licenses_id_fk",
           "tableFrom": "accounts_to_licenses",
           "tableTo": "licenses",
-          "columnsFrom": [
-            "license_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["license_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "accounts_to_licenses_account_id_license_id_pk": {
-          "columns": [
-            "account_id",
-            "license_id"
-          ],
+          "columns": ["account_id", "license_id"],
           "name": "accounts_to_licenses_account_id_license_id_pk"
         }
       },
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "accounts_to_pages": {
-      "name": "accounts_to_pages",
+    "accounts_to_makers": {
+      "name": "accounts_to_makers",
       "columns": {
         "account_id": {
           "name": "account_id",
@@ -193,8 +171,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "page_id": {
-          "name": "page_id",
+        "maker_id": {
+          "name": "maker_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -211,40 +189,29 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "accounts_to_pages_account_id_accounts_id_fk": {
-          "name": "accounts_to_pages_account_id_accounts_id_fk",
-          "tableFrom": "accounts_to_pages",
+        "accounts_to_makers_account_id_accounts_id_fk": {
+          "name": "accounts_to_makers_account_id_accounts_id_fk",
+          "tableFrom": "accounts_to_makers",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "accounts_to_pages_page_id_pages_id_fk": {
-          "name": "accounts_to_pages_page_id_pages_id_fk",
-          "tableFrom": "accounts_to_pages",
-          "tableTo": "pages",
-          "columnsFrom": [
-            "page_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+        "accounts_to_makers_maker_id_makers_id_fk": {
+          "name": "accounts_to_makers_maker_id_makers_id_fk",
+          "tableFrom": "accounts_to_makers",
+          "tableTo": "makers",
+          "columnsFrom": ["maker_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "accounts_to_pages_account_id_page_id_pk": {
-          "columns": [
-            "account_id",
-            "page_id"
-          ],
-          "name": "accounts_to_pages_account_id_page_id_pk"
+        "accounts_to_makers_account_id_maker_id_pk": {
+          "columns": ["account_id", "maker_id"],
+          "name": "accounts_to_makers_account_id_maker_id_pk"
         }
       },
       "uniqueConstraints": {},
@@ -340,8 +307,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "events_to_pages": {
-      "name": "events_to_pages",
+    "events_to_makers": {
+      "name": "events_to_makers",
       "columns": {
         "event_id": {
           "name": "event_id",
@@ -350,8 +317,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "page_id": {
-          "name": "page_id",
+        "maker_id": {
+          "name": "maker_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -360,40 +327,29 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "events_to_pages_event_id_events_id_fk": {
-          "name": "events_to_pages_event_id_events_id_fk",
-          "tableFrom": "events_to_pages",
+        "events_to_makers_event_id_events_id_fk": {
+          "name": "events_to_makers_event_id_events_id_fk",
+          "tableFrom": "events_to_makers",
           "tableTo": "events",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "events_to_pages_page_id_pages_id_fk": {
-          "name": "events_to_pages_page_id_pages_id_fk",
-          "tableFrom": "events_to_pages",
-          "tableTo": "pages",
-          "columnsFrom": [
-            "page_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+        "events_to_makers_maker_id_makers_id_fk": {
+          "name": "events_to_makers_maker_id_makers_id_fk",
+          "tableFrom": "events_to_makers",
+          "tableTo": "makers",
+          "columnsFrom": ["maker_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
-        "events_to_pages_event_id_page_id_pk": {
-          "columns": [
-            "event_id",
-            "page_id"
-          ],
-          "name": "events_to_pages_event_id_page_id_pk"
+        "events_to_makers_event_id_maker_id_pk": {
+          "columns": ["event_id", "maker_id"],
+          "name": "events_to_makers_event_id_maker_id_pk"
         }
       },
       "uniqueConstraints": {},
@@ -462,12 +418,8 @@
           "name": "items_to_licenses_item_id_items_id_fk",
           "tableFrom": "items_to_licenses",
           "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -475,22 +427,15 @@
           "name": "items_to_licenses_group_id_licenses_id_fk",
           "tableFrom": "items_to_licenses",
           "tableTo": "licenses",
-          "columnsFrom": [
-            "group_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["group_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "items_to_licenses_item_id_group_id_pk": {
-          "columns": [
-            "item_id",
-            "group_id"
-          ],
+          "columns": ["item_id", "group_id"],
           "name": "items_to_licenses_item_id_group_id_pk"
         }
       },
@@ -535,8 +480,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "pages": {
-      "name": "pages",
+    "makers": {
+      "name": "makers",
       "columns": {
         "id": {
           "name": "id",
@@ -593,7 +538,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "text",
+          "type": "integer",
           "primaryKey": true,
           "notNull": true,
           "autoincrement": false
@@ -620,12 +565,8 @@
           "name": "sessions_account_id_accounts_id_fk",
           "tableFrom": "sessions",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -688,12 +629,8 @@
           "name": "votes_account_id_accounts_id_fk",
           "tableFrom": "votes",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -701,12 +638,8 @@
           "name": "votes_item_id_items_id_fk",
           "tableFrom": "votes",
           "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

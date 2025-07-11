@@ -1,5 +1,5 @@
 output "reiya" {
-  value       = {
+  value = {
     d1_databases = {
       database_id = cloudflare_d1_database.default["reiya"].id
     }

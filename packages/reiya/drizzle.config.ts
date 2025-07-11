@@ -4,10 +4,10 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
-const config={
-    out: "./migrations",
-    dialect: "sqlite",
-  } satisfies Config;
+const config = {
+  out: "./migrations",
+  dialect: "sqlite",
+} satisfies Config;
 
 function createLocalConfig() {
   const wranglerDir = path.join(

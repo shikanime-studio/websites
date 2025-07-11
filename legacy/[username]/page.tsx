@@ -1,10 +1,10 @@
-import NextImage from "next/image";
+import MakerBadges from "../components/MakerBadges";
+import { INSTAGRAM_REFRESHER_KEY, InstagramRefresher } from "@/lib/config";
 import { refreshMaker } from "@/lib/utils";
 import { get } from "@vercel/edge-config";
-import { INSTAGRAM_REFRESHER_KEY, InstagramRefresher } from "@/lib/config";
-import MakerBadges from "../components/MakerBadges";
-import { BsInstagram } from "react-icons/bs";
+import NextImage from "next/image";
 import NextLink from "next/link";
+import { BsInstagram } from "react-icons/bs";
 import zod from "zod";
 
 type Props = {
@@ -98,7 +98,7 @@ export default async function Maker({ params }: Props) {
               />
             ) : (
               <div className="avatar placeholder">
-                <div className="-h-40 w-40 rounded-full bg-neutral-focus text-neutral-content">
+                <div className="-h-40 bg-neutral-focus text-neutral-content w-40 rounded-full">
                   <span className="text-3xl">
                     {maker.display_name.slice(0, 1)}
                   </span>

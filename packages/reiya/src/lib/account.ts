@@ -30,9 +30,5 @@ export function getAccountFromGoogle(db: DrizzleD1Database, googleId: string) {
 }
 
 export function getAccount(db: DrizzleD1Database, accountId: number) {
-  return db
-    .select()
-    .from(accounts)
-    .where(eq(accounts.id, accountId))
-    .get();
+  return db.select().from(accounts).where(eq(accounts.id, accountId)).get();
 }
