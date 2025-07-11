@@ -4,6 +4,11 @@ import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
 
+const config={
+    out: "./migrations",
+    dialect: "sqlite",
+  } satisfies Config;
+
 function createLocalConfig() {
   const wranglerDir = path.join(
     process.cwd(),
@@ -18,18 +23,18 @@ function createLocalConfig() {
     );
   }
   return {
+    ...config,
     schema: "./src/schema.ts",
-    dialect: "sqlite",
     dbCredentials: {
       url: path.join(wranglerDir, sqliteFile),
     },
   } satisfies Config;
 }
+
 function createRemoteConfig() {
   return {
+    ...config,
     schema: "./src/schema.ts",
-    out: "./migrations",
-    dialect: "sqlite",
     driver: "d1-http",
     dbCredentials: {
       accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
