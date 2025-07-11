@@ -1,4 +1,4 @@
-import {  accounts,  sessions } from "../schema";
+import { accounts, sessions } from "../schema";
 import type { AstroCookies } from "astro";
 import { eq, sql, and } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
