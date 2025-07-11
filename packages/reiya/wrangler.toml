@@ -5,4 +5,4 @@ routes = [{ pattern = "reiya.shikanime.studio", custom_domain = true }]
 [[d1_databases]]
 binding = "DB"
 database_name = "reiya"
-database_id = "352c39b0-ec2c-46bc-b0d1-86291e5316b3"
+database_id = "7b838da3-58f3-4db0-b4c4-e5e59db90fce"

@@ -16,6 +16,7 @@ variable "projects" {
   default = {
     shikanime-studio = "shikanime-studio"
     links            = "links"
+    reiya            = "reiya"
   }
 }
 
@@ -34,11 +35,17 @@ variable "dns_records" {
       name    = "links.shikanime.studio"
       project = "links"
     }
+    reiya = {
+      name    = "reiya.shikanime.studio"
+      project = "reiya"
+    }
   }
 }
 
 variable "d1s" {
   type        = map(string)
   description = "Map of Cloudflare D1 databases"
-  default     = {}
+  default     = {
+    reiya = "reiya"
+  }
 }
