@@ -1,5 +1,10 @@
 ---
 import DashboardLayout from "../layouts/DashboardLayout.astro";
+import { getItems } from "../lib/items";
+import { getD1Database } from "../lib/util";
+
+const db = getD1Database(Astro.locals);
+const items = await getItems(db);
 ---
 
 <DashboardLayout>
@@ -17,7 +22,33 @@ import DashboardLayout from "../layouts/DashboardLayout.astro";
         </div>
       </div>
     </div>
-    <!-- Placeholder for makers list -->
-    <p>Makers list will be implemented here</p>
+    {!items ? (
+      <div class="alert alert-error">
+        <span>Error: Unable to load items</span>
+      </div>
+    ) : items.length === 0 ? (
+      <div class="alert alert-info">
+        <span>No items available</span>
+      </div>
+    ) : (
+      items.map((item) => (
+        <div class="card w-96 bg-base-100 shadow-xl">
+          <figure>
+            <img
+              src={item.imageUrls[0]}
+              alt={item.name}
+              class="h-48 w-full object-cover"
+            />
+          </figure>
+          <div class="card-body">
+            <h2 class="card-title">{item.name}</h2>
+            <p>{item.description}</p>
+            <div class="card-actions justify-end">
+              <a href={`/items/${item.id}`} class="btn btn-primary">View Details</a>
+            </div>
+          </div>
+        </div>
+      ))
+    )}
   </div>
 </DashboardLayout>

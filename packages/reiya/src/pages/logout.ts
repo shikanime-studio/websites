@@ -1,4 +1,4 @@
-import { deleteSession, deleteSessionCookies } from "../lib/session";
+import { deleteSession, deleteSessionCookies } from "../lib/sessions";
 import { getD1Database, getRedirectTo } from "../lib/util";
 import type { APIContext } from "astro";
 

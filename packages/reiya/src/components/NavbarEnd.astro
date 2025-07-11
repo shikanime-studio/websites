@@ -1,6 +1,6 @@
 ---
 import NavbarUserMenu from "./NavbarUserMenu.astro";
-import { getSessionForHome } from "../lib/session";
+import { getSessionForHome } from "../lib/sessions";
 
 interface Props {
   session?: Awaited<ReturnType<typeof getSessionForHome>>;

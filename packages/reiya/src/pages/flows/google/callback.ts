@@ -1,14 +1,14 @@
 import {
   createAccountFromGoogleTokenInfo,
   getAccountFromGoogle,
-} from "../../../lib/account";
+} from "../../../lib/accounts";
 import {
   deleteLoginFlowCookies,
   getAuthorizationCode,
   getLoginFlow,
   validateLoginFlow,
 } from "../../../lib/google";
-import { createSession, setSessionCookies } from "../../../lib/session";
+import { createSession, setSessionCookies } from "../../../lib/sessions";
 import {
   deleteRedirectToCookies,
   getD1Database,
