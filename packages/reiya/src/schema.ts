@@ -9,32 +9,32 @@ export const accounts = sqliteTable("accounts", {
   pictureUrl: text("picture_url").notNull(),
 });
 
-export const accountsToPages = sqliteTable(
-  'accounts_to_pages',
+export const accountsToMakers = sqliteTable(
+  'accounts_to_makers',
   {
     accountId: integer('account_id')
       .notNull()
       .references(() => accounts.id),
-    pageId: integer('page_id')
+    makerId: integer('maker_id')
       .notNull()
-      .references(() => pages.id),
+      .references(() => makers.id),
     createdAt: text("created_at")
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
   },
   (t) => [
-    primaryKey({ columns: [t.accountId, t.pageId] })
+    primaryKey({ columns: [t.accountId, t.makerId] })
   ],
 );
 
-export const accountsToPagesRelations = relations(accountsToPages, ({ one }) => ({
+export const accountsToMakersRelations = relations(accountsToMakers, ({ one }) => ({
   account: one(accounts, {
-    fields: [accountsToPages.accountId],
+    fields: [accountsToMakers.accountId],
     references: [accounts.id],
   }),
-  page: one(pages, {
-    fields: [accountsToPages.pageId],
-    references: [pages.id],
+  maker: one(makers, {
+    fields: [accountsToMakers.makerId],
+    references: [makers.id],
   }),
 }));
 
@@ -117,29 +117,29 @@ export const events = sqliteTable("events", {
   endsAt: text("ends_at").notNull(),
 });
 
-export const eventsToPages = sqliteTable(
-  'events_to_pages',
+export const eventsToMakers = sqliteTable(
+  'events_to_makers',
   {
     eventId: integer('event_id')
       .notNull()
       .references(() => events.id),
-    pageId: integer('page_id')
+    makerId: integer('maker_id')
       .notNull()
-      .references(() => pages.id),
+      .references(() => makers.id),
   },
   (t) => [
-    primaryKey({ columns: [t.eventId, t.pageId] })
+    primaryKey({ columns: [t.eventId, t.makerId] })
   ],
 );
 
-export const eventsToPagesRelations = relations(eventsToPages, ({ one }) => ({
+export const eventsToMakersRelations = relations(eventsToMakers, ({ one }) => ({
   event: one(events, {
-    fields: [eventsToPages.eventId],
+    fields: [eventsToMakers.eventId],
     references: [events.id],
   }),
-  page: one(pages, {
-    fields: [eventsToPages.pageId],
-    references: [pages.id],
+  maker: one(makers, {
+    fields: [eventsToMakers.makerId],
+    references: [makers.id],
   }),
 }));
 
@@ -161,7 +161,7 @@ export const characters = sqliteTable("characters", {
   imageUrl: text("image_url").notNull(),
 });
 
-export const pages = sqliteTable("pages", {
+export const makers = sqliteTable("makers", {
   id: integer("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description"),
