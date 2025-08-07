@@ -1,9 +1,9 @@
-CREATE TABLE `accounts_to_characters` (
-    `account_id` integer NOT NULL,
+CREATE TABLE `users_to_characters` (
+    `user_id` integer NOT NULL,
     `character_id` integer NOT NULL,
     `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    PRIMARY KEY (`account_id`, `character_id`),
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (
+    PRIMARY KEY (`user_id`, `character_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (
         `id`
     ) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (`character_id`) REFERENCES `characters` (
@@ -11,12 +11,12 @@ CREATE TABLE `accounts_to_characters` (
     ) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 --> statement-breakpoint
-CREATE TABLE `accounts_to_licenses` (
-    `account_id` integer NOT NULL,
+CREATE TABLE `users_to_licenses` (
+    `user_id` integer NOT NULL,
     `license_id` integer NOT NULL,
     `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    PRIMARY KEY (`account_id`, `license_id`),
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (
+    PRIMARY KEY (`user_id`, `license_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (
         `id`
     ) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (`license_id`) REFERENCES `licenses` (
@@ -24,12 +24,12 @@ CREATE TABLE `accounts_to_licenses` (
     ) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 --> statement-breakpoint
-CREATE TABLE `accounts_to_makers` (
-    `account_id` integer NOT NULL,
+CREATE TABLE `users_to_makers` (
+    `user_id` integer NOT NULL,
     `maker_id` integer NOT NULL,
     `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    PRIMARY KEY (`account_id`, `maker_id`),
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (
+    PRIMARY KEY (`user_id`, `maker_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (
         `id`
     ) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (`maker_id`) REFERENCES `makers` (
@@ -102,12 +102,12 @@ CREATE TABLE `makers` (
 --> statement-breakpoint
 CREATE TABLE `votes` (
     `id` integer PRIMARY KEY NOT NULL,
-    `account_id` integer NOT NULL,
+    `user_id` integer NOT NULL,
     `item_id` integer NOT NULL,
     `type` text NOT NULL,
     `created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
     `updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (
+    FOREIGN KEY (`user_id`) REFERENCES `users` (
         `id`
     ) ON UPDATE NO ACTION ON DELETE NO ACTION,
     FOREIGN KEY (`item_id`) REFERENCES `items` (
@@ -118,17 +118,17 @@ CREATE TABLE `votes` (
 PRAGMA foreign_keys = OFF;--> statement-breakpoint
 CREATE TABLE `__new_sessions` (
     `id` text PRIMARY KEY NOT NULL,
-    `account_id` integer NOT NULL,
+    `user_id` integer NOT NULL,
     `expires_at` text DEFAULT (DATETIME('now', '+30 days')) NOT NULL,
-    FOREIGN KEY (`account_id`) REFERENCES `accounts` (
+    FOREIGN KEY (`user_id`) REFERENCES `users` (
         `id`
     ) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 --> statement-breakpoint
 --> statement-breakpoint
-INSERT INTO `__new_sessions` ("id", "account_id", "expires_at") SELECT
+INSERT INTO `__new_sessions` ("id", "user_id", "expires_at") SELECT
     "id",
-    "account_id",
+    "user_id",
     "expires_at"
 FROM `sessions`;
 DROP TABLE `sessions`;--> statement-breakpoint

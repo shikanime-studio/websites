@@ -1,7 +1,7 @@
 import {
-  createAccountFromGoogleTokenInfo,
-  getAccountFromGoogle,
-} from "../../../lib/accounts";
+  createUserFromTokens,
+  getUserFromTokens,
+} from "../../../lib/users";
 import {
   deleteLoginFlowCookies,
   getAuthorizationCode,
@@ -29,9 +29,9 @@ export async function GET(context: APIContext) {
     }
     throw e;
   }
-  let tokenInfo: Awaited<ReturnType<typeof validateLoginFlow>> | undefined;
+  let tokens: Awaited<ReturnType<typeof validateLoginFlow>> | undefined;
   try {
-    tokenInfo = await validateLoginFlow(flow, authCode);
+    tokens = await validateLoginFlow(flow, authCode);
   } catch (e) {
     if (e instanceof Error && e.message !== "Invalid state") {
       throw e;
@@ -39,13 +39,13 @@ export async function GET(context: APIContext) {
     return new Response("Invalid session token", { status: 401 });
   }
   const db = getD1Database(context.locals);
-  const existingAccount = await getAccountFromGoogle(db, tokenInfo.sub);
-  if (existingAccount) {
-    const session = await createSession(db, existingAccount.id);
+  const existingUser = await getUserFromTokens(db, tokens);
+  if (existingUser) {
+    const session = await createSession(db, existingUser.id);
     setSessionCookies(context.cookies, session.id, new Date(session.expiresAt));
   } else {
-    const account = await createAccountFromGoogleTokenInfo(db, tokenInfo);
-    const session = await createSession(db, account.id);
+    const user = await createUserFromTokens(db, tokens);
+    const session = await createSession(db, user.id);
     setSessionCookies(context.cookies, session.id, new Date(session.expiresAt));
   }
   deleteLoginFlowCookies(context.cookies);

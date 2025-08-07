@@ -6,20 +6,44 @@ import {
   primaryKey,
 } from "drizzle-orm/sqlite-core";
 
-export const accounts = sqliteTable("accounts", {
+export const users = sqliteTable("users", {
   id: integer("id").primaryKey(),
-  googleId: text("google_id"),
-  email: text("email").notNull(),
+  email: text("email").notNull().unique(),
   name: text("name").notNull(),
   pictureUrl: text("picture_url").notNull(),
 });
 
-export const accountsToMakers = sqliteTable(
-  "accounts_to_makers",
+export const accounts = sqliteTable("accounts", {
+  id: integer("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  provider: text("provider").notNull(),
+  subject: text("subject").notNull(),
+  accessToken: text("access_token"),
+  accessTokenExpiresAt: integer("expires_at"),
+  refreshToken: text("refresh_token"),
+  scope: text("scope"),
+});
+
+export const userToAccounts = sqliteTable(
+  "user_to_accounts",
   {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id),
     accountId: integer("account_id")
       .notNull()
       .references(() => accounts.id),
+  }
+)
+
+export const usersToMakers = sqliteTable(
+  "users_to_makers",
+  {
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id),
     makerId: integer("maker_id")
       .notNull()
       .references(() => makers.id),
@@ -27,29 +51,29 @@ export const accountsToMakers = sqliteTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
   },
-  (t) => [primaryKey({ columns: [t.accountId, t.makerId] })],
+  (t) => [primaryKey({ columns: [t.userId, t.makerId] })],
 );
 
-export const accountsToMakersRelations = relations(
-  accountsToMakers,
+export const usersToMakersRelations = relations(
+  usersToMakers,
   ({ one }) => ({
-    account: one(accounts, {
-      fields: [accountsToMakers.accountId],
-      references: [accounts.id],
+    user: one(users, {
+      fields: [usersToMakers.userId],
+      references: [users.id],
     }),
     maker: one(makers, {
-      fields: [accountsToMakers.makerId],
+      fields: [usersToMakers.makerId],
       references: [makers.id],
     }),
   }),
 );
 
-export const accountsToLicenses = sqliteTable(
-  "accounts_to_licenses",
+export const usersToLicenses = sqliteTable(
+  "users_to_licenses",
   {
-    accountId: integer("account_id")
+    userId: integer("user_id")
       .notNull()
-      .references(() => accounts.id),
+      .references(() => users.id),
     licenseId: integer("license_id")
       .notNull()
       .references(() => licenses.id),
@@ -57,29 +81,29 @@ export const accountsToLicenses = sqliteTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
   },
-  (t) => [primaryKey({ columns: [t.accountId, t.licenseId] })],
+  (t) => [primaryKey({ columns: [t.userId, t.licenseId] })],
 );
 
-export const accountsToLicensesRelations = relations(
-  accountsToLicenses,
+export const usersToLicensesRelations = relations(
+  usersToLicenses,
   ({ one }) => ({
-    account: one(accounts, {
-      fields: [accountsToLicenses.accountId],
-      references: [accounts.id],
+    user: one(users, {
+      fields: [usersToLicenses.userId],
+      references: [users.id],
     }),
     license: one(licenses, {
-      fields: [accountsToLicenses.licenseId],
+      fields: [usersToLicenses.licenseId],
       references: [licenses.id],
     }),
   }),
 );
 
-export const accountsToCharacters = sqliteTable(
-  "accounts_to_characters",
+export const usersToCharacters = sqliteTable(
+  "users_to_characters",
   {
-    accountId: integer("account_id")
+    userId: integer("user_id")
       .notNull()
-      .references(() => accounts.id),
+      .references(() => users.id),
     characterId: integer("character_id")
       .notNull()
       .references(() => characters.id),
@@ -87,18 +111,18 @@ export const accountsToCharacters = sqliteTable(
       .notNull()
       .default(sql`CURRENT_TIMESTAMP`),
   },
-  (t) => [primaryKey({ columns: [t.accountId, t.characterId] })],
+  (t) => [primaryKey({ columns: [t.userId, t.characterId] })],
 );
 
-export const accountsToCharactersRelations = relations(
-  accountsToCharacters,
+export const usersToCharactersRelations = relations(
+  usersToCharacters,
   ({ one }) => ({
-    account: one(accounts, {
-      fields: [accountsToCharacters.accountId],
-      references: [accounts.id],
+    user: one(users, {
+      fields: [usersToCharacters.userId],
+      references: [users.id],
     }),
     character: one(characters, {
-      fields: [accountsToCharacters.characterId],
+      fields: [usersToCharacters.characterId],
       references: [characters.id],
     }),
   }),
@@ -108,9 +132,9 @@ export const sessions = sqliteTable("sessions", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
-  accountId: integer("account_id")
+  userId: integer("user_id")
     .notNull()
-    .references(() => accounts.id),
+    .references(() => users.id),
   expiresAt: text("expires_at")
     .notNull()
     .default(sql`(datetime('now', '+30 days'))`),
@@ -218,9 +242,9 @@ export const itemsToLicensesRelations = relations(
 
 export const votes = sqliteTable("votes", {
   id: integer("id").primaryKey(),
-  accountId: integer("account_id")
+  userId: integer("user_id")
     .notNull()
-    .references(() => accounts.id),
+    .references(() => users.id),
   itemId: integer("item_id")
     .notNull()
     .references(() => items.id),
@@ -234,9 +258,9 @@ export const votes = sqliteTable("votes", {
 });
 
 export const votesRelations = relations(votes, ({ one }) => ({
-  account: one(accounts, {
-    fields: [votes.accountId],
-    references: [accounts.id],
+  user: one(users, {
+    fields: [votes.userId],
+    references: [users.id],
   }),
   item: one(items, {
     fields: [votes.itemId],

@@ -10,7 +10,7 @@ interface Props {
 <div class="navbar-end">
   {
     Astro.props.session ? (
-      <NavbarUserMenu account={Astro.props.session.account} />
+      <NavbarUserMenu user={Astro.props.session.user} />
     ) : (
       <div class="dropdown dropdown-end">
         <label tabindex={0} class="avatar btn btn-circle btn-ghost">
