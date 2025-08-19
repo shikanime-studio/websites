@@ -1,9 +1,15 @@
-name = "baguetto"
 compatibility_date = "2025-03-25"
+compatibility_flags = [ "nodejs_compat" ]
+main = "./dist/_worker.js/index.js"
+name = "baguetto"
 routes = [{ pattern = "baguetto.shikanime.studio", custom_domain = true }]
 
 [assets]
+binding = "ASSETS"
 directory = "./dist"
+
+[observability]
+enabled = true
 
 [[d1_databases]]
 binding = "DB"
