@@ -1,5 +1,6 @@
 name = "www"
 compatibility_date = "2025-03-25"
+routes = [{ pattern = "shikanime.studio", custom_domain = true }]
 
 [assets]
 directory = "./dist"
