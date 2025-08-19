@@ -1,49 +1,24 @@
 ---
 import NavbarUserMenu from "./NavbarUserMenu.astro";
 import { getSessionForHome } from "../lib/sessions";
+import { BsGoogle } from "react-icons/bs";
 
 interface Props {
   session?: Awaited<ReturnType<typeof getSessionForHome>>;
 }
 ---
 
-<div class="navbar-end">
-  {
-    Astro.props.session ? (
-      <NavbarUserMenu user={Astro.props.session.user} />
-    ) : (
-      <div class="dropdown dropdown-end">
-        <label tabindex={0} class="avatar btn btn-circle btn-ghost">
-          <div class="w-10 rounded-full">
-            <div class="flex h-full w-full items-center justify-center bg-gray-300 text-gray-600">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-            </div>
-          </div>
-        </label>
-        <ul
-          tabindex={0}
-          class="menu dropdown-content menu-sm z-[1] mt-3 w-52 rounded-box bg-base-100 p-2 shadow"
-        >
-          <li>
-            <a class="justify-between" href="/flows/google">
-              Sign In
-            </a>
-          </li>
-        </ul>
-      </div>
-    )
-  }
+<div class="flex items-center">
+  <div class="ml-3 flex items-center">
+    {
+      Astro.props.session ? (
+        <NavbarUserMenu user={Astro.props.session.user} />
+      ) : (
+        <a href="/flows/google" class="btn btn-sm sign-in-btn">
+          <BsGoogle />
+          SIGN IN
+        </a>
+      )
+    }
+  </div>
 </div>
