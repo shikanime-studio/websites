@@ -66,7 +66,11 @@ export const usersToMakersRelations = relations(
       references: [makers.id],
     }),
   }),
-);
+  maker: one(makers, {
+    fields: [usersToMakers.makerId],
+    references: [makers.id],
+  }),
+}));
 
 export const usersToLicenses = sqliteTable(
   "users_to_licenses",
