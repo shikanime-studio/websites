@@ -2,6 +2,9 @@ name = "baguetto"
 compatibility_date = "2025-01-27"
 routes = [{ pattern = "baguetto.shikanime.studio", custom_domain = true }]
 
+[assets]
+directory = "./dist"
+
 [[d1_databases]]
 binding = "DB"
 database_name = "baguetto"
