@@ -32,6 +32,6 @@
   "devDependencies": {
     "arctic": "^3.2.1",
     "drizzle-kit": "^0.30.3",
-    "wrangler": "^3.105.1"
+    "wrangler": "^4.31.0"
   }
 }
