@@ -4,9 +4,7 @@ import { Image } from "astro:assets";
 import type { getSessionForHome } from "../lib/sessions";
 
 interface Props {
-  user: NonNullable<
-    Awaited<ReturnType<typeof getSessionForHome>>
-  >["user"];
+  user: NonNullable<Awaited<ReturnType<typeof getSessionForHome>>>["user"];
 }
 ---
 

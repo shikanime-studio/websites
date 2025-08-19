@@ -14,7 +14,7 @@ interface Props {
       Astro.props.session ? (
         <NavbarUserMenu user={Astro.props.session.user} />
       ) : (
-        <a href="/flows/google" class="btn btn-sm sign-in-btn">
+        <a href="/flows/google" class="sign-in-btn btn btn-sm">
           <BsGoogle />
           SIGN IN
         </a>

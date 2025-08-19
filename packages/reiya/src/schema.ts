@@ -26,17 +26,14 @@ export const accounts = sqliteTable("accounts", {
   scope: text("scope"),
 });
 
-export const userToAccounts = sqliteTable(
-  "user_to_accounts",
-  {
-    userId: integer("user_id")
-      .notNull()
-      .references(() => users.id),
-    accountId: integer("account_id")
-      .notNull()
-      .references(() => accounts.id),
-  }
-)
+export const userToAccounts = sqliteTable("user_to_accounts", {
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id),
+  accountId: integer("account_id")
+    .notNull()
+    .references(() => accounts.id),
+});
 
 export const usersToMakers = sqliteTable(
   "users_to_makers",
@@ -54,19 +51,16 @@ export const usersToMakers = sqliteTable(
   (t) => [primaryKey({ columns: [t.userId, t.makerId] })],
 );
 
-export const usersToMakersRelations = relations(
-  usersToMakers,
-  ({ one }) => ({
-    user: one(users, {
-      fields: [usersToMakers.userId],
-      references: [users.id],
-    }),
-    maker: one(makers, {
-      fields: [usersToMakers.makerId],
-      references: [makers.id],
-    }),
+export const usersToMakersRelations = relations(usersToMakers, ({ one }) => ({
+  user: one(users, {
+    fields: [usersToMakers.userId],
+    references: [users.id],
   }),
-);
+  maker: one(makers, {
+    fields: [usersToMakers.makerId],
+    references: [makers.id],
+  }),
+}));
 
 export const usersToLicenses = sqliteTable(
   "users_to_licenses",
