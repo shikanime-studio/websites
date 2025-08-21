@@ -23,7 +23,7 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  site: import.meta.env.SITE || "https://baguetto.shikanime.studio",
+  site: "https://baguetto.shikanime.studio",
   vite: {
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
