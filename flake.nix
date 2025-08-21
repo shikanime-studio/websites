@@ -30,7 +30,7 @@
         treefmt-nix.flakeModule
       ];
       perSystem =
-        { pkgs, ... }:
+        { config, pkgs, ... }:
         {
           treefmt = {
             projectRootFile = "flake.nix";
@@ -84,14 +84,6 @@
           };
           devenv.shells.default = {
             containers = pkgs.lib.mkForce { };
-            languages = {
-              opentofu.enable = true;
-              nix.enable = true;
-              javascript = {
-                enable = true;
-                corepack.enable = true;
-              };
-            };
             cachix = {
               enable = true;
               push = "shikanime";
@@ -103,8 +95,18 @@
               shellcheck.enable = true;
               tflint.enable = true;
             };
+            languages = {
+              opentofu.enable = true;
+              nix.enable = true;
+              javascript = {
+                enable = true;
+                corepack.enable = true;
+              };
+            };
             packages = [
               pkgs.gitnr
+              pkgs.secretspec
+              pkgs.sops
             ];
           };
         };
