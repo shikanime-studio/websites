@@ -9,7 +9,7 @@ const googleConfig = getGoogleConfig();
 export const google = new Google(
   googleConfig.clientId,
   googleConfig.clientSecret,
-  `${import.meta.env.SITE}/flows/google/callback`,
+  `${googleConfig.authorizedRedirectBaseUri}/flows/google/callback`,
 );
 
 export function createAuthorizationURL(state: string, codeVerifier: string) {
