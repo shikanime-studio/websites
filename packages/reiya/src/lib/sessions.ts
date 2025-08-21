@@ -1,13 +1,13 @@
-import { accounts, sessions } from "../schema";
+import { users, sessions } from "../schema";
 import type { AstroCookies } from "astro";
 import { eq, sql, and } from "drizzle-orm";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 
-export async function createSession(db: DrizzleD1Database, accountId: number) {
+export async function createSession(db: DrizzleD1Database, userId: number) {
   const [session] = await db
     .insert(sessions)
     .values({
-      accountId,
+      userId,
     })
     .returning({
       id: sessions.id,
@@ -37,12 +37,12 @@ export async function getSessionForHome(
   return db
     .select({
       id: sessions.id,
-      accountId: sessions.accountId,
+      userId: sessions.userId,
       expiresAt: sessions.expiresAt,
-      account: accounts,
+      user: users,
     })
     .from(sessions)
-    .innerJoin(accounts, eq(sessions.accountId, accounts.id))
+    .innerJoin(users, eq(sessions.userId, users.id))
     .where(
       and(
         eq(sessions.id, sessionId),

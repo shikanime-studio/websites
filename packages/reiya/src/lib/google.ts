@@ -1,5 +1,5 @@
 import { getGoogleConfig } from "./config";
-import { Google } from "arctic";
+import { Google, OAuth2Tokens } from "arctic";
 import { decodeIdToken } from "arctic";
 import type { AstroCookies } from "astro";
 import z from "zod";
@@ -65,15 +65,6 @@ export function getAuthorizationCode(url: URL) {
   });
 }
 
-const tokenInfoSchema = z.object({
-  sub: z.string(),
-  name: z.string(),
-  picture: z.string(),
-  email: z.string(),
-});
-
-export type TokenInfo = z.infer<typeof tokenInfoSchema>;
-
 export async function validateLoginFlow(
   sessionFlow: z.infer<typeof loginFlowSchema>,
   authorizationCode: z.infer<typeof authorizationCodeSchema>,
@@ -81,12 +72,22 @@ export async function validateLoginFlow(
   if (sessionFlow.storedState !== authorizationCode.state) {
     throw new Error("Invalid state");
   }
-  const tokens = await google.validateAuthorizationCode(
+  return google.validateAuthorizationCode(
     authorizationCode.code,
     sessionFlow.codeVerifier,
   );
-  return tokenInfoSchema.parse(decodeIdToken(tokens.idToken()));
 }
+
+const tokenInfoSchema = z.object({
+  sub: z.string(),
+  name: z.string(),
+  picture: z.string(),
+  email: z.string(),
+});
+
+export const getTokenInfo = (idToken: string) => {
+  return tokenInfoSchema.parse(decodeIdToken(idToken));
+};
 
 export function deleteLoginFlowCookies(cookies: AstroCookies) {
   cookies.delete("google_oauth_state");
