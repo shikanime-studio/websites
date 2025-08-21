@@ -89,6 +89,7 @@
               javascript = {
                 enable = true;
                 corepack.enable = true;
+                npm.install.enable = true;
               };
             };
             cachix = {
