@@ -16,6 +16,6 @@ jobs:
       - name: Check Nix Flake
         run: |
           nix develop . --impure -c nix flake check -- \
+            --accept-flake-config \
             --all-systems \
-            --no-pure-eval \
-            --accept-flake-config
+            --impure
