@@ -1,8 +1,8 @@
-output "reiya" {
+output "baguetto" {
   value = {
     d1_databases = {
-      database_id = cloudflare_d1_database.default["reiya"].id
+      database_id = cloudflare_d1_database.default["baguetto"].id
     }
   }
-  description = "Reiya D1 databases"
+  description = "Baguetto D1 databases"
 }

@@ -8,7 +8,7 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Reiya",
+  title: "Baguetto",
   description:
     "We're all about bringing together costume Makers and cosplay enthusiasts!",
 };
