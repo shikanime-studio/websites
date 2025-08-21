@@ -14,7 +14,7 @@ export default function PrivacyNotice() {
 
           <ul>
             <li>
-              Visit our website at https://reiya.shikanime.studio/, or any
+              Visit our website at https://baguetto.shikanime.studio/, or any
               website of ours that links to this privacy notice
             </li>
             <li>
