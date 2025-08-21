@@ -1,0 +1,26 @@
+---
+interface Props {
+  status: string | null;
+  badges: string[];
+}
+
+const { status, badges } = Astro.props;
+
+function getStatusBadge(status: string | null) {
+  if (status === "COMMISSIONS_CLOSED") {
+    return { text: "Closed", class: "badge-error" };
+  } else if (status === "COMMISSIONS_OPEN") {
+    return { text: "Open", class: "badge-success" };
+  } else if (status === "COMMISSIONS_WAITLIST") {
+    return { text: "Waitlist", class: "badge-warning" };
+  }
+  return { text: "Unknown", class: "badge-warning" };
+}
+
+const statusBadge = getStatusBadge(status);
+---
+
+<div class="flex flex-wrap gap-2">
+  <div class={`badge ${statusBadge.class}`}>{statusBadge.text}</div>
+  {badges?.map((badge) => <div class="badge">{badge}</div>)}
+</div>
