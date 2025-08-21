@@ -42,6 +42,7 @@
               prettier = {
                 enable = true;
                 includes = [
+                  "*.assetsignore"
                   "*.astro"
                   "*.js"
                   "*.json"
