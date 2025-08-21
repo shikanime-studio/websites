@@ -42,7 +42,6 @@
               prettier = {
                 enable = true;
                 includes = [
-                  "*.assetsignore"
                   "*.astro"
                   "*.js"
                   "*.json"
@@ -72,6 +71,7 @@
               terraform.enable = true;
             };
             settings.global.excludes = [
+              "*.assetsignore"
               "*.gif"
               "*.ico"
               "*.jpg"
