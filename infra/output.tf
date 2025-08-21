@@ -1,8 +1,4 @@
-output "baguetto" {
-  value = {
-    d1_databases = {
-      database_id = cloudflare_d1_database.default["baguetto"].id
-    }
-  }
-  description = "Baguetto D1 databases"
+output "d1s" {
+  value       = [for d1 in cloudflare_d1_database.default : d1.id]
+  description = "Cloudflare D1 databases"
 }

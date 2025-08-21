@@ -8,7 +8,6 @@ set -o pipefail
 gitnr create \
   ghc:Nix \
   repo:shikanime/gitignore/refs/heads/main/Devenv.gitignore \
-  repo:shikanime/gitignore/refs/heads/main/Wrangler.gitignore \
   tt:astro \
   tt:node \
   tt:jetbrains+all \

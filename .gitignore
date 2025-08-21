@@ -19,12 +19,6 @@ result-*
 .direnv*
 .pre-commit-config.yaml
 
-###--------------------------------------------------------------###
-###  Repo: shikanime/gitignore/refs/heads/main/Wrangler.gitignore  ###
-###--------------------------------------------------------------###
-
-.wrangler/
-
 ###-----------------###
 ###  TopTal: astro  ###
 ###-----------------###

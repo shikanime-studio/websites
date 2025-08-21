@@ -14,9 +14,8 @@ variable "projects" {
   type        = map(string)
   description = "Map of Cloudflare Pages projects"
   default = {
-    links    = "links"
-    baguetto = "baguetto"
-    www      = "www"
+    links = "links"
+    www   = "www"
   }
 }
 
@@ -31,10 +30,6 @@ variable "dns_records" {
       name    = "links.shikanime.studio"
       project = "links"
     }
-    baguetto = {
-      name    = "baguetto.shikanime.studio"
-      project = "baguetto"
-    }
     www = {
       name    = "shikanime.studio"
       project = "www"
@@ -45,7 +40,5 @@ variable "dns_records" {
 variable "d1s" {
   type        = map(string)
   description = "Map of Cloudflare D1 databases"
-  default = {
-    baguetto = "baguetto"
-  }
+  default     = {}
 }
