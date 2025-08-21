@@ -15,7 +15,7 @@ jobs:
       - uses: DeterminateSystems/nix-installer-action@v19
       - name: Check Nix Flake
         run: |
-          nix develop . --impure -c nix flake check -- \
-            --accept-flake-config \
+          nix develop . --impure -c nix flake check \
             --all-systems \
-            --impure
+            --no-pure-eval \
+            --accept-flake-config
