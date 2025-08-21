@@ -27,7 +27,4 @@ jobs:
           name: shikanime
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
       - name: Check Nix Flake
-        run: |
-          nix develop \
-            --impure \
-            --command "nix flake check --show-trace --all-systems --impure"
+        run: nix develop . --impure -c nix flake check --show-trace --all-systems --impure
