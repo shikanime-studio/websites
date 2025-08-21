@@ -88,10 +88,8 @@
               nix.enable = true;
               javascript = {
                 enable = true;
-                npm = {
-                  enable = true;
-                  install.enable = true;
-                };
+                corepack.enable = true;
+                npm.install.enable = true;
               };
             };
             cachix = {
