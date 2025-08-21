@@ -14,8 +14,4 @@ jobs:
       - uses: actions/checkout@v5
       - uses: DeterminateSystems/nix-installer-action@v19
       - name: Check Nix Flake
-        run: |
-          nix develop . --impure -c nix flake check \
-            --all-systems \
-            --no-pure-eval \
-            --accept-flake-config
+        run: nix develop . --impure -c nix flake check --all-systems --no-pure-eval --accept-flake-config
