@@ -1,8 +1,8 @@
 ---
 import { Image } from "astro:assets";
-import Logo from "../assets/infinity-horizon-logo.webp";
-import ProjectElkiaLogo from "../assets/project-elkia-logo.webp";
-import ShikanimeStudioLogo from "../assets/shikanime-studio-logo.webp";
+import logoImage from "../assets/infinity-horizon-logo.webp";
+import projectElkiaLogoImage from "../assets/project-elkia-logo.webp";
+import shikanimeStudioLogoImage from "../assets/shikanime-studio-logo.webp";
 ---
 
 <section
@@ -14,12 +14,12 @@ import ShikanimeStudioLogo from "../assets/shikanime-studio-logo.webp";
       href="https://shikanime.notion.site/Infinity-Horizons-f0a47e34242b48109c20139ce5242890?pvs=4"
     >
       <Image
-        src={Logo}
+        src={logoImage}
         alt="Infinity Horizons Logo"
         width="150"
         height="150"
         class="mx-auto"
-        loading="lazy"
+        loading="eager"
         quality="max"
       />
     </a>
@@ -27,12 +27,12 @@ import ShikanimeStudioLogo from "../assets/shikanime-studio-logo.webp";
       href="https://shikanime.notion.site/Project-Elkia-7546ce161bf14ea9b08f380c988b472f?pvs=4"
     >
       <Image
-        src={ProjectElkiaLogo}
+        src={projectElkiaLogoImage}
         alt="Project Elkia Logo"
         width="150"
         height="150"
         class="mx-auto"
-        loading="lazy"
+        loading="eager"
         quality="max"
       />
     </a>
@@ -40,12 +40,12 @@ import ShikanimeStudioLogo from "../assets/shikanime-studio-logo.webp";
       href="https://shikanime.notion.site/Shikanime-Studio-9f666bc9205a40e88d2adf8e7c73d226?pvs=4"
     >
       <Image
-        src={ShikanimeStudioLogo}
+        src={shikanimeStudioLogoImage}
         alt="Shikanime Studio Logo"
         width="150"
         height="150"
         class="mx-auto"
-        loading="lazy"
+        loading="eager"
         quality="max"
       />
     </a>
