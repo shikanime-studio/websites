@@ -1,0 +1,22 @@
+name: Update
+on:
+  schedule:
+    - cron: "0 0 * * 0"
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
+      - uses: DeterminateSystems/update-flake-lock@v27
+        with:
+          branch: github/update_flake
+          commit-msg: Update Flake
+          pr-title: Update Flake
+          pr-labels: dependencies
+          pr-assignees: shikanime
+          sign-commits: true
+          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
+          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
