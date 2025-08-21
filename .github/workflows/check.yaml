@@ -13,5 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/magic-nix-cache-action@v13
       - name: Check Nix Flake
         run: nix develop . --impure -c nix flake check --all-systems --no-pure-eval --accept-flake-config
