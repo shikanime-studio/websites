@@ -7,9 +7,9 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@v13
-      - uses: DeterminateSystems/update-flake-lock@v23
+      - uses: actions/checkout@v5
+      - uses: DeterminateSystems/nix-installer-action@v19
+      - uses: DeterminateSystems/update-flake-lock@v27
         with:
           branch: github/update_flake
           commit-msg: Update Flake
