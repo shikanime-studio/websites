@@ -20,7 +20,7 @@ jobs:
           extra-conf: extra-platforms = aarch64-linux
       - name: Check Nix Flake
         run: |
-          nix develop . --impure -c nix flake check \
+          nix develop . --impure -c nix flake check -- \
             --all-systems \
             --no-pure-eval \
             --accept-flake-config
