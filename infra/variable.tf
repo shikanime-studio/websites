@@ -14,9 +14,8 @@ variable "projects" {
   type        = map(string)
   description = "Map of Cloudflare Pages projects"
   default = {
-    shikanime-studio = "shikanime-studio"
-    reiya            = "reiya"
-    links            = "links"
+    links = "links"
+    www   = "www"
   }
 }
 
@@ -27,17 +26,19 @@ variable "dns_records" {
   }))
   description = "Map of DNS records"
   default = {
-    shikanime-studio = {
-      name    = "shikanime.studio"
-      project = "shikanime-studio"
-    }
-    reiya = {
-      name    = "reiya.shikanime.studio"
-      project = "reiya"
-    }
     links = {
       name    = "links.shikanime.studio"
       project = "links"
     }
+    www = {
+      name    = "shikanime.studio"
+      project = "www"
+    }
   }
+}
+
+variable "d1s" {
+  type        = map(string)
+  description = "Map of Cloudflare D1 databases"
+  default     = {}
 }
