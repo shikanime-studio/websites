@@ -11,8 +11,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: DeterminateSystems/nix-installer-action@v17
+      - uses: actions/checkout@v5
+      - uses: DeterminateSystems/nix-installer-action@v19
       - name: Check Nix Flake
         run: |
           nix develop . --impure -c nix flake check -- \
