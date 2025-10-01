@@ -4,9 +4,9 @@ import { Image } from "astro:assets";
 import type { getSessionForHome } from "../lib/sessions";
 
 interface Props {
-  account: NonNullable<
+  user: NonNullable<
     Awaited<ReturnType<typeof getSessionForHome>>
-  >["account"];
+  >["user"];
 }
 ---
 
@@ -14,8 +14,8 @@ interface Props {
   <div tabindex="0" role="button" class="avatar btn btn-circle btn-ghost">
     <div class="w-10 rounded-full">
       <Image
-        src={Astro.props.account.pictureUrl}
-        alt={`${Astro.props.account.name} Avatar`}
+        src={Astro.props.user.pictureUrl}
+        alt={`${Astro.props.user.name} Avatar`}
         width="40"
         height="40"
         loading="eager"
@@ -26,9 +26,9 @@ interface Props {
     class="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
   >
     <li>
-      <a href="/account">
+      <a href="/user">
         <BsFillPersonVcardFill />
-        Account
+        User
       </a>
     </li>
     <li>
