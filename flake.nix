@@ -52,7 +52,10 @@
           };
           treefmt.config = {
             programs = {
-              prettier.enable = true;
+              prettier = {
+                enable = true;
+                includes = [ "*.astro" ];
+              };
               sqlfluff = {
                 enable = true;
                 dialect = "sqlite";
@@ -60,16 +63,6 @@
               taplo.enable = true;
               terraform.enable = true;
             };
-            settings.global.excludes = [
-              "*.assetsignore"
-              "*.gif"
-              "*.ico"
-              "*.jpg"
-              "*.png"
-              "*.svg"
-              "*.txt"
-              "*.webp"
-            ];
           };
         };
       };
