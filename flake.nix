@@ -1,7 +1,10 @@
 {
   inputs = {
+    automata.url = "github:shikanime-studio/automata";
     devenv.url = "github:cachix/devenv";
+    devlib.url = "github:shikanime-studio/devlib";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
@@ -22,53 +25,38 @@
   outputs =
     inputs@{
       devenv,
+      devlib,
       flake-parts,
+      git-hooks,
       treefmt-nix,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
+        devlib.flakeModule
+        git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { pkgs, ... }:
-        {
-          treefmt = {
-            projectRootFile = "flake.nix";
-            enableDefaultExcludes = true;
+      perSystem = _: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.shikanime-studio
+          ];
+          gitignore.content = [
+            ".astro"
+          ];
+          languages = {
+            opentofu.enable = true;
+            javascript.enable = true;
+          };
+          treefmt.config = {
             programs = {
-              actionlint.enable = true;
-              hclfmt.enable = true;
-              nixfmt.enable = true;
-              prettier = {
-                enable = true;
-                includes = [
-                  "*.astro"
-                  "*.js"
-                  "*.json"
-                  "*.jsx"
-                  "*.md"
-                  "*.mjs"
-                  "*.ts"
-                  "*.tsx"
-                  "*.webmanifest"
-                  "*.xml"
-                  "*.yaml"
-                ];
-                settings.plugins = [
-                  "@prettier/plugin-xml"
-                  "@trivago/prettier-plugin-sort-imports"
-                  "prettier-plugin-astro"
-                  "prettier-plugin-tailwindcss"
-                ];
-              };
-              shfmt.enable = true;
+              prettier.enable = true;
               sqlfluff = {
                 enable = true;
                 dialect = "sqlite";
               };
-              statix.enable = true;
               taplo.enable = true;
               terraform.enable = true;
             };
@@ -81,35 +69,10 @@
               "*.svg"
               "*.txt"
               "*.webp"
-              "**/node_modules"
-            ];
-          };
-          devenv.shells.default = {
-            containers = pkgs.lib.mkForce { };
-            languages = {
-              opentofu.enable = true;
-              nix.enable = true;
-              javascript = {
-                enable = true;
-                corepack.enable = true;
-              };
-            };
-            cachix = {
-              enable = true;
-              push = "shikanime";
-            };
-            git-hooks.hooks = {
-              deadnix.enable = true;
-              denolint.enable = true;
-              flake-checker.enable = true;
-              shellcheck.enable = true;
-              tflint.enable = true;
-            };
-            packages = [
-              pkgs.gitnr
             ];
           };
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
