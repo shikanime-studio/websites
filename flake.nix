@@ -55,6 +55,11 @@
               prettier = {
                 enable = true;
                 includes = [ "*.astro" ];
+                settings.plugins = [
+                  "@trivago/prettier-plugin-sort-imports"
+                  "prettier-plugin-astro"
+                  "prettier-plugin-tailwindcss"
+                ];
               };
               sqlfluff = {
                 enable = true;
@@ -62,6 +67,7 @@
               };
               taplo.enable = true;
               terraform.enable = true;
+              xmllint.enable = true;
             };
           };
         };
