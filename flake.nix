@@ -52,10 +52,6 @@
           };
           treefmt.config = {
             programs = {
-              sqlfluff = {
-                enable = true;
-                dialect = "sqlite";
-              };
               taplo.enable = true;
               terraform.enable = true;
               xmllint.enable = true;
