@@ -17,8 +17,5 @@ export default defineConfig({
   ],
   output: "server",
   adapter: cloudflare(),
-  redirects: {
-    "/": "/shikanime",
-  },
   site: "https://links.shikanime.studio",
 });
