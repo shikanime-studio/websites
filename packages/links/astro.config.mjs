@@ -15,7 +15,9 @@ export default defineConfig({
     }),
   ],
   output: "server",
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    imageService: "compile",
+  }),
   site: "https://links.shikanime.studio",
   vite: {
     plugins: [tailwindcss()],

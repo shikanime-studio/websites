@@ -4,6 +4,10 @@ main = "./dist/_worker.js/index.js"
 name = "www"
 routes = [{ pattern = "shikanime.studio", custom_domain = true }]
 
+[[kv_namespaces]]
+binding = "KV_BINDING"
+preview_id = "2cfe106fa7b546b39e9bace24729e358"
+
 [assets]
 binding = "ASSETS"
 directory = "./dist"
