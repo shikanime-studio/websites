@@ -52,8 +52,6 @@
           };
           treefmt.config = {
             programs = {
-              # TODO: Can't resolve plugins
-              prettier.enable = false;
               sqlfluff = {
                 enable = true;
                 dialect = "sqlite";
