@@ -70,12 +70,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -198,12 +194,8 @@
           "name": "events_to_makers_event_id_events_id_fk",
           "tableFrom": "events_to_makers",
           "tableTo": "events",
-          "columnsFrom": [
-            "event_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["event_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -211,22 +203,15 @@
           "name": "events_to_makers_maker_id_makers_id_fk",
           "tableFrom": "events_to_makers",
           "tableTo": "makers",
-          "columnsFrom": [
-            "maker_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["maker_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "events_to_makers_event_id_maker_id_pk": {
-          "columns": [
-            "event_id",
-            "maker_id"
-          ],
+          "columns": ["event_id", "maker_id"],
           "name": "events_to_makers_event_id_maker_id_pk"
         }
       },
@@ -296,12 +281,8 @@
           "name": "items_to_licenses_item_id_items_id_fk",
           "tableFrom": "items_to_licenses",
           "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -309,22 +290,15 @@
           "name": "items_to_licenses_group_id_licenses_id_fk",
           "tableFrom": "items_to_licenses",
           "tableTo": "licenses",
-          "columnsFrom": [
-            "group_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["group_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "items_to_licenses_item_id_group_id_pk": {
-          "columns": [
-            "item_id",
-            "group_id"
-          ],
+          "columns": ["item_id", "group_id"],
           "name": "items_to_licenses_item_id_group_id_pk"
         }
       },
@@ -454,12 +428,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -492,12 +462,8 @@
           "name": "user_to_accounts_user_id_users_id_fk",
           "tableFrom": "user_to_accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -505,12 +471,8 @@
           "name": "user_to_accounts_account_id_accounts_id_fk",
           "tableFrom": "user_to_accounts",
           "tableTo": "accounts",
-          "columnsFrom": [
-            "account_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["account_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -554,9 +516,7 @@
       "indexes": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },
@@ -597,12 +557,8 @@
           "name": "users_to_characters_user_id_users_id_fk",
           "tableFrom": "users_to_characters",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -610,22 +566,15 @@
           "name": "users_to_characters_character_id_characters_id_fk",
           "tableFrom": "users_to_characters",
           "tableTo": "characters",
-          "columnsFrom": [
-            "character_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["character_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "users_to_characters_user_id_character_id_pk": {
-          "columns": [
-            "user_id",
-            "character_id"
-          ],
+          "columns": ["user_id", "character_id"],
           "name": "users_to_characters_user_id_character_id_pk"
         }
       },
@@ -664,12 +613,8 @@
           "name": "users_to_licenses_user_id_users_id_fk",
           "tableFrom": "users_to_licenses",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -677,22 +622,15 @@
           "name": "users_to_licenses_license_id_licenses_id_fk",
           "tableFrom": "users_to_licenses",
           "tableTo": "licenses",
-          "columnsFrom": [
-            "license_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["license_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "users_to_licenses_user_id_license_id_pk": {
-          "columns": [
-            "user_id",
-            "license_id"
-          ],
+          "columns": ["user_id", "license_id"],
           "name": "users_to_licenses_user_id_license_id_pk"
         }
       },
@@ -731,12 +669,8 @@
           "name": "users_to_makers_user_id_users_id_fk",
           "tableFrom": "users_to_makers",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -744,22 +678,15 @@
           "name": "users_to_makers_maker_id_makers_id_fk",
           "tableFrom": "users_to_makers",
           "tableTo": "makers",
-          "columnsFrom": [
-            "maker_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["maker_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {
         "users_to_makers_user_id_maker_id_pk": {
-          "columns": [
-            "user_id",
-            "maker_id"
-          ],
+          "columns": ["user_id", "maker_id"],
           "name": "users_to_makers_user_id_maker_id_pk"
         }
       },
@@ -820,12 +747,8 @@
           "name": "votes_user_id_users_id_fk",
           "tableFrom": "votes",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -833,12 +756,8 @@
           "name": "votes_item_id_items_id_fk",
           "tableFrom": "votes",
           "tableTo": "items",
-          "columnsFrom": [
-            "item_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["item_id"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }

@@ -1,5 +1,5 @@
 jobs:
-  dependencies:
+  check:
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -14,16 +14,10 @@ jobs:
       - uses: shikanime-studio/setup-nix-action@v1
         with:
           github-token: ${{ steps.createGithubAppToken.outputs.token }}
-      - run: nix fmt
-      - uses: shikanime-studio/automata-action@v1
-        with:
-          ghstack-username: operator6o
-          github-token: ${{ steps.createGithubAppToken.outputs.token }}
-          gpg-passphrase: ${{ secrets.GPG_PASSPHRASE }}
-          gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
-          sign-commits: true
-          username: Operator 6O <operator6o@shikanime.studio>
-  stale:
+      - run: nix flake check --accept-flake-config --all-systems --no-pure-eval
+  publish:
+    needs:
+      - check
     runs-on: ubuntu-latest
     steps:
       - id: createGithubAppToken
@@ -31,15 +25,17 @@ jobs:
         with:
           app-id: ${{ vars.OPERATOR_APP_ID }}
           private-key: ${{ secrets.OPERATOR_PRIVATE_KEY }}
-      - uses: actions/stale@v10
+      - uses: actions/checkout@v6
         with:
-          days-before-close: 14
-          days-before-stale: 30
-          repo-token: ${{ steps.createGithubAppToken.outputs.token }}
-          stale-issue-label: stale
-          stale-pr-label: stale
-name: Update
+          fetch-depth: 0
+          token: ${{ steps.createGithubAppToken.outputs.token }}
+      - env:
+          GITHUB_TOKEN: ${{ steps.createGithubAppToken.outputs.token }}
+          REF_NAME: ${{ github.ref_name }}
+          REPO: ${{ github.repository }}
+        run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes
+name: Release
 "on":
-  schedule:
-    - cron: 0 4 * * 0
-  workflow_dispatch: null
+  push:
+    tags:
+      - v?[0-9]+.[0-9]+.[0-9]+*
