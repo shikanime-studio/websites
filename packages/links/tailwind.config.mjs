@@ -1,5 +1,3 @@
-import typography from "@tailwindcss/typography";
-import daisyui from "daisyui";
 import { fontFamily } from "tailwindcss/defaultTheme";
 
 /** @type {import('tailwindcss').Config} */
@@ -12,22 +10,4 @@ module.exports = {
       },
     },
   },
-  daisyui: {
-    themes: [
-      {
-        void: {
-          primary: "#f3ef00",
-          secondary: "#009af9",
-          accent: "#00977e",
-          neutral: "#000509",
-          "base-100": "#462a7d",
-          info: "#00cbf8",
-          success: "#00a260",
-          warning: "#e59200",
-          error: "#ff4d5e",
-        },
-      },
-    ],
-  },
-  plugins: [typography, daisyui],
 };
