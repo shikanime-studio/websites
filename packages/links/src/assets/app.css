@@ -1,0 +1,20 @@
+@config "../../tailwind.config.mjs";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: void --default;
+}
+@plugin "daisyui/theme" {
+  name: "void";
+  default: true;
+  color-scheme: dark;
+
+  --color-base-100: #462a7d;
+  --color-neutral: #000509;
+  --color-primary: #f3ef00;
+  --color-secondary: #009af9;
+  --color-accent: #00977e;
+  --color-info: #00cbf8;
+  --color-success: #00a260;
+  --color-warning: #e59200;
+  --color-error: #ff4d5e;
+}
