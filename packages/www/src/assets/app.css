@@ -1,0 +1,24 @@
+@config "../../tailwind.config.mjs";
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: newfuture --default;
+}
+@plugin "daisyui/theme" {
+  name: "newfuture";
+  default: true;
+  color-scheme: light;
+
+  --color-base-100: #f5f5f5;
+  --color-neutral: #f5f5f5;
+  --color-primary: #f5712c;
+  --color-secondary: #58c7f3;
+  --color-accent: #ffd200;
+  --color-info: #53c0f3;
+  --color-info-content: #140502;
+  --color-success: #71ead2;
+  --color-success-content: #140502;
+  --color-warning: #eace6c;
+  --color-warning-content: #140502;
+  --color-error: #ec8c78;
+  --color-error-content: #140502;
+}

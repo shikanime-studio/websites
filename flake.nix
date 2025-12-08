@@ -1,113 +1,64 @@
 {
   inputs = {
+    automata.url = "github:shikanime-studio/automata";
     devenv.url = "github:cachix/devenv";
+    devlib.url = "github:shikanime-studio/devlib";
     flake-parts.url = "github:hercules-ci/flake-parts";
+    git-hooks.url = "github:cachix/git-hooks.nix";
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   nixConfig = {
-    extra-public-keys = [
-      "shikanime.cachix.org-1:OrpjVTH6RzYf2R97IqcTWdLRejF6+XbpFNNZJxKG8Ts="
-      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
-    ];
     extra-substituters = [
-      "https://shikanime.cachix.org"
+      "https://cachix.cachix.org"
       "https://devenv.cachix.org"
+      "https://shikanime.cachix.org"
+    ];
+    extra-trusted-public-keys = [
+      "cachix.cachix.org-1:eWNHQldwUO7G2VkjpnjDbWwy4KQ/HNxht7H4SSoMckM="
+      "devenv.cachix.org-1:w1cLUi8dv3hnoSPGAuibQv+f9TZLr6cv/Hm9XgU50cw="
+      "shikanime.cachix.org-1:OrpjVTH6RzYf2R97IqcTWdLRejF6+XbpFNNZJxKG8Ts="
     ];
   };
 
   outputs =
     inputs@{
       devenv,
+      devlib,
       flake-parts,
+      git-hooks,
       treefmt-nix,
       ...
     }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       imports = [
         devenv.flakeModule
+        devlib.flakeModule
+        git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { pkgs, ... }:
-        {
-          treefmt = {
-            projectRootFile = "flake.nix";
-            enableDefaultExcludes = true;
+      perSystem = _: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.shikanime-studio
+          ];
+          gitignore.content = [
+            ".astro"
+          ];
+          languages = {
+            opentofu.enable = true;
+            javascript.enable = true;
+          };
+          treefmt.config = {
             programs = {
-              actionlint.enable = true;
-              hclfmt.enable = true;
-              nixfmt.enable = true;
-              prettier = {
-                enable = true;
-                includes = [
-                  "*.astro"
-                  "*.js"
-                  "*.json"
-                  "*.jsx"
-                  "*.md"
-                  "*.mjs"
-                  "*.ts"
-                  "*.tsx"
-                  "*.webmanifest"
-                  "*.xml"
-                  "*.yaml"
-                ];
-                settings.plugins = [
-                  "@prettier/plugin-xml"
-                  "@trivago/prettier-plugin-sort-imports"
-                  "prettier-plugin-astro"
-                  "prettier-plugin-tailwindcss"
-                ];
-              };
-              shfmt.enable = true;
-              sqlfluff = {
-                enable = true;
-                dialect = "sqlite";
-              };
-              statix.enable = true;
               taplo.enable = true;
               terraform.enable = true;
+              xmllint.enable = true;
             };
-            settings.global.excludes = [
-              "*.assetsignore"
-              "*.gif"
-              "*.ico"
-              "*.jpg"
-              "*.png"
-              "*.svg"
-              "*.txt"
-              "*.webp"
-              "**/node_modules"
-            ];
-          };
-          devenv.shells.default = {
-            containers = pkgs.lib.mkForce { };
-            languages = {
-              opentofu.enable = true;
-              nix.enable = true;
-              javascript = {
-                enable = true;
-                corepack.enable = true;
-              };
-            };
-            cachix = {
-              enable = true;
-              push = "shikanime";
-            };
-            git-hooks.hooks = {
-              deadnix.enable = true;
-              denolint.enable = true;
-              flake-checker.enable = true;
-              shellcheck.enable = true;
-              tflint.enable = true;
-            };
-            packages = [
-              pkgs.gitnr
-            ];
           };
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
