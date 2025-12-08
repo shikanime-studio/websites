@@ -23,6 +23,12 @@ export default defineConfig({
       enabled: true,
     },
   }),
+  server: {
+    headers: {
+      "Cross-Origin-Opener-Policy": ["same-origin", "same-origin-allow-popups"],
+      "Referrer-Policy": "no-referrer-when-downgrade",
+    },
+  },
   site: "https://baguetto.shikanime.studio",
   vite: {
     resolve: {

@@ -1,11 +1,8 @@
 ---
-import { BsBoxArrowRight, BsFillPersonVcardFill } from "react-icons/bs";
+import { BsFillPersonVcardFill } from "react-icons/bs";
 import { Image } from "astro:assets";
-import type { getSessionForHome } from "../lib/sessions";
+import LogoutButton from "./LogoutButton";
 
-interface Props {
-  user: NonNullable<Awaited<ReturnType<typeof getSessionForHome>>>["user"];
-}
 ---
 
 <div class="dropdown dropdown-end">
@@ -30,10 +27,7 @@ interface Props {
       </a>
     </li>
     <li>
-      <a href={`/logout?redirect=${Astro.url.toString()}`}>
-        <BsBoxArrowRight />
-        Logout
-      </a>
+      <LogoutButton client:load />
     </li>
   </ul>
 </div>

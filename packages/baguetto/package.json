@@ -19,6 +19,7 @@
     "@astrojs/tailwind": "^6.0.2",
     "@fontsource-variable/inter": "^5.2.6",
     "@tailwindcss/typography": "^0.5.16",
+    "@types/gsi": "^0.0.5",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "astro": "^5.13.2",
