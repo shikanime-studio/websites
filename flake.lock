@@ -1666,6 +1666,7 @@
       },
       "locked": {
         "lastModified": 1709087332,
+        "narHash": "sha256-HG2cCnktfHsKV0s4XW83gU3F57gaTljL9KNSuG6bnQs=",
         "owner": "hercules-ci",
         "repo": "gitignore.nix",
         "rev": "637db329424fd7e46cf4185293b9cc8c88c95394",
@@ -2106,7 +2107,6 @@
           "devenv",
           "nixpkgs"
         ],
-        "nixpkgs": "nixpkgs",
         "nixpkgs-23-11": [
           "automata",
           "devlib",
@@ -2766,7 +2766,6 @@
         "owner": "NixOS",
         "repo": "nixpkgs",
         "rev": "dc704e6102e76aad573f63b74c742cd96f8f1e6c",
-        "rev": "14a40a1d7fb9afa4739275ac642ed7301a9ba1ab",
         "type": "github"
       },
       "original": {
@@ -3089,7 +3088,6 @@
         "git-hooks": "git-hooks_16",
         "nixpkgs": "nixpkgs_31",
         "treefmt-nix": "treefmt-nix_8"
-        "nixpkgs": "nixpkgs_3",
       }
     },
     "treefmt-nix": {
