@@ -329,3 +329,34 @@ export const eventsRelations = relations(events, ({ many }) => ({
 export const charactersRelations = relations(characters, ({ many }) => ({
   licenses: many(licenses),
 }));
+
+export type Schema = {
+  users: typeof users;
+  sessions: typeof sessions;
+  accounts: typeof accounts;
+  verifications: typeof verifications;
+  usersToMakers: typeof usersToMakers;
+  usersToMakersRelations: typeof usersToMakersRelations;
+  usersToLicenses: typeof usersToLicenses;
+  usersToLicensesRelations: typeof usersToLicensesRelations;
+  usersToCharacters: typeof usersToCharacters;
+  usersToCharactersRelations: typeof usersToCharactersRelations;
+  events: typeof events;
+  eventsToMakers: typeof eventsToMakers;
+  eventsToMakersRelations: typeof eventsToMakersRelations;
+  licenses: typeof licenses;
+  licenseRelations: typeof licenseRelations;
+  characters: typeof characters;
+  makers: typeof makers;
+  items: typeof items;
+  itemsToLicenses: typeof itemsToLicenses;
+  itemsToLicensesRelations: typeof itemsToLicensesRelations;
+  votes: typeof votes;
+  votesRelations: typeof votesRelations;
+  notifications: typeof notifications;
+  rateLimits: typeof rateLimits;
+  makersRelations: typeof makersRelations;
+  itemsRelations: typeof itemsRelations;
+  eventsRelations: typeof eventsRelations;
+  charactersRelations: typeof charactersRelations;
+};

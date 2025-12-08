@@ -5,7 +5,7 @@ import { faker } from "@faker-js/faker";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import * as schema from "./src/schema";
+import * as schema from "./schema";
 
 // Helper to find local D1 database file
 function getLocalDbPath() {
