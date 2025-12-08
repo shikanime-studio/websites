@@ -15,7 +15,8 @@ export async function onRequestGet(context: APIContext) {
   try {
     const conditions = [];
     if (search) conditions.push(like(events.name, `%${search}%`));
-    if (upcoming) conditions.push(gte(events.startsAt, new Date().toISOString()));
+    if (upcoming)
+      conditions.push(gte(events.startsAt, new Date().toISOString()));
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
     const query = db

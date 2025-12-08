@@ -11,7 +11,10 @@ export async function onRequestPost(context: APIContext) {
   const db = createD1Database(context.locals);
 
   try {
-    const body = await context.request.json() as { type: string, targetId: number };
+    const body = (await context.request.json()) as {
+      type: string;
+      targetId: number;
+    };
     const { type, targetId } = body;
     const userId = context.locals.user?.id;
 

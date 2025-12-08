@@ -21,7 +21,10 @@ export function getItemsByMaker(db: DrizzleD1Database<any>, makerId: number) {
     .orderBy(desc(items.createdAt));
 }
 
-export function getItemsByCharacterName(db: DrizzleD1Database<any>, characterName: string) {
+export function getItemsByCharacterName(
+  db: DrizzleD1Database<any>,
+  characterName: string,
+) {
   return db
     .select({
       id: items.id,
@@ -39,8 +42,8 @@ export function getItemsByCharacterName(db: DrizzleD1Database<any>, characterNam
     .where(
       or(
         like(items.name, `%${characterName}%`),
-        like(items.description, `%${characterName}%`)
-      )
+        like(items.description, `%${characterName}%`),
+      ),
     )
     .orderBy(desc(items.createdAt));
 }

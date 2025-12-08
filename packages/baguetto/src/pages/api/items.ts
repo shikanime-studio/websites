@@ -1,11 +1,6 @@
 import type { APIRoute } from "astro";
 import { createD1Database } from "../../lib/db";
-import {
-  items,
-  makers,
-  itemsToLicenses,
-  licenses,
-} from "../../schema";
+import { items, makers, itemsToLicenses, licenses } from "../../schema";
 import { eq, and, or, like } from "drizzle-orm";
 
 export const GET: APIRoute = async function (context) {

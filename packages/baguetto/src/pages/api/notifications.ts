@@ -65,7 +65,9 @@ export async function onRequestPost(context: APIContext) {
   }
 
   try {
-    const body = await context.request.json() as { notificationIds: number[] };
+    const body = (await context.request.json()) as {
+      notificationIds: number[];
+    };
     const { notificationIds } = body;
 
     if (!Array.isArray(notificationIds)) {

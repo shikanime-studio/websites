@@ -65,34 +65,91 @@ async function main() {
   faker.seed(12345);
   const COUNT = 50; // Generate a pool of realistic data
 
-  const userNames = faker.helpers.multiple(() => faker.person.fullName(), { count: COUNT });
-  const userEmails = faker.helpers.multiple(() => faker.internet.email(), { count: COUNT });
-  const userAvatars = faker.helpers.multiple(() => faker.image.avatar(), { count: COUNT });
+  const userNames = faker.helpers.multiple(() => faker.person.fullName(), {
+    count: COUNT,
+  });
+  const userEmails = faker.helpers.multiple(() => faker.internet.email(), {
+    count: COUNT,
+  });
+  const userAvatars = faker.helpers.multiple(() => faker.image.avatar(), {
+    count: COUNT,
+  });
 
-  const makerNames = faker.helpers.multiple(() => faker.company.name(), { count: COUNT });
-  const makerDescriptions = faker.helpers.multiple(() => faker.company.catchPhrase(), { count: COUNT });
-  const makerAvatars = faker.helpers.multiple(() => faker.image.avatar(), { count: COUNT });
-  const makerCovers = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 800, height: 400 }), { count: COUNT });
-  const makerLinks = faker.helpers.multiple(() => [faker.internet.url(), faker.internet.url()], { count: COUNT });
+  const makerNames = faker.helpers.multiple(() => faker.company.name(), {
+    count: COUNT,
+  });
+  const makerDescriptions = faker.helpers.multiple(
+    () => faker.company.catchPhrase(),
+    { count: COUNT },
+  );
+  const makerAvatars = faker.helpers.multiple(() => faker.image.avatar(), {
+    count: COUNT,
+  });
+  const makerCovers = faker.helpers.multiple(
+    () => faker.image.urlPicsumPhotos({ width: 800, height: 400 }),
+    { count: COUNT },
+  );
+  const makerLinks = faker.helpers.multiple(
+    () => [faker.internet.url(), faker.internet.url()],
+    { count: COUNT },
+  );
 
-  const licenseNames = faker.helpers.multiple(() => faker.commerce.productName(), { count: COUNT });
-  const licenseDescriptions = faker.helpers.multiple(() => faker.commerce.productDescription(), { count: COUNT });
-  const licenseImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 400, height: 400 }), { count: COUNT });
+  const licenseNames = faker.helpers.multiple(
+    () => faker.commerce.productName(),
+    { count: COUNT },
+  );
+  const licenseDescriptions = faker.helpers.multiple(
+    () => faker.commerce.productDescription(),
+    { count: COUNT },
+  );
+  const licenseImages = faker.helpers.multiple(
+    () => faker.image.urlPicsumPhotos({ width: 400, height: 400 }),
+    { count: COUNT },
+  );
 
-  const characterNames = faker.helpers.multiple(() => faker.person.fullName(), { count: COUNT });
-  const characterBios = faker.helpers.multiple(() => faker.person.bio(), { count: COUNT });
-  const characterImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 300, height: 400 }), { count: COUNT });
+  const characterNames = faker.helpers.multiple(() => faker.person.fullName(), {
+    count: COUNT,
+  });
+  const characterBios = faker.helpers.multiple(() => faker.person.bio(), {
+    count: COUNT,
+  });
+  const characterImages = faker.helpers.multiple(
+    () => faker.image.urlPicsumPhotos({ width: 300, height: 400 }),
+    { count: COUNT },
+  );
 
-  const eventNames = faker.helpers.multiple(() => faker.company.buzzPhrase(), { count: COUNT });
-  const eventDescriptions = faker.helpers.multiple(() => faker.lorem.paragraph(), { count: COUNT });
-  const eventImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 800, height: 400 }), { count: COUNT });
-  const eventLocs = faker.helpers.multiple(() => faker.location.city(), { count: COUNT });
-  const eventUrls = faker.helpers.multiple(() => faker.internet.url(), { count: COUNT });
+  const eventNames = faker.helpers.multiple(() => faker.company.buzzPhrase(), {
+    count: COUNT,
+  });
+  const eventDescriptions = faker.helpers.multiple(
+    () => faker.lorem.paragraph(),
+    { count: COUNT },
+  );
+  const eventImages = faker.helpers.multiple(
+    () => faker.image.urlPicsumPhotos({ width: 800, height: 400 }),
+    { count: COUNT },
+  );
+  const eventLocs = faker.helpers.multiple(() => faker.location.city(), {
+    count: COUNT,
+  });
+  const eventUrls = faker.helpers.multiple(() => faker.internet.url(), {
+    count: COUNT,
+  });
 
-  const itemNames = faker.helpers.multiple(() => faker.commerce.productName(), { count: COUNT });
-  const itemDescriptions = faker.helpers.multiple(() => faker.commerce.productDescription(), { count: COUNT });
-  const itemImages = faker.helpers.multiple(() => [faker.image.urlPicsumPhotos({ width: 400, height: 400 })], { count: COUNT });
-  const itemPrices = faker.helpers.multiple(() => faker.commerce.price(), { count: COUNT });
+  const itemNames = faker.helpers.multiple(() => faker.commerce.productName(), {
+    count: COUNT,
+  });
+  const itemDescriptions = faker.helpers.multiple(
+    () => faker.commerce.productDescription(),
+    { count: COUNT },
+  );
+  const itemImages = faker.helpers.multiple(
+    () => [faker.image.urlPicsumPhotos({ width: 400, height: 400 })],
+    { count: COUNT },
+  );
+  const itemPrices = faker.helpers.multiple(() => faker.commerce.price(), {
+    count: COUNT,
+  });
 
   await seed(db as any, seedSchema, { count: 10, seed: 12345 }).refine((f) => ({
     users: {
@@ -153,7 +210,6 @@ async function main() {
   const seededLicenses = await db.select().from(schema.licenses).limit(3);
   const seededCharacters = await db.select().from(schema.characters).limit(5);
 
-
   // Helper to insert safely
   const insertSafe = async (table: any, values: any) => {
     try {
@@ -166,32 +222,48 @@ async function main() {
   // Seed Users -> Makers (Follows)
   if (seededUsers.length > 0 && seededMakers.length > 0) {
     for (const user of seededUsers) {
-      const maker = seededMakers[Math.floor(Math.random() * seededMakers.length)];
-      await insertSafe(schema.usersToMakers, { userId: user.id, makerId: maker.id });
+      const maker =
+        seededMakers[Math.floor(Math.random() * seededMakers.length)];
+      await insertSafe(schema.usersToMakers, {
+        userId: user.id,
+        makerId: maker.id,
+      });
     }
   }
 
   // Seed Events -> Makers (Attendance)
   if (seededEvents.length > 0 && seededMakers.length > 0) {
     for (const event of seededEvents) {
-      const maker = seededMakers[Math.floor(Math.random() * seededMakers.length)];
-      await insertSafe(schema.eventsToMakers, { eventId: event.id, makerId: maker.id });
+      const maker =
+        seededMakers[Math.floor(Math.random() * seededMakers.length)];
+      await insertSafe(schema.eventsToMakers, {
+        eventId: event.id,
+        makerId: maker.id,
+      });
     }
   }
 
   // Seed Users -> Licenses
   if (seededUsers.length > 0 && seededLicenses.length > 0) {
     for (const user of seededUsers) {
-      const license = seededLicenses[Math.floor(Math.random() * seededLicenses.length)];
-      await insertSafe(schema.usersToLicenses, { userId: user.id, licenseId: license.id });
+      const license =
+        seededLicenses[Math.floor(Math.random() * seededLicenses.length)];
+      await insertSafe(schema.usersToLicenses, {
+        userId: user.id,
+        licenseId: license.id,
+      });
     }
   }
 
   // Seed Users -> Characters
   if (seededUsers.length > 0 && seededCharacters.length > 0) {
     for (const user of seededUsers) {
-      const character = seededCharacters[Math.floor(Math.random() * seededCharacters.length)];
-      await insertSafe(schema.usersToCharacters, { userId: user.id, characterId: character.id });
+      const character =
+        seededCharacters[Math.floor(Math.random() * seededCharacters.length)];
+      await insertSafe(schema.usersToCharacters, {
+        userId: user.id,
+        characterId: character.id,
+      });
     }
   }
 

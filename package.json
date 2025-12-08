@@ -15,9 +15,5 @@
     "packages/baguetto",
     "packages/links",
     "packages/www"
-  ],
-  "dependencies": {
-    "better-sqlite3": "^12.5.0",
-    "drizzle-seed": "^0.3.1"
-  }
+  ]
 }
