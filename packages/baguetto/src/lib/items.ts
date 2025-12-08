@@ -1,4 +1,11 @@
-import { type Schema, items, makers, events, characters, licenses } from "../schema";
+import {
+  type Schema,
+  items,
+  makers,
+  events,
+  characters,
+  licenses,
+} from "../schema";
 import { DrizzleD1Database } from "drizzle-orm/d1";
 import { eq, desc, gt, like, or } from "drizzle-orm";
 
@@ -90,10 +97,7 @@ export function getItem(db: DrizzleD1Database<Schema>, id: number) {
     .get();
 }
 
-export function getRecentItems(
-  db: DrizzleD1Database<Schema>,
-  limit = 10,
-) {
+export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
   return db
     .select({
       id: items.id,
@@ -112,10 +116,7 @@ export function getRecentItems(
     .limit(limit);
 }
 
-export function getUpcomingEvents(
-  db: DrizzleD1Database<Schema>,
-  limit = 3,
-) {
+export function getUpcomingEvents(db: DrizzleD1Database<Schema>, limit = 3) {
   const now = new Date().toISOString();
   return db
     .select()
@@ -125,10 +126,7 @@ export function getUpcomingEvents(
     .limit(limit);
 }
 
-export function getFeaturedMakers(
-  db: DrizzleD1Database<Schema>,
-  limit = 8,
-) {
+export function getFeaturedMakers(db: DrizzleD1Database<Schema>, limit = 8) {
   return db.select().from(makers).limit(limit);
 }
 
@@ -140,10 +138,7 @@ export function getMaker(db: DrizzleD1Database<Schema>, id: number) {
   return db.select().from(makers).where(eq(makers.id, id)).get();
 }
 
-export function getLicenses(
-  db: DrizzleD1Database<Schema>,
-  limit = 10,
-) {
+export function getLicenses(db: DrizzleD1Database<Schema>, limit = 10) {
   return db.select().from(licenses).limit(limit);
 }
 
