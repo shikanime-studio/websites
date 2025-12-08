@@ -1,17 +1,13 @@
 ---
 import ScaffoldLayout from "./ScaffoldLayout.astro";
-import Sidebar from "../components/Sidebar.astro";
 import BaseLayout from "./BaseLayout.astro";
 ---
 
 <BaseLayout>
   <ScaffoldLayout>
-    <Sidebar />
-    <div class="p-4 sm:ml-64">
-      <div class="mt-12 p-4">
-        <div class="m-5 flex w-full flex-col">
-          <div class="w-11/12"><slot /></div>
-        </div>
+    <div class="min-h-screen bg-pink-50/30">
+      <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <slot />
       </div>
     </div>
   </ScaffoldLayout>

@@ -154,6 +154,11 @@ export const events = sqliteTable("events", {
   imageUrl: text("image_url").notNull(),
   startsAt: text("starts_at").notNull(),
   endsAt: text("ends_at").notNull(),
+  location: text("location"),
+  eventType: text("event_type"),
+  websiteUrl: text("website_url"),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
 export const eventsToMakers = sqliteTable(
@@ -208,6 +213,8 @@ export const makers = sqliteTable("makers", {
     .notNull()
     .$type<string[]>()
     .default(sql`'[]'`),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
 export const items = sqliteTable("items", {
@@ -218,6 +225,12 @@ export const items = sqliteTable("items", {
     .notNull()
     .$type<string[]>()
     .default(sql`'[]'`),
+  category: text("category"),
+  priceRange: text("price_range"),
+  availabilityStatus: text("availability_status").default("available"),
+  makerId: integer("maker_id").references(() => makers.id),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
 });
 
 export const itemsToLicenses = sqliteTable(
@@ -226,7 +239,7 @@ export const itemsToLicenses = sqliteTable(
     itemId: integer("item_id")
       .notNull()
       .references(() => items.id),
-    licenseId: integer("group_id")
+    licenseId: integer("license_id")
       .notNull()
       .references(() => licenses.id),
   },
@@ -273,4 +286,46 @@ export const votesRelations = relations(votes, ({ one }) => ({
     fields: [votes.itemId],
     references: [items.id],
   }),
+}));
+
+export const notifications = sqliteTable("notifications", {
+  id: integer("id").primaryKey(),
+  userId: text("user_id").references(() => users.id),
+  type: text("type").notNull(),
+  title: text("title").notNull(),
+  message: text("message").notNull(),
+  relatedId: integer("related_id"),
+  relatedType: text("related_type"),
+  isRead: integer("is_read", { mode: "boolean" }).default(false),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
+});
+
+export const rateLimits = sqliteTable("rate_limits", {
+  id: text("id").primaryKey(),
+  key: text("key"),
+  count: integer("count"),
+  lastRequest: integer("last_request", { mode: "number" }),
+});
+
+// Relations
+export const makersRelations = relations(makers, ({ many }) => ({
+  items: many(items),
+  events: many(eventsToMakers),
+}));
+
+export const itemsRelations = relations(items, ({ one, many }) => ({
+  maker: one(makers, {
+    fields: [items.makerId],
+    references: [makers.id],
+  }),
+  licenses: many(itemsToLicenses),
+  votes: many(votes),
+}));
+
+export const eventsRelations = relations(events, ({ many }) => ({
+  makers: many(eventsToMakers),
+}));
+
+export const charactersRelations = relations(characters, ({ many }) => ({
+  licenses: many(licenses),
 }));

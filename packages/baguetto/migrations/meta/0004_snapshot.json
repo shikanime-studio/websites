@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "8c361af1-e6c1-47b8-9c57-e67a6b7b8d80",
-  "prevId": "1542a074-55d3-4f3c-9f70-8b01ad6ad42a",
+  "id": "4f27818d-1bb2-44fb-bb93-9bbc666fe6df",
+  "prevId": "7e5b8974-1cdd-4aea-8d0e-4207f2a9aa99",
   "tables": {
     "account": {
       "name": "account",
@@ -423,6 +423,44 @@
           "notNull": true,
           "autoincrement": false,
           "default": "'[]'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "rate_limit": {
+      "name": "rate_limit",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "key": {
+          "name": "key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "count": {
+          "name": "count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "last_request": {
+          "name": "last_request",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
       "indexes": {},

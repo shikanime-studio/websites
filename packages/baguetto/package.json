@@ -4,34 +4,46 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "astro dev",
+    "dev": "UV_THREADPOOL_SIZE=64 NODE_OPTIONS='--dns-result-order=ipv4first' astro dev",
+    "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "format": "prettier --write .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply baguetto",
+    "db:seed": "tsx seed.ts",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@astrojs/check": "^0.9.6",
     "@astrojs/cloudflare": "^12.6.4",
     "@astrojs/partytown": "^2.1.4",
     "@astrojs/react": "^4.3.0",
     "@astrojs/sitemap": "^3.5.0",
-    "@astrojs/tailwind": "^6.0.2",
-    "@fontsource-variable/inter": "^5.2.6",
+    "@better-auth/passkey": "^1.4.5",
+    "@fontsource-variable/inter": "^5.2.8",
     "@tailwindcss/typography": "^0.5.16",
+    "@tailwindcss/vite": "^4.0.0",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "astro": "^5.13.2",
     "better-auth": "^1.4.5",
-    "daisyui": "^4.0.9",
+    "daisyui": "^5.5.5",
     "drizzle-orm": "^0.44.4",
+    "drizzle-seed": "^0.3.1",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-icons": "^5.5.0",
-    "tailwindcss": "^3.4.17"
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.1.0",
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^12.5.0",
     "drizzle-kit": "^0.31.4",
-    "wrangler": "^4.31.0"
+    "tidewave": "^0.5.5",
+    "tsx": "^4.21.0",
+    "wrangler": "^4.51.0"
   }
 }

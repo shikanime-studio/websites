@@ -2,10 +2,10 @@
 import "@fontsource-variable/inter";
 import Footer from "../components/Footer.astro";
 import Navbar from "../components/Navbar.astro";
-import { getD1Database } from "../lib/util";
+import { createD1Database } from "../lib/db";
 import { createAuth } from "../lib/auth";
 
-const db = getD1Database(Astro.locals);
+const db = createD1Database(Astro.locals);
 const auth = createAuth(db);
 
 const session = await auth.api.getSession({
