@@ -1,12 +1,13 @@
 ---
-import { BsBoxArrowRight, BsFillPersonVcardFill } from "react-icons/bs";
+import { BsFillPersonVcardFill } from "react-icons/bs";
 import { Image } from "astro:assets";
-import type { getSessionForHome } from "../lib/sessions";
+import LogoutButton from "./LogoutButton";
 
 interface Props {
-  account: NonNullable<
-    Awaited<ReturnType<typeof getSessionForHome>>
-  >["account"];
+  user: {
+    name: string;
+    image?: string | null;
+  };
 }
 ---
 
@@ -14,8 +15,9 @@ interface Props {
   <div tabindex="0" role="button" class="avatar btn btn-circle btn-ghost">
     <div class="w-10 rounded-full">
       <Image
-        src={Astro.props.account.pictureUrl}
-        alt={`${Astro.props.account.name} Avatar`}
+        src={Astro.props.user.image ||
+          `https://ui-avatars.com/api/?name=${Astro.props.user.name}`}
+        alt={`${Astro.props.user.name} Avatar`}
         width="40"
         height="40"
         loading="eager"
@@ -26,16 +28,13 @@ interface Props {
     class="menu dropdown-content z-50 w-52 rounded-box bg-base-100 p-2 shadow"
   >
     <li>
-      <a href="/account">
+      <a href="/user">
         <BsFillPersonVcardFill />
-        Account
+        User
       </a>
     </li>
     <li>
-      <a href={`/logout?redirect=${Astro.url.toString()}`}>
-        <BsBoxArrowRight />
-        Logout
-      </a>
+      <LogoutButton client:load />
     </li>
   </ul>
 </div>

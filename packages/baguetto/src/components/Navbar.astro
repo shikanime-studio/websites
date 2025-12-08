@@ -2,10 +2,14 @@
 import NavbarStart from "./NavbarStart.astro";
 import NavbarCenter from "./NavbarCenter.astro";
 import NavbarEnd from "./NavbarEnd.astro";
-import { getSessionForHome } from "../lib/sessions";
 
 interface Props {
-  session?: Awaited<ReturnType<typeof getSessionForHome>>;
+  session?: {
+    user: {
+      name: string;
+      image?: string | null;
+    };
+  } | null;
 }
 ---
 

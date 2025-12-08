@@ -23,7 +23,13 @@ export default defineConfig({
       enabled: true,
     },
   }),
-  site: import.meta.env.SITE || "https://reiya.shikanime.studio",
+  server: {
+    headers: {
+      "Cross-Origin-Opener-Policy": ["same-origin", "same-origin-allow-popups"],
+      "Referrer-Policy": "no-referrer-when-downgrade",
+    },
+  },
+  site: "https://baguetto.shikanime.studio",
   vite: {
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.

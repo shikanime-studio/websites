@@ -1,5 +1,5 @@
 {
-  "name": "@shikanime/reiya",
+  "name": "@shikanime/baguetto",
   "version": "2025.01",
   "private": true,
   "type": "module",
@@ -8,7 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply reiya",
+    "db:migrate": "wrangler d1 migrations apply baguetto",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
@@ -22,6 +22,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "astro": "^5.13.2",
+    "better-auth": "^1.4.5",
     "daisyui": "^4.0.9",
     "drizzle-orm": "^0.44.4",
     "react": "^19.1.1",
@@ -30,7 +31,6 @@
     "tailwindcss": "^3.4.17"
   },
   "devDependencies": {
-    "arctic": "^3.7.0",
     "drizzle-kit": "^0.31.4",
     "wrangler": "^4.31.0"
   }

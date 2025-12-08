@@ -4,8 +4,8 @@
   "id": "b6e0ec66-27e3-4d3d-82cf-eb26d9eeefe3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "accounts": {
-      "name": "accounts",
+    "users": {
+      "name": "users",
       "columns": {
         "id": {
           "name": "id",
@@ -59,8 +59,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "account_id": {
-          "name": "account_id",
+        "user_id": {
+          "name": "user_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
@@ -77,11 +77,11 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "sessions_account_id_accounts_id_fk": {
-          "name": "sessions_account_id_accounts_id_fk",
+        "sessions_user_id_users_id_fk": {
+          "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
-          "tableTo": "accounts",
-          "columnsFrom": ["account_id"],
+          "tableTo": "users",
+          "columnsFrom": ["user_id"],
           "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
