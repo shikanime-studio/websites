@@ -1,0 +1,131 @@
+---
+import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import { getMaker, getItemsByMaker } from "../../lib/items";
+import { createD1Database } from "../../lib/db";
+
+const { id } = Astro.params;
+const db = createD1Database(Astro.locals);
+
+if (!id) {
+  return Astro.redirect("/artists");
+}
+
+const maker = await getMaker(db, parseInt(id));
+const items = await getItemsByMaker(db, parseInt(id));
+
+if (!maker) {
+  return Astro.redirect("/404");
+}
+
+const getAvatar = (m: any) => m.avatarImageUrl || `https://placehold.co/200x200/ffe4e6/be123c?text=${encodeURIComponent(m.name)}`;
+const getCover = (m: any) => m.coverImageUrl || `https://placehold.co/1200x400/ffe4e6/be123c?text=${encodeURIComponent(m.name + " Cover")}`;
+const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `https://placehold.co/400x400/ffe4e6/be123c?text=${encodeURIComponent(item.name)}`;
+---
+
+<DashboardLayout>
+  <!-- Header/Cover -->
+  <div class="relative bg-rose-50 h-64 md:h-80 w-full overflow-hidden">
+    <img
+      src={getCover(maker)}
+      alt={`${maker.name} Cover`}
+      class="w-full h-full object-cover"
+    />
+    <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+  </div>
+
+  <div class="container mx-auto px-4 relative z-10 -mt-24 mb-12">
+    <div class="bg-white rounded-3xl shadow-lg p-6 md:p-8 border border-rose-50">
+      <div class="flex flex-col md:flex-row gap-6 items-start">
+        <!-- Avatar -->
+        <div class="relative -mt-16 md:-mt-20">
+          <div class="w-32 h-32 md:w-40 md:h-40 rounded-full ring-4 ring-white overflow-hidden bg-white shadow-md">
+            <img
+              src={getAvatar(maker)}
+              alt={maker.name}
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="flex-1 pt-2 md:pt-0">
+          <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+              <h1 class="text-3xl font-black text-gray-900">{maker.name}</h1>
+              <p class="text-gray-500 mt-1">{maker.description || "No description available."}</p>
+            </div>
+
+            <div class="flex gap-2">
+              <button class="btn btn-primary text-white gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                Follow Artist
+              </button>
+            </div>
+          </div>
+
+          <!-- Links -->
+          {maker.links && maker.links.length > 0 && (
+            <div class="flex flex-wrap gap-2 mt-4">
+              {maker.links.map((link: string) => (
+                <a
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="badge badge-lg badge-outline gap-1 hover:bg-rose-50 hover:text-rose-600 cursor-pointer"
+                >
+                  🔗 {new URL(link).hostname}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex items-center justify-between mb-8">
+      <h2 class="text-2xl font-bold text-gray-900">Merchandise</h2>
+      <select class="select select-bordered select-sm">
+        <option>Newest First</option>
+        <option>Price: Low to High</option>
+      </select>
+    </div>
+
+    {items.length > 0 ? (
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {items.map((item) => (
+          <a href={`/items/${item.id}`} class="card bg-white shadow-lg hover:shadow-xl transition-all duration-300 group">
+            <figure class="aspect-square overflow-hidden bg-rose-50">
+              <img
+                src={getItemImage(item)}
+                alt={item.name}
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              />
+            </figure>
+            <div class="card-body p-4">
+              <h3 class="font-bold text-gray-900 group-hover:text-rose-600 transition-colors">{item.name}</h3>
+              <p class="text-rose-600 font-medium">{item.price || "Price TBD"}</p>
+              <div class="flex justify-between items-center mt-2">
+                <span class="text-xs text-gray-500 capitalize">{item.category || "Merch"}</span>
+                <button class="btn btn-circle btn-xs btn-ghost text-rose-400 hover:bg-rose-50">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+        <div class="text-6xl mb-4">🎨</div>
+        <h3 class="text-xl font-semibold text-gray-700 mb-2">No items listed yet</h3>
+        <p class="text-gray-500">This artist hasn't listed any merchandise yet.</p>
+      </div>
+    )}
+  </div>
+</DashboardLayout>
