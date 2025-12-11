@@ -1,0 +1,122 @@
+---
+import DashboardLayout from "../layouts/DashboardLayout.astro";
+import { getAllEvents } from "../lib/items";
+import { createD1Database } from "../lib/db";
+
+const db = createD1Database(Astro.locals);
+const events = await getAllEvents(db);
+
+const getPlaceholder = (text: string) => `https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(text)}`;
+---
+
+<DashboardLayout>
+  <div class="container mx-auto px-4 py-8">
+    <!-- Page Header -->
+    <div class="text-center mb-12">
+      <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Upcoming Events</h1>
+      <p class="text-lg text-gray-600">Find conventions, pop-up shops, and artist alleys near you.</p>
+    </div>
+
+    <!-- Event Type Filter -->
+    <div class="flex justify-center mb-8">
+      <div class="tabs tabs-boxed bg-rose-50 p-1">
+        <a class="tab tab-active bg-white text-rose-600 shadow-sm rounded-btn">All Events</a>
+        <a class="tab hover:text-rose-600">Conventions</a>
+        <a class="tab hover:text-rose-600">Pop-up Shops</a>
+        <a class="tab hover:text-rose-600">Artist Alleys</a>
+        <a class="tab hover:text-rose-600">Online Events</a>
+      </div>
+    </div>
+
+    <!-- Search and Filter Bar -->
+    <div class="mb-8">
+      <div class="flex flex-col sm:flex-row gap-4 items-center justify-between">
+        <div class="flex-1 max-w-md">
+          <input
+            type="text"
+            placeholder="Search events..."
+            class="input input-bordered w-full focus:input-primary"
+          />
+        </div>
+        <div class="flex gap-2">
+          <select class="select select-bordered focus:select-primary">
+            <option>All Locations</option>
+            <option>Tokyo</option>
+            <option>Osaka</option>
+            <option>Online</option>
+          </select>
+          <select class="select select-bordered focus:select-primary">
+            <option>Upcoming First</option>
+            <option>Most Popular</option>
+            <option>Nearest to Me</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {events.map((event) => (
+        <div class="card bg-white shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] border border-gray-100">
+          <figure class="relative h-48 overflow-hidden">
+            <img
+              src={event.imageUrl || getPlaceholder(event.name)}
+              alt={event.name}
+              class="h-full w-full object-cover transition duration-300 hover:scale-105"
+            />
+            <div class="absolute top-4 right-4">
+              <span class="badge badge-primary text-white shadow-sm">{event.eventType || 'Event'}</span>
+            </div>
+          </figure>
+          <div class="card-body p-6">
+            <h3 class="card-title text-xl font-bold text-gray-900">{event.name}</h3>
+            <p class="text-sm text-gray-600 line-clamp-2">
+              {event.description}
+            </p>
+
+            <!-- Event Details -->
+            <div class="space-y-3 mt-4">
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="font-medium">
+                  {new Date(event.startsAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}
+                </span>
+              </div>
+              <div class="flex items-center text-sm text-gray-600">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-rose-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                {event.location || "Online"}
+              </div>
+            </div>
+
+            <!-- Event Actions -->
+            <div class="card-actions justify-between items-center mt-6 pt-4 border-t border-gray-100">
+              <div class="flex items-center gap-2">
+                <button class="btn btn-circle btn-sm btn-ghost hover:text-rose-600" title="Save event">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                  </svg>
+                </button>
+              </div>
+              <a href={`/events/${event.id}`} class="btn btn-primary btn-sm rounded-full px-6 text-white">
+                View Details
+              </a>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {events.length === 0 && (
+        <div class="col-span-full text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
+          <div class="text-6xl mb-4">🗓️</div>
+          <h3 class="text-xl font-semibold text-gray-700 mb-2">No upcoming events</h3>
+          <p class="text-gray-500">Check back later for new conventions and pop-ups!</p>
+        </div>
+      )}
+    </div>
+  </div>
+</DashboardLayout>
