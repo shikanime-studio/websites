@@ -29,9 +29,8 @@ export const prerender = true;
       src="https://www.googletagmanager.com/gtag/js?id=G-FJ39X8JKGM"></script>
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        // eslint-disable-next-line prefer-rest-params
-        dataLayer.push(arguments);
+      function gtag(...args) {
+        window.dataLayer.push(args);
       }
       gtag("js", new Date());
 
