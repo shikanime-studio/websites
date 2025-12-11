@@ -7,8 +7,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
-    "format": "prettier --write ."
+    "preview": "astro preview"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.6",

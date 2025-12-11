@@ -1,8 +1,13 @@
-@config "../../tailwind.config.mjs";
 @import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 @plugin "daisyui" {
   themes: newfuture --default;
 }
+
 @plugin "daisyui/theme" {
   name: "newfuture";
   default: true;

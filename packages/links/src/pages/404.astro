@@ -3,21 +3,30 @@ import Layout from "../layouts/Layout.astro";
 
 export const prerender = true;
 ---
+
 <Layout title="404 • Wrong Portal" description="Not Found">
-  <main class="max-w-xl text-center p-6">
-    <div class="mockup-window border bg-white mt-6">
+  <main class="max-w-xl p-6 text-center">
+    <div class="mockup-window mt-6 border bg-white">
       <div class="bg-base-200 px-6 py-10">
         <h1 class="text-6xl font-black">404</h1>
-        <p class="mt-4 text-lg">Portal miscalibrated. The void says “try again”.</p>
+        <p class="mt-4 text-lg">
+          Portal miscalibrated. The void says “try again”.
+        </p>
         <p class="mt-1 text-sm opacity-70">Pick a stable timeline below.</p>
         <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
           <a href="/shikanime/" class="btn btn-primary">@Shikanime</a>
-          <a href="/william.phetsinorath/" class="btn btn-primary">@William.Phetsinorath</a>
-          <a href="https://shikanime.studio" class="btn btn-outline">Main Site</a>
+          <a href="/william.phetsinorath/" class="btn btn-primary"
+            >@William.Phetsinorath</a
+          >
+          <a href="https://shikanime.studio" class="btn btn-outline"
+            >Main Site</a
+          >
         </div>
       </div>
     </div>
-    <div class="mt-6 flex items-center justify-center gap-2 text-xs opacity-60 text-white">
+    <div
+      class="mt-6 flex items-center justify-center gap-2 text-xs text-white opacity-60"
+    >
       <span>Error code: 404</span>
       <span>•</span>
       <span>Not Found</span>

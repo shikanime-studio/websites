@@ -1,6 +1,6 @@
 ---
 import "@fontsource-variable/inter";
-import "../assets/app.css";
+import "../assets/global.css";
 import Hero from "../components/Hero.astro";
 import Footer from "../components/Footer.astro";
 import IntroSection from "../components/IntroSection.astro";
@@ -30,6 +30,7 @@ export const prerender = true;
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
       function gtag() {
+        // eslint-disable-next-line prefer-rest-params
         dataLayer.push(arguments);
       }
       gtag("js", new Date());
