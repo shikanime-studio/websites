@@ -1,6 +1,6 @@
 ---
 import "@fontsource-variable/inter";
-import "../assets/app.css";
+import "../assets/global.css";
 
 interface Props {
   title?: string;
@@ -20,8 +20,8 @@ interface Props {
       src="https://www.googletagmanager.com/gtag/js?id=G-YZBXJ1P5JM"></script>
     <script type="text/partytown">
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
+      function gtag(...args) {
+        window.dataLayer.push(args);
       }
       gtag("js", new Date());
 
