@@ -50,13 +50,6 @@
             opentofu.enable = true;
             javascript.enable = true;
           };
-          treefmt.config = {
-            programs = {
-              taplo.enable = true;
-              terraform.enable = true;
-              xmllint.enable = true;
-            };
-          };
         };
       };
       systems = [

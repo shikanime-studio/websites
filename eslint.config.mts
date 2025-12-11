@@ -16,8 +16,6 @@ export default defineConfig(
   globalIgnores([
     "**/.astro",
     "**/.devenv",
-    "**/.env*",
-    "**/.trae",
     "**/*.d.ts",
     "**/dist",
     "**/package-lock.json",
