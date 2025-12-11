@@ -43,7 +43,7 @@ jobs:
         if: (github.event.pull_request.user.login == 'dependabot[bot]' || github.event.pull_request.user.login == 'yorha-operator-6o[bot]') && !(startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head'))
         run: gh pr comment "$PR_HTML_URL" --body .land | pr
 name: Integration
-"on":
+'on':
   pull_request:
     branches:
       - main
