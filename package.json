@@ -30,7 +30,8 @@
   "name": "@shikanime/websites",
   "scripts": {
     "format": "prettier --write .",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "test": "vitest"
   },
   "workspaces": [
     "packages/links",
