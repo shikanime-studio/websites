@@ -45,6 +45,7 @@
           ];
           gitignore.content = [
             ".astro"
+            ".wrangler"
           ];
           languages = {
             opentofu.enable = true;
