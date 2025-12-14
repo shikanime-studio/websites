@@ -94,10 +94,25 @@
     },
     "cachix": {
       "inputs": {
-        "devenv": ["automata", "devenv"],
-        "flake-compat": ["automata", "devenv", "flake-compat"],
-        "git-hooks": ["automata", "devenv", "git-hooks"],
-        "nixpkgs": ["automata", "devenv", "nixpkgs"]
+        "devenv": [
+          "automata",
+          "devenv"
+        ],
+        "flake-compat": [
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
+        "git-hooks": [
+          "automata",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -116,10 +131,25 @@
     },
     "cachix_10": {
       "inputs": {
-        "devenv": ["devlib", "devenv"],
-        "flake-compat": ["devlib", "devenv", "flake-compat"],
-        "git-hooks": ["devlib", "devenv", "git-hooks"],
-        "nixpkgs": ["devlib", "devenv", "nixpkgs"]
+        "devenv": [
+          "devlib",
+          "devenv"
+        ],
+        "flake-compat": [
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
+        "git-hooks": [
+          "devlib",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -138,7 +168,12 @@
     },
     "cachix_2": {
       "inputs": {
-        "devenv": ["automata", "devlib", "automata", "devenv"],
+        "devenv": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv"
+        ],
         "flake-compat": [
           "automata",
           "devlib",
@@ -146,8 +181,20 @@
           "devenv",
           "flake-compat"
         ],
-        "git-hooks": ["automata", "devlib", "automata", "devenv", "git-hooks"],
-        "nixpkgs": ["automata", "devlib", "automata", "devenv", "nixpkgs"]
+        "git-hooks": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -166,7 +213,13 @@
     },
     "cachix_3": {
       "inputs": {
-        "devenv": ["automata", "devlib", "automata", "devlib", "devenv"],
+        "devenv": [
+          "automata",
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv"
+        ],
         "flake-compat": [
           "automata",
           "devlib",
@@ -209,10 +262,29 @@
     },
     "cachix_4": {
       "inputs": {
-        "devenv": ["automata", "devlib", "devenv"],
-        "flake-compat": ["automata", "devlib", "devenv", "flake-compat"],
-        "git-hooks": ["automata", "devlib", "devenv", "git-hooks"],
-        "nixpkgs": ["automata", "devlib", "devenv", "nixpkgs"]
+        "devenv": [
+          "automata",
+          "devlib",
+          "devenv"
+        ],
+        "flake-compat": [
+          "automata",
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
+        "git-hooks": [
+          "automata",
+          "devlib",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -231,10 +303,21 @@
     },
     "cachix_5": {
       "inputs": {
-        "devenv": ["devenv"],
-        "flake-compat": ["devenv", "flake-compat"],
-        "git-hooks": ["devenv", "git-hooks"],
-        "nixpkgs": ["devenv", "nixpkgs"]
+        "devenv": [
+          "devenv"
+        ],
+        "flake-compat": [
+          "devenv",
+          "flake-compat"
+        ],
+        "git-hooks": [
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -253,10 +336,29 @@
     },
     "cachix_6": {
       "inputs": {
-        "devenv": ["devlib", "automata", "devenv"],
-        "flake-compat": ["devlib", "automata", "devenv", "flake-compat"],
-        "git-hooks": ["devlib", "automata", "devenv", "git-hooks"],
-        "nixpkgs": ["devlib", "automata", "devenv", "nixpkgs"]
+        "devenv": [
+          "devlib",
+          "automata",
+          "devenv"
+        ],
+        "flake-compat": [
+          "devlib",
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
+        "git-hooks": [
+          "devlib",
+          "automata",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -275,7 +377,13 @@
     },
     "cachix_7": {
       "inputs": {
-        "devenv": ["devlib", "automata", "devlib", "automata", "devenv"],
+        "devenv": [
+          "devlib",
+          "automata",
+          "devlib",
+          "automata",
+          "devenv"
+        ],
         "flake-compat": [
           "devlib",
           "automata",
@@ -371,7 +479,12 @@
     },
     "cachix_9": {
       "inputs": {
-        "devenv": ["devlib", "automata", "devlib", "devenv"],
+        "devenv": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv"
+        ],
         "flake-compat": [
           "devlib",
           "automata",
@@ -379,8 +492,20 @@
           "devenv",
           "flake-compat"
         ],
-        "git-hooks": ["devlib", "automata", "devlib", "devenv", "git-hooks"],
-        "nixpkgs": ["devlib", "automata", "devlib", "devenv", "nixpkgs"]
+        "git-hooks": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760971495,
@@ -522,11 +647,11 @@
         "nixpkgs": "nixpkgs_17"
       },
       "locked": {
-        "lastModified": 1765288076,
-        "narHash": "sha256-ypfX5OKoE6PYk7XbTBjxT2ST8Uonn4lKnj+dbAsbA1g=",
+        "lastModified": 1765663102,
+        "narHash": "sha256-b8g4tSlMMlkd+/rxW5PZYQ3ZinHGX9/GjyhD5NJQ6U4=",
         "owner": "cachix",
         "repo": "devenv",
-        "rev": "93c055af1e8fcac49251f1b2e1c57f78620ad351",
+        "rev": "2858d76996ef35d7c65843f278f5739d8e9014fc",
         "type": "github"
       },
       "original": {
@@ -682,11 +807,11 @@
         "treefmt-nix": "treefmt-nix_9"
       },
       "locked": {
-        "lastModified": 1765464094,
-        "narHash": "sha256-Uh9xrkLnQQ3GaNssAesyGEw5s3PeGaLgFju4QaFy7xQ=",
+        "lastModified": 1765632330,
+        "narHash": "sha256-wCLpK5Ig2SAJSQXXhJ+x5DQRJ+PUuIzq+LQjsjWwXbM=",
         "owner": "shikanime-studio",
         "repo": "devlib",
-        "rev": "11d6a928e499f82391594cd9eb263eb0bf2e6c5f",
+        "rev": "39c089ac8f6f229b767fe14b0fa3d02b46ae860c",
         "type": "github"
       },
       "original": {
@@ -1062,7 +1187,11 @@
     },
     "flake-parts": {
       "inputs": {
-        "nixpkgs-lib": ["automata", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1080,7 +1209,12 @@
     },
     "flake-parts_10": {
       "inputs": {
-        "nixpkgs-lib": ["devlib", "automata", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1185,7 +1319,13 @@
     },
     "flake-parts_15": {
       "inputs": {
-        "nixpkgs-lib": ["devlib", "automata", "devlib", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1239,7 +1379,11 @@
     },
     "flake-parts_18": {
       "inputs": {
-        "nixpkgs-lib": ["devlib", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1275,7 +1419,13 @@
     },
     "flake-parts_2": {
       "inputs": {
-        "nixpkgs-lib": ["automata", "devlib", "automata", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1296,11 +1446,11 @@
         "nixpkgs-lib": "nixpkgs-lib_10"
       },
       "locked": {
-        "lastModified": 1763759067,
-        "narHash": "sha256-LlLt2Jo/gMNYAwOgdRQBrsRoOz7BPRkzvNaI/fzXi2Q=",
+        "lastModified": 1765495779,
+        "narHash": "sha256-MhA7wmo/7uogLxiewwRRmIax70g6q1U/YemqTGoFHlM=",
         "owner": "hercules-ci",
         "repo": "flake-parts",
-        "rev": "2cccadc7357c0ba201788ae99c4dfa90728ef5e0",
+        "rev": "5635c32d666a59ec9a55cab87e898889869f7b71",
         "type": "github"
       },
       "original": {
@@ -1372,7 +1522,12 @@
     },
     "flake-parts_6": {
       "inputs": {
-        "nixpkgs-lib": ["automata", "devlib", "devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1426,7 +1581,10 @@
     },
     "flake-parts_9": {
       "inputs": {
-        "nixpkgs-lib": ["devenv", "nixpkgs"]
+        "nixpkgs-lib": [
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760948891,
@@ -1444,9 +1602,17 @@
     },
     "git-hooks": {
       "inputs": {
-        "flake-compat": ["automata", "devenv", "flake-compat"],
+        "flake-compat": [
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
         "gitignore": "gitignore",
-        "nixpkgs": ["automata", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1464,9 +1630,19 @@
     },
     "git-hooks_10": {
       "inputs": {
-        "flake-compat": ["devlib", "automata", "devenv", "flake-compat"],
+        "flake-compat": [
+          "devlib",
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
         "gitignore": "gitignore_10",
-        "nixpkgs": ["devlib", "automata", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1602,7 +1778,13 @@
           "flake-compat"
         ],
         "gitignore": "gitignore_15",
-        "nixpkgs": ["devlib", "automata", "devlib", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1660,9 +1842,17 @@
     },
     "git-hooks_18": {
       "inputs": {
-        "flake-compat": ["devlib", "devenv", "flake-compat"],
+        "flake-compat": [
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
         "gitignore": "gitignore_18",
-        "nixpkgs": ["devlib", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1708,7 +1898,13 @@
           "flake-compat"
         ],
         "gitignore": "gitignore_2",
-        "nixpkgs": ["automata", "devlib", "automata", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1731,11 +1927,11 @@
         "nixpkgs": "nixpkgs_38"
       },
       "locked": {
-        "lastModified": 1765016596,
-        "narHash": "sha256-rhSqPNxDVow7OQKi4qS5H8Au0P4S3AYbawBSmJNUtBQ=",
+        "lastModified": 1765464257,
+        "narHash": "sha256-dixPWKiHzh80PtD0aLuxYNQ0xP+843dfXG/yM3OzaYQ=",
         "owner": "cachix",
         "repo": "git-hooks.nix",
-        "rev": "548fc44fca28a5e81c5d6b846e555e6b9c2a5a3c",
+        "rev": "09e45f2598e1a8499c3594fe11ec2943f34fe509",
         "type": "github"
       },
       "original": {
@@ -1820,9 +2016,19 @@
     },
     "git-hooks_6": {
       "inputs": {
-        "flake-compat": ["automata", "devlib", "devenv", "flake-compat"],
+        "flake-compat": [
+          "automata",
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
         "gitignore": "gitignore_6",
-        "nixpkgs": ["automata", "devlib", "devenv", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1880,9 +2086,15 @@
     },
     "git-hooks_9": {
       "inputs": {
-        "flake-compat": ["devenv", "flake-compat"],
+        "flake-compat": [
+          "devenv",
+          "flake-compat"
+        ],
         "gitignore": "gitignore_9",
-        "nixpkgs": ["devenv", "nixpkgs"]
+        "nixpkgs": [
+          "devenv",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1760663237,
@@ -1900,7 +2112,12 @@
     },
     "gitignore": {
       "inputs": {
-        "nixpkgs": ["automata", "devenv", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devenv",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -1918,7 +2135,13 @@
     },
     "gitignore_10": {
       "inputs": {
-        "nixpkgs": ["devlib", "automata", "devenv", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devenv",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2065,7 +2288,13 @@
     },
     "gitignore_16": {
       "inputs": {
-        "nixpkgs": ["devlib", "automata", "devlib", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devlib",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2083,7 +2312,12 @@
     },
     "gitignore_17": {
       "inputs": {
-        "nixpkgs": ["devlib", "automata", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2101,7 +2335,12 @@
     },
     "gitignore_18": {
       "inputs": {
-        "nixpkgs": ["devlib", "devenv", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "devenv",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2119,7 +2358,11 @@
     },
     "gitignore_19": {
       "inputs": {
-        "nixpkgs": ["devlib", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devlib",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2162,7 +2405,10 @@
     },
     "gitignore_20": {
       "inputs": {
-        "nixpkgs": ["git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2231,7 +2477,13 @@
     },
     "gitignore_5": {
       "inputs": {
-        "nixpkgs": ["automata", "devlib", "automata", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "automata",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2249,7 +2501,13 @@
     },
     "gitignore_6": {
       "inputs": {
-        "nixpkgs": ["automata", "devlib", "devenv", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "devenv",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2267,7 +2525,12 @@
     },
     "gitignore_7": {
       "inputs": {
-        "nixpkgs": ["automata", "devlib", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2285,7 +2548,11 @@
     },
     "gitignore_8": {
       "inputs": {
-        "nixpkgs": ["automata", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "automata",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2303,7 +2570,11 @@
     },
     "gitignore_9": {
       "inputs": {
-        "nixpkgs": ["devenv", "git-hooks", "nixpkgs"]
+        "nixpkgs": [
+          "devenv",
+          "git-hooks",
+          "nixpkgs"
+        ]
       },
       "locked": {
         "lastModified": 1709087332,
@@ -2321,12 +2592,34 @@
     },
     "nix": {
       "inputs": {
-        "flake-compat": ["automata", "devenv", "flake-compat"],
-        "flake-parts": ["automata", "devenv", "flake-parts"],
-        "git-hooks-nix": ["automata", "devenv", "git-hooks"],
-        "nixpkgs": ["automata", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["automata", "devenv"],
-        "nixpkgs-regression": ["automata", "devenv"]
+        "flake-compat": [
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
+        "flake-parts": [
+          "automata",
+          "devenv",
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "automata",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "automata",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "automata",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2345,12 +2638,34 @@
     },
     "nix_10": {
       "inputs": {
-        "flake-compat": ["devlib", "devenv", "flake-compat"],
-        "flake-parts": ["devlib", "devenv", "flake-parts"],
-        "git-hooks-nix": ["devlib", "devenv", "git-hooks"],
-        "nixpkgs": ["devlib", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["devlib", "devenv"],
-        "nixpkgs-regression": ["devlib", "devenv"]
+        "flake-compat": [
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
+        "flake-parts": [
+          "devlib",
+          "devenv",
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "devlib",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "devlib",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "devlib",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2390,9 +2705,25 @@
           "devenv",
           "git-hooks"
         ],
-        "nixpkgs": ["automata", "devlib", "automata", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["automata", "devlib", "automata", "devenv"],
-        "nixpkgs-regression": ["automata", "devlib", "automata", "devenv"]
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "automata",
+          "devlib",
+          "automata",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2443,7 +2774,13 @@
           "devenv",
           "nixpkgs"
         ],
-        "nixpkgs-23-11": ["automata", "devlib", "automata", "devlib", "devenv"],
+        "nixpkgs-23-11": [
+          "automata",
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv"
+        ],
         "nixpkgs-regression": [
           "automata",
           "devlib",
@@ -2469,12 +2806,40 @@
     },
     "nix_4": {
       "inputs": {
-        "flake-compat": ["automata", "devlib", "devenv", "flake-compat"],
-        "flake-parts": ["automata", "devlib", "devenv", "flake-parts"],
-        "git-hooks-nix": ["automata", "devlib", "devenv", "git-hooks"],
-        "nixpkgs": ["automata", "devlib", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["automata", "devlib", "devenv"],
-        "nixpkgs-regression": ["automata", "devlib", "devenv"]
+        "flake-compat": [
+          "automata",
+          "devlib",
+          "devenv",
+          "flake-compat"
+        ],
+        "flake-parts": [
+          "automata",
+          "devlib",
+          "devenv",
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "automata",
+          "devlib",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "automata",
+          "devlib",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "automata",
+          "devlib",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2493,12 +2858,28 @@
     },
     "nix_5": {
       "inputs": {
-        "flake-compat": ["devenv", "flake-compat"],
-        "flake-parts": ["devenv", "flake-parts"],
-        "git-hooks-nix": ["devenv", "git-hooks"],
-        "nixpkgs": ["devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["devenv"],
-        "nixpkgs-regression": ["devenv"]
+        "flake-compat": [
+          "devenv",
+          "flake-compat"
+        ],
+        "flake-parts": [
+          "devenv",
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2517,12 +2898,40 @@
     },
     "nix_6": {
       "inputs": {
-        "flake-compat": ["devlib", "automata", "devenv", "flake-compat"],
-        "flake-parts": ["devlib", "automata", "devenv", "flake-parts"],
-        "git-hooks-nix": ["devlib", "automata", "devenv", "git-hooks"],
-        "nixpkgs": ["devlib", "automata", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["devlib", "automata", "devenv"],
-        "nixpkgs-regression": ["devlib", "automata", "devenv"]
+        "flake-compat": [
+          "devlib",
+          "automata",
+          "devenv",
+          "flake-compat"
+        ],
+        "flake-parts": [
+          "devlib",
+          "automata",
+          "devenv",
+          "flake-parts"
+        ],
+        "git-hooks-nix": [
+          "devlib",
+          "automata",
+          "devenv",
+          "git-hooks"
+        ],
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "devlib",
+          "automata",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "devlib",
+          "automata",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -2573,7 +2982,13 @@
           "devenv",
           "nixpkgs"
         ],
-        "nixpkgs-23-11": ["devlib", "automata", "devlib", "automata", "devenv"],
+        "nixpkgs-23-11": [
+          "devlib",
+          "automata",
+          "devlib",
+          "automata",
+          "devenv"
+        ],
         "nixpkgs-regression": [
           "devlib",
           "automata",
@@ -2690,9 +3105,25 @@
           "devenv",
           "git-hooks"
         ],
-        "nixpkgs": ["devlib", "automata", "devlib", "devenv", "nixpkgs"],
-        "nixpkgs-23-11": ["devlib", "automata", "devlib", "devenv"],
-        "nixpkgs-regression": ["devlib", "automata", "devlib", "devenv"]
+        "nixpkgs": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv",
+          "nixpkgs"
+        ],
+        "nixpkgs-23-11": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv"
+        ],
+        "nixpkgs-regression": [
+          "devlib",
+          "automata",
+          "devlib",
+          "devenv"
+        ]
       },
       "locked": {
         "lastModified": 1761648602,
@@ -3357,11 +3788,11 @@
     },
     "nixpkgs_38": {
       "locked": {
-        "lastModified": 1759417375,
-        "narHash": "sha256-O7eHcgkQXJNygY6AypkF9tFhsoDQjpNEojw3eFs73Ow=",
+        "lastModified": 1764947035,
+        "narHash": "sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx+J2FfutM7T9w=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "dc704e6102e76aad573f63b74c742cd96f8f1e6c",
+        "rev": "a672be65651c80d3f592a89b3945466584a22069",
         "type": "github"
       },
       "original": {
@@ -3373,11 +3804,11 @@
     },
     "nixpkgs_39": {
       "locked": {
-        "lastModified": 1764947035,
-        "narHash": "sha256-EYHSjVM4Ox4lvCXUMiKKs2vETUSL5mx+J2FfutM7T9w=",
+        "lastModified": 1765457389,
+        "narHash": "sha256-ddhDtNYvleZeYF7g7TRFSmuQuZh7HCgqstg5YBGwo5s=",
         "owner": "nixos",
         "repo": "nixpkgs",
-        "rev": "a672be65651c80d3f592a89b3945466584a22069",
+        "rev": "f997fa0f94fb1ce55bccb97f60d41412ae8fde4c",
         "type": "github"
       },
       "original": {
