@@ -19,10 +19,14 @@ export default function LoginButton() {
   };
 
   return (
-    <button className="btn btn-sm" onClick={handleSignIn} disabled={isLoading}>
+    <button
+      className="btn btn-outline rounded-full font-bold px-4"
+      onClick={handleSignIn}
+      disabled={isLoading}
+    >
       {isLoading ? (
         <>
-          <span className="loading loading-spinner loading-sm"></span>
+          <span className="loading loading-spinner loading-xs"></span>
           SIGNING IN
         </>
       ) : (

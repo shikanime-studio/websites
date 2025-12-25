@@ -17,12 +17,12 @@ export function getItemsByMaker(
     .select({
       id: items.id,
       name: items.name,
-      price: items.priceRange,
+      priceRange: items.priceRange,
       imageUrls: items.imageUrls,
       category: items.category,
       maker: {
         name: makers.name,
-        avatar: makers.avatarImageUrl,
+        avatarImageUrl: makers.avatarImageUrl,
       },
     })
     .from(items)
@@ -39,12 +39,12 @@ export function getItemsByCharacterName(
     .select({
       id: items.id,
       name: items.name,
-      price: items.priceRange,
+      priceRange: items.priceRange,
       imageUrls: items.imageUrls,
       category: items.category,
       maker: {
         name: makers.name,
-        avatar: makers.avatarImageUrl,
+        avatarImageUrl: makers.avatarImageUrl,
       },
     })
     .from(items)
@@ -63,12 +63,12 @@ export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
     .select({
       id: items.id,
       name: items.name,
-      price: items.priceRange,
+      priceRange: items.priceRange,
       imageUrls: items.imageUrls,
       category: items.category,
       maker: {
         name: makers.name,
-        avatar: makers.avatarImageUrl,
+        avatarImageUrl: makers.avatarImageUrl,
       },
     })
     .from(items)
@@ -82,13 +82,13 @@ export function getItem(db: DrizzleD1Database<Schema>, id: number) {
       id: items.id,
       name: items.name,
       description: items.description,
-      price: items.priceRange,
+      priceRange: items.priceRange,
       imageUrls: items.imageUrls,
       category: items.category,
       maker: {
         id: makers.id,
         name: makers.name,
-        avatar: makers.avatarImageUrl,
+        avatarImageUrl: makers.avatarImageUrl,
       },
     })
     .from(items)
@@ -102,12 +102,13 @@ export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
     .select({
       id: items.id,
       name: items.name,
-      price: items.priceRange,
+      priceRange: items.priceRange,
       imageUrls: items.imageUrls,
       category: items.category,
+      availabilityStatus: items.availabilityStatus,
       maker: {
         name: makers.name,
-        avatar: makers.avatarImageUrl,
+        avatarImageUrl: makers.avatarImageUrl,
       },
     })
     .from(items)

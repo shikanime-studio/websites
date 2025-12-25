@@ -1,0 +1,41 @@
+---
+const { currentLocale } = Astro;
+const { pathname } = Astro.url;
+
+function getPathForLocale(locale: string) {
+  // Simple logic: if current path starts with /fr, replace with / for en.
+  // If / (en), prepend /fr for fr.
+  // This needs to be more robust for subpaths.
+  
+  if (locale === 'fr') {
+    if (pathname.startsWith('/fr')) return pathname;
+    return `/fr${pathname === '/' ? '' : pathname}`;
+  } else {
+    // target 'en'
+    if (pathname.startsWith('/fr')) {
+      const newPath = pathname.replace('/fr', '');
+      return newPath || '/';
+    }
+    return pathname;
+  }
+}
+---
+
+<div class="dropdown dropdown-end">
+  <div tabindex="0" role="button" class="btn btn-ghost btn-sm rounded-full">
+    {currentLocale === 'fr' ? '🇫🇷' : '🇺🇸'}
+    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down opacity-50"><path d="m6 9 6 6 6-6"/></svg>
+  </div>
+  <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow bg-base-100 rounded-box w-32 mt-2">
+    <li>
+      <a href={getPathForLocale('en')} class={currentLocale === 'en' ? 'active font-bold' : ''}>
+        🇺🇸 English
+      </a>
+    </li>
+    <li>
+      <a href={getPathForLocale('fr')} class={currentLocale === 'fr' ? 'active font-bold' : ''}>
+        🇫🇷 Français
+      </a>
+    </li>
+  </ul>
+</div>

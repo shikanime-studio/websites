@@ -1,0 +1,60 @@
+---
+import FluidLayout from "../layouts/FluidLayout.astro";
+import { Image } from "astro:assets";
+import workInProgress from "../assets/work-in-progress.gif";
+---
+
+<FluidLayout>
+  <div class="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+    <!-- Decorative Background Elements -->
+    <div class="absolute top-20 left-10 w-20 h-20 bg-primary/10 rounded-full blur-xl animate-pulse"></div>
+    <div class="absolute bottom-20 right-10 w-32 h-32 bg-secondary/20 rounded-full blur-xl"></div>
+
+    <div class="container mx-auto px-4 z-10">
+      <div class="flex flex-col lg:flex-row items-center justify-center gap-12 lg:gap-8 max-w-5xl mx-auto">
+
+        <!-- Text Content -->
+        <div class="flex-1 text-center lg:text-left space-y-6">
+            <div class="relative inline-block">
+                <h1 class="text-8xl md:text-9xl font-black text-primary tracking-tighter transform -rotate-2">
+                    404
+                </h1>
+                <span class="absolute -top-4 -right-8 bg-black text-white text-sm font-bold px-3 py-1 rounded-full transform rotate-12 shadow-md">
+                    OOF!
+                </span>
+            </div>
+
+            <h2 class="text-3xl md:text-4xl font-black text-gray-900 tracking-tight leading-tight">
+                This page is currently<br/>
+                <span class="text-primary underline decoration-wavy decoration-2 underline-offset-4">in the oven</span>.
+            </h2>
+
+            <p class="text-lg text-gray-600 font-medium max-w-md mx-auto lg:mx-0 leading-relaxed">
+                We couldn't find the page you're looking for. It might have been eaten by our mascot or it's still being baked!
+            </p>
+
+            <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-4">
+                <a href="/" class="btn btn-primary rounded-full px-8 font-bold text-white shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    Take Me Home
+                </a>
+                <a href="/merchs" class="btn btn-outline btn-primary rounded-full px-8 font-bold hover:bg-primary hover:text-white transition-all duration-300 bg-white">
+                    Explore Merch
+                </a>
+            </div>
+        </div>
+
+        <!-- Image Content -->
+        <div class="flex-1 flex justify-center lg:justify-start">
+            <div class="w-64 md:w-80 rounded-2xl overflow-hidden shadow-lg transform rotate-3 hover:rotate-0 transition-all duration-500">
+                <Image
+                    src={workInProgress}
+                    alt="Work in progress"
+                    class="w-full h-auto object-cover"
+                />
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</FluidLayout>

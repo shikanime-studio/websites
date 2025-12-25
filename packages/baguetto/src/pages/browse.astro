@@ -1,201 +1,110 @@
 ---
-import DashboardLayout from "../layouts/DashboardLayout.astro";
-import { getItemsWithMakers } from "../lib/items";
+import FluidLayout from "../layouts/FluidLayout.astro";
+import { Gallery } from "../components/Gallery";
+import { PageTabs } from "../components/PageTabs";
+import { FilterBar } from "../components/FilterBar";
+import type { CardProps } from "../components/Card";
 import { createD1Database } from "../lib/db";
+import { getItemsWithMakers, getAllMakers, getAllEvents, getAllCharacters } from "../lib/items";
 
 const db = createD1Database(Astro.locals);
-const items = await getItemsWithMakers(db);
+const type = Astro.url.searchParams.get('type') || 'merchs';
 
-const getPlaceholder = (text: string) => `https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(text)}`;
+let galleryItems: CardProps[] = [];
+let categories: string[] = [];
+let activeTab = type;
 
-// Mock filter options (these would come from API in real implementation)
-const categories = ['Stickers', 'Prints', 'Mugs', 'Keychains', 'Apparel', 'Accessories'];
-const priceRanges = ['Under $10', '$10-25', '$25-50', '$50-100', 'Over $100'];
+// Fetch data based on type
+switch (type) {
+  case 'artists':
+    const makers = await getAllMakers(db);
+    galleryItems = makers.map(maker => ({
+      id: maker.id,
+      title: maker.name,
+      images: maker.avatarImageUrl ? [maker.avatarImageUrl] : [`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(maker.name)}`],
+      artist: {
+        name: maker.name,
+        avatar: maker.avatarImageUrl || '',
+        verified: true,
+      },
+      rating: 5.0,
+      reviewCount: Math.floor(Math.random() * 50) + 1,
+      status: "OPEN",
+      href: `/artists/${maker.id}` // We might want to keep individual profile pages or route them differently
+    }));
+    categories = ['Digital Art', 'Traditional Art', 'Merchandise', 'Commissions'];
+    break;
+
+  case 'events':
+    const events = await getAllEvents(db);
+    galleryItems = events.map(event => ({
+      id: event.id,
+      title: event.name,
+      images: event.imageUrl ? [event.imageUrl] : [`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(event.name)}`],
+      artist: {
+        name: event.location || 'Online',
+        avatar: '',
+        verified: true,
+      },
+      rating: 5.0,
+      reviewCount: Math.floor(Math.random() * 100) + 10,
+      status: "OPEN",
+      price: new Date(event.startsAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }),
+      href: `/events/${event.id}`
+    }));
+    categories = ['Conventions', 'Pop-up Shops', 'Artist Alleys', 'Online Events'];
+    break;
+
+  case 'characters':
+    const characters = await getAllCharacters(db);
+    galleryItems = characters.map(char => ({
+      id: char.id,
+      title: char.name,
+      images: char.imageUrl ? [char.imageUrl] : [`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(char.name)}`],
+      artist: {
+        name: 'Original Character', // Default since we don't have source info
+        avatar: '',
+        verified: true,
+      },
+      rating: 5.0,
+      reviewCount: Math.floor(Math.random() * 200) + 10,
+      status: "OPEN",
+      price: undefined,
+      href: `/characters/${char.id}`
+    }));
+    categories = ['Anime', 'Games', 'Manga', 'Original'];
+    break;
+
+  case 'merchs':
+  default:
+    const items = await getItemsWithMakers(db);
+    galleryItems = items.map(item => ({
+      id: item.id,
+      title: item.name,
+      images: item.imageUrls || [],
+      artist: {
+        name: item.maker?.name || 'Unknown',
+        avatar: item.maker?.avatarImageUrl || '',
+      },
+      rating: 5,
+      reviewCount: 12,
+      status: "OPEN",
+      price: item.priceRange || undefined,
+      href: `/items/${item.id}`
+    }));
+    categories = ['Stickers', 'Prints', 'Mugs', 'Keychains', 'Apparel', 'Accessories'];
+    break;
+}
 ---
 
-<DashboardLayout>
-  <div class="container mx-auto px-4 py-8">
-    <!-- Page Header -->
-    <div class="text-center mb-12">
-      <h1 class="text-4xl font-extrabold text-gray-900 mb-4">Find Character Merch</h1>
-      <p class="text-lg text-gray-600">Discover stickers, prints, mugs and more from your favorite artists at conventions and popup shops.</p>
+<FluidLayout>
+  <div class="container mx-auto px-4 py-6">
+    <PageTabs activeTab={activeTab} client:load />
+
+    <div class="mb-8">
+      <FilterBar categories={categories} client:load />
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-8">
-      <!-- Filters -->
-      <div class="lg:w-1/4">
-        <div class="bg-white rounded-lg shadow-md p-6 sticky top-24 border border-rose-100">
-          <h3 class="text-xl font-semibold mb-6 text-gray-900">Filters</h3>
-
-          <!-- Search -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-            <input
-              type="text"
-              id="searchInput"
-              placeholder="Search items..."
-              class="input input-bordered w-full focus:input-primary"
-            />
-          </div>
-
-          <!-- Category Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Category</label>
-            <div class="space-y-2">
-              {categories.map(category => (
-                <label class="flex items-center">
-                  <input
-                    type="checkbox"
-                    class="checkbox checkbox-primary checkbox-sm mr-2"
-                    data-filter="category"
-                    value={category}
-                  />
-                  <span class="text-sm text-gray-700">{category}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <!-- Price Range Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
-            <select class="select select-bordered w-full focus:select-primary">
-              <option value="">All Prices</option>
-              {priceRanges.map(range => (
-                <option value={range}>{range}</option>
-              ))}
-            </select>
-          </div>
-
-          <!-- Availability Filter -->
-          <div class="mb-6">
-            <label class="block text-sm font-medium text-gray-700 mb-2">Availability</label>
-            <div class="space-y-2">
-              <label class="flex items-center">
-                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" checked />
-                <span class="text-sm text-gray-700">Available</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" />
-                <span class="text-sm text-gray-700">Upcoming</span>
-              </label>
-              <label class="flex items-center">
-                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm mr-2" />
-                <span class="text-sm text-gray-700">Limited</span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Filter Actions -->
-          <div class="space-y-2">
-            <button class="btn btn-primary w-full text-white">Apply Filters</button>
-            <button class="btn btn-outline btn-primary w-full">Clear All</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Items Grid -->
-      <div class="lg:w-3/4">
-        <!-- Results Header -->
-        <div class="flex justify-between items-center mb-6">
-          <p class="text-gray-600">
-            Showing {items.length} items
-          </p>
-          <div class="flex items-center gap-4">
-            <label class="text-sm text-gray-600">Sort by:</label>
-            <select class="select select-bordered select-sm focus:select-primary">
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-              <option value="name">Name A-Z</option>
-              <option value="price-low">Price: Low to High</option>
-              <option value="price-high">Price: High to Low</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Items Grid -->
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {items.map((item) => (
-            <div class="card bg-white shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02] border border-gray-100">
-              <figure class="px-3 pt-3">
-                <div class="relative w-full aspect-square overflow-hidden rounded-xl bg-gray-100">
-                  <img
-                    src={item.imageUrls && Array.isArray(item.imageUrls) && item.imageUrls.length > 0
-                      ? item.imageUrls[0]
-                      : getPlaceholder(item.name)}
-                    alt={item.name}
-                    class="h-full w-full object-cover transition duration-300 hover:scale-105"
-                  />
-                </div>
-              </figure>
-              <div class="card-body p-4">
-                <h3 class="card-title text-base font-bold text-gray-900 line-clamp-1">{item.name}</h3>
-
-                <div class="flex items-center gap-2 mb-2">
-                  {item.maker && (
-                    <div class="flex items-center gap-1 text-xs text-gray-500">
-                      <div class="avatar placeholder">
-                        <div class="w-5 rounded-full bg-neutral-focus text-neutral-content">
-                          {item.maker.avatar ? (
-                            <img src={item.maker.avatar} alt={item.maker.name} />
-                          ) : (
-                            <span>{item.maker.name.charAt(0)}</span>
-                          )}
-                        </div>
-                      </div>
-                      <span class="truncate max-w-[120px]">{item.maker.name}</span>
-                    </div>
-                  )}
-                </div>
-
-                <!-- Item Tags -->
-                <div class="flex flex-wrap gap-1 mb-3">
-                  {item.category && (
-                    <span class="badge badge-primary badge-outline badge-xs">{item.category}</span>
-                  )}
-                  {item.price && (
-                    <span class="badge badge-ghost badge-xs font-semibold">{item.price}</span>
-                  )}
-                </div>
-
-                <!-- Item Actions -->
-                <div class="card-actions justify-between items-center mt-auto">
-                   <div class="flex items-center gap-2">
-                    <button class="btn btn-circle btn-xs btn-ghost hover:text-rose-600" title="Save for later">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </button>
-                  </div>
-                  <a href={`/items/${item.id}`} class="btn btn-primary btn-sm text-white rounded-full px-4">
-                    Details
-                  </a>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <!-- Empty State -->
-        {items.length === 0 && (
-          <div class="text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300">
-            <div class="text-6xl mb-4">🔍</div>
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">No items found</h3>
-            <p class="text-gray-500">Try adjusting your filters or search terms</p>
-          </div>
-        )}
-
-        <!-- Pagination -->
-        <div class="flex justify-center mt-12">
-          <div class="join">
-            <button class="join-item btn btn-sm">1</button>
-            <button class="join-item btn btn-sm btn-active btn-primary text-white">2</button>
-            <button class="join-item btn btn-sm">3</button>
-            <button class="join-item btn btn-sm">...</button>
-            <button class="join-item btn btn-sm">Next</button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <Gallery items={galleryItems} client:load />
   </div>
-</DashboardLayout>
+</FluidLayout>

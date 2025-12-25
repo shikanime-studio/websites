@@ -8,6 +8,13 @@ import tidewave from "tidewave/vite-plugin";
 
 // https://astro.build/config
 export default defineConfig({
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "fr"],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
     partytown({
       config: {

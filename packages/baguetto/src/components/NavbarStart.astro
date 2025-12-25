@@ -3,26 +3,22 @@ import { Image } from "astro:assets";
 import Logo from "../assets/logo.png";
 ---
 
-<div class="flex items-center justify-start gap-8">
-  <a href="/" class="ml-2 flex items-center">
-    <Image
-      src={Logo}
-      class="mr-3 h-8 w-auto"
-      alt="Baguetto Logo"
-      width="32"
-      height="32"
-    />
-    <span
-      class="self-center whitespace-nowrap text-xl font-bold tracking-tight text-gray-900 sm:text-2xl"
-    >
+<div class="flex items-center">
+  <div class="flex items-center gap-6">
+    <a href="/" class="flex items-center gap-2 text-xl font-bold tracking-tight text-base-content hover:opacity-80 transition-opacity">
+      <Image
+        src={Logo}
+        class="h-8 w-auto"
+        alt="Baguetto Logo"
+        width="32"
+        height="32"
+      />
       Baguetto
-    </span>
-  </a>
+    </a>
 
-  <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-700">
-    <a href="/browse" class="hover:text-rose-600">Browse</a>
-    <a href="/events" class="hover:text-rose-600">Events</a>
-    <a href="/artists" class="hover:text-rose-600">Artists</a>
-    <a href="/characters" class="hover:text-rose-600">Characters</a>
+    <div class="hidden md:flex items-center gap-1">
+      <a href="/following" class="btn btn-ghost rounded-full font-medium text-base-content/70 hover:text-base-content hover:bg-base-200">Following</a>
+      <a href="/browse" class="btn btn-ghost rounded-full font-medium text-base-content/70 hover:text-base-content hover:bg-base-200">Browse</a>
+    </div>
   </div>
 </div>

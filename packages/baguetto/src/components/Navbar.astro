@@ -13,12 +13,8 @@ interface Props {
 }
 ---
 
-<nav class="fixed top-0 z-50 w-full border-b border-base-200 bg-base-100">
-  <div class="px-3 py-3 lg:px-5 lg:pl-3">
-    <div class="flex items-center justify-between">
-      <NavbarStart />
-      <NavbarCenter />
-      <NavbarEnd session={Astro.props.session} />
-    </div>
-  </div>
+<nav class="navbar fixed top-0 z-50 w-full bg-base-100 px-4 lg:px-6 justify-between">
+  <NavbarStart />
+  <NavbarCenter />
+  <NavbarEnd session={Astro.props.session} />
 </nav>

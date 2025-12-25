@@ -1,5 +1,5 @@
 ---
-import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import FluidLayout from "../../layouts/FluidLayout.astro";
 import { getCharacter, getItemsByCharacterName } from "../../lib/items";
 import { createD1Database } from "../../lib/db";
 
@@ -22,7 +22,7 @@ const getImage = (char: any) => char.imageUrl || `https://placehold.co/600x400/f
 const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `https://placehold.co/400x400/ffe4e6/be123c?text=${encodeURIComponent(item.name)}`;
 ---
 
-<DashboardLayout>
+<FluidLayout>
   <div class="bg-rose-50 border-b border-rose-100">
     <div class="container mx-auto px-4 py-12">
       <div class="flex flex-col md:flex-row gap-8 items-center">
@@ -82,13 +82,13 @@ const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `ht
             </figure>
             <div class="card-body p-4">
               <h3 class="font-bold text-gray-900 group-hover:text-rose-600 transition-colors">{item.name}</h3>
-              <p class="text-rose-600 font-medium">{item.price || "Price TBD"}</p>
+              <p class="text-rose-600 font-medium">{item.priceRange || "Price TBD"}</p>
               <div class="flex justify-between items-center mt-2">
                 <span class="text-xs text-gray-500 capitalize">{item.category || "Merch"}</span>
                 {item.maker && (
                   <div class="flex items-center gap-1 text-xs text-gray-500">
                     <div class="w-4 h-4 rounded-full overflow-hidden">
-                       <img src={item.maker.avatar || `https://placehold.co/50x50/ffe4e6/be123c?text=${item.maker.name[0]}`} alt={item.maker.name} class="w-full h-full object-cover" />
+                       <img src={item.maker.avatarImageUrl || `https://placehold.co/50x50/ffe4e6/be123c?text=${item.maker.name[0]}`} alt={item.maker.name} class="w-full h-full object-cover" />
                     </div>
                     <span>{item.maker.name}</span>
                   </div>
@@ -103,8 +103,8 @@ const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `ht
         <div class="text-6xl mb-4">🛍️</div>
         <h3 class="text-xl font-semibold text-gray-700 mb-2">No items listed yet</h3>
         <p class="text-gray-500">Artists haven't tagged any merchandise for {character.name} yet.</p>
-        <a href="/browse" class="btn btn-primary mt-6 text-white">Browse All Items</a>
+        <a href="/merchs" class="btn btn-primary mt-6 text-white">Browse All Items</a>
       </div>
     )}
   </div>
-</DashboardLayout>
+</FluidLayout>

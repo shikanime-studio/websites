@@ -13,6 +13,10 @@ const session = await auth.api.getSession({
 });
 ---
 
-<Navbar session={session} />
-<slot />
-<Footer />
+<div class="flex flex-col min-h-screen">
+  <Navbar session={session} />
+  <main class="grow pt-16">
+    <slot />
+  </main>
+  <Footer />
+</div>
