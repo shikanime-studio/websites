@@ -1,13 +1,13 @@
 import {
   type Schema,
-  items,
-  makers,
-  events,
   characters,
+  events,
+  items,
   licenses,
+  makers,
 } from "../schema";
-import { DrizzleD1Database } from "drizzle-orm/d1";
-import { eq, desc, gt, like, or } from "drizzle-orm";
+import { desc, eq, gt, like, or } from "drizzle-orm";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 export function getItemsByMaker(
   db: DrizzleD1Database<Schema>,
@@ -23,6 +23,8 @@ export function getItemsByMaker(
       maker: {
         name: makers.name,
         avatarImageUrl: makers.avatarImageUrl,
+        avatarImageWidth: makers.avatarImageWidth,
+        avatarImageHeight: makers.avatarImageHeight,
       },
     })
     .from(items)
@@ -45,6 +47,8 @@ export function getItemsByCharacterName(
       maker: {
         name: makers.name,
         avatarImageUrl: makers.avatarImageUrl,
+        avatarImageWidth: makers.avatarImageWidth,
+        avatarImageHeight: makers.avatarImageHeight,
       },
     })
     .from(items)
@@ -69,6 +73,8 @@ export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
       maker: {
         name: makers.name,
         avatarImageUrl: makers.avatarImageUrl,
+        avatarImageWidth: makers.avatarImageWidth,
+        avatarImageHeight: makers.avatarImageHeight,
       },
     })
     .from(items)
@@ -89,6 +95,8 @@ export function getItem(db: DrizzleD1Database<Schema>, id: number) {
         id: makers.id,
         name: makers.name,
         avatarImageUrl: makers.avatarImageUrl,
+        avatarImageWidth: makers.avatarImageWidth,
+        avatarImageHeight: makers.avatarImageHeight,
       },
     })
     .from(items)
@@ -109,6 +117,8 @@ export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
       maker: {
         name: makers.name,
         avatarImageUrl: makers.avatarImageUrl,
+        avatarImageWidth: makers.avatarImageWidth,
+        avatarImageHeight: makers.avatarImageHeight,
       },
     })
     .from(items)

@@ -1,48 +1,8 @@
 ---
+import { Following as FollowingComponent } from "../components/Following";
 import FluidLayout from "../layouts/FluidLayout.astro";
-import { Gallery } from "../components/Gallery";
-import { PageTabs } from "../components/PageTabs";
-import { FilterBar } from "../components/FilterBar";
-import { createD1Database } from "../lib/db";
-import { getItemsWithMakers } from "../lib/items";
-
-const db = createD1Database(Astro.locals);
-const items = await getItemsWithMakers(db);
-
-const galleryItems = items.map(item => ({
-  id: item.id,
-  title: item.name,
-  images: item.imageUrls || [],
-  artist: {
-    name: item.maker?.name || 'Unknown',
-    avatar: item.maker?.avatarImageUrl || '',
-  },
-  rating: 5,
-  reviewCount: 12,
-  status: "OPEN" as const,
-  price: item.priceRange || undefined,
-  href: `/items/${item.id}`
-}));
-
-const categories = ['All', 'Artists', 'Circles', 'Events'];
 ---
 
 <FluidLayout>
-  <div class="space-y-4">
-    <div class="container mx-auto px-4 py-6">
-      <PageTabs activeTab="following" client:load />
-
-      <div class="mt-6">
-        <FilterBar
-          categories={categories}
-          client:load
-        />
-      </div>
-
-      <div class="mt-6">
-        <h2 class="text-2xl font-bold mb-6">Following Feed</h2>
-        <Gallery items={galleryItems} client:load />
-      </div>
-    </div>
-  </div>
+  <FollowingComponent client:load />
 </FluidLayout>

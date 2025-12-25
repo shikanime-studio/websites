@@ -1,10 +1,16 @@
 import { relations, sql } from "drizzle-orm";
 import {
   integer,
+  primaryKey,
   sqliteTable,
   text,
-  primaryKey,
 } from "drizzle-orm/sqlite-core";
+
+export const categories = sqliteTable("categories", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull().unique(),
+  icon: text("icon").notNull(),
+});
 
 export const users = sqliteTable("user", {
   id: text("id").primaryKey(),
@@ -152,6 +158,8 @@ export const events = sqliteTable("events", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   imageUrl: text("image_url").notNull(),
+  imageWidth: integer("image_width").notNull().default(0),
+  imageHeight: integer("image_height").notNull().default(0),
   startsAt: text("starts_at").notNull(),
   endsAt: text("ends_at").notNull(),
   location: text("location"),
@@ -190,6 +198,8 @@ export const licenses = sqliteTable("licenses", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   imageUrl: text("image_url").notNull(),
+  imageWidth: integer("image_width").notNull().default(0),
+  imageHeight: integer("image_height").notNull().default(0),
 });
 
 export const licenseRelations = relations(licenses, ({ many }) => ({
@@ -201,6 +211,8 @@ export const characters = sqliteTable("characters", {
   name: text("name").notNull(),
   description: text("description").notNull(),
   imageUrl: text("image_url").notNull(),
+  imageWidth: integer("image_width").notNull().default(0),
+  imageHeight: integer("image_height").notNull().default(0),
 });
 
 export const makers = sqliteTable("makers", {
@@ -208,7 +220,11 @@ export const makers = sqliteTable("makers", {
   name: text("name").notNull(),
   description: text("description"),
   avatarImageUrl: text("avatar_image_url"),
+  avatarImageWidth: integer("avatar_image_width").default(0),
+  avatarImageHeight: integer("avatar_image_height").default(0),
   coverImageUrl: text("cover_image_url"),
+  coverImageWidth: integer("cover_image_width").default(0),
+  coverImageHeight: integer("cover_image_height").default(0),
   links: text("links", { mode: "json" })
     .notNull()
     .$type<string[]>()
@@ -223,7 +239,7 @@ export const items = sqliteTable("items", {
   description: text("description"),
   imageUrls: text("image_urls", { mode: "json" })
     .notNull()
-    .$type<string[]>()
+    .$type<{ src: string; width: number; height: number }[]>()
     .default(sql`'[]'`),
   category: text("category"),
   priceRange: text("price_range"),
@@ -330,7 +346,8 @@ export const charactersRelations = relations(characters, ({ many }) => ({
   licenses: many(licenses),
 }));
 
-export type Schema = {
+export interface Schema extends Record<string, unknown> {
+  categories: typeof categories;
   users: typeof users;
   sessions: typeof sessions;
   accounts: typeof accounts;
@@ -359,4 +376,4 @@ export type Schema = {
   itemsRelations: typeof itemsRelations;
   eventsRelations: typeof eventsRelations;
   charactersRelations: typeof charactersRelations;
-};
+}

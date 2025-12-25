@@ -1,8 +1,8 @@
+import * as schema from "../schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap } from "better-auth/plugins";
-import { DrizzleD1Database } from "drizzle-orm/d1";
-import * as schema from "../schema";
+import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 export const createAuth = (db: DrizzleD1Database<typeof schema>) =>
   betterAuth({
@@ -16,10 +16,15 @@ export const createAuth = (db: DrizzleD1Database<typeof schema>) =>
     }),
     plugins: [oneTap()],
     socialProviders: {
-      google: {
-        clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID!,
-        clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET!,
-      },
+      ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID &&
+      import.meta.env.GOOGLE_CLIENT_SECRET
+        ? {
+            google: {
+              clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
+              clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET,
+            },
+          }
+        : {}),
     },
     advanced: {
       ipAddress: {

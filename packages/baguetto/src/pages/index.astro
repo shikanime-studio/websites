@@ -1,149 +1,209 @@
 ---
 import FluidLayout from "../layouts/FluidLayout.astro";
-import { Card } from "../components/Card";
-import { Gallery } from "../components/Gallery";
-import { Featured } from "../components/Featured";
-import { PageTabs } from "../components/PageTabs";
-import { FilterBar } from "../components/FilterBar";
-import Hero from "../components/Hero.astro";
-
-import { eq, desc } from "drizzle-orm";
 import { createD1Database } from "../lib/db";
-import { getRecentItems } from "../lib/items";
-import * as schema from "../schema";
+import { categories as categoriesTable } from "../schema";
 
 const db = createD1Database(Astro.locals);
-
-const items = await getRecentItems(db, 20);
-
-const showcases = items.map((item) => ({
-  id: item.id,
-  title: item.name,
-  images: item.imageUrls || [],
-  artist: {
-    name: item.maker?.name || "Unknown Artist",
-    avatar:
-      item.maker?.avatarImageUrl ||
-      "https://placehold.co/100x100/ccc/FFF?text=?",
-    verified: true,
-    level: Math.floor(Math.random() * 20) + 1,
-  },
-  rating: parseFloat((Math.random() * 2 + 3).toFixed(1)),
-  reviewCount: Math.floor(Math.random() * 100),
-  status: (item.availabilityStatus?.toUpperCase() === "AVAILABLE"
-    ? "OPEN"
-    : "CLOSED") as "OPEN" | "CLOSED" | "WAITLIST",
-  price: item.priceRange || undefined,
-}));
-
-const categories = [
-  { name: "Stickers", icon: "🏷️", color: "bg-pink-100 text-pink-600" },
-  { name: "Prints", icon: "🎨", color: "bg-purple-100 text-purple-600" },
-  { name: "Mugs", icon: "☕", color: "bg-cyan-100 text-cyan-600" },
-  { name: "Keychains", icon: "🔑", color: "bg-blue-100 text-blue-600" },
-  { name: "Apparel", icon: "👕", color: "bg-rose-100 text-rose-600" },
-  { name: "Plushies", icon: "🧸", color: "bg-amber-100 text-amber-600" },
-  { name: "Pins", icon: "📍", color: "bg-indigo-100 text-indigo-600" },
-  { name: "Doujinshi", icon: "📚", color: "bg-green-100 text-green-600" },
-];
-
-const showcaseTabs = [
-  { label: 'Featured Artists & Circles', href: '/browse?type=artists', active: true },
-  { label: 'Merch Findings', href: '/browse?type=merchs', active: false },
-];
-
-const showcaseFilters = ["Random", "Latest", "AI", "Gamemakers", "Verified", "Base price", "Availability"];
+const categories = await db.select().from(categoriesTable);
+const featuredCategories = categories.slice(0, 8);
 ---
 
 <FluidLayout>
-  <div class="space-y-4">
-    <Hero />
-
-    <!-- Commission Services -->
-    <div>
-      <!-- Categories Scroll -->
-      <div class="carousel carousel-center w-full gap-3 pb-4 scrollbar-hide mb-8">
-        {categories.map(cat => (
-          <div class="carousel-item">
-            <button class="flex items-center gap-2 whitespace-nowrap rounded-full bg-white border border-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition">
-              <span class={`flex h-6 w-6 items-center justify-center rounded-full ${cat.color} text-xs`}>
-                {cat.icon}
-              </span>
-              {cat.name}
-            </button>
+  <div class="mx-auto w-full max-w-6xl">
+    <div class="flex flex-col gap-12 py-10 sm:gap-16 sm:py-14">
+      <section>
+        <div class="mx-auto flex max-w-2xl flex-col gap-7">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge badge-primary badge-lg font-black">Beta</span>
+            <span class="badge badge-ghost badge-lg font-bold">Artist Alley</span>
+            <span class="badge badge-ghost badge-lg font-bold">Conventions</span>
+            <span class="badge badge-ghost badge-lg font-bold">Merch</span>
           </div>
-        ))}
-        <div class="carousel-item">
-          <button class="flex items-center gap-2 whitespace-nowrap rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition">
-            All categories &rarr;
-          </button>
+
+          <div class="flex flex-col gap-5">
+            <h1 class="text-5xl leading-[1.05] font-black tracking-tight text-gray-900 sm:text-6xl">
+              Find merch and artists—without the algorithm.
+            </h1>
+
+            <p class="max-w-xl text-lg leading-relaxed font-semibold text-gray-700 sm:text-xl">
+              Explore what creators are making, follow your favorites, and plan
+              your next con haul.
+            </p>
+          </div>
+
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <a
+              href="/explore"
+              class="btn btn-primary btn-lg rounded-full px-10 font-black"
+            >
+              Explore
+            </a>
+            <a
+              href="#for-artists"
+              class="btn btn-ghost btn-lg rounded-full px-10 font-black"
+            >
+              For artists
+            </a>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Featured Section -->
-      <Featured
-        client:visible
-        title="Discover Trending Merch"
-        items={showcases}
-        viewAllLink="/browse?type=merchs"
-      />
-    </div>
-
-    <!-- Upcoming Conventions Section -->
-    <div>
-       <div class="flex items-center justify-between mb-6">
-        <h2 class="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <span class="text-primary font-bold">NEXT</span> Upcoming Conventions
-        </h2>
-        <a href="/browse?type=events" class="text-sm font-bold text-gray-900 hover:underline">View all events &rarr;</a>
-      </div>
-
-       <div class="carousel carousel-center w-full gap-3 pb-4 scrollbar-hide mb-6">
-         {["USA", "Europe", "Japan", "Asia", "Online", "Popup Shops"].map(cat => (
-             <div class="carousel-item">
-                 <button class="whitespace-nowrap rounded-full border border-gray-200 bg-white px-3 py-1.5 text-xs font-bold text-gray-600 hover:bg-gray-50">
-                     {cat}
-                 </button>
-             </div>
-         ))}
-       </div>
-
-        <!-- Convention Cards Grid -->
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-             {["Comiket 103", "Anime Expo", "Japan Expo", "DoKomi", "TwitchCon", "Vket"].map((name, i) => (
-                 <div class="group cursor-pointer">
-                    <div class="aspect-square rounded-xl bg-gray-100 overflow-hidden mb-2 relative">
-                        <img src={`https://placehold.co/400x400/eee/999?text=${name.replace(' ', '+')}`} class="w-full h-full object-cover group-hover:scale-105 transition duration-300" />
-                        <div class="absolute top-2 left-2 bg-white/90 p-1 rounded-full shadow-sm">
-                             <div class="w-4 h-4 rounded-full bg-red-500"></div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-1 mb-1">
-                        <span class="text-xs text-gray-500">Dec 2025</span>
-                    </div>
-                    <h4 class="font-bold text-sm text-gray-900 truncate">{name}</h4>
-                    <div class="text-xs font-bold text-gray-900 mt-1">Tokyo, Japan</div>
-                 </div>
-             ))}
+      <section>
+        <div class="border-base-200 bg-base-100 flex flex-col gap-4 rounded-3xl border-2 p-6 shadow-sm">
+          <div class="flex items-center justify-between gap-4">
+            <h2 class="text-base font-black text-gray-900">Browse by category</h2>
+            <a href="/explore" class="text-primary text-sm font-black">
+              Explore all →
+            </a>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            {
+              featuredCategories.length > 0 ? (
+                featuredCategories.map((cat) => (
+                  <a
+                    href="/explore"
+                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    <span class="text-base leading-none">{cat.icon}</span>
+                    {cat.name}
+                  </a>
+                ))
+              ) : (
+                <>
+                  <a
+                    href="/explore"
+                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    <span class="text-base leading-none">🏷️</span>
+                    Stickers
+                  </a>
+                  <a
+                    href="/explore"
+                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    <span class="text-base leading-none">🎨</span>
+                    Prints
+                  </a>
+                  <a
+                    href="/explore"
+                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    <span class="text-base leading-none">☕</span>
+                    Mugs
+                  </a>
+                </>
+              )
+            }
+          </div>
         </div>
-    </div>
+      </section>
 
-    <!-- Showcases Section -->
-    <div>
-        <PageTabs tabs={showcaseTabs} client:load />
+      <section>
+        <div class="grid items-start gap-6 lg:grid-cols-2 lg:gap-10">
+          <div class="border-base-200 bg-base-100 flex flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm">
+            <div class="flex flex-col gap-3">
+              <div class="text-sm font-black text-gray-600">How it works</div>
+              <h2 class="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+                Explore → Follow → Plan
+              </h2>
+              <p class="max-w-xl text-lg font-semibold text-gray-600">
+                Lightweight browsing for fans, and a clean home for artists.
+              </p>
+            </div>
 
-        <div class="mb-6">
-          <FilterBar categories={showcaseFilters} client:load />
+            <div class="grid gap-3 sm:grid-cols-3">
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div class="text-primary text-2xl font-black">①</div>
+                <div class="text-base font-black text-gray-900">Explore</div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Merch, artists, and events in one place.
+                </div>
+              </div>
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div class="text-secondary text-2xl font-black">②</div>
+                <div class="text-base font-black text-gray-900">Follow</div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Save creators and characters you want to revisit.
+                </div>
+              </div>
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div class="text-accent text-2xl font-black">③</div>
+                <div class="text-base font-black text-gray-900">Plan</div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Find what’s available and where to get it.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section
+            id="for-artists"
+            class="border-base-200 bg-base-100 scroll-mt-24 flex flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm"
+          >
+            <div class="flex flex-col gap-3">
+              <div class="text-sm font-black text-gray-600">
+                For artists & circles
+              </div>
+              <h2 class="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">
+                Be discoverable without feeding an algorithm.
+              </h2>
+              <p class="max-w-xl text-lg font-semibold text-gray-600">
+                Make it easy for fans to find you, your merch, and your con
+                schedule.
+              </p>
+            </div>
+
+            <div class="grid gap-3">
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div class="text-sm font-black text-gray-900">
+                  Artist-friendly
+                </div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Simple pages that load fast and read well.
+                </div>
+              </div>
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div class="text-sm font-black text-gray-900">
+                  Convention-first
+                </div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Built for real booths, weekends, and small drops.
+                </div>
+              </div>
+              <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div class="text-sm font-black text-gray-900">
+                  Built in public
+                </div>
+                <div class="text-sm font-semibold text-gray-600">
+                  Tell us what would actually make this useful for you.
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
+      </section>
 
-        <Gallery
-            client:visible
-            items={[
-                ...showcases,
-                ...showcases.slice(0, 2).map(card => ({ ...card, id: `${card.id}-duplicate` }))
-            ]}
-        />
+      <section>
+        <div class="border-base-300 bg-base-100 flex flex-col gap-6 rounded-3xl border-2 border-dashed p-8">
+          <div class="flex flex-col gap-3">
+            <h2 class="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">
+              Ready to browse?
+            </h2>
+            <p class="max-w-2xl text-lg font-semibold text-gray-600">
+              Start in Explore, then come back when you need something new to
+              draw, buy, or find for your next con.
+            </p>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <a
+              href="/explore"
+              class="btn btn-primary btn-lg rounded-full px-10 font-black"
+            >
+              Go to Explore
+            </a>
+          </div>
+        </div>
+      </section>
     </div>
-
   </div>
 </FluidLayout>

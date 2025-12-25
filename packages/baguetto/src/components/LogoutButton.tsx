@@ -1,5 +1,5 @@
-import { BsBoxArrowRight } from "react-icons/bs";
 import { authClient } from "../lib/auth-client";
+import { BsBoxArrowRight } from "react-icons/bs";
 
 export default function LogoutButton() {
   const handleLogout = async () => {
@@ -13,7 +13,7 @@ export default function LogoutButton() {
   };
 
   return (
-    <button onClick={handleLogout} className="btn btn-ghost">
+    <button type="button" onClick={handleLogout} className="btn btn-ghost">
       <BsBoxArrowRight />
       Logout
     </button>

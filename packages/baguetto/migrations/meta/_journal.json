@@ -5,50 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1738015531948,
-      "tag": "0000_flaky_cannonball",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1752227291266,
-      "tag": "0001_silent_grim_reaper",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1765208003604,
-      "tag": "0002_motionless_rhino",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1765209028360,
-      "tag": "0003_nice_drax",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1765212099646,
-      "tag": "0004_optimal_star_brand",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1765212223364,
-      "tag": "0005_living_ultron",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1765215085054,
-      "tag": "0006_many_unus",
+      "when": 1766692386514,
+      "tag": "0000_nostalgic_tusk",
       "breakpoints": true
     }
   ]

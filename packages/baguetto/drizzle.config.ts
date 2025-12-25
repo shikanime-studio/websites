@@ -1,8 +1,9 @@
-import { defineConfig } from "drizzle-kit";
 import type { Config } from "drizzle-kit";
+import { defineConfig } from "drizzle-kit";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { z } from "zod";
 
 const config = {
   out: "./migrations",
@@ -31,15 +32,22 @@ function createLocalConfig() {
   } satisfies Config;
 }
 
+const remoteEnvSchema = z.object({
+  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+  CLOUDFLARE_DATABASE_ID: z.string().min(1),
+  CLOUDFLARE_API_TOKEN: z.string().min(1),
+});
+
 function createRemoteConfig() {
+  const env = remoteEnvSchema.parse(process.env);
   return {
     ...config,
     schema: "./src/schema.ts",
     driver: "d1-http",
     dbCredentials: {
-      accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
-      databaseId: process.env.CLOUDFLARE_DATABASE_ID!,
-      token: process.env.CLOUDFLARE_API_TOKEN!,
+      accountId: env.CLOUDFLARE_ACCOUNT_ID,
+      databaseId: env.CLOUDFLARE_DATABASE_ID,
+      token: env.CLOUDFLARE_API_TOKEN,
     },
   } satisfies Config;
 }
