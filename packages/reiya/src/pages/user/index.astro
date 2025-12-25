@@ -4,7 +4,7 @@ import { createAuth } from "../../lib/auth";
 import { createD1Database } from "../../lib/db";
 
 const db = createD1Database(Astro.locals);
-const auth = createAuth(db);
+const auth = createAuth(db, Astro.locals);
 
 const session = await auth.api.getSession({
   headers: Astro.request.headers,

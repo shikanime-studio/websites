@@ -13,10 +13,6 @@ directory = "./dist"
 [observability]
 enabled = true
 
-[vars]
-PUBLIC_GOOGLE_CLIENT_ID = "978776659802-e1ltf0b87jfmifqm8vfr2mi79vus7g8u.apps.googleusercontent.com"
-BETTER_AUTH_URL = "https://reiya.shikanime.studio"
-
 [[d1_databases]]
 binding = "DB"
 database_name = "reiya"

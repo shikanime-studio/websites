@@ -4,7 +4,10 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap } from "better-auth/plugins";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
-export const createAuth = (db: DrizzleD1Database<typeof schema>) =>
+export const createAuth = (
+  db: DrizzleD1Database<typeof schema>,
+  locals: App.Locals,
+) =>
   betterAuth({
     database: drizzleAdapter(db, {
       provider: "sqlite",
@@ -15,13 +18,14 @@ export const createAuth = (db: DrizzleD1Database<typeof schema>) =>
       usePlural: true,
     }),
     plugins: [oneTap()],
+    secret: locals.runtime.env.BETTER_AUTH_SECRET,
     socialProviders: {
       ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID &&
-      import.meta.env.GOOGLE_CLIENT_SECRET
+      locals.runtime.env.GOOGLE_CLIENT_SECRET
         ? {
             google: {
               clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
-              clientSecret: import.meta.env.GOOGLE_CLIENT_SECRET,
+              clientSecret: locals.runtime.env.GOOGLE_CLIENT_SECRET,
             },
           }
         : {}),
