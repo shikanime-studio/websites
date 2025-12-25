@@ -1,8 +1,10 @@
-compatibility_date = "2025-03-25"
+compatibility_date = "2025-12-25"
 compatibility_flags = ["nodejs_compat"]
 main = "./dist/_worker.js/index.js"
 name = "reiya"
-routes = [{ pattern = "reiya.shikanime.studio", custom_domain = true }]
+routes = [
+  { pattern = "reiya.shikanime.studio", custom_domain = true, zone_name = "shikanime.studio" },
+]
 
 [assets]
 binding = "ASSETS"
@@ -10,6 +12,10 @@ directory = "./dist"
 
 [observability]
 enabled = true
+
+[vars]
+PUBLIC_GOOGLE_CLIENT_ID = "978776659802-e1ltf0b87jfmifqm8vfr2mi79vus7g8u.apps.googleusercontent.com"
+BETTER_AUTH_URL = "https://reiya.shikanime.studio"
 
 [[d1_databases]]
 binding = "DB"
