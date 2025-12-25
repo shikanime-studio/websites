@@ -1,8 +1,8 @@
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat"]
 main = "./dist/_worker.js/index.js"
-name = "baguetto"
-routes = [{ pattern = "baguetto.shikanime.studio", custom_domain = true }]
+name = "reiya"
+routes = [{ pattern = "reiya.shikanime.studio", custom_domain = true }]
 
 [assets]
 binding = "ASSETS"
@@ -13,5 +13,5 @@ enabled = true
 
 [[d1_databases]]
 binding = "DB"
-database_name = "baguetto"
+database_name = "reiya"
 database_id = "b54e4fee-4cda-40d6-ac03-783546714a6d"

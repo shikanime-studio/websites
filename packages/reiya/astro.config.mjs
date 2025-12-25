@@ -37,7 +37,7 @@ export default defineConfig({
       "Referrer-Policy": "no-referrer-when-downgrade",
     },
   },
-  site: "https://baguetto.shikanime.studio",
+  site: "https://reiya.shikanime.studio",
   vite: {
     plugins: [tailwindcss(), tidewave()],
     resolve: {
