@@ -1,0 +1,78 @@
+---
+import Hero from "../components/Hero.astro";
+import {
+  ExploreArtists,
+  ExploreCharacters,
+  ExploreConventions,
+  ExploreFeatured,
+  ExploreSectionExpend,
+  ExploreSectionHead,
+  ExploreSectionTitle,
+  ExploreShowcase,
+} from "../components/Explore";
+import FluidLayout from "../layouts/FluidLayout.astro";
+import { createD1Database } from "../lib/db";
+import { categories as categoriesTable } from "../schema";
+
+const db = createD1Database(Astro.locals);
+const categories = await db.select().from(categoriesTable);
+---
+
+<FluidLayout>
+  <div class="flex flex-col gap-6">
+    <Hero />
+
+    <div class="carousel carousel-center scrollbar-hide w-full gap-3">
+      {
+        categories.map((cat) => (
+          <div class="carousel-item">
+            <button class="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-700 shadow-sm transition hover:bg-gray-50">
+              <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs text-gray-600">
+                {cat.icon}
+              </span>
+              {cat.name}
+            </button>
+          </div>
+        ))
+      }
+      <div class="carousel-item">
+        <button
+          class="flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-700 transition hover:bg-gray-200"
+        >
+          All categories &rarr;
+        </button>
+      </div>
+    </div>
+
+    <ExploreFeatured client:load>
+      <ExploreSectionHead>
+        <ExploreSectionTitle>Discover Trending Merch</ExploreSectionTitle>
+        <ExploreSectionExpend href="/explore?type=merchs">
+          View all
+        </ExploreSectionExpend>
+      </ExploreSectionHead>
+    </ExploreFeatured>
+
+    <ExploreArtists client:load>
+      <ExploreSectionHead>
+        <ExploreSectionTitle>Featured Artists & Circles</ExploreSectionTitle>
+        <ExploreSectionExpend href="/explore?type=artists">
+          View all
+        </ExploreSectionExpend>
+      </ExploreSectionHead>
+    </ExploreArtists>
+
+    <ExploreCharacters client:load>
+      <ExploreSectionHead>
+        <ExploreSectionTitle>Popular Characters</ExploreSectionTitle>
+        <ExploreSectionExpend href="/explore?type=characters">
+          View all
+        </ExploreSectionExpend>
+      </ExploreSectionHead>
+    </ExploreCharacters>
+
+    <ExploreConventions client:load />
+
+    <ExploreShowcase client:load />
+  </div>
+</FluidLayout>

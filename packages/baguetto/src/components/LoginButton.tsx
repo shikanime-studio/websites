@@ -1,40 +1,54 @@
-import { BsGoogle } from "react-icons/bs";
-import { useState } from "react";
 import { authClient } from "../lib/auth-client";
+import { AlertError } from "./AlertError";
+import { Toast } from "./Toast";
+import { useState } from "react";
+import { BsGoogle } from "react-icons/bs";
 
 export default function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSignIn = async () => {
     setIsLoading(true);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/",
-      });
-    } catch (error) {
-      console.error(error);
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/",
+    });
+    if (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "An error occurred during sign in",
+      );
       setIsLoading(false);
     }
   };
 
   return (
-    <button
-      className="btn btn-outline rounded-full font-bold px-4"
-      onClick={handleSignIn}
-      disabled={isLoading}
-    >
-      {isLoading ? (
-        <>
-          <span className="loading loading-spinner loading-xs"></span>
-          SIGNING IN
-        </>
-      ) : (
-        <>
-          <BsGoogle />
-          SIGN IN
-        </>
+    <>
+      <button
+        type="button"
+        className="btn rounded-full px-4 font-bold"
+        onClick={handleSignIn}
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <>
+            <span className="loading loading-spinner loading-xs"></span>
+            SIGNING IN
+          </>
+        ) : (
+          <>
+            <BsGoogle />
+            SIGN IN
+          </>
+        )}
+      </button>
+      {error && (
+        <Toast duration={3000} onClose={() => setError(null)}>
+          <AlertError onClose={() => setError(null)}>{error}</AlertError>
+        </Toast>
       )}
-    </button>
+    </>
   );
 }

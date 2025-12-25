@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import * as schema from "./schema";
+import { faker } from "@faker-js/faker";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
-import { seed, reset } from "drizzle-seed";
-import { faker } from "@faker-js/faker";
+import { reset, seed } from "drizzle-seed";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
-import * as schema from "./schema";
 
 // Helper to find local D1 database file
 function getLocalDbPath() {
@@ -42,6 +43,20 @@ async function main() {
   await reset(db as any, schema);
 
   console.log("🌱 Seeding database...");
+
+  // Static categories data
+  const categoriesData = [
+    { name: "Stickers", icon: "🏷️" },
+    { name: "Prints", icon: "🎨" },
+    { name: "Mugs", icon: "☕" },
+    { name: "Keychains", icon: "🔑" },
+    { name: "Apparel", icon: "👕" },
+    { name: "Plushies", icon: "🧸" },
+    { name: "Pins", icon: "📍" },
+    { name: "Doujinshi", icon: "📚" },
+  ];
+
+  await db.insert(schema.categories).values(categoriesData);
 
   // Select only the main entity tables for automatic seeding
   // We exclude join tables with composite primary keys to avoid unique constraint violations
@@ -110,11 +125,18 @@ async function main() {
     () => {
       const numImages = faker.number.int({ min: 1, max: 4 });
       return faker.helpers.multiple(
-        () =>
-          faker.image.urlPicsumPhotos({
-            width: 400,
-            height: faker.number.int({ min: 300, max: 800 }),
-          }),
+        () => {
+          const width = 400;
+          const height = faker.number.int({ min: 300, max: 800 });
+          return {
+            src: faker.image.urlPicsumPhotos({
+              width,
+              height,
+            }),
+            width,
+            height,
+          };
+        },
         { count: numImages },
       );
     },
@@ -137,7 +159,11 @@ async function main() {
         name: f.companyName(),
         description: f.loremIpsum({ sentencesCount: 2 }),
         avatarImageUrl: f.valuesFromArray({ values: makerAvatars }),
+        avatarImageWidth: f.int({ minValue: 128, maxValue: 128 }),
+        avatarImageHeight: f.int({ minValue: 128, maxValue: 128 }),
         coverImageUrl: f.valuesFromArray({ values: makerCovers }),
+        coverImageWidth: f.int({ minValue: 800, maxValue: 800 }),
+        coverImageHeight: f.int({ minValue: 400, maxValue: 400 }),
         links: f.valuesFromArray({ values: makerLinks as any[] }),
       },
     },
@@ -146,6 +172,8 @@ async function main() {
         name: f.valuesFromArray({ values: licenseNames }),
         description: f.loremIpsum({ sentencesCount: 3 }),
         imageUrl: f.valuesFromArray({ values: licenseImages }),
+        imageWidth: f.int({ minValue: 400, maxValue: 400 }),
+        imageHeight: f.int({ minValue: 400, maxValue: 400 }),
       },
     },
     characters: {
@@ -153,6 +181,8 @@ async function main() {
         name: f.fullName(),
         description: f.loremIpsum({ sentencesCount: 2 }),
         imageUrl: f.valuesFromArray({ values: characterImages }),
+        imageWidth: f.int({ minValue: 300, maxValue: 300 }),
+        imageHeight: f.int({ minValue: 400, maxValue: 400 }),
       },
     },
     events: {
@@ -160,6 +190,8 @@ async function main() {
         name: f.companyName(),
         description: f.loremIpsum({ sentencesCount: 4 }),
         imageUrl: f.valuesFromArray({ values: eventImages }),
+        imageWidth: f.int({ minValue: 800, maxValue: 800 }),
+        imageHeight: f.int({ minValue: 400, maxValue: 400 }),
         location: f.city(),
         websiteUrl: f.valuesFromArray({ values: eventUrls }),
         startsAt: f.date(),

@@ -1,48 +1,55 @@
-import React from 'react';
+import type { FC, ReactNode } from "react";
 
-interface FilterButtonProps {
+export interface FilterButtonProps {
   label: string;
   active?: boolean;
   hasDropdown?: boolean;
   onClick?: () => void;
 }
 
-const FilterButton: React.FC<FilterButtonProps> = ({ label, active, hasDropdown, onClick }) => (
+export const FilterButton: FC<FilterButtonProps> = ({
+  label,
+  active,
+  hasDropdown,
+  onClick,
+}) => (
   <button
+    type="button"
     onClick={onClick}
-    className={`
-      flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all
-      ${active
-        ? 'bg-black text-white hover:bg-gray-800'
-        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-      }
-    `}
+    className={`btn btn-neutral flex items-center gap-2 rounded-full border-none px-4 py-2 text-sm font-medium transition-all ${
+      active
+        ? "text-primary bg-gray-200 font-bold hover:bg-gray-300"
+        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+    } `}
   >
     {label}
     {hasDropdown && (
-      <svg className={`w-4 h-4 ${active ? 'text-white' : 'text-gray-500'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      <svg
+        aria-hidden="true"
+        className={`h-4 w-4 ${active ? "text-primary" : "text-gray-500"}`}
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M19 9l-7 7-7-7"
+        />
       </svg>
     )}
   </button>
 );
 
 interface FilterBarProps {
-  categories?: string[];
-  className?: string;
+  children?: ReactNode;
 }
 
-export const FilterBar: React.FC<FilterBarProps> = ({ categories = [], className = "" }) => {
+export const FilterBar: FC<FilterBarProps> = ({ children }) => {
   return (
-    <div className={`flex gap-3 overflow-x-auto pb-4 scrollbar-hide ${className}`}>
-      <FilterButton label="Category" hasDropdown />
-      <FilterButton label="Licenses" hasDropdown />
-      <FilterButton label="Service options" hasDropdown />
-      <FilterButton label="Price" hasDropdown />
-      <FilterButton label="On sale" />
-      {categories.map((cat) => (
-        <FilterButton key={cat} label={cat} />
-      ))}
+    <div className="scrollbar-hide flex gap-3 overflow-x-auto pb-2">
+      {children}
     </div>
   );
 };
