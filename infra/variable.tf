@@ -14,9 +14,9 @@ variable "projects" {
   type        = map(string)
   description = "Map of Cloudflare Pages projects"
   default = {
-    links    = "links"
+    links = "links"
     reiya = "reiya"
-    www      = "www"
+    www   = "www"
   }
 }
 
