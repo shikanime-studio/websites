@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as schema from "./schema";
+import type { Schema } from "./schema";
 import { faker } from "@faker-js/faker";
-import Database from "better-sqlite3";
-import { drizzle } from "drizzle-orm/better-sqlite3";
 import { reset, seed } from "drizzle-seed";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { z } from "zod";
 
 // Helper to find local D1 database file
 function getLocalDbPath() {
@@ -32,13 +32,123 @@ function getLocalDbPath() {
   return path.join(wranglerDir, sqliteFile);
 }
 
-const dbPath = getLocalDbPath();
-console.log(`Using database at: ${dbPath}`);
+function isRemoteSeed() {
+  return process.argv.includes("--remote") || process.env.REMOTE === "true";
+}
 
-const sqlite = new Database(dbPath);
-const db = drizzle(sqlite, { schema });
+interface RemoteEnv {
+  accountId: string;
+  databaseId: string;
+  apiToken: string;
+}
+
+const remoteEnvSchema = z.object({
+  CLOUDFLARE_ACCOUNT_ID: z.string().min(1),
+  CLOUDFLARE_DATABASE_ID: z.string().min(1),
+  CLOUDFLARE_API_TOKEN: z.string().min(1),
+});
+
+function getRemoteEnv(): RemoteEnv {
+  const parsed = remoteEnvSchema.safeParse(process.env);
+  if (!parsed.success) {
+    throw new Error(
+      "Missing remote D1 env. Set CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_DATABASE_ID, CLOUDFLARE_API_TOKEN.",
+    );
+  }
+
+  return {
+    accountId: parsed.data.CLOUDFLARE_ACCOUNT_ID,
+    databaseId: parsed.data.CLOUDFLARE_DATABASE_ID,
+    apiToken: parsed.data.CLOUDFLARE_API_TOKEN,
+  };
+}
+
+async function createLocalDb() {
+  const dbPath = getLocalDbPath();
+  console.log(`Using local database at: ${dbPath}`);
+
+  const { default: Database } = await import("better-sqlite3");
+  const { drizzle } = await import("drizzle-orm/better-sqlite3");
+
+  const sqlite = new Database(dbPath);
+  return drizzle<Schema>(sqlite, { schema });
+}
+
+async function createRemoteDb() {
+  const env = getRemoteEnv();
+  console.log(
+    `Using remote D1 database at: ${env.accountId}/${env.databaseId} (via Cloudflare API)`,
+  );
+
+  const { drizzle } = await import("drizzle-orm/sqlite-proxy");
+
+  const callD1 = async (
+    endpoint: "query" | "raw",
+    sql: string,
+    params: unknown[],
+  ) => {
+    const url = `https://api.cloudflare.com/client/v4/accounts/${env.accountId}/d1/database/${env.databaseId}/${endpoint}`;
+    const res = await fetch(url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${env.apiToken}`,
+      },
+      body: JSON.stringify({
+        sql,
+        params: params.map((p) => (p === undefined ? null : p)),
+      }),
+    });
+
+    const data = (await res.json()) as any;
+    if (!res.ok || data?.success !== true) {
+      const message =
+        data?.errors?.[0]?.message ??
+        data?.messages?.[0]?.message ??
+        `Request failed with status ${res.status}`;
+      throw new Error(message);
+    }
+
+    return data.result?.[0];
+  };
+
+  const driver = async (
+    sql: string,
+    params: any[],
+    method: "all" | "get" | "values" | "run",
+  ): Promise<{ rows: any[] | any[][] }> => {
+    if (method === "values") {
+      const result = await callD1("raw", sql, params ?? []);
+      return { rows: result?.results?.rows ?? [] };
+    }
+
+    const result = await callD1("query", sql, params ?? []);
+    const rows = (result?.results ?? []) as any[];
+    return { rows: method === "get" ? rows.slice(0, 1) : rows };
+  };
+
+  const batchDriver = async (
+    queries: {
+      sql: string;
+      params: any[];
+      method: "all" | "get" | "values" | "run";
+    }[],
+  ): Promise<{ rows: any[] | any[][] }[]> => {
+    return Promise.all(
+      queries.map((q) => driver(q.sql, q.params ?? [], q.method)),
+    );
+  };
+
+  return drizzle<Schema>(driver, batchDriver, { schema });
+}
+
+async function createDb() {
+  return isRemoteSeed() ? createRemoteDb() : createLocalDb();
+}
 
 async function main() {
+  const db = await createDb();
+
   console.log("🌱 Resetting database...");
   await reset(db as any, schema);
 

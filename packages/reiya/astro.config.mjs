@@ -39,6 +39,9 @@ export default defineConfig({
   },
   site: "https://reiya.shikanime.studio",
   vite: {
+    optimizeDeps: {
+      exclude: ["better-auth"],
+    },
     plugins: [tailwindcss(), tidewave()],
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.

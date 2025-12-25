@@ -4,6 +4,7 @@ import {
   fetchShowcases,
 } from "../lib/api-client";
 import { Featured } from "./Featured";
+import { FilterBar, FilterButton } from "./FilterBar";
 import { Gallery, ShowcaseGalleryContent } from "./Gallery";
 import { QueryProvider } from "./QueryProvider";
 import { Tab, TabContent, TabList } from "./TabList";
@@ -11,7 +12,6 @@ import { useQuery } from "@tanstack/react-query";
 import type { FC, ReactNode } from "react";
 import { Activity } from "react";
 import { FaArrowRight } from "react-icons/fa6";
-import { FilterBar, FilterButton } from "./FilterBar";
 
 interface ExploreSectionProps {
   className?: string;
@@ -33,10 +33,10 @@ export const ExploreSectionTitle: FC<{ children: ReactNode }> = ({
   );
 };
 
-export const ExploreSectionExpend: FC<{ href: string; children: ReactNode }> = ({
-  href,
-  children,
-}) => {
+export const ExploreSectionExpend: FC<{
+  href: string;
+  children: ReactNode;
+}> = ({ href, children }) => {
   return (
     <a
       href={href}
@@ -283,4 +283,3 @@ const ExploreShowcaseContent: FC = () => {
     </TabList>
   );
 };
-
