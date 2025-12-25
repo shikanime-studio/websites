@@ -15,7 +15,7 @@ variable "projects" {
   description = "Map of Cloudflare Pages projects"
   default = {
     links    = "links"
-    baguetto = "baguetto"
+    reiya = "reiya"
     www      = "www"
   }
 }
@@ -31,9 +31,9 @@ variable "dns_records" {
       name    = "links.shikanime.studio"
       project = "links"
     }
-    baguetto = {
-      name    = "baguetto.shikanime.studio"
-      project = "baguetto"
+    reiya = {
+      name    = "reiya.shikanime.studio"
+      project = "reiya"
     }
     www = {
       name    = "shikanime.studio"
@@ -46,6 +46,6 @@ variable "d1s" {
   type        = map(string)
   description = "Map of Cloudflare D1 databases"
   default = {
-    baguetto = "baguetto"
+    reiya = "reiya"
   }
 }

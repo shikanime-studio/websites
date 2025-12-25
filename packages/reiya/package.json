@@ -1,5 +1,5 @@
 {
-  "name": "@shikanime/baguetto",
+  "name": "@shikanime/reiya",
   "version": "2025.01",
   "private": true,
   "type": "module",
@@ -9,7 +9,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "wrangler d1 migrations apply baguetto",
+    "db:migrate": "wrangler d1 migrations apply reiya",
     "db:seed": "tsx src/seed.ts",
     "db:studio": "drizzle-kit studio"
   },
