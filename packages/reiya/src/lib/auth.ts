@@ -19,6 +19,7 @@ export const createAuth = (
     }),
     plugins: [oneTap()],
     secret: locals.runtime.env.BETTER_AUTH_SECRET,
+    baseURL: import.meta.env.SITE,
     socialProviders: {
       ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID &&
       locals.runtime.env.GOOGLE_CLIENT_SECRET
