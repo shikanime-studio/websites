@@ -14,4 +14,4 @@ enabled = true
 [[d1_databases]]
 binding = "DB"
 database_name = "reiya"
-database_id = "b54e4fee-4cda-40d6-ac03-783546714a6d"
+database_id = "7b838da3-58f3-4db0-b4c4-e5e59db90fce"
