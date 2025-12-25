@@ -1,5 +1,5 @@
 ---
-import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import FluidLayout from "../../layouts/FluidLayout.astro";
 import { getItem } from "../../lib/items";
 import { createD1Database } from "../../lib/db";
 
@@ -20,7 +20,7 @@ const getAvatar = (maker: any) => maker.avatar || `https://placehold.co/100x100/
 const getPlaceholder = (text: string) => `https://placehold.co/600x600/ffe4e6/be123c?text=${encodeURIComponent(text)}`;
 ---
 
-<DashboardLayout>
+<FluidLayout>
   <div class="container mx-auto px-4 py-8">
     <div class="breadcrumbs text-sm mb-6 text-gray-500">
       <ul>
@@ -81,7 +81,7 @@ const getPlaceholder = (text: string) => `https://placehold.co/600x600/ffe4e6/be
             </button>
           </div>
 
-          <div class="text-2xl font-bold text-rose-600 mb-6">{item.price || "Price Varies"}</div>
+          <div class="text-2xl font-bold text-rose-600 mb-6">{item.priceRange || "Price Varies"}</div>
 
           <div class="prose prose-slate mb-8 max-w-none text-gray-600">
             <p>{item.description || "No description available."}</p>
@@ -116,4 +116,4 @@ const getPlaceholder = (text: string) => `https://placehold.co/600x600/ffe4e6/be
       </div>
     </div>
   </div>
-</DashboardLayout>
+</FluidLayout>

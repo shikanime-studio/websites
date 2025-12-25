@@ -1,5 +1,5 @@
 ---
-import DashboardLayout from "../../layouts/DashboardLayout.astro";
+import FluidLayout from "../../layouts/FluidLayout.astro";
 import { getMaker, getItemsByMaker } from "../../lib/items";
 import { createD1Database } from "../../lib/db";
 
@@ -22,7 +22,7 @@ const getCover = (m: any) => m.coverImageUrl || `https://placehold.co/1200x400/f
 const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `https://placehold.co/400x400/ffe4e6/be123c?text=${encodeURIComponent(item.name)}`;
 ---
 
-<DashboardLayout>
+<FluidLayout>
   <!-- Header/Cover -->
   <div class="relative bg-rose-50 h-64 md:h-80 w-full overflow-hidden">
     <img
@@ -128,4 +128,4 @@ const getItemImage = (item: any) => (item.imageUrls && item.imageUrls[0]) || `ht
       </div>
     )}
   </div>
-</DashboardLayout>
+</FluidLayout>

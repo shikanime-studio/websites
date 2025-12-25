@@ -65,23 +65,10 @@ async function main() {
   faker.seed(12345);
   const COUNT = 50; // Generate a pool of realistic data
 
-  const userNames = faker.helpers.multiple(() => faker.person.fullName(), {
-    count: COUNT,
-  });
-  const userEmails = faker.helpers.multiple(() => faker.internet.email(), {
-    count: COUNT,
-  });
   const userAvatars = faker.helpers.multiple(() => faker.image.avatar(), {
     count: COUNT,
   });
 
-  const makerNames = faker.helpers.multiple(() => faker.company.name(), {
-    count: COUNT,
-  });
-  const makerDescriptions = faker.helpers.multiple(
-    () => faker.company.catchPhrase(),
-    { count: COUNT },
-  );
   const makerAvatars = faker.helpers.multiple(() => faker.image.avatar(), {
     count: COUNT,
   });
@@ -98,40 +85,20 @@ async function main() {
     () => faker.commerce.productName(),
     { count: COUNT },
   );
-  const licenseDescriptions = faker.helpers.multiple(
-    () => faker.commerce.productDescription(),
-    { count: COUNT },
-  );
   const licenseImages = faker.helpers.multiple(
     () => faker.image.urlPicsumPhotos({ width: 400, height: 400 }),
     { count: COUNT },
   );
 
-  const characterNames = faker.helpers.multiple(() => faker.person.fullName(), {
-    count: COUNT,
-  });
-  const characterBios = faker.helpers.multiple(() => faker.person.bio(), {
-    count: COUNT,
-  });
   const characterImages = faker.helpers.multiple(
     () => faker.image.urlPicsumPhotos({ width: 300, height: 400 }),
     { count: COUNT },
   );
 
-  const eventNames = faker.helpers.multiple(() => faker.company.buzzPhrase(), {
-    count: COUNT,
-  });
-  const eventDescriptions = faker.helpers.multiple(
-    () => faker.lorem.paragraph(),
-    { count: COUNT },
-  );
   const eventImages = faker.helpers.multiple(
     () => faker.image.urlPicsumPhotos({ width: 800, height: 400 }),
     { count: COUNT },
   );
-  const eventLocs = faker.helpers.multiple(() => faker.location.city(), {
-    count: COUNT,
-  });
   const eventUrls = faker.helpers.multiple(() => faker.internet.url(), {
     count: COUNT,
   });
@@ -139,12 +106,18 @@ async function main() {
   const itemNames = faker.helpers.multiple(() => faker.commerce.productName(), {
     count: COUNT,
   });
-  const itemDescriptions = faker.helpers.multiple(
-    () => faker.commerce.productDescription(),
-    { count: COUNT },
-  );
   const itemImages = faker.helpers.multiple(
-    () => [faker.image.urlPicsumPhotos({ width: 400, height: 400 })],
+    () => {
+      const numImages = faker.number.int({ min: 1, max: 4 });
+      return faker.helpers.multiple(
+        () =>
+          faker.image.urlPicsumPhotos({
+            width: 400,
+            height: faker.number.int({ min: 300, max: 800 }),
+          }),
+        { count: numImages },
+      );
+    },
     { count: COUNT },
   );
   const itemPrices = faker.helpers.multiple(() => faker.commerce.price(), {
@@ -154,15 +127,15 @@ async function main() {
   await seed(db as any, seedSchema, { count: 10, seed: 12345 }).refine((f) => ({
     users: {
       columns: {
-        name: f.valuesFromArray({ values: userNames }),
-        email: f.valuesFromArray({ values: userEmails, isUnique: true }),
+        name: f.fullName(),
+        email: f.email(),
         image: f.valuesFromArray({ values: userAvatars }),
       },
     },
     makers: {
       columns: {
-        name: f.valuesFromArray({ values: makerNames }),
-        description: f.valuesFromArray({ values: makerDescriptions }),
+        name: f.companyName(),
+        description: f.loremIpsum({ sentencesCount: 2 }),
         avatarImageUrl: f.valuesFromArray({ values: makerAvatars }),
         coverImageUrl: f.valuesFromArray({ values: makerCovers }),
         links: f.valuesFromArray({ values: makerLinks as any[] }),
@@ -171,30 +144,32 @@ async function main() {
     licenses: {
       columns: {
         name: f.valuesFromArray({ values: licenseNames }),
-        description: f.valuesFromArray({ values: licenseDescriptions }),
+        description: f.loremIpsum({ sentencesCount: 3 }),
         imageUrl: f.valuesFromArray({ values: licenseImages }),
       },
     },
     characters: {
       columns: {
-        name: f.valuesFromArray({ values: characterNames }),
-        description: f.valuesFromArray({ values: characterBios }),
+        name: f.fullName(),
+        description: f.loremIpsum({ sentencesCount: 2 }),
         imageUrl: f.valuesFromArray({ values: characterImages }),
       },
     },
     events: {
       columns: {
-        name: f.valuesFromArray({ values: eventNames }),
-        description: f.valuesFromArray({ values: eventDescriptions }),
+        name: f.companyName(),
+        description: f.loremIpsum({ sentencesCount: 4 }),
         imageUrl: f.valuesFromArray({ values: eventImages }),
-        location: f.valuesFromArray({ values: eventLocs }),
+        location: f.city(),
         websiteUrl: f.valuesFromArray({ values: eventUrls }),
+        startsAt: f.date(),
+        endsAt: f.date(),
       },
     },
     items: {
       columns: {
         name: f.valuesFromArray({ values: itemNames }),
-        description: f.valuesFromArray({ values: itemDescriptions }),
+        description: f.loremIpsum({ sentencesCount: 2 }),
         imageUrls: f.valuesFromArray({ values: itemImages as any[] }),
         priceRange: f.valuesFromArray({ values: itemPrices }),
       },
