@@ -6,6 +6,7 @@ import {
   CardInfo,
   CardStatus,
 } from "./Card";
+import { EmptyState } from "./EmptyState";
 import { Image } from "./Image";
 import type { FC } from "react";
 import { FaArrowRight } from "react-icons/fa6";
@@ -42,11 +43,18 @@ export const Featured: FC<FeaturedProps> = ({
         </div>
       )}
 
-      <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
-        {items.map((item) => (
-          <FeaturedCarouselItem key={item.id} item={item} />
-        ))}
-      </div>
+      {items.length > 0 ? (
+        <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
+          {items.map((item) => (
+            <FeaturedCarouselItem key={item.id} item={item} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="No items yet"
+          description="We couldn't find any items to display in this section."
+        />
+      )}
     </div>
   );
 };

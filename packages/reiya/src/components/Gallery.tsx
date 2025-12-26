@@ -8,6 +8,7 @@ import {
   CardStatus,
 } from "./Card";
 import { CardModal } from "./CardModal";
+import { EmptyState } from "./EmptyState";
 import { Image } from "./Image";
 import { SkeletonCard } from "./SkeletonCard";
 import { useQuery } from "@tanstack/react-query";
@@ -57,31 +58,40 @@ export const GalleryContent: FC<GalleryContentProps> = ({
         ))}
       </Activity>
       <Activity mode={isLoading ? "hidden" : "visible"}>
-        {items.map((item) => (
-          <GalleryItem key={item.id}>
-            <Card>
-              <CardComponent
-                title={item.title}
-                href={item.href}
-                onClick={() => setSelectedCard(item)}
-                images={item.images.map((img, i) => (
-                  <Image
-                    key={img.src}
-                    src={img.src}
-                    alt={`${item.title} - image ${i + 1}`}
-                    width={img.width}
-                    height={img.height}
-                    className="h-full w-full object-contain"
-                  />
-                ))}
-              >
-                <CardStatus status={item.status} />
-                <CardBookmark />
-              </CardComponent>
-              <CardInfo {...item} onClick={() => setSelectedCard(item)} />
-            </Card>
-          </GalleryItem>
-        ))}
+        {items.length > 0 ? (
+          items.map((item) => (
+            <GalleryItem key={item.id}>
+              <Card>
+                <CardComponent
+                  title={item.title}
+                  href={item.href}
+                  onClick={() => setSelectedCard(item)}
+                  images={item.images.map((img, i) => (
+                    <Image
+                      key={img.src}
+                      src={img.src}
+                      alt={`${item.title} - image ${i + 1}`}
+                      width={img.width}
+                      height={img.height}
+                      className="h-full w-full object-contain"
+                    />
+                  ))}
+                >
+                  <CardStatus status={item.status} />
+                  <CardBookmark />
+                </CardComponent>
+                <CardInfo {...item} onClick={() => setSelectedCard(item)} />
+              </Card>
+            </GalleryItem>
+          ))
+        ) : (
+          <div className="[column-span:all] w-full">
+            <EmptyState
+              title="No results found"
+              description="Try adjusting your filters or search terms to find what you're looking for."
+            />
+          </div>
+        )}
       </Activity>
       {selectedCard && (
         <CardModal card={selectedCard} onClose={() => setSelectedCard(null)} />
@@ -110,30 +120,39 @@ export const ShowcaseGalleryContent: FC<
         ))}
       </Activity>
       <Activity mode={isLoading ? "hidden" : "visible"}>
-        {items.map((item) => (
-          <GalleryItem key={item.id}>
-            <Card>
-              <CardShowcaseCarousel
-                title={item.title}
-                href={item.href}
-                onClick={() => setSelectedCard(item)}
-                images={item.images.map((img, i) => (
-                  <Image
-                    key={img.src}
-                    src={img.src}
-                    alt={`${item.title} - image ${i + 1}`}
-                    width={img.width}
-                    height={img.height}
-                    className="h-full w-full object-contain"
-                  />
-                ))}
-              >
-                {/* No CardStatus, No CardBookmark */}
-              </CardShowcaseCarousel>
-              <CardInfo {...item} onClick={() => setSelectedCard(item)} />
-            </Card>
-          </GalleryItem>
-        ))}
+        {items.length > 0 ? (
+          items.map((item) => (
+            <GalleryItem key={item.id}>
+              <Card>
+                <CardShowcaseCarousel
+                  title={item.title}
+                  href={item.href}
+                  onClick={() => setSelectedCard(item)}
+                  images={item.images.map((img, i) => (
+                    <Image
+                      key={img.src}
+                      src={img.src}
+                      alt={`${item.title} - image ${i + 1}`}
+                      width={img.width}
+                      height={img.height}
+                      className="h-full w-full object-contain"
+                    />
+                  ))}
+                >
+                  {/* No CardStatus, No CardBookmark */}
+                </CardShowcaseCarousel>
+                <CardInfo {...item} onClick={() => setSelectedCard(item)} />
+              </Card>
+            </GalleryItem>
+          ))
+        ) : (
+          <div className="[column-span:all] w-full">
+            <EmptyState
+              title="No showcases found"
+              description="Check back later for new findings."
+            />
+          </div>
+        )}
       </Activity>
       {selectedCard && (
         <CardModal card={selectedCard} onClose={() => setSelectedCard(null)} />
