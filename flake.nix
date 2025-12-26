@@ -41,15 +41,22 @@
       perSystem = _: {
         devenv.shells.default = {
           imports = [
-            devlib.devenvModules.shikanime-studio
+            devlib.devenvModules.docs
+            devlib.devenvModules.formats
+            devlib.devenvModules.github
+            devlib.devenvModules.javascript
+            devlib.devenvModules.nix
+            devlib.devenvModules.opentofu
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime
           ];
           gitignore.content = [
             ".astro"
             ".wrangler"
           ];
-          languages = {
-            opentofu.enable = true;
-            javascript.enable = true;
+          treefmt.config.programs.sqlfluff = {
+            enable = true;
+            dialect = "sqlite";
           };
         };
       };
