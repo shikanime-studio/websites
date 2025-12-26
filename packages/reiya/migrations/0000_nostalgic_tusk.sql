@@ -23,7 +23,6 @@ CREATE TABLE `categories` (
     `icon` text NOT NULL
 );
 --> statement-breakpoint
---> statement-breakpoint
 CREATE UNIQUE INDEX `categories_name_unique` ON `categories` (`name`);
 CREATE TABLE `characters` (
     `id` integer PRIMARY KEY NOT NULL,
@@ -150,7 +149,6 @@ CREATE TABLE `session` (
     ) ON UPDATE NO ACTION ON DELETE NO ACTION
 );
 --> statement-breakpoint
---> statement-breakpoint
 CREATE UNIQUE INDEX `session_token_unique` ON `session` (`token`);
 CREATE TABLE `user` (
     `id` text PRIMARY KEY NOT NULL,
@@ -161,7 +159,6 @@ CREATE TABLE `user` (
     `created_at` integer NOT NULL,
     `updated_at` integer NOT NULL
 );
---> statement-breakpoint
 --> statement-breakpoint
 CREATE UNIQUE INDEX `user_email_unique` ON `user` (`email`);
 CREATE TABLE `users_to_characters` (
