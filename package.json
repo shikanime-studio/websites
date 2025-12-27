@@ -25,7 +25,7 @@
     "typescript-eslint": "^8.49.0",
     "vitest": "^4.0.15"
   },
-  "packageManager": "npm@9.9.4+sha512.37371088ba6a0ee2e16af772276277b4627f9e2fde6dca87545664bf50b8ffa95b96b6943db3e0089e1585be286b71458516b6623f60039f23187ff3b4ab9e35",
+  "packageManager": "npm@11.7.0+sha512.c22099a6fff8d5b2286c2a09df5352b4858a7c0c716320f58989d60ad8b29ecf2ce6fdfe97ccb41c23ffb1272e1fa079f868487dd6b81d02a2a9e199c095a117",
   "name": "@shikanime/websites",
   "scripts": {
     "format": "prettier --write . \"!**/*.{json,yaml}\"",
@@ -33,7 +33,8 @@
     "test": "vitest"
   },
   "workspaces": [
-    "packages/links",
-    "packages/www"
+    "apps/links",
+    "apps/reiya",
+    "apps/www"
   ]
 }

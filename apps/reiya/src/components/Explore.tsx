@@ -1,8 +1,10 @@
 import {
   fetchArtists,
   fetchCharacters,
+  fetchEvents,
   fetchShowcases,
 } from "../lib/api-client";
+import { EmptyState } from "./EmptyState";
 import { Featured } from "./Featured";
 import { FilterBar, FilterButton } from "./FilterBar";
 import { Gallery, ShowcaseGalleryContent } from "./Gallery";
@@ -175,6 +177,19 @@ const ExploreCharactersContent: FC = () => {
 
 export const ExploreConventions: FC = () => {
   return (
+    <QueryProvider>
+      <ExploreConventionsContent />
+    </QueryProvider>
+  );
+};
+
+const ExploreConventionsContent: FC = () => {
+  const { data: events = [], isLoading } = useQuery({
+    queryKey: ["events"],
+    queryFn: fetchEvents,
+  });
+
+  return (
     <ExploreSection>
       <ExploreSectionHead>
         <ExploreSectionTitle>
@@ -200,34 +215,50 @@ export const ExploreConventions: FC = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-        {[
-          "Comiket 103",
-          "Anime Expo",
-          "Japan Expo",
-          "DoKomi",
-          "TwitchCon",
-          "Vket",
-        ].map((name) => (
-          <div className="group flex cursor-pointer flex-col gap-1" key={name}>
-            <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-              <img
-                src={`https://placehold.co/400x400/eee/999?text=${name.replace(" ", "+")}`}
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                alt={name}
-              />
-              <div className="absolute top-2 left-2 rounded-full bg-white/90 p-1 shadow-sm">
-                <div className="h-4 w-4 rounded-full bg-red-500"></div>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <span className="text-xs text-gray-500">Dec 2025</span>
-            </div>
-            <h4 className="truncate text-sm font-bold text-gray-900">{name}</h4>
-            <div className="text-xs font-bold text-gray-900">Tokyo, Japan</div>
+      <Activity mode={isLoading ? "visible" : "hidden"}>
+        <div className="flex h-64 w-full items-center justify-center">
+          <span className="loading loading-spinner loading-lg text-primary"></span>
+        </div>
+      </Activity>
+
+      <Activity mode={isLoading ? "hidden" : "visible"}>
+        {events.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+            {events.map((event) => (
+              <a
+                href={event.href}
+                className="group flex cursor-pointer flex-col gap-1"
+                key={event.id}
+              >
+                <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
+                  <img
+                    src={event.images[0]?.src}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    alt={event.title}
+                  />
+                  <div className="absolute top-2 left-2 rounded-full bg-white/90 p-1 shadow-sm">
+                    <div className="h-4 w-4 rounded-full bg-red-500"></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1">
+                  <span className="text-xs text-gray-500">{event.price}</span>
+                </div>
+                <h4 className="truncate text-sm font-bold text-gray-900">
+                  {event.title}
+                </h4>
+                <div className="text-xs font-bold text-gray-900">
+                  {event.artist.name}
+                </div>
+              </a>
+            ))}
           </div>
-        ))}
-      </div>
+        ) : (
+          <EmptyState
+            title="No conventions found"
+            description="Check back later for upcoming events."
+          />
+        )}
+      </Activity>
     </ExploreSection>
   );
 };

@@ -31,6 +31,7 @@ export interface CardData {
   };
   rating: number;
   reviewCount: number;
+  price?: string;
 }
 
 export interface CardProps {
