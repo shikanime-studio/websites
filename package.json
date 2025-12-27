@@ -33,7 +33,7 @@
     "test": "vitest"
   },
   "workspaces": [
-    "packages/links",
-    "packages/www"
+    "apps/links",
+    "apps/www"
   ]
 }
