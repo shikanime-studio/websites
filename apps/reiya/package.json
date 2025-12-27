@@ -10,7 +10,7 @@
     "preview": "astro preview",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply reiya",
-    "db:seed": "tsx src/seed.ts",
+    "db:seed": "SEED_FILE=$(tsx src/seed.ts) && wrangler d1 execute reiya --file=$SEED_FILE --yes && rm $SEED_FILE",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
