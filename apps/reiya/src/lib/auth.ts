@@ -30,6 +30,28 @@ export const createAuth = (
             },
           }
         : {}),
+      myAnimeList: {
+        clientId: locals.runtime.env.MAL_CLIENT_ID,
+        clientSecret: locals.runtime.env.MAL_CLIENT_SECRET,
+        authorizationEndpoint: "https://myanimelist.net/v1/oauth2/authorize",
+        tokenEndpoint: "https://myanimelist.net/v1/oauth2/token",
+        userInfoEndpoint: "https://myanimelist.net/v1/users/@me",
+        mapProfileToUser: (profile: any) => {
+          return {
+            id: profile.id.toString(),
+            name: profile.name,
+            email: `mal-${profile.id}@example.com`,
+            image: profile.picture,
+            emailVerified: false,
+          };
+        },
+      },
+    },
+    account:{
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["myanimelist"]
+      }
     },
     advanced: {
       ipAddress: {
