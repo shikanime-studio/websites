@@ -10,6 +10,14 @@ declare namespace App {
       email: string;
       avatarUrl: string;
     };
+    runtime: {
+      env: {
+        BETTER_AUTH_SECRET: string;
+        GOOGLE_CLIENT_SECRET: string;
+        MAL_CLIENT_ID: string;
+        MAL_CLIENT_SECRET: string;
+      };
+    };
   }
 }
 

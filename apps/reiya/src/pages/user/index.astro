@@ -2,6 +2,9 @@
 import FluidLayout from "../../layouts/FluidLayout.astro";
 import { createAuth } from "../../lib/auth";
 import { createD1Database } from "../../lib/db";
+import { accounts } from "../../schema";
+import { eq } from "drizzle-orm";
+import { LinkAccountButton } from "../../components/LinkAccountButton";
 
 const db = createD1Database(Astro.locals);
 const auth = createAuth(db, Astro.locals);
@@ -11,6 +14,11 @@ const session = await auth.api.getSession({
 });
 
 const user = session?.user;
+
+const linkedAccounts = user
+  ? await db.select().from(accounts).where(eq(accounts.userId, user.id))
+  : [];
+const linkedProviders = linkedAccounts.map((a) => a.providerId);
 ---
 
 <FluidLayout>
@@ -64,6 +72,32 @@ const user = session?.user;
                 class="input input-bordered w-full"
                 disabled
               />
+            </div>
+
+            <div class="divider" />
+
+            <h3 class="text-xl font-bold">Linked Accounts</h3>
+            <div class="flex flex-col gap-4">
+              <div class="flex flex-wrap gap-2">
+                {linkedProviders.map((provider) => (
+                  <div class="badge badge-success badge-lg gap-2 p-4 capitalize">
+                    {provider}
+                  </div>
+                ))}
+              </div>
+
+              {!linkedProviders.includes("myAnimeList") && (
+                <div class="flex flex-col gap-2">
+                  <p class="text-neutral-content text-sm">
+                    Link your account to import your list.
+                  </p>
+                  <LinkAccountButton
+                    client:load
+                    providerId="myAnimeList"
+                    label="MyAnimeList"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </div>
