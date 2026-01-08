@@ -43,7 +43,7 @@ export function ToolBar() {
             onClick={() => setIsSettingsOpen(true)}
             aria-label="Settings"
           >
-            <Settings className="h-[18px] w-[18px]" />
+            <Settings className="h-4.5 w-4.5" />
           </button>
         </div>
       </div>
