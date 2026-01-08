@@ -1,8 +1,8 @@
+import { useState } from "react";
+import { BsGoogle } from "react-icons/bs";
 import { authClient } from "../lib/auth-client";
 import { AlertError } from "./AlertError";
 import { Toast } from "./Toast";
-import { useState } from "react";
-import { BsGoogle } from "react-icons/bs";
 
 export default function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,14 +10,14 @@ export default function LoginButton() {
 
   const handleSignIn = async () => {
     setIsLoading(true);
-    const { error } = await authClient.signIn.social({
+    const res = await authClient.signIn.social({
       provider: "google",
       callbackURL: "/",
     });
-    if (error) {
+    if (res.error) {
       setError(
-        error instanceof Error
-          ? error.message
+        res.error instanceof Error
+          ? res.error.message
           : "An error occurred during sign in",
       );
       setIsLoading(false);

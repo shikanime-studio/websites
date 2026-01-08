@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as schema from "./schema";
-import type { Schema } from "./schema";
-import { faker } from "@faker-js/faker";
-import { seed } from "drizzle-seed";
 import fs from "node:fs";
-import { drizzle } from "drizzle-orm/better-sqlite3";
-import Database from "better-sqlite3";
 import os from "node:os";
 import path from "node:path";
+import { faker } from "@faker-js/faker";
+import { seed } from "drizzle-seed";
+import { drizzle } from "drizzle-orm/better-sqlite3";
+import Database from "better-sqlite3";
+import * as schema from "./schema";
+import type { Schema } from "./schema";
 
 async function main() {
   console.error("🌱 Generating seed data...");
@@ -16,49 +16,48 @@ async function main() {
   const sqlite = new Database(":memory:");
   const db = drizzle<Schema>(sqlite, { schema });
 
-  // 1. Initialize Tables
   // We look for migrations to create tables in the in-memory DB
   const migrationsFolder = "./migrations";
   if (fs.existsSync(migrationsFolder)) {
-      const files = fs.readdirSync(migrationsFolder).filter(f => f.endsWith('.sql')).sort();
-      for (const file of files) {
-          const content = fs.readFileSync(`${migrationsFolder}/${file}`, 'utf-8');
-          // Split by statement breakpoint if present, or just execute
-          // drizzle-kit generated migrations often use `--> statement-breakpoint`
-          const statements = content.split('--> statement-breakpoint');
-          for (const statement of statements) {
-            if (statement.trim()) {
-              try {
-                sqlite.exec(statement);
-              } catch (e) {
-                console.error(`Warning executing migration statement from ${file}:`, e);
-              }
-            }
+    const files = fs.readdirSync(migrationsFolder).filter(f => f.endsWith('.sql')).sort();
+    for (const file of files) {
+      const content = fs.readFileSync(`${migrationsFolder}/${file}`, 'utf-8');
+      // Split by statement breakpoint if present, or just execute
+      // drizzle-kit generated migrations often use `--> statement-breakpoint`
+      const statements = content.split('--> statement-breakpoint');
+      for (const statement of statements) {
+        if (statement.trim()) {
+          try {
+            sqlite.exec(statement);
+          } catch (e) {
+            console.error(`Warning executing migration statement from ${file}:`, e);
           }
+        }
       }
+    }
   } else {
-      console.error("⚠️ No migrations folder found. drizzle-seed might fail if tables don't exist.");
+    console.error("⚠️ No migrations folder found. drizzle-seed might fail if tables don't exist.");
   }
 
-  // 2. Insert Static Data from seeds folder
+  // Insert static data from seeds folder
   console.error("Inserting static data from seeds folder...");
   const seedsFolder = "./seeds";
   if (fs.existsSync(seedsFolder)) {
-      const files = fs.readdirSync(seedsFolder).filter(f => f.endsWith('.sql')).sort();
-      for (const file of files) {
-          console.error(`  - Executing ${file}`);
-          const content = fs.readFileSync(`${seedsFolder}/${file}`, 'utf-8');
-          const statements = content.split(';'); // Simple split by semicolon
-          for (const statement of statements) {
-            if (statement.trim()) {
-              try {
-                sqlite.exec(statement);
-              } catch (e) {
-                console.error(`Warning executing statement from ${file}:`, e);
-              }
-            }
+    const files = fs.readdirSync(seedsFolder).filter(f => f.endsWith('.sql')).sort();
+    for (const file of files) {
+      console.error(`  - Executing ${file}`);
+      const content = fs.readFileSync(`${seedsFolder}/${file}`, 'utf-8');
+      const statements = content.split(';'); // Simple split by semicolon
+      for (const statement of statements) {
+        if (statement.trim()) {
+          try {
+            sqlite.exec(statement);
+          } catch (e) {
+            console.error(`Warning executing statement from ${file}:`, e);
           }
+        }
       }
+    }
   }
 
   // Static categories data
@@ -79,7 +78,7 @@ async function main() {
     console.error("Error inserting static data (tables might not exist or constraint violation):", e);
   }
 
-  // 3. Generate Dummy Data (using drizzle-seed)
+  // Generate dummy data (using drizzle-seed)
   console.error("Generating dummy data...");
   const seedSchema = {
     users: schema.users,
@@ -106,16 +105,14 @@ async function main() {
   const licenseNames = faker.helpers.multiple(() => faker.commerce.productName(), { count: COUNT });
   const licenseImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 400, height: 400 }), { count: COUNT });
   const characterImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 300, height: 400 }), { count: COUNT });
-  const eventImages = faker.helpers.multiple(() => faker.image.urlPicsumPhotos({ width: 800, height: 400 }), { count: COUNT });
-  const eventUrls = faker.helpers.multiple(() => faker.internet.url(), { count: COUNT });
   const itemNames = faker.helpers.multiple(() => faker.commerce.productName(), { count: COUNT });
   const itemImages = faker.helpers.multiple(() => {
-      const numImages = faker.number.int({ min: 1, max: 4 });
-      return faker.helpers.multiple(() => ({
-          src: faker.image.urlPicsumPhotos({ width: 400, height: faker.number.int({ min: 300, max: 800 }) }),
-          width: 400,
-          height: faker.number.int({ min: 300, max: 800 }),
-      }), { count: numImages });
+    const numImages = faker.number.int({ min: 1, max: 4 });
+    return faker.helpers.multiple(() => ({
+      src: faker.image.urlPicsumPhotos({ width: 400, height: faker.number.int({ min: 300, max: 800 }) }),
+      width: 400,
+      height: faker.number.int({ min: 300, max: 800 }),
+    }), { count: numImages });
   }, { count: COUNT });
   const itemPrices = faker.helpers.multiple(() => faker.commerce.price(), { count: COUNT });
 
@@ -137,7 +134,7 @@ async function main() {
         coverImageUrl: f.valuesFromArray({ values: makerCovers }),
         coverImageWidth: f.int({ minValue: 800, maxValue: 800 }),
         coverImageHeight: f.int({ minValue: 400, maxValue: 400 }),
-        links: f.valuesFromArray({ values: makerLinks as any[] }),
+        links: f.valuesFromArray({ values: makerLinks as Array<any> }),
       },
     },
     licenses: {
@@ -163,13 +160,13 @@ async function main() {
       columns: {
         name: f.valuesFromArray({ values: itemNames }),
         description: f.loremIpsum({ sentencesCount: 2 }),
-        imageUrls: f.valuesFromArray({ values: itemImages as any[] }),
+        imageUrls: f.valuesFromArray({ values: itemImages as Array<any> }),
         priceRange: f.valuesFromArray({ values: itemPrices }),
       },
     },
   }));
 
-  // 4. Manual Relations
+  // Manual relations
   console.error("Seeding relations...");
   const seededUsers = await db.select().from(schema.users);
   const seededMakers = await db.select().from(schema.makers);
@@ -180,7 +177,7 @@ async function main() {
   const insertSafe = async (table: any, values: any) => {
     try {
       await db.insert(table).values(values).onConflictDoNothing();
-    } catch (e) {
+    } catch {
       // ignore
     }
   };
@@ -213,7 +210,7 @@ async function main() {
     }
   }
 
-  // 5. Dump to SQL
+  // Dump to SQL
   const tables = [
     'categories',
     'events',
@@ -232,32 +229,32 @@ async function main() {
   let outputSql = "-- Generated seed data\n";
 
   for (const table of tables) {
-      try {
-        const rows = sqlite.prepare(`SELECT * FROM ${table}`).all() as Record<string, any>[];
-        if (rows.length === 0) continue;
+    try {
+      const rows = sqlite.prepare(`SELECT * FROM ${table}`).all() as Array<Record<string, any>>;
+      if (rows.length === 0) continue;
 
-        outputSql += `\n-- Data for ${table}\n`;
+      outputSql += `\n-- Data for ${table}\n`;
 
-        for (const row of rows) {
-            const columns = Object.keys(row);
-            const values = Object.values(row).map(v => {
-                if (v === null) return 'NULL';
-                if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
-                if (typeof v === 'number') return v;
-                if (typeof v === 'boolean') return v ? 1 : 0;
-                if (v instanceof Date) return `'${v.toISOString()}'`;
-                if (typeof v === 'object') return `'${JSON.stringify(v).replace(/'/g, "''")}'`;
-                return v;
-            });
+      for (const row of rows) {
+        const columns = Object.keys(row);
+        const values = Object.values(row).map(v => {
+          if (v === null) return 'NULL';
+          if (typeof v === 'string') return `'${v.replace(/'/g, "''")}'`;
+          if (typeof v === 'number') return v;
+          if (typeof v === 'boolean') return v ? 1 : 0;
+          if (v instanceof Date) return `'${v.toISOString()}'`;
+          if (typeof v === 'object') return `'${JSON.stringify(v).replace(/'/g, "''")}'`;
+          return v;
+        });
 
-            outputSql += `INSERT OR IGNORE INTO ${table} (${columns.join(', ')}) VALUES (${values.join(', ')});\n`;
-        }
-      } catch (e) {
-          console.error(`Skipping table ${table} (maybe not created?):`, e);
+        outputSql += `INSERT OR IGNORE INTO ${table} (${columns.join(', ')}) VALUES (${values.join(', ')});\n`;
       }
+    } catch (e) {
+      console.error(`Skipping table ${table} (maybe not created?):`, e);
+    }
   }
 
-  // 6. Write to Temp File
+  // Write to Temp File
   const tempDir = os.tmpdir();
   const seedFile = path.join(tempDir, `seed-${Date.now()}.sql`);
   fs.writeFileSync(seedFile, outputSql);

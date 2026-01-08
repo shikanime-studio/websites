@@ -1,5 +1,3 @@
-import { Image } from "./Image";
-import type { FC, MouseEvent, ReactNode } from "react";
 import { useRef, useState } from "react";
 import {
   FaBookmark,
@@ -8,17 +6,19 @@ import {
   FaCircleCheck,
   FaRegClone,
 } from "react-icons/fa6";
+import { Image } from "./Image";
+import type { FC, MouseEvent, ReactNode } from "react";
 
 export interface CardData {
   id: string | number;
   title: string;
   status: "OPEN" | "CLOSED" | "WAITLIST";
   href: string;
-  images: {
+  images: Array<{
     src: string;
     width: number;
     height: number;
-  }[];
+  }>;
   artist: {
     name: string;
     avatar: {
@@ -215,9 +215,9 @@ export const CardBookmark: FC<CardBookmarkProps> = ({ onClick }) => {
 
 export interface CardCarouselProps {
   title: string;
-  images: ReactNode[];
+  images: Array<ReactNode>;
   href?: string;
-  backgroundImages?: string[];
+  backgroundImages?: Array<string>;
   children?: ReactNode;
   onClick?: () => void;
 }
@@ -351,7 +351,7 @@ export const CardCarouselCount: FC<{ count: number }> = ({ count }) => (
 
 export interface CardShowcaseCarouselProps {
   title: string;
-  images: ReactNode[];
+  images: Array<ReactNode>;
   href?: string;
   children?: ReactNode;
   onClick?: () => void;

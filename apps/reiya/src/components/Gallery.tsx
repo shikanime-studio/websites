@@ -1,19 +1,20 @@
+import { useQuery } from "@tanstack/react-query";
+import { Activity, useState } from "react";
 import {
   Card,
   CardBookmark,
   CardCarousel,
-  type CardData,
+  
   CardInfo,
   CardShowcaseCarousel,
-  CardStatus,
+  CardStatus
 } from "./Card";
 import { CardModal } from "./CardModal";
 import { EmptyState } from "./EmptyState";
 import { Image } from "./Image";
 import { SkeletonCard } from "./SkeletonCard";
-import { useQuery } from "@tanstack/react-query";
+import type {CardData} from "./Card";
 import type { FC, ReactNode } from "react";
-import { Activity, useState } from "react";
 
 interface GalleryProps {
   children?: ReactNode;
@@ -26,8 +27,8 @@ export const Gallery: FC<GalleryProps> = ({ children }) => {
 };
 
 interface GalleryContentProps {
-  queryKey: string[];
-  queryFn: () => Promise<CardData[]>;
+  queryKey: Array<string>;
+  queryFn: () => Promise<Array<CardData>>;
   staleTime?: number;
   variant?: "default" | "showcase";
 }

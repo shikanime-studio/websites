@@ -227,7 +227,7 @@ export const makers = sqliteTable("makers", {
   coverImageHeight: integer("cover_image_height").default(0),
   links: text("links", { mode: "json" })
     .notNull()
-    .$type<string[]>()
+    .$type<Array<string>>()
     .default(sql`'[]'`),
   createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
   updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
@@ -239,7 +239,7 @@ export const items = sqliteTable("items", {
   description: text("description"),
   imageUrls: text("image_urls", { mode: "json" })
     .notNull()
-    .$type<{ src: string; width: number; height: number }[]>()
+    .$type<Array<{ src: string; width: number; height: number }>>()
     .default(sql`'[]'`),
   category: text("category"),
   priceRange: text("price_range"),
