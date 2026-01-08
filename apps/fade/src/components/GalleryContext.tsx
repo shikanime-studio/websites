@@ -7,34 +7,29 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 
-export interface ImageItem {
-  file: File;
-  url: string;
-  name: string;
-  size: number;
+export interface FileItem {
+  handle: FileSystemFileHandle;
 }
 
 interface GalleryState {
-  images: Array<ImageItem>;
+  files: Array<FileItem>;
   selectedIndex: number;
   isLoading: boolean;
 }
 
 interface GalleryContextValue extends GalleryState {
   loadDirectory: () => Promise<void>;
-  selectImage: (index: number) => void;
+  selectFile: (index: number) => void;
   navigateNext: () => void;
   navigatePrevious: () => void;
-  selectedImage: ImageItem | null;
+  selectedFile: FileItem | null;
 }
 
 const GalleryContext = createContext<GalleryContextValue | null>(null);
 
-const IMAGE_EXTENSIONS = [".jpg", ".jpeg", ".png", ".webp", ".gif", ".avif"];
-
 export function GalleryProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GalleryState>({
-    images: [],
+    files: [],
     selectedIndex: 0,
     isLoading: false,
   });
@@ -50,33 +45,19 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: true }));
 
       const directoryHandle = await window.showDirectoryPicker();
-      const imageItems: Array<ImageItem> = [];
+      const items: FileItem[] = [];
 
-      for await (const entry of directoryHandle.values()) {
-        if (entry.kind === "file") {
-          const lowerName = entry.name.toLowerCase();
-          const isImage = IMAGE_EXTENSIONS.some((ext) =>
-            lowerName.endsWith(ext),
-          );
-
-          if (isImage) {
-            const file = await entry.getFile();
-            const url = URL.createObjectURL(file);
-            imageItems.push({
-              file,
-              url,
-              name: entry.name,
-              size: file.size,
-            });
-          }
+      for await (const handle of directoryHandle.values()) {
+        if (handle.kind === "file") {
+          items.push({ handle });
         }
       }
 
       // Sort by filename
-      imageItems.sort((a, b) => a.name.localeCompare(b.name));
+      items.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
 
       setState({
-        images: imageItems,
+        files: items,
         selectedIndex: 0,
         isLoading: false,
       });
@@ -89,17 +70,17 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const selectImage = useCallback((index: number) => {
+  const selectFile = useCallback((index: number) => {
     setState((prev) => ({
       ...prev,
-      selectedIndex: Math.max(0, Math.min(index, prev.images.length - 1)),
+      selectedIndex: Math.max(0, Math.min(index, prev.files.length - 1)),
     }));
   }, []);
 
   const navigateNext = useCallback(() => {
     setState((prev) => ({
       ...prev,
-      selectedIndex: Math.min(prev.selectedIndex + 1, prev.images.length - 1),
+      selectedIndex: Math.min(prev.selectedIndex + 1, prev.files.length - 1),
     }));
   }, []);
 
@@ -113,7 +94,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (state.images.length === 0) return;
+      if (state.files.length === 0) return;
 
       switch (event.key) {
         case "ArrowRight":
@@ -125,11 +106,11 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
           event.preventDefault();
           break;
         case "Home":
-          selectImage(0);
+          selectFile(0);
           event.preventDefault();
           break;
         case "End":
-          selectImage(state.images.length - 1);
+          selectFile(state.files.length - 1);
           event.preventDefault();
           break;
       }
@@ -137,27 +118,20 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [state.images.length, navigateNext, navigatePrevious, selectImage]);
+  }, [state.files.length, navigateNext, navigatePrevious, selectFile]);
 
-  // Cleanup object URLs on unmount
-  useEffect(() => {
-    return () => {
-      state.images.forEach((image) => URL.revokeObjectURL(image.url));
-    };
-  }, [state.images]);
-
-  const selectedImage =
-    state.images.length > 0 ? state.images[state.selectedIndex] : null;
+  const selectedFile =
+    state.files.length > 0 ? state.files[state.selectedIndex] : null;
 
   return (
     <GalleryContext.Provider
       value={{
         ...state,
         loadDirectory,
-        selectImage,
+        selectFile,
         navigateNext,
         navigatePrevious,
-        selectedImage,
+        selectedFile,
       }}
     >
       {children}

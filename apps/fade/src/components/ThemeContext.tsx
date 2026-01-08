@@ -1,7 +1,7 @@
-import { settingsCollection } from "../lib/db";
-import type { Theme } from "../lib/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { createContext, useContext, useEffect } from "react";
+import { settingsCollection } from "../lib/db";
+import type { Theme } from "../lib/db";
 import type { ReactNode } from "react";
 
 interface ThemeContextValue {

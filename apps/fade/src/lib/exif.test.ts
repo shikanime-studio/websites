@@ -1,5 +1,5 @@
+import { describe, expect, it } from "vitest";
 import { getExifTags } from "./exif";
-import { describe, it, expect } from "vitest";
 
 describe("getExifTags", () => {
   // Helper to create EXIF data block

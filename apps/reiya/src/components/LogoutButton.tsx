@@ -1,5 +1,5 @@
-import { authClient } from "../lib/auth-client";
 import { BsBoxArrowRight } from "react-icons/bs";
+import { authClient } from "../lib/auth-client";
 
 export default function LogoutButton() {
   const handleLogout = async () => {

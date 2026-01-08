@@ -1,3 +1,6 @@
+import { useQuery } from "@tanstack/react-query";
+import { Activity } from "react";
+import { FaArrowRight } from "react-icons/fa6";
 import {
   fetchArtists,
   fetchCharacters,
@@ -10,10 +13,7 @@ import { FilterBar, FilterButton } from "./FilterBar";
 import { Gallery, ShowcaseGalleryContent } from "./Gallery";
 import { QueryProvider } from "./QueryProvider";
 import { Tab, TabContent, TabList } from "./TabList";
-import { useQuery } from "@tanstack/react-query";
-import { Activity } from "react";
 import type { FC, ReactNode } from "react";
-import { FaArrowRight } from "react-icons/fa6";
 
 interface ExploreSectionProps {
   className?: string;
