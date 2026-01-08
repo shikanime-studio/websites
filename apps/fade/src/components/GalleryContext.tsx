@@ -47,7 +47,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: true }));
 
       const directoryHandle = await window.showDirectoryPicker();
-      const promises: Promise<FileItem>[] = [];
+      const promises: Array<Promise<FileItem>> = [];
 
       for await (const handle of directoryHandle.values()) {
         if (handle.kind === "file") {

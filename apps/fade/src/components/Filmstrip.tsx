@@ -1,6 +1,6 @@
-import { useGallery } from "./GalleryContext";
 import { FileQuestion } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { useGallery } from "./GalleryContext";
 
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery();

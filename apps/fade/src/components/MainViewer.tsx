@@ -1,10 +1,10 @@
-import { useGallery } from "./GalleryContext";
 import {
   ChevronLeft,
   ChevronRight,
   FileQuestion,
   ImageOff,
 } from "lucide-react";
+import { useGallery } from "./GalleryContext";
 
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
