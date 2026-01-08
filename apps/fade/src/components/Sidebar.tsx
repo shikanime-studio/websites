@@ -92,7 +92,7 @@ export function Sidebar() {
               {exifData && Object.keys(exifData).length > 0 && (
                 <>
                   <div className="border-base-300 text-base-content/70 mt-8 mb-5 flex items-center gap-2 border-b pb-3">
-                    <Camera className="h-[18px] w-[18px]" />
+                    <Camera className="h-4.5 w-4.5" />
                     <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
                       Camera
                     </h2>
