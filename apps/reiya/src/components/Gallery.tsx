@@ -1,19 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
-import { Activity, useState } from "react";
 import {
   Card,
   CardBookmark,
   CardCarousel,
-  
   CardInfo,
   CardShowcaseCarousel,
-  CardStatus
+  CardStatus,
 } from "./Card";
+import type { CardData } from "./Card";
 import { CardModal } from "./CardModal";
 import { EmptyState } from "./EmptyState";
 import { Image } from "./Image";
 import { SkeletonCard } from "./SkeletonCard";
-import type {CardData} from "./Card";
+import { useQuery } from "@tanstack/react-query";
+import { Activity, useState } from "react";
 import type { FC, ReactNode } from "react";
 
 interface GalleryProps {
@@ -86,7 +85,7 @@ export const GalleryContent: FC<GalleryContentProps> = ({
             </GalleryItem>
           ))
         ) : (
-          <div className="[column-span:all] w-full">
+          <div className="w-full [column-span:all]">
             <EmptyState
               title="No results found"
               description="Try adjusting your filters or search terms to find what you're looking for."
@@ -147,7 +146,7 @@ export const ShowcaseGalleryContent: FC<
             </GalleryItem>
           ))
         ) : (
-          <div className="[column-span:all] w-full">
+          <div className="w-full [column-span:all]">
             <EmptyState
               title="No showcases found"
               description="Check back later for new findings."
