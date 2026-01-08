@@ -34,8 +34,14 @@
     "test": "vitest"
   },
   "workspaces": [
+    "apps/fade",
     "apps/links",
     "apps/reiya",
     "apps/www"
-  ]
+  ],
+  "dependencies": {
+    "@tanstack/devtools-vite": "^0.4.1",
+    "@tanstack/react-db": "^0.1.61",
+    "@tanstack/react-devtools": "^0.9.2"
+  }
 }
