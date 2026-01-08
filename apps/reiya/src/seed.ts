@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as schema from "./schema";
-import type { Schema } from "./schema";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import { faker } from "@faker-js/faker";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
 import { seed } from "drizzle-seed";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
+import * as schema from "./schema";
+import type { Schema } from "./schema";
 
 async function main() {
   console.error("🌱 Generating seed data...");

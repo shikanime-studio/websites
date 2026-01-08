@@ -1,7 +1,4 @@
-import type { CardData } from "./Card";
-import { Image } from "./Image";
 import { useEffect, useRef, useState } from "react";
-import type { FC } from "react";
 import { createPortal } from "react-dom";
 import {
   FaArrowUp,
@@ -13,6 +10,9 @@ import {
   FaShare,
   FaXmark,
 } from "react-icons/fa6";
+import { Image } from "./Image";
+import type { FC } from "react";
+import type { CardData } from "./Card";
 
 interface CardModalProps {
   card: CardData;

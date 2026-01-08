@@ -1,7 +1,3 @@
-import { settingsCollection } from "../lib/db";
-import { getExifTags } from "../lib/exif";
-import type { ExifTags } from "../lib/exif";
-import { useGallery } from "./GalleryContext";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -12,6 +8,10 @@ import {
   Info,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { settingsCollection } from "../lib/db";
+import { getExifTags } from "../lib/exif";
+import { useGallery } from "./GalleryContext";
+import type { ExifTags } from "../lib/exif";
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -37,29 +37,25 @@ export function Sidebar() {
   const [exifData, setExifData] = useState<ExifTags | null>(null);
 
   useEffect(() => {
-    if (selectedFile) {
-      if (selectedFile.file.type.startsWith("image/")) {
-        const img = new Image();
-        img.onload = () => {
-          setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-        };
-        img.src = selectedFile.url;
-
-        getExifTags(selectedFile.file)
-          .then(setExifData)
-          .catch((err) => {
-            console.error("Failed to parse EXIF:", err);
-            setExifData(null);
-          });
-      } else {
-        setDimensions(null);
-        setExifData(null);
-      }
-    } else {
+    if (!selectedFile || !selectedFile.file.type.startsWith("image/")) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDimensions(null);
       setExifData(null);
+      return;
     }
+
+    const img = new Image();
+    img.onload = () => {
+      setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = selectedFile.url;
+
+    getExifTags(selectedFile.file)
+      .then(setExifData)
+      .catch((err) => {
+        console.error("Failed to parse EXIF:", err);
+        setExifData(null);
+      });
   }, [selectedFile]);
 
   return (

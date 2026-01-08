@@ -1,7 +1,7 @@
-import { useGallery } from "./GalleryContext";
-import { SettingsModal } from "./SettingsModal";
 import { FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
+import { useGallery } from "./GalleryContext";
+import { SettingsModal } from "./SettingsModal";
 
 export function ToolBar() {
   const { loadDirectory, files, selectedIndex, isLoading } = useGallery();
