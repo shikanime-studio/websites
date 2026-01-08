@@ -44,19 +44,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <Outlet />
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
-}
-
-function RootDocument({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
         <TanStackDevtools
           config={{
             position: "bottom-right",
@@ -74,6 +61,19 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
           ]}
         />
+      </ThemeProvider>
+    </QueryClientProvider>
+  );
+}
+
+function RootDocument({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <HeadContent />
+      </head>
+      <body>
+        {children}
         <Scripts />
       </body>
     </html>

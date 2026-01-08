@@ -40,10 +40,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
-    settingsCollection.insert({
-      id: "theme",
-      value: newTheme,
-    });
+    if (data.length > 0) {
+      settingsCollection.update("theme", (draft) => {
+        draft.value = newTheme;
+      });
+    } else {
+      settingsCollection.insert({
+        id: "theme",
+        value: newTheme,
+      });
+    }
   };
 
   const toggleTheme = () => {
