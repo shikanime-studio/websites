@@ -28,7 +28,7 @@
   "type": "module",
   "name": "@shikanime/websites",
   "scripts": {
-    "format": "prettier --write .",
+    "format": "prettier --write '**/*.{astro,css,js,jsx,ts,tsx,webmanifest}'",
     "lint": "eslint .",
     "test": "vitest run"
   },
