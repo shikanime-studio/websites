@@ -4,7 +4,7 @@ export const SkeletonCard: FC = () => {
   return (
     <div className="flex w-full flex-col gap-3">
       {/* Image Skeleton */}
-      <div className="skeleton aspect-[4/3] w-full rounded-2xl"></div>
+      <div className="skeleton aspect-4/3 w-full rounded-2xl"></div>
 
       {/* Info Skeleton */}
       <div className="flex flex-col gap-2">

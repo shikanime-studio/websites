@@ -80,7 +80,7 @@ export const CardInfo: FC<CardInfoProps> = ({
               className="h-5 w-5 overflow-hidden rounded-full ring-1 ring-gray-100"
             />
           </div>
-          <span className="max-w-[100px] truncate text-sm font-medium text-gray-600">
+          <span className="max-w-25 truncate text-sm font-medium text-gray-600">
             {artist.name}
           </span>
           {artist.verified && (
@@ -283,7 +283,7 @@ export const CardCarousel: FC<CardCarouselProps> = ({
   };
 
   return (
-    <div className="hover:shadow-primary/20 group relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-gray-200 shadow-none transition-all duration-500 ease-out hover:shadow-xl">
+    <div className="hover:shadow-primary/20 group relative aspect-video w-full overflow-hidden rounded-2xl bg-gray-200 shadow-none transition-all duration-500 ease-out hover:shadow-xl">
       <a
         href={href}
         onClick={handleContainerClick}
@@ -298,13 +298,13 @@ export const CardCarousel: FC<CardCarouselProps> = ({
             images.map((img) => (
               <div
                 key={crypto.randomUUID()}
-                className="carousel-item h-full w-full flex-shrink-0 snap-center"
+                className="carousel-item h-full w-full shrink-0 snap-center"
               >
                 {img}
               </div>
             ))
           ) : (
-            <div className="carousel-item h-full w-full flex-shrink-0 snap-center">
+            <div className="carousel-item h-full w-full shrink-0 snap-center">
               <img
                 src={`https://placehold.co/600x800/ffe4e6/be123c?text=${encodeURIComponent(
                   title,

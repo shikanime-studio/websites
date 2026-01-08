@@ -59,7 +59,7 @@ interface FeaturedCarouselItemProps {
 
 const FeaturedCarouselItem: FC<FeaturedCarouselItemProps> = ({ item }) => {
   return (
-    <div className="carousel-item w-[280px] min-w-[280px] sm:w-[320px] sm:min-w-[320px]">
+    <div className="carousel-item w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
       <Card>
         <div className="w-full">
           <CardCarousel

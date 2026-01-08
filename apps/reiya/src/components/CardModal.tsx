@@ -176,7 +176,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                 <div className="flex items-center gap-1 font-bold text-gray-900">
                   <span className="truncate">{card.artist.name}</span>
                   {card.artist.verified && (
-                    <FaCircleCheck className="text-primary h-3 w-3 flex-shrink-0" />
+                    <FaCircleCheck className="text-primary h-3 w-3 shrink-0" />
                   )}
                 </div>
                 <div className="truncate text-sm text-gray-500">
