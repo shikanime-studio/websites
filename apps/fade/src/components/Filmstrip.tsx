@@ -1,8 +1,9 @@
 import { useGallery } from "./GalleryContext";
+import { FileQuestion } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export function Filmstrip() {
-  const { images, selectedIndex, selectImage } = useGallery();
+  const { files, selectedIndex, selectFile } = useGallery();
   const containerRef = useRef<HTMLDivElement>(null);
   const selectedRef = useRef<HTMLButtonElement>(null);
 
@@ -29,10 +30,10 @@ export function Filmstrip() {
     }
   }, [selectedIndex]);
 
-  if (images.length === 0) {
+  if (files.length === 0) {
     return (
       <div className="bg-base-200 border-base-300 flex h-30 items-center justify-center border-t">
-        <p className="m-0 text-sm opacity-50">Your images will appear here</p>
+        <p className="m-0 text-sm opacity-50">Your files will appear here</p>
       </div>
     );
   }
@@ -43,25 +44,31 @@ export function Filmstrip() {
       ref={containerRef}
     >
       <div className="flex h-full items-center gap-2 p-4">
-        {images.map((image, index) => (
+        {files.map((fileItem, index) => (
           <button
-            key={image.url}
+            key={fileItem.url}
             ref={index === selectedIndex ? selectedRef : null}
             className={`bg-base-300 hover:border-base-content/50 relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
               index === selectedIndex
                 ? "border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]"
                 : "border-transparent"
             }`}
-            onClick={() => selectImage(index)}
-            aria-label={`Select ${image.name}`}
+            onClick={() => selectFile(index)}
+            aria-label={`Select ${fileItem.handle.name}`}
             aria-current={index === selectedIndex ? "true" : "false"}
           >
-            <img
-              src={image.url}
-              alt={image.name}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            {fileItem.file.type.startsWith("image/") ? (
+              <img
+                src={fileItem.url}
+                alt={fileItem.handle.name}
+                className="h-full w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <FileQuestion className="h-8 w-8 opacity-50" />
+              </div>
+            )}
             <div
               className={`pointer-events-none absolute inset-0 ${
                 index === selectedIndex
