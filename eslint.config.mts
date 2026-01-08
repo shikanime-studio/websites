@@ -11,6 +11,7 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import { tailwind4 } from "tailwind-csstree";
 import tseslint from "typescript-eslint";
+import { tanstackConfig } from "@tanstack/eslint-config";
 
 export default defineConfig(
   globalIgnores([
@@ -74,4 +75,5 @@ export default defineConfig(
     },
   },
   prettier,
+  tanstackConfig,
 );
