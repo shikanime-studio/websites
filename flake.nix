@@ -43,12 +43,13 @@
           imports = [
             devlib.devenvModules.docs
             devlib.devenvModules.formats
+            devlib.devenvModules.git
             devlib.devenvModules.github
             devlib.devenvModules.javascript
             devlib.devenvModules.nix
             devlib.devenvModules.opentofu
             devlib.devenvModules.shell
-            devlib.devenvModules.shikanime
+            devlib.devenvModules.shikanime-studio
           ];
           gitignore.content = [
             ".astro"
