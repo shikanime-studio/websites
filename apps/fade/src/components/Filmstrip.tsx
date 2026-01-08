@@ -31,7 +31,7 @@ export function Filmstrip() {
 
   if (images.length === 0) {
     return (
-      <div className="bg-base-200 border-base-300 flex h-[120px] items-center justify-center border-t">
+      <div className="bg-base-200 border-base-300 flex h-30 items-center justify-center border-t">
         <p className="m-0 text-sm opacity-50">Your images will appear here</p>
       </div>
     );
@@ -39,7 +39,7 @@ export function Filmstrip() {
 
   return (
     <div
-      className="bg-base-200 border-base-300 scrollbar-thin h-[120px] overflow-x-auto overflow-y-hidden border-t"
+      className="bg-base-200 border-base-300 scrollbar-thin h-30 overflow-x-auto overflow-y-hidden border-t"
       ref={containerRef}
     >
       <div className="flex h-full items-center gap-2 p-4">
@@ -65,8 +65,8 @@ export function Filmstrip() {
             <div
               className={`pointer-events-none absolute inset-0 ${
                 index === selectedIndex
-                  ? "from-warning/20 bg-gradient-to-t to-transparent"
-                  : "bg-gradient-to-t from-black/30 to-transparent"
+                  ? "from-warning/20 bg-linear-to-t to-transparent"
+                  : "bg-linear-to-t from-black/30 to-transparent"
               }`}
             />
           </button>
