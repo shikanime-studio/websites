@@ -27,49 +27,18 @@ export async function getExifTags(file: File): Promise<ExifTags> {
   const buffer = await file.arrayBuffer();
   const view = new DataView(buffer);
 
-  if (isJpeg(view)) {
-    return parseJpeg(view);
+  switch (file.type) {
+    case "image/jpeg":
+      return parseJpeg(view);
+    case "image/png":
+      return parsePng(view);
+    case "image/webp":
+      return parseWebP(view);
+    case "image/tiff":
+      return parseExifData(view, 0);
+    default:
+      return {};
   }
-
-  if (isPng(view)) {
-    return parsePng(view);
-  }
-
-  if (isWebP(view)) {
-    return parseWebP(view);
-  }
-
-  if (isTiff(view)) {
-    return parseExifData(view, 0);
-  }
-
-  return {};
-}
-
-function isJpeg(view: DataView): boolean {
-  return view.byteLength >= 2 && view.getUint16(0) === 0xffd8;
-}
-
-function isPng(view: DataView): boolean {
-  return (
-    view.byteLength >= 8 &&
-    view.getUint32(0) === 0x89504e47 &&
-    view.getUint32(4) === 0x0d0a1a0a
-  );
-}
-
-function isWebP(view: DataView): boolean {
-  return (
-    view.byteLength >= 12 &&
-    view.getUint32(0) === 0x52494646 && // RIFF
-    view.getUint32(8) === 0x57454250
-  ); // WEBP
-}
-
-function isTiff(view: DataView): boolean {
-  if (view.byteLength < 4) return false;
-  const sig = view.getUint32(0);
-  return sig === 0x49492a00 || sig === 0x4d4d002a;
 }
 
 function parseJpeg(view: DataView): ExifTags {

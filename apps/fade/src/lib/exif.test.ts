@@ -4,6 +4,8 @@ import { describe, it, expect } from "vitest";
 describe("getExifTags", () => {
   // Helper to create EXIF data block
   function createExifBlock(make = "Test") {
+    const makeLen = make.length + 1; // +1 for null terminator
+
     // TIFF Header: II (little endian), 42, offset 8
     const tiffHeader = new Uint8Array([
       0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00,
@@ -12,21 +14,13 @@ describe("getExifTags", () => {
     // IFD0: 1 entry
     const ifd0Count = new Uint8Array([0x01, 0x00]);
 
-    // Entry: Make (0x010f), ASCII (2), count 5, offset 26
-    const entry = new Uint8Array([
-      0x0f,
-      0x01, // Tag
-      0x02,
-      0x00, // Type
-      0x05,
-      0x00,
-      0x00,
-      0x00, // Count
-      0x1a,
-      0x00,
-      0x00,
-      0x00, // Value/Offset (26)
-    ]);
+    // Entry: Make (0x010f), ASCII (2), count, offset 26
+    const entry = new Uint8Array(12);
+    const entryView = new DataView(entry.buffer);
+    entryView.setUint16(0, 0x010f, true); // Tag
+    entryView.setUint16(2, 0x0002, true); // Type (ASCII)
+    entryView.setUint32(4, makeLen, true); // Count
+    entryView.setUint32(8, 26, true); // Value/Offset (26)
 
     // Next IFD offset: 0
     const nextIfd = new Uint8Array([0x00, 0x00, 0x00, 0x00]);
