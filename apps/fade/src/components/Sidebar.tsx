@@ -68,11 +68,11 @@ export function Sidebar() {
   return (
     <aside
       className={`bg-base-200 border-base-300 relative shrink-0 border-l transition-all duration-250 ${
-        isCollapsed ? "w-8" : "w-[280px]"
+        isCollapsed ? "w-8" : "w-70"
       }`}
     >
       <button
-        className="btn btn-sm btn-square absolute top-1/2 -left-3 z-[5] h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
+        className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
         onClick={() =>
           settingsCollection.insert({
             id: "sidebar_collapsed",
@@ -228,7 +228,7 @@ export function Sidebar() {
               {exifData && Object.keys(exifData).length > 0 && (
                 <>
                   <div className="border-base-300 text-base-content/70 mt-8 mb-5 flex items-center gap-2 border-b pb-3">
-                    <Camera className="h-[18px] w-[18px]" />
+                    <Camera className="h-4.5 w-4.5" />
                     <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
                       Camera
                     </h2>
