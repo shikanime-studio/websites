@@ -1,6 +1,4 @@
-import { Image } from "./Image";
 import { useRef, useState } from "react";
-import type { FC, MouseEvent, ReactNode } from "react";
 import {
   FaBookmark,
   FaChevronLeft,
@@ -8,6 +6,8 @@ import {
   FaCircleCheck,
   FaRegClone,
 } from "react-icons/fa6";
+import { Image } from "./Image";
+import type { FC, MouseEvent, ReactNode } from "react";
 
 export interface CardData {
   id: string | number;

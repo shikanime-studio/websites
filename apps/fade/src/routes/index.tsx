@@ -1,9 +1,9 @@
+import { createFileRoute } from "@tanstack/react-router";
 import { Filmstrip } from "../components/Filmstrip";
 import { GalleryProvider } from "../components/GalleryContext";
 import { MainViewer } from "../components/MainViewer";
 import { Sidebar } from "../components/Sidebar";
 import { ToolBar } from "../components/ToolBar";
-import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({ component: App });
 

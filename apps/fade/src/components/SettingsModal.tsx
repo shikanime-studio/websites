@@ -1,7 +1,7 @@
-import { useTheme } from "./ThemeContext";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
+import { useTheme } from "./ThemeContext";
 
 interface SettingsModalProps {
   isOpen: boolean;

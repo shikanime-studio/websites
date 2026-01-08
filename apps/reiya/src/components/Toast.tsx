@@ -1,7 +1,7 @@
 import { useState } from "react";
-import type { FC, ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useTimeout } from "usehooks-ts";
+import type { FC, ReactNode } from "react";
 
 export interface ToastProps {
   children: ReactNode;
