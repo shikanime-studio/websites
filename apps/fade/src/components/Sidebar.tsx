@@ -1,16 +1,17 @@
-import { settingsCollection } from "../lib/db";
-import { getExifTags } from "../lib/exif";
-import type { ExifTags } from "../lib/exif";
-import { useGallery } from "./GalleryContext";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
   ChevronLeft,
   ChevronRight,
   FileImage,
+  FileQuestion,
   Info,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { settingsCollection } from "../lib/db";
+import { getExifTags } from "../lib/exif";
+import { useGallery } from "./GalleryContext";
+import type { ExifTags } from "../lib/exif";
 
 function formatFileSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} B`;
@@ -19,7 +20,7 @@ function formatFileSize(bytes: number): string {
 }
 
 export function Sidebar() {
-  const { selectedImage } = useGallery();
+  const { selectedFile } = useGallery();
 
   const { data } = useLiveQuery((q) =>
     q
@@ -36,25 +37,26 @@ export function Sidebar() {
   const [exifData, setExifData] = useState<ExifTags | null>(null);
 
   useEffect(() => {
-    if (selectedImage) {
-      const img = new Image();
-      img.onload = () => {
-        setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-      };
-      img.src = selectedImage.url;
-
-      getExifTags(selectedImage.file)
-        .then(setExifData)
-        .catch((err) => {
-          console.error("Failed to parse EXIF:", err);
-          setExifData(null);
-        });
-    } else {
+    if (!selectedFile || !selectedFile.file.type.startsWith("image/")) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDimensions(null);
       setExifData(null);
+      return;
     }
-  }, [selectedImage]);
+
+    const img = new Image();
+    img.onload = () => {
+      setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = selectedFile.url;
+
+    getExifTags(selectedFile.file)
+      .then(setExifData)
+      .catch((err) => {
+        console.error("Failed to parse EXIF:", err);
+        setExifData(null);
+      });
+  }, [selectedFile]);
 
   return (
     <aside
@@ -88,10 +90,14 @@ export function Sidebar() {
             </h2>
           </div>
 
-          {selectedImage ? (
+          {selectedFile ? (
             <div>
               <div className="bg-base-300 rounded-box mb-5 flex h-15 items-center justify-center">
-                <FileImage className="h-8 w-8 opacity-50" />
+                {selectedFile.file.type.startsWith("image/") ? (
+                  <FileImage className="h-8 w-8 opacity-50" />
+                ) : (
+                  <FileQuestion className="h-8 w-8 opacity-50" />
+                )}
               </div>
 
               <dl className="m-0 flex flex-col gap-4">
@@ -101,9 +107,9 @@ export function Sidebar() {
                   </dt>
                   <dd
                     className="m-0 text-sm font-medium break-all"
-                    title={selectedImage.name}
+                    title={selectedFile.handle.name}
                   >
-                    {selectedImage.name}
+                    {selectedFile.handle.name}
                   </dd>
                 </div>
 
@@ -123,7 +129,7 @@ export function Sidebar() {
                     File Size
                   </dt>
                   <dd className="m-0 text-sm font-medium">
-                    {formatFileSize(selectedImage.size)}
+                    {formatFileSize(selectedFile.file.size)}
                   </dd>
                 </div>
               </dl>

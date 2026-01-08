@@ -1,9 +1,9 @@
-import { defineConfig } from "drizzle-kit";
-import type { Config } from "drizzle-kit";
 import fs from "node:fs";
 import path from "node:path";
 import process from "node:process";
+import { defineConfig } from "drizzle-kit";
 import { z } from "zod";
+import type { Config } from "drizzle-kit";
 
 const config = {
   out: "./migrations",
