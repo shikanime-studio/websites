@@ -1,7 +1,7 @@
-import { FileQuestion } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useGallery } from "./GalleryContext";
+import { FilmstripItem } from "./FilmstripItem";
 
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery();
@@ -45,43 +45,16 @@ export function Filmstrip() {
         {virtualizer.getVirtualItems().map((virtualItem) => {
           const fileItem = files[virtualItem.index];
           return (
-            <button
-              key={fileItem.url}
-              className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
-                virtualItem.index === selectedIndex
-                  ? "border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]"
-                  : "border-transparent"
-              }`}
+            <FilmstripItem
+              key={fileItem.handle.name}
+              handle={fileItem.handle}
+              isSelected={virtualItem.index === selectedIndex}
+              onClick={() => selectFile(virtualItem.index)}
               style={{
                 transform: `translateX(${virtualItem.start}px)`,
-                width: "80px", // Explicit width matching estimateSize - gap
+                width: "80px",
               }}
-              onClick={() => selectFile(virtualItem.index)}
-              aria-label={`Select ${fileItem.handle.name}`}
-              aria-current={
-                virtualItem.index === selectedIndex ? "true" : "false"
-              }
-            >
-              {fileItem.file.type.startsWith("image/") ? (
-                <img
-                  src={fileItem.url}
-                  alt={fileItem.handle.name}
-                  className="h-full w-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center">
-                  <FileQuestion className="h-8 w-8 opacity-50" />
-                </div>
-              )}
-              <div
-                className={`pointer-events-none absolute inset-0 ${
-                  virtualItem.index === selectedIndex
-                    ? "from-warning/20 bg-linear-to-t to-transparent"
-                    : "bg-linear-to-t from-black/30 to-transparent"
-                }`}
-              />
-            </button>
+            />
           );
         })}
       </div>
