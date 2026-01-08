@@ -1,13 +1,6 @@
+import { characters, events, items, licenses, makers } from "../schema";
+import type { Schema } from "../schema";
 import { desc, eq, gt, like, or } from "drizzle-orm";
-import {
-  
-  characters,
-  events,
-  items,
-  licenses,
-  makers
-} from "../schema";
-import type {Schema} from "../schema";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 export function getItemsByMaker(

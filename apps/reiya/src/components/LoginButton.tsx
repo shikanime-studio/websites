@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { BsGoogle } from "react-icons/bs";
 import { authClient } from "../lib/auth-client";
 import { AlertError } from "./AlertError";
 import { Toast } from "./Toast";
+import { useState } from "react";
+import { BsGoogle } from "react-icons/bs";
 
 export default function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
