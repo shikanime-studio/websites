@@ -20,16 +20,16 @@
     "jiti": "^2.6.1",
     "prettier": "^3.5.2",
     "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-autocorrect": "^0.4.3",
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwind-csstree": "^0.1.4",
     "typescript-eslint": "^8.49.0",
     "vitest": "^4.0.15"
   },
   "packageManager": "npm@11.7.0+sha512.c22099a6fff8d5b2286c2a09df5352b4858a7c0c716320f58989d60ad8b29ecf2ce6fdfe97ccb41c23ffb1272e1fa079f868487dd6b81d02a2a9e199c095a117",
+  "type": "module",
   "name": "@shikanime/websites",
   "scripts": {
-    "format": "prettier --write . \"!**/*.{json,yaml}\"",
+    "format": "prettier --write .",
     "lint": "eslint .",
     "test": "vitest"
   },

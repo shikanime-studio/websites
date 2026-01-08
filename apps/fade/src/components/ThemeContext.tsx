@@ -1,12 +1,8 @@
-import {
-    createContext,
-    useContext,
-    useEffect
-} from 'react'
-import { eq, useLiveQuery } from '@tanstack/react-db'
-import {  settingsCollection } from '../lib/db'
-import type {Theme} from '../lib/db';
-import type { ReactNode } from 'react'
+import { settingsCollection } from "../lib/db";
+import type { Theme } from "../lib/db";
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { createContext, useContext, useEffect } from "react";
+import type { ReactNode } from "react";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -17,10 +13,11 @@ interface ThemeContextValue {
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const { data } = useLiveQuery(
-        (q) => q.from({ settings: settingsCollection })
-            .where(({ settings }) => eq(settings.id, 'theme'))
-    )
+  const { data } = useLiveQuery((q) =>
+    q
+      .from({ settings: settingsCollection })
+      .where(({ settings }) => eq(settings.id, "theme")),
+  );
 
   const theme = (data[0]?.value as Theme | undefined) ?? "system";
 
@@ -34,26 +31,26 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         root.setAttribute("data-theme", systemTheme);
       };
 
-            applySystemTheme()
-            mediaQuery.addEventListener('change', applySystemTheme)
-            return () => mediaQuery.removeEventListener('change', applySystemTheme)
-        } else {
-            root.setAttribute('data-theme', theme)
-        }
-    }, [theme])
-
-    const setTheme = (newTheme: Theme) => {
-        settingsCollection.insert({
-            id: 'theme',
-            value: newTheme
-        })
+      applySystemTheme();
+      mediaQuery.addEventListener("change", applySystemTheme);
+      return () => mediaQuery.removeEventListener("change", applySystemTheme);
+    } else {
+      root.setAttribute("data-theme", theme);
     }
   }, [theme]);
 
-    const toggleTheme = () => {
-        const nextTheme = theme === 'system' ? 'dark' : (theme === 'dark' ? 'light' : 'dark')
-        setTheme(nextTheme)
-    }
+  const setTheme = (newTheme: Theme) => {
+    settingsCollection.insert({
+      id: "theme",
+      value: newTheme,
+    });
+  };
+
+  const toggleTheme = () => {
+    const nextTheme =
+      theme === "system" ? "dark" : theme === "dark" ? "light" : "dark";
+    setTheme(nextTheme);
+  };
 
   return (
     <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>

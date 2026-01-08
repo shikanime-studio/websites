@@ -14,15 +14,15 @@ export const GET: APIRoute = async ({ locals }) => {
       name: item.maker?.name || "Unknown Artist",
       avatar: item.maker?.avatarImageUrl
         ? {
-          src: item.maker.avatarImageUrl,
-          width: item.maker.avatarImageWidth || 0,
-          height: item.maker.avatarImageHeight || 0,
-        }
+            src: item.maker.avatarImageUrl,
+            width: item.maker.avatarImageWidth || 0,
+            height: item.maker.avatarImageHeight || 0,
+          }
         : {
-          src: "https://placehold.co/100x100/ccc/FFF?text=?",
-          width: 100,
-          height: 100,
-        },
+            src: "https://placehold.co/100x100/ccc/FFF?text=?",
+            width: 100,
+            height: 100,
+          },
       verified: true,
       level: Math.floor(Math.random() * 20) + 1,
     },

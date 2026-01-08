@@ -1,7 +1,7 @@
+import * as schema from "../schema";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap } from "better-auth/plugins";
-import * as schema from "../schema";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 
 export const createAuth = (

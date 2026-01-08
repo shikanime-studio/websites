@@ -1,5 +1,5 @@
-import { FaBoxOpen } from "react-icons/fa6";
 import type { FC, ReactNode } from "react";
+import { FaBoxOpen } from "react-icons/fa6";
 
 interface EmptyStateProps {
   title?: string;
