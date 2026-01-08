@@ -5,10 +5,12 @@ import {
   ImageOff,
 } from "lucide-react";
 import { useGallery } from "./GalleryContext";
+import { useFile } from "../hooks/useFile";
 
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
     useGallery();
+  const { file, url } = useFile(selectedFile?.handle);
 
   if (files.length === 0) {
     return (
@@ -40,10 +42,12 @@ export function MainViewer() {
 
       <div className="flex h-full min-w-0 flex-1 items-center justify-center p-6">
         {selectedFile &&
-          (selectedFile.file.type.startsWith("image/") ? (
+          file &&
+          url &&
+          (file.type.startsWith("image/") ? (
             <img
-              key={selectedFile.url}
-              src={selectedFile.url}
+              key={url}
+              src={url}
               alt={selectedFile.handle.name}
               className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
             />

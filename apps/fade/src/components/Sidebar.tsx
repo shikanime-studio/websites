@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { settingsCollection } from "../lib/db";
 import { getExifTags } from "../lib/exif";
 import { useGallery } from "./GalleryContext";
+import { useFile } from "../hooks/useFile";
 import type { ExifTags } from "../lib/exif";
 
 function formatFileSize(bytes: number): string {
@@ -21,6 +22,7 @@ function formatFileSize(bytes: number): string {
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
+  const { file, url } = useFile(selectedFile?.handle);
 
   const { data } = useLiveQuery((q) =>
     q
@@ -37,7 +39,7 @@ export function Sidebar() {
   const [exifData, setExifData] = useState<ExifTags | null>(null);
 
   useEffect(() => {
-    if (!selectedFile || !selectedFile.file.type.startsWith("image/")) {
+    if (!selectedFile || !file || !url || !file.type.startsWith("image/")) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDimensions(null);
       setExifData(null);
@@ -48,15 +50,15 @@ export function Sidebar() {
     img.onload = () => {
       setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
     };
-    img.src = selectedFile.url;
+    img.src = url;
 
-    getExifTags(selectedFile.file)
+    getExifTags(file)
       .then(setExifData)
       .catch((err) => {
         console.error("Failed to parse EXIF:", err);
         setExifData(null);
       });
-  }, [selectedFile]);
+  }, [selectedFile, file, url]);
 
   return (
     <aside
@@ -90,10 +92,10 @@ export function Sidebar() {
             </h2>
           </div>
 
-          {selectedFile ? (
+          {selectedFile && file ? (
             <div>
               <div className="bg-base-300 rounded-box mb-5 flex h-15 items-center justify-center">
-                {selectedFile.file.type.startsWith("image/") ? (
+                {file.type.startsWith("image/") ? (
                   <FileImage className="h-8 w-8 opacity-50" />
                 ) : (
                   <FileQuestion className="h-8 w-8 opacity-50" />
@@ -129,7 +131,7 @@ export function Sidebar() {
                     File Size
                   </dt>
                   <dd className="m-0 text-sm font-medium">
-                    {formatFileSize(selectedFile.file.size)}
+                    {formatFileSize(file.size)}
                   </dd>
                 </div>
               </dl>

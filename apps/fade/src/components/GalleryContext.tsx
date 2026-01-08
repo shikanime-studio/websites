@@ -8,8 +8,6 @@ import {
 import type { ReactNode } from "react";
 
 export interface FileItem {
-  file: File;
-  url: string;
   handle: FileSystemFileHandle;
 }
 
@@ -47,31 +45,19 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: true }));
 
       const directoryHandle = await window.showDirectoryPicker();
-      const promises: Array<Promise<FileItem>> = [];
+      const items: FileItem[] = [];
 
       for await (const handle of directoryHandle.values()) {
         if (handle.kind === "file") {
-          promises.push(
-            (async () => {
-              const file = await handle.getFile();
-              const url = URL.createObjectURL(file);
-              return {
-                file,
-                url,
-                handle: handle,
-              };
-            })(),
-          );
+          items.push({ handle });
         }
       }
 
-      const fileItems = await Promise.all(promises);
-
       // Sort by filename
-      fileItems.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
+      items.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
 
       setState({
-        files: fileItems,
+        files: items,
         selectedIndex: 0,
         isLoading: false,
       });
@@ -133,13 +119,6 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [state.files.length, navigateNext, navigatePrevious, selectFile]);
-
-  // Cleanup object URLs on unmount
-  useEffect(() => {
-    return () => {
-      state.files.forEach((file) => URL.revokeObjectURL(file.url));
-    };
-  }, [state.files]);
 
   const selectedFile =
     state.files.length > 0 ? state.files[state.selectedIndex] : null;
