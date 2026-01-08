@@ -28,8 +28,9 @@ export const Route = createRootRoute({
       },
     ],
   }),
-  shellComponent: RootDocument,
   component: RootComponent,
+  shellComponent: RootDocument,
+  ssr: false,
 });
 
 function RootComponent() {
