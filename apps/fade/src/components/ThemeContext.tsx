@@ -1,13 +1,12 @@
 import {
-    
     createContext,
     useContext,
-    useEffect,
-    useState
+    useEffect
 } from 'react'
-import type {ReactNode} from 'react';
-
-type Theme = 'dark' | 'light' | 'system'
+import { eq, useLiveQuery } from '@tanstack/react-db'
+import {  settingsCollection } from '../lib/db'
+import type {Theme} from '../lib/db';
+import type { ReactNode } from 'react'
 
 interface ThemeContextValue {
   theme: Theme;
@@ -17,20 +16,16 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-const THEME_STORAGE_KEY = 'fade-theme'
-
 export function ThemeProvider({ children }: { children: ReactNode }) {
-    const [theme, setThemeState] = useState<Theme>(() => {
-        if (typeof window !== 'undefined') {
-            const stored = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null
-            if (stored === 'light' || stored === 'dark' || stored === 'system') return stored
-        }
-        return 'system'
-    })
+    const { data } = useLiveQuery(
+        (q) => q.from({ settings: settingsCollection })
+            .where(({ settings }) => eq(settings.id, 'theme'))
+    )
+
+  const theme = (data[0]?.value as Theme | undefined) ?? "system";
 
   useEffect(() => {
     const root = document.documentElement;
-        localStorage.setItem(THEME_STORAGE_KEY, theme)
 
     if (theme === "system") {
       const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
@@ -48,15 +43,16 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }, [theme])
 
     const setTheme = (newTheme: Theme) => {
-        setThemeState(newTheme)
+        settingsCollection.insert({
+            id: 'theme',
+            value: newTheme
+        })
     }
   }, [theme]);
 
     const toggleTheme = () => {
-        setThemeState((prev) => {
-            if (prev === 'system') return 'dark'
-            return prev === 'dark' ? 'light' : 'dark'
-        })
+        const nextTheme = theme === 'system' ? 'dark' : (theme === 'dark' ? 'light' : 'dark')
+        setTheme(nextTheme)
     }
 
   return (
