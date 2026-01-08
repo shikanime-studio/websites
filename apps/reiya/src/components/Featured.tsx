@@ -1,9 +1,9 @@
+import { FaArrowRight } from "react-icons/fa6";
 import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from "./Card";
-import type { CardData } from "./Card";
 import { EmptyState } from "./EmptyState";
 import { Image } from "./Image";
+import type { CardData } from "./Card";
 import type { FC } from "react";
-import { FaArrowRight } from "react-icons/fa6";
 
 interface FeaturedProps {
   title?: string;
