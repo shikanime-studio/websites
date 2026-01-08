@@ -4,7 +4,7 @@ import { FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
 
 export function ToolBar() {
-  const { loadDirectory, images, selectedIndex, isLoading } = useGallery();
+  const { loadDirectory, files, selectedIndex, isLoading } = useGallery();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
@@ -18,9 +18,9 @@ export function ToolBar() {
         </div>
 
         <div className="navbar-center">
-          {images.length > 0 && (
+          {files.length > 0 && (
             <span className="text-sm tabular-nums opacity-70">
-              {selectedIndex + 1} / {images.length}
+              {selectedIndex + 1} / {files.length}
             </span>
           )}
         </div>
