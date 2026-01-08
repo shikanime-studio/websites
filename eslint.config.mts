@@ -2,6 +2,7 @@ import css from "@eslint/css";
 import eslint from "@eslint/js";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
+import { tanstackConfig } from "@tanstack/eslint-config";
 import prettier from "eslint-config-prettier";
 import astro from "eslint-plugin-astro";
 import react from "eslint-plugin-react";
@@ -11,7 +12,6 @@ import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import { tailwind4 } from "tailwind-csstree";
 import tseslint from "typescript-eslint";
-import { tanstackConfig } from "@tanstack/eslint-config";
 
 export default defineConfig(
   globalIgnores([
