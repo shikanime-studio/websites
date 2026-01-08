@@ -60,7 +60,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
           );
 
           if (isImage) {
-            const file = await (entry as FileSystemFileHandle).getFile();
+            const file = await entry.getFile();
             const url = URL.createObjectURL(file);
             imageItems.push({
               file,
