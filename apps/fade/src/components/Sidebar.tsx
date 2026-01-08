@@ -68,12 +68,18 @@ export function Sidebar() {
     >
       <button
         className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
-        onClick={() =>
-          settingsCollection.insert({
-            id: "sidebar_collapsed",
-            value: !isCollapsed,
-          })
-        }
+        onClick={() => {
+          if (data.length > 0) {
+            settingsCollection.update("sidebar_collapsed", (draft) => {
+              draft.value = !isCollapsed;
+            });
+          } else {
+            settingsCollection.insert({
+              id: "sidebar_collapsed",
+              value: !isCollapsed,
+            });
+          }
+        }}
         aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
       >
         {isCollapsed ? (
