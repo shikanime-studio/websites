@@ -1,5 +1,5 @@
-import type { FC } from "react";
 import { Activity, useState } from "react";
+import type { FC } from "react";
 
 export interface ImageProps {
   src: string;

@@ -1,5 +1,5 @@
-import type { FC, InputHTMLAttributes, ReactNode } from "react";
 import { Activity, createContext, useContext, useState } from "react";
+import type { FC, InputHTMLAttributes, ReactNode } from "react";
 
 interface TabContextType {
   activeTab: string;
