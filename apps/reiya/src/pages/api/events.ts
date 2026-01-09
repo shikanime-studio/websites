@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ locals }) => {
           },
         ],
     artist: {
-      name: event.location || "Online",
+      name: event.location ?? "Online",
       avatar: {
         src: `https://placehold.co/100x100/e2e8f0/64748b?text=EV`,
         width: 100,
@@ -40,7 +40,7 @@ export const GET: APIRoute = async ({ locals }) => {
       month: "short",
       day: "numeric",
     }),
-    href: `/events/${event.id}`,
+    href: `/events/${String(event.id)}`,
   }));
 
   return new Response(JSON.stringify(eventItems), {

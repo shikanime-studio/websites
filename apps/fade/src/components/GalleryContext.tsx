@@ -13,7 +13,7 @@ export function GalleryProvider({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data: files, isFetching } = useSuspenseQuery({
+  const { data: files } = useSuspenseQuery({
     queryKey: ["gallery", handle],
     queryFn: async () => {
       if (!handle) return [];
@@ -23,7 +23,11 @@ export function GalleryProvider({
     refetchOnWindowFocus: false,
   });
 
+  const [prevHandle, setPrevHandle] = useState(handle);
+  if (handle !== prevHandle) {
+    setPrevHandle(handle);
     setSelectedIndex(0);
+  }
 
   const selectFile = useCallback(
     (index: number) => {

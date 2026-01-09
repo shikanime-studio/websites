@@ -28,8 +28,12 @@ export const Toast: FC<ToastProps> = ({
   return createPortal(
     <div
       className={`toast toast-end toast-bottom z-50 ${className}`}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => {
+        setIsHovered(true);
+      }}
+      onMouseLeave={() => {
+        setIsHovered(false);
+      }}
     >
       {children}
     </div>,

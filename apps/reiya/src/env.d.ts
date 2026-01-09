@@ -1,5 +1,11 @@
 /// <reference types="@types/gsi" />
 
+interface Env {
+  DB: import("@cloudflare/workers-types").D1Database;
+  BETTER_AUTH_SECRET: string;
+  GOOGLE_CLIENT_SECRET: string;
+}
+
 type Runtime = import("@astrojs/cloudflare").Runtime<Env>;
 
 declare namespace App {

@@ -3,7 +3,6 @@ import eslint from "@eslint/js";
 import json from "@eslint/json";
 import markdown from "@eslint/markdown";
 import { tanstackConfig } from "@tanstack/eslint-config";
-import prettier from "eslint-config-prettier";
 import astro from "eslint-plugin-astro";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
@@ -21,6 +20,7 @@ export default defineConfig(
     "**/dist",
     "**/package-lock.json",
   ]),
+  tanstackConfig,
   {
     files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     extends: [
@@ -33,6 +33,11 @@ export default defineConfig(
       reactRefresh.configs.vite,
     ],
     languageOptions: {
+      parserOptions: {
+        project: null,
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
@@ -74,6 +79,4 @@ export default defineConfig(
       customSyntax: tailwind4,
     },
   },
-  prettier,
-  tanstackConfig,
 );

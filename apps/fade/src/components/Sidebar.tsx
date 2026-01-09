@@ -1,14 +1,14 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { Camera, ChevronLeft, ChevronRight, Info } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
-import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
+import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
-import type { FileItem } from "../hooks/useGallery";
+import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
@@ -82,27 +82,9 @@ export function Sidebar() {
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
-  const { file } = useFile(handle);
-  const { url } = useObjectUrl(file ?? null);
+  const { file } = useFile(fileItem);
   const exifData = useExif(file ?? null);
-  const [dimensions, setDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!file || !url || !file.type.startsWith("image/")) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDimensions(null);
-      return;
-    }
-
-    const img = new Image();
-    img.onload = () => {
-      setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-    };
-    img.src = url;
-  }, [file, url]);
+  const { width, height } = useCanvasInfo();
 
   if (!file) return null;
 
@@ -122,13 +104,13 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {dimensions && (
+        {width && height && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {dimensions.width} × {dimensions.height}
+              {width} × {height}
             </dd>
           </div>
         )}
@@ -231,13 +213,13 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
             </h2>
           </div>
           <div className="flex flex-col gap-2">
-            {sidecars.map((sidecarFile) => (
+            {sidecars.map((sidecarItem) => (
               <div
-                key={sidecarFile.name}
+                key={sidecarItem.handle.name}
                 className="flex items-center gap-2 text-sm opacity-70"
               >
-                <FileIcon type="image/jpeg" className="h-4 w-4" />
-                <span className="truncate">{sidecarFile.name}</span>
+                <FileIcon type={sidecarItem.mimeType} className="h-4 w-4" />
+                <span className="truncate">{sidecarItem.handle.name}</span>
               </div>
             ))}
           </div>

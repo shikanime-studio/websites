@@ -75,8 +75,7 @@ export function Filmstrip() {
           return (
             <Activity mode={mode} key={fileItem.handle.name}>
               <FilmstripItem
-                handle={fileItem.handle}
-                sidecars={fileItem.sidecars}
+                fileItem={fileItem}
                 isSelected={index === selectedIndex}
                 onClick={() => {
                   selectFile(index);

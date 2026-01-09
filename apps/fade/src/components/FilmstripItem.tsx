@@ -2,10 +2,10 @@ import { Image } from "@unpic/react";
 import { Suspense } from "react";
 import { useThumbnail } from "../hooks/useThumbnail";
 import { FileIcon } from "./FileIcon";
+import type { FileItem } from "../lib/fs";
 
 interface FilmstripItemProps {
-  handle: FileSystemFileHandle;
-  sidecars?: Array<FileSystemFileHandle>;
+  fileItem: FileItem;
   isSelected: boolean;
   onClick: () => void;
   style: React.CSSProperties;
@@ -20,11 +20,12 @@ export function FilmstripItem(props: FilmstripItemProps) {
 }
 
 function FilmstripItemSkeleton({
-  handle,
+  fileItem,
   isSelected,
   onClick,
   style,
 }: FilmstripItemProps) {
+  const { handle } = fileItem;
   return (
     <button
       className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
@@ -45,12 +46,13 @@ function FilmstripItemSkeleton({
 }
 
 function FilmstripItemContent({
-  handle,
+  fileItem,
   isSelected,
   onClick,
   style,
 }: FilmstripItemProps) {
-  const { mimeType, url } = useThumbnail(handle, 80, 80);
+  const { handle } = fileItem;
+  const { mimeType, url } = useThumbnail(fileItem, 80, 80);
 
   return (
     <button

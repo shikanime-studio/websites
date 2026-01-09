@@ -6,7 +6,7 @@ import { SettingsModal } from "./SettingsModal";
 
 export function ToolBar() {
   const { select } = useDirectory();
-  const { files, selectedIndex, isLoading } = useGallery();
+  const { files, selectedIndex } = useGallery();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
@@ -33,14 +33,9 @@ export function ToolBar() {
             onClick={() => {
               void select();
             }}
-            disabled={isLoading}
           >
-            {isLoading ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <FolderOpen className="h-4 w-4" />
-            )}
-            <span>{isLoading ? "Loading..." : "Open Folder"}</span>
+            <FolderOpen className="h-4 w-4" />
+            <span>Open Folder</span>
           </button>
           <button
             className="btn btn-sm btn-square btn-ghost"
