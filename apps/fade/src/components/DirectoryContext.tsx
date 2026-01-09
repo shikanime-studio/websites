@@ -3,8 +3,7 @@ import { DirectoryContext } from "../hooks/useDirectory";
 import type { ReactNode } from "react";
 
 export function DirectoryProvider({ children }: { children: ReactNode }) {
-  const [handle, setHandle] =
-    useState<FileSystemDirectoryHandle | null>(null);
+  const [handle, setHandle] = useState<FileSystemDirectoryHandle | null>(null);
 
   const select = useCallback(async () => {
     try {
