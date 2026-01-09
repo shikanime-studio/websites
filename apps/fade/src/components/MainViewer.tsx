@@ -1,12 +1,12 @@
 import {
   ChevronLeft,
   ChevronRight,
-  FileQuestion,
   ImageOff,
 } from "lucide-react";
 import { Image } from "@unpic/react";
 import { useGallery } from "./GalleryContext";
 import { useFile } from "../hooks/useFile";
+import { FileIcon } from "./FileIcon";
 
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
@@ -52,17 +52,24 @@ export function MainViewer() {
               alt={selectedFile.handle.name}
               className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
               layout="fullWidth"
+              background="auto"
             />
           ) : (
-            <div className="flex flex-col items-center gap-4 opacity-50">
-              <FileQuestion className="h-32 w-32 opacity-30" />
-              <p className="m-0 text-xl font-medium">
-                Preview not available for this file type
-              </p>
-              <p className="m-0 text-base opacity-70">
-                {selectedFile.handle.name}
-              </p>
-            </div>
+            <object
+              data={url}
+              type={file.type}
+              className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
+            >
+              <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
+                <FileIcon type={file.type} className="h-32 w-32 opacity-30" />
+                <p className="m-0 text-xl font-medium">
+                  Preview not available for this file type
+                </p>
+                <p className="m-0 text-base opacity-70">
+                  {selectedFile.handle.name}
+                </p>
+              </div>
+            </object>
           ))}
       </div>
 

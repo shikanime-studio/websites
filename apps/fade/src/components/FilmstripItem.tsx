@@ -1,6 +1,6 @@
-import { FileQuestion } from "lucide-react";
 import { Image } from "@unpic/react";
 import { useFile } from "../hooks/useFile";
+import { FileIcon } from "./FileIcon";
 
 interface FilmstripItemProps {
   handle: FileSystemFileHandle;
@@ -35,10 +35,11 @@ export function FilmstripItem({
           alt={handle.name}
           className="h-full w-full object-cover"
           layout="fullWidth"
+          background="auto"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <FileQuestion className="h-8 w-8 opacity-50" />
+          <FileIcon type={file?.type} className="h-8 w-8 opacity-50" />
         </div>
       )}
       <div
