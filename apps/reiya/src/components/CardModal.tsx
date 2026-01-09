@@ -10,7 +10,7 @@ import {
   FaShare,
   FaXmark,
 } from "react-icons/fa6";
-import { Image } from "./Image";
+import { Image } from "@unpic/react";
 import type { FC } from "react";
 import type { CardData } from "./Card";
 
@@ -95,6 +95,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                   width={img.width}
                   height={img.height}
                   alt={`${card.title}`}
+                  layout="constrained"
                   className="h-auto w-full object-contain"
                 />
               </div>
@@ -170,6 +171,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                 width={48}
                 height={48}
                 alt={card.artist.name}
+                layout="constrained"
                 className="h-12 w-12 rounded-full ring-2 ring-white"
               />
               <div className="min-w-0 flex-1">

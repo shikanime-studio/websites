@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Image } from "@unpic/react";
 import { Activity } from "react";
 import { FaArrowRight } from "react-icons/fa6";
 import {
@@ -231,8 +232,11 @@ const ExploreConventionsContent: FC = () => {
                 key={event.id}
               >
                 <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-                  <img
+                  <Image
                     src={event.images[0]?.src}
+                    width={event.images[0]?.width}
+                    height={event.images[0]?.height}
+                    layout="constrained"
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     alt={event.title}
                   />
