@@ -5,9 +5,9 @@ import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
+import { formatBytes } from "../lib/intl";
 import { useGallery } from "./GalleryContext";
 import { FileIcon } from "./FileIcon";
-import { formatBytes } from "../lib/intl";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();

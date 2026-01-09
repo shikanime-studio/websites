@@ -5,11 +5,12 @@ export function useThumbnail(
   handle: FileSystemFileHandle | null,
   width = 256,
   height = 256,
+  quality = 1.0,
 ) {
   const { file, mimeType } = useFile(handle);
 
   const { data } = useSuspenseQuery({
-    queryKey: ["thumbnail", handle?.name, width, height],
+    queryKey: ["thumbnail", handle?.name, width, height, quality],
     queryFn: async () => {
       if (!file || !mimeType || !mimeType.startsWith("image/")) {
         return null;
@@ -17,32 +18,29 @@ export function useThumbnail(
 
       try {
         const bitmap = await createImageBitmap(file);
-        let targetWidth = width;
-        let targetHeight = height;
 
-        const ratio = Math.min(width / bitmap.width, height / bitmap.height);
+        // Calculate scaling to cover the requested width/height
+        const scale = Math.max(width / bitmap.width, height / bitmap.height);
 
-        if (ratio < 1) {
-          targetWidth = Math.round(bitmap.width * ratio);
-          targetHeight = Math.round(bitmap.height * ratio);
-        } else {
-          targetWidth = bitmap.width;
-          targetHeight = bitmap.height;
-        }
+        const drawWidth = Math.round(bitmap.width * scale);
+        const drawHeight = Math.round(bitmap.height * scale);
+
+        const offsetX = (width - drawWidth) / 2;
+        const offsetY = (height - drawHeight) / 2;
 
         const canvas = document.createElement("canvas");
-        canvas.width = targetWidth;
-        canvas.height = targetHeight;
+        canvas.width = width;
+        canvas.height = height;
         const ctx = canvas.getContext("2d");
         if (!ctx) {
           bitmap.close();
           return null;
         }
 
-        ctx.drawImage(bitmap, 0, 0, targetWidth, targetHeight);
+        ctx.drawImage(bitmap, offsetX, offsetY, drawWidth, drawHeight);
         bitmap.close();
 
-        return canvas.toDataURL("image/jpeg", 0.7);
+        return canvas.toDataURL("image/webp", quality);
       } catch {
         return null;
       }
