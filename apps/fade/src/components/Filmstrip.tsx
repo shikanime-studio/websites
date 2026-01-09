@@ -1,18 +1,37 @@
-import { Activity, useEffect, useRef } from "react";
+import { Activity, useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useGallery } from "./GalleryContext";
 import { FilmstripItem } from "./FilmstripItem";
 
+const ITEM_SIZE = 88;
+
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const overscan =
+    containerWidth > 0 ? Math.ceil(containerWidth / ITEM_SIZE) : 5;
 
   const virtualizer = useVirtualizer({
     horizontal: true,
     count: files.length,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 88, // 80px width + 8px gap
-    overscan: 5,
+    estimateSize: () => ITEM_SIZE,
+    overscan,
   });
 
   // Scroll selected thumbnail into view
@@ -49,7 +68,7 @@ export function Filmstrip() {
       >
         {files.map((fileItem, index) => {
           const mode = modeMap.get(index) ?? "hidden";
-          const start = index * 88;
+          const start = index * ITEM_SIZE;
 
           return (
             <Activity mode={mode} key={fileItem.handle.name}>

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Activity, useState } from "react";
+import { Image } from "@unpic/react";
 import {
   Card,
   CardBookmark,
@@ -11,7 +12,6 @@ import {
 import { CardModal } from "./CardModal";
 import { EmptyState } from "./EmptyState";
 import { SkeletonCard } from "./SkeletonCard";
-import { Image } from "@unpic/react";
 import type { CardData } from "./Card";
 import type { FC, ReactNode } from "react";
 
