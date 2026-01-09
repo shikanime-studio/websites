@@ -4,41 +4,32 @@ import { GalleryContext } from "../hooks/useGallery";
 import { scanDirectory } from "../lib/fs";
 import type { ReactNode } from "react";
 
-export function GalleryProvider({ children }: { children: ReactNode }) {
-  const [directoryHandle, setDirectoryHandle] =
-    useState<FileSystemDirectoryHandle | null>(null);
-  const [loadId, setLoadId] = useState(0);
+export function GalleryProvider({
+  children,
+  handle,
+}: {
+  children: ReactNode;
+  handle: FileSystemDirectoryHandle | null;
+}) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data: files, isFetching } = useSuspenseQuery({
-    queryKey: ["gallery", loadId],
+  const {
+    data: files,
+    isFetching,
+  } = useSuspenseQuery({
+    queryKey: ["gallery", handle],
     queryFn: async () => {
-      if (!directoryHandle) return [];
-      return scanDirectory(directoryHandle);
+      if (!handle) return [];
+      return scanDirectory(handle);
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
   });
 
-  const loadDirectory = useCallback(async () => {
-    try {
-      // Check if the API is supported
-      if (!("showDirectoryPicker" in window)) {
-        alert("File System Access API is not supported in this browser");
-        return;
-      }
-
-      const handle = await window.showDirectoryPicker();
-      setDirectoryHandle(handle);
-      setLoadId((id) => id + 1);
-      setSelectedIndex(0);
-    } catch (error) {
-      // User cancelled the picker
-      if ((error as Error).name !== "AbortError") {
-        console.error("Error loading directory:", error);
-      }
-    }
-  }, []);
+  // Reset selection when directory changes
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [handle]);
 
   const selectFile = useCallback(
     (index: number) => {
@@ -94,7 +85,6 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
         files,
         selectedIndex,
         isLoading: isFetching,
-        loadDirectory,
         selectFile,
         navigateNext,
         navigatePrevious,

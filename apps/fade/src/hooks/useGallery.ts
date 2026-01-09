@@ -12,7 +12,6 @@ export interface GalleryState {
 }
 
 export interface GalleryContextValue extends GalleryState {
-  loadDirectory: () => Promise<void>;
   selectFile: (index: number) => void;
   navigateNext: () => void;
   navigatePrevious: () => void;
