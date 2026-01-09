@@ -313,7 +313,7 @@ export const CardCarousel: FC<CardCarouselProps> = ({
                 alt={title}
                 width={600}
                 height={800}
-                imageClassName="h-full w-full object-contain"
+                className="h-full w-full object-contain"
               />
             </div>
           )}
@@ -375,7 +375,7 @@ export const CardShowcaseCarousel: FC<CardShowcaseCarouselProps> = ({
       alt={title}
       width={600}
       height={400}
-      imageClassName="h-auto w-full"
+      className="h-auto w-full"
     />
   );
 

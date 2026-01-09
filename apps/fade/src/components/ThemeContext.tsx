@@ -16,10 +16,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   const { data } = useLiveQuery((q) =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "theme")),
+      .where(({ settings }) => eq(settings.id, "theme"))
+      .findOne(),
   );
 
-  const theme = (data[0]?.value as Theme | undefined) ?? "system";
+  const theme = (data?.value as Theme | undefined) ?? "system";
 
   useEffect(() => {
     const root = document.documentElement;
@@ -40,7 +41,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [theme]);
 
   const setTheme = (newTheme: Theme) => {
-    if (data.length > 0) {
+    if (data) {
       settingsCollection.update("theme", (draft) => {
         draft.value = newTheme;
       });

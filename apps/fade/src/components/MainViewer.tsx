@@ -40,7 +40,9 @@ export function MainViewer() {
 
       <div className="flex h-full min-w-0 flex-1 items-center justify-center p-6">
         <Suspense
-          fallback={<span className="loading loading-spinner loading-lg"></span>}
+          fallback={
+            <span className="loading loading-spinner loading-lg"></span>
+          }
         >
           {selectedFile ? (
             <MainViewerContent handle={selectedFile.handle} />

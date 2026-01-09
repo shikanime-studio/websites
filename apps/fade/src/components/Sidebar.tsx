@@ -1,10 +1,5 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import {
-  Camera,
-  ChevronLeft,
-  ChevronRight,
-  Info,
-} from "lucide-react";
+import { Camera, ChevronLeft, ChevronRight, Info } from "lucide-react";
 import { Suspense, useEffect, useState } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
@@ -12,13 +7,7 @@ import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "./GalleryContext";
 import { FileIcon } from "./FileIcon";
-import type { ExifTags } from "../lib/exif";
-
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
-}
+import { formatBytes } from "../lib/intl";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
@@ -146,7 +135,7 @@ function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
             File Size
           </dt>
           <dd className="m-0 text-sm font-medium">
-            {formatFileSize(file.size)}
+            {formatBytes(file.size)}
           </dd>
         </div>
       </dl>
