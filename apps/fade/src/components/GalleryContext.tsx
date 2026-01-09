@@ -82,7 +82,6 @@ export function GalleryProvider({
       value={{
         files,
         selectedIndex,
-        isLoading: isFetching,
         selectFile,
         navigateNext,
         navigatePrevious,
