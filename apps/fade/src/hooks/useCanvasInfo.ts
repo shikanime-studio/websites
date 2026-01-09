@@ -1,10 +1,8 @@
 import { createContext, useContext } from "react";
 
 interface CanvasInfoContextType {
-  width: number | null;
-  height: number | null;
-  setDimensions: (width: number, height: number) => void;
-  resetDimensions: () => void;
+  image: HTMLImageElement | null;
+  setImage: (image: HTMLImageElement | null) => void;
 }
 
 export const CanvasInfoContext = createContext<CanvasInfoContextType | null>(

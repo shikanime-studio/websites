@@ -8,6 +8,7 @@ import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
 import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
+import { Histogram } from "./Histogram";
 import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
@@ -84,14 +85,18 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
   const { file } = useFile(fileItem);
   const exifData = useExif(file ?? null);
-  const { width, height } = useCanvasInfo();
+  const { image } = useCanvasInfo();
 
   if (!file) return null;
 
   return (
     <div>
-      <div className="bg-base-300 rounded-box mb-5 flex h-15 items-center justify-center">
-        <FileIcon type={file.type} className="h-8 w-8 opacity-50" />
+      <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
+        {file.type.startsWith("image/") ? (
+          <Histogram />
+        ) : (
+          <FileIcon type={file.type} className="h-8 w-8 opacity-50" />
+        )}
       </div>
 
       <dl className="m-0 flex flex-col gap-4">
@@ -104,13 +109,13 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {width && height && (
+        {image && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {width} × {height}
+              {image.naturalWidth} × {image.naturalHeight}
             </dd>
           </div>
         )}
