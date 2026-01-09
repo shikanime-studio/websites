@@ -83,7 +83,7 @@ export function Sidebar() {
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
   const { file } = useFile(fileItem);
-  const { url,revoke } = useObjectUrl(file ?? null);
+  const { url, revoke } = useObjectUrl(file ?? null);
   const exifData = useExif(file ?? null);
   const [dimensions, setDimensions] = useState<{
     width: number;

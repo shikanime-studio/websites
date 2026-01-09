@@ -20,7 +20,8 @@ export default function LogoutButton() {
       })
       .catch(() => {
         setError("Failed to logout");
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
@@ -33,8 +34,8 @@ export default function LogoutButton() {
           handleLogout();
         }}
         className="btn btn-ghost"
-              disabled={isLoading}
-              >
+        disabled={isLoading}
+      >
         <BsBoxArrowRight />
         Logout
       </button>

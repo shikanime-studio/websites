@@ -7,32 +7,37 @@ import {
   FaRegClone,
 } from "react-icons/fa6";
 import { Image } from "@unpic/react";
+import { z } from "zod";
 import type { FC, MouseEvent, ReactNode } from "react";
 
-export interface CardData {
-  id: string | number;
-  title: string;
-  status: "OPEN" | "CLOSED" | "WAITLIST";
-  href: string;
-  images: Array<{
-    src: string;
-    width: number;
-    height: number;
-  }>;
-  artist: {
-    name: string;
-    avatar: {
-      src: string;
-      width: number;
-      height: number;
-    };
-    verified?: boolean;
-    level?: number;
-  };
-  rating: number;
-  reviewCount: number;
-  price?: string;
-}
+export const CardDataSchema = z.object({
+  id: z.union([z.string(), z.number()]),
+  title: z.string(),
+  status: z.enum(["OPEN", "CLOSED", "WAITLIST"]),
+  href: z.string(),
+  images: z.array(
+    z.object({
+      src: z.string(),
+      width: z.number(),
+      height: z.number(),
+    }),
+  ),
+  artist: z.object({
+    name: z.string(),
+    avatar: z.object({
+      src: z.string(),
+      width: z.number(),
+      height: z.number(),
+    }),
+    verified: z.boolean().optional(),
+    level: z.number().optional(),
+  }),
+  rating: z.number(),
+  reviewCount: z.number(),
+  price: z.string().optional(),
+});
+
+export type CardData = z.infer<typeof CardDataSchema>;
 
 export interface CardProps {
   children?: ReactNode;

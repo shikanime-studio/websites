@@ -18,7 +18,8 @@ export default function LoginButton() {
       .catch(() => {
         setError("An error occurred during sign in");
         setIsLoading(false);
-      }).finally(() => {
+      })
+      .finally(() => {
         setIsLoading(false);
       });
   };
