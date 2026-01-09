@@ -1,13 +1,23 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { GalleryContext } from "../hooks/useGallery";
+import { scanDirectory } from "../lib/fs";
 import type { ReactNode } from "react";
-import type { FileItem, GalleryState } from "../hooks/useGallery";
 
 export function GalleryProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<GalleryState>({
-    files: [],
-    selectedIndex: 0,
-    isLoading: false,
+  const [directoryHandle, setDirectoryHandle] =
+    useState<FileSystemDirectoryHandle | null>(null);
+  const [loadId, setLoadId] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const { data: files, isFetching } = useSuspenseQuery({
+    queryKey: ["gallery", loadId],
+    queryFn: async () => {
+      if (!directoryHandle) return [];
+      return scanDirectory(directoryHandle);
+    },
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
   });
 
   const loadDirectory = useCallback(async () => {
@@ -18,95 +28,37 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      setState((prev) => ({ ...prev, isLoading: true }));
-
-      const directoryHandle = await window.showDirectoryPicker();
-      const groups = new Map<string, Array<FileSystemFileHandle>>();
-
-      for await (const handle of directoryHandle.values()) {
-        if (handle.kind === "file") {
-          const name = handle.name;
-          const lastDotIndex = name.lastIndexOf(".");
-          const basename =
-            lastDotIndex === -1 ? name : name.substring(0, lastDotIndex);
-
-          let group = groups.get(basename);
-          if (!group) {
-            group = [];
-            groups.set(basename, group);
-          }
-          group.push(handle);
-        }
-      }
-
-      const items: Array<FileItem> = [];
-      const RASTER_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "avif"]);
-
-      for (const handles of groups.values()) {
-        let primaryHandle = handles[0];
-        let bestScore = -1;
-
-        for (const handle of handles) {
-          const ext = handle.name.split(".").pop()?.toLowerCase() ?? "";
-          const score = RASTER_EXTENSIONS.has(ext) ? 2 : 1;
-
-          if (score > bestScore) {
-            bestScore = score;
-            primaryHandle = handle;
-          }
-        }
-
-        const sidecars = handles.filter((h) => h !== primaryHandle);
-        sidecars.sort((a, b) => a.name.localeCompare(b.name));
-
-        items.push({
-          handle: primaryHandle,
-          sidecars,
-        });
-      }
-
-      // Sort by filename
-      items.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
-
-      setState({
-        files: items,
-        selectedIndex: 0,
-        isLoading: false,
-      });
+      const handle = await window.showDirectoryPicker();
+      setDirectoryHandle(handle);
+      setLoadId((id) => id + 1);
+      setSelectedIndex(0);
     } catch (error) {
       // User cancelled the picker
       if ((error as Error).name !== "AbortError") {
         console.error("Error loading directory:", error);
       }
-      setState((prev) => ({ ...prev, isLoading: false }));
     }
   }, []);
 
-  const selectFile = useCallback((index: number) => {
-    setState((prev) => ({
-      ...prev,
-      selectedIndex: Math.max(0, Math.min(index, prev.files.length - 1)),
-    }));
-  }, []);
+  const selectFile = useCallback(
+    (index: number) => {
+      setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)));
+    },
+    [files.length],
+  );
 
   const navigateNext = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      selectedIndex: Math.min(prev.selectedIndex + 1, prev.files.length - 1),
-    }));
-  }, []);
+    setSelectedIndex((prev) => Math.min(prev + 1, files.length - 1));
+  }, [files.length]);
 
   const navigatePrevious = useCallback(() => {
-    setState((prev) => ({
-      ...prev,
-      selectedIndex: Math.max(prev.selectedIndex - 1, 0),
-    }));
+    setSelectedIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (state.files.length === 0) return;
+      if (files.length === 0) return;
 
       switch (event.key) {
         case "ArrowRight":
@@ -122,7 +74,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
           event.preventDefault();
           break;
         case "End":
-          selectFile(state.files.length - 1);
+          selectFile(files.length - 1);
           event.preventDefault();
           break;
       }
@@ -132,15 +84,16 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [state.files.length, navigateNext, navigatePrevious, selectFile]);
+  }, [files.length, navigateNext, navigatePrevious, selectFile]);
 
-  const selectedFile =
-    state.files.length > 0 ? state.files[state.selectedIndex] : null;
+  const selectedFile = files.length > 0 ? files[selectedIndex] : null;
 
   return (
     <GalleryContext.Provider
       value={{
-        ...state,
+        files,
+        selectedIndex,
+        isLoading: isFetching,
         loadDirectory,
         selectFile,
         navigateNext,
