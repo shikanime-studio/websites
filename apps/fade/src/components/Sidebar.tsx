@@ -14,10 +14,11 @@ export function Sidebar() {
   const { data } = useLiveQuery((q) =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "sidebar_collapsed")),
+      .where(({ settings }) => eq(settings.id, "sidebar_collapsed"))
+      .findOne(),
   );
 
-  const isCollapsed = (data[0]?.value as boolean) || false;
+  const isCollapsed = (data?.value as boolean) || false;
 
   return (
     <aside
@@ -28,7 +29,7 @@ export function Sidebar() {
       <button
         className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
         onClick={() => {
-          if (data.length > 0) {
+          if (data) {
             settingsCollection.update("sidebar_collapsed", (draft) => {
               draft.value = !isCollapsed;
             });
@@ -134,9 +135,7 @@ function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
           <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
             File Size
           </dt>
-          <dd className="m-0 text-sm font-medium">
-            {formatBytes(file.size)}
-          </dd>
+          <dd className="m-0 text-sm font-medium">{formatBytes(file.size)}</dd>
         </div>
       </dl>
 
