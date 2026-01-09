@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { fileTypeFromBlob } from "file-type";
 import { useMemo } from "react";
 
 const registry = new FinalizationRegistry((url: string) => {
@@ -19,16 +20,30 @@ function getObjectUrl(file: File) {
 
 export function useFile(handle: FileSystemFileHandle | undefined | null) {
   const {
-    data: file,
+    data: fileData,
     isLoading,
     error,
   } = useQuery({
     queryKey: ["file", handle?.name],
-    queryFn: () => (handle ? handle.getFile() : Promise.resolve(null)),
+    queryFn: async () => {
+      if (!handle) return null;
+      const file = await handle.getFile();
+      const type = await fileTypeFromBlob(file);
+      return { file, mimeType: type?.mime ?? file.type };
+    },
     staleTime: Infinity,
   });
 
-  const url = useMemo(() => (file ? getObjectUrl(file) : null), [file]);
+  const url = useMemo(
+    () => (fileData?.file ? getObjectUrl(fileData.file) : null),
+    [fileData?.file],
+  );
 
-  return { file, url, isLoading, error };
+  return {
+    file: fileData?.file,
+    mimeType: fileData?.mimeType,
+    url,
+    isLoading,
+    error,
+  };
 }

@@ -1,8 +1,4 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  ImageOff,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { Image } from "@unpic/react";
 import { useGallery } from "./GalleryContext";
 import { useFile } from "../hooks/useFile";
@@ -11,7 +7,7 @@ import { FileIcon } from "./FileIcon";
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
     useGallery();
-  const { file, url } = useFile(selectedFile?.handle);
+  const { file, mimeType, url } = useFile(selectedFile?.handle);
 
   if (files.length === 0) {
     return (
@@ -42,35 +38,45 @@ export function MainViewer() {
       </button>
 
       <div className="flex h-full min-w-0 flex-1 items-center justify-center p-6">
-        {selectedFile &&
-          file &&
-          url &&
-          (file.type.startsWith("image/") ? (
-            <Image
-              key={url}
-              src={url}
-              alt={selectedFile.handle.name}
-              className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-              layout="fullWidth"
-              background="auto"
-            />
-          ) : (
-            <object
-              data={url}
-              type={file.type}
-              className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
-            >
-              <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
-                <FileIcon type={file.type} className="h-32 w-32 opacity-30" />
-                <p className="m-0 text-xl font-medium">
-                  Preview not available for this file type
-                </p>
-                <p className="m-0 text-base opacity-70">
-                  {selectedFile.handle.name}
-                </p>
-              </div>
-            </object>
-          ))}
+        {selectedFile && file && url && (
+          <>
+            {mimeType?.startsWith("image/") ? (
+              <Image
+                key={url}
+                src={url}
+                alt={selectedFile.handle.name}
+                className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                layout="fullWidth"
+                background="auto"
+              />
+            ) : mimeType?.startsWith("video/") ? (
+              <video
+                key={url}
+                src={url}
+                className="animate-fade-in max-h-full max-w-full rounded-lg shadow-2xl"
+                controls
+                autoPlay
+                loop
+              />
+            ) : (
+              <object
+                data={url}
+                type={mimeType}
+                className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
+              >
+                <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
+                  <FileIcon type={mimeType} className="h-32 w-32 opacity-30" />
+                  <p className="m-0 text-xl font-medium">
+                    Preview not available for this file type
+                  </p>
+                  <p className="m-0 text-base opacity-70">
+                    {selectedFile.handle.name}
+                  </p>
+                </div>
+              </object>
+            )}
+          </>
+        )}
       </div>
 
       <button

@@ -15,7 +15,7 @@ export function FilmstripItem({
   onClick,
   style,
 }: FilmstripItemProps) {
-  const { file, url } = useFile(handle);
+  const { file, mimeType, url } = useFile(handle);
 
   return (
     <button
@@ -29,7 +29,7 @@ export function FilmstripItem({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? "true" : "false"}
     >
-      {url && file?.type?.startsWith("image/") ? (
+      {url && mimeType?.startsWith("image/") ? (
         <Image
           src={url}
           alt={handle.name}
@@ -39,7 +39,7 @@ export function FilmstripItem({
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">
-          <FileIcon type={file?.type} className="h-8 w-8 opacity-50" />
+          <FileIcon type={mimeType} className="h-8 w-8 opacity-50" />
         </div>
       )}
       <div
