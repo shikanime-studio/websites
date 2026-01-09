@@ -55,6 +55,9 @@
             enable = true;
             dialect = "sqlite";
           };
+          treefmt.config.settings.global.excludes = [
+            "*.gen.ts"
+          ];
         };
       };
       systems = [

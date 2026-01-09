@@ -1,18 +1,37 @@
-import { useEffect, useRef } from "react";
+import { Activity, useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useGallery } from "./GalleryContext";
 import { FilmstripItem } from "./FilmstripItem";
 
+const ITEM_SIZE = 88;
+
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery();
   const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setContainerWidth(entry.contentRect.width);
+      }
+    });
+
+    observer.observe(containerRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  const overscan =
+    containerWidth > 0 ? Math.ceil(containerWidth / ITEM_SIZE) : 5;
 
   const virtualizer = useVirtualizer({
     horizontal: true,
     count: files.length,
     getScrollElement: () => containerRef.current,
-    estimateSize: () => 88, // 80px width + 8px gap
-    overscan: 5,
+    estimateSize: () => ITEM_SIZE,
+    overscan,
   });
 
   // Scroll selected thumbnail into view
@@ -31,6 +50,11 @@ export function Filmstrip() {
     );
   }
 
+  const virtualItems = virtualizer.getVirtualItems();
+  const modeMap = new Map(
+    virtualItems.map((v) => [v.index, "visible" as const]),
+  );
+
   return (
     <div
       className="bg-base-200 border-base-300 scrollbar-thin h-30 overflow-x-auto overflow-y-hidden border-t"
@@ -42,19 +66,22 @@ export function Filmstrip() {
           width: `${virtualizer.getTotalSize()}px`,
         }}
       >
-        {virtualizer.getVirtualItems().map((virtualItem) => {
-          const fileItem = files[virtualItem.index];
+        {files.map((fileItem, index) => {
+          const mode = modeMap.get(index) ?? "hidden";
+          const start = index * ITEM_SIZE;
+
           return (
-            <FilmstripItem
-              key={fileItem.handle.name}
-              handle={fileItem.handle}
-              isSelected={virtualItem.index === selectedIndex}
-              onClick={() => selectFile(virtualItem.index)}
-              style={{
-                transform: `translateX(${virtualItem.start}px)`,
-                width: "80px",
-              }}
-            />
+            <Activity mode={mode} key={fileItem.handle.name}>
+              <FilmstripItem
+                handle={fileItem.handle}
+                isSelected={index === selectedIndex}
+                onClick={() => selectFile(index)}
+                style={{
+                  transform: `translateX(${start}px)`,
+                  width: "80px",
+                }}
+              />
+            </Activity>
           );
         })}
       </div>

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { Activity, useState } from "react";
+import { Image } from "@unpic/react";
 import {
   Card,
   CardBookmark,
@@ -10,7 +11,6 @@ import {
 } from "./Card";
 import { CardModal } from "./CardModal";
 import { EmptyState } from "./EmptyState";
-import { Image } from "./Image";
 import { SkeletonCard } from "./SkeletonCard";
 import type { CardData } from "./Card";
 import type { FC, ReactNode } from "react";
@@ -73,6 +73,7 @@ export const GalleryContent: FC<GalleryContentProps> = ({
                       alt={`${item.title} - image ${i + 1}`}
                       width={img.width}
                       height={img.height}
+                      layout="constrained"
                       className="h-full w-full object-contain"
                     />
                   ))}
@@ -135,6 +136,7 @@ export const ShowcaseGalleryContent: FC<
                       alt={`${item.title} - image ${i + 1}`}
                       width={img.width}
                       height={img.height}
+                      layout="constrained"
                       className="h-full w-full object-contain"
                     />
                   ))}

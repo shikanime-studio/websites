@@ -7,9 +7,9 @@ import {
   createRootRoute,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "../components/ThemeContext";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 
 const queryClient = new QueryClient();
 
