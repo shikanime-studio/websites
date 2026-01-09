@@ -23,10 +23,7 @@ export function GalleryProvider({
     refetchOnWindowFocus: false,
   });
 
-  // Reset selection when directory changes
-  useEffect(() => {
     setSelectedIndex(0);
-  }, [handle]);
 
   const selectFile = useCallback(
     (index: number) => {
