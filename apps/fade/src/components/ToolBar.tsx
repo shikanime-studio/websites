@@ -1,10 +1,12 @@
 import { FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
+import { useDirectory } from "../hooks/useDirectory";
 import { useGallery } from "../hooks/useGallery";
 import { SettingsModal } from "./SettingsModal";
 
 export function ToolBar() {
-  const { loadDirectory, files, selectedIndex, isLoading } = useGallery();
+  const { select } = useDirectory();
+  const { files, selectedIndex } = useGallery();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
@@ -29,16 +31,11 @@ export function ToolBar() {
           <button
             className="btn btn-sm btn-outline btn-warning gap-2 font-medium"
             onClick={() => {
-              void loadDirectory();
+              void select();
             }}
-            disabled={isLoading}
           >
-            {isLoading ? (
-              <span className="loading loading-spinner loading-xs"></span>
-            ) : (
-              <FolderOpen className="h-4 w-4" />
-            )}
-            <span>{isLoading ? "Loading..." : "Open Folder"}</span>
+            <FolderOpen className="h-4 w-4" />
+            <span>Open Folder</span>
           </button>
           <button
             className="btn btn-sm btn-square btn-ghost"
