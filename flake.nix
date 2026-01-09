@@ -51,10 +51,6 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
-          gitignore.content = [
-            ".astro"
-            ".wrangler"
-          ];
           treefmt.config.programs.sqlfluff = {
             enable = true;
             dialect = "sqlite";
