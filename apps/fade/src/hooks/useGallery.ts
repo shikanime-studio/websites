@@ -1,9 +1,5 @@
 import { createContext, useContext } from "react";
-
-export interface FileItem {
-  handle: FileSystemFileHandle;
-  sidecars: Array<FileSystemFileHandle>;
-}
+import type { FileItem } from "../lib/fs";
 
 export interface GalleryState {
   files: Array<FileItem>;

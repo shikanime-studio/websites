@@ -1,16 +1,17 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useFile } from "./useFile";
+import type { FileItem } from "../lib/fs";
 
 export function useThumbnail(
-  handle: FileSystemFileHandle | null,
+  fileItem: FileItem | null,
   width = 256,
   height = 256,
   quality = 1.0,
 ) {
-  const { file, mimeType } = useFile(handle);
+  const { file, mimeType } = useFile(fileItem);
 
   const { data } = useSuspenseQuery({
-    queryKey: ["thumbnail", handle?.name, width, height, quality],
+    queryKey: ["thumbnail", fileItem?.handle.name, width, height, quality],
     queryFn: async () => {
       if (!file || !mimeType?.startsWith("image/")) {
         return null;

@@ -8,20 +8,20 @@ export default function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSignIn = async () => {
+  const handleSignIn = () => {
     setIsLoading(true);
-    const res = await authClient.signIn.social({
-      provider: "google",
-      callbackURL: "/",
-    });
-    if (res.error) {
-      setError(
-        res.error instanceof Error
-          ? res.error.message
-          : "An error occurred during sign in",
-      );
-      setIsLoading(false);
-    }
+    authClient.signIn
+      .social({
+        provider: "google",
+        callbackURL: "/",
+      })
+      .catch(() => {
+        setError("An error occurred during sign in");
+        setIsLoading(false);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -29,7 +29,9 @@ export default function LoginButton() {
       <button
         type="button"
         className="btn rounded-full px-4 font-bold"
-        onClick={handleSignIn}
+        onClick={() => {
+          handleSignIn();
+        }}
         disabled={isLoading}
       >
         {isLoading ? (
@@ -45,8 +47,19 @@ export default function LoginButton() {
         )}
       </button>
       {error && (
-        <Toast duration={3000} onClose={() => setError(null)}>
-          <AlertError onClose={() => setError(null)}>{error}</AlertError>
+        <Toast
+          duration={3000}
+          onClose={() => {
+            setError(null);
+          }}
+        >
+          <AlertError
+            onClose={() => {
+              setError(null);
+            }}
+          >
+            {error}
+          </AlertError>
         </Toast>
       )}
     </>

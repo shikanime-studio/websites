@@ -11,15 +11,15 @@ export const GET: APIRoute = async ({ locals }) => {
     title: item.name,
     images: item.imageUrls,
     artist: {
-      name: item.maker?.name || "Unknown",
+      name: item.maker?.name ?? "Unknown",
       avatar: item.maker?.avatarImageUrl
         ? {
             src: item.maker.avatarImageUrl,
-            width: item.maker.avatarImageWidth || 0,
-            height: item.maker.avatarImageHeight || 0,
+            width: item.maker.avatarImageWidth ?? 0,
+            height: item.maker.avatarImageHeight ?? 0,
           }
         : {
-            src: `https://placehold.co/100x100/ccc/FFF?text=${encodeURIComponent(item.maker?.name || "?")}`,
+            src: `https://placehold.co/100x100/ccc/FFF?text=${encodeURIComponent(item.maker?.name ?? "?")}`,
             width: 100,
             height: 100,
           },
@@ -27,8 +27,8 @@ export const GET: APIRoute = async ({ locals }) => {
     rating: 5,
     reviewCount: 12,
     status: "OPEN" as const,
-    price: item.priceRange || undefined,
-    href: `/items/${item.id}`,
+    price: item.priceRange ?? undefined,
+    href: `/items/${String(item.id)}`,
   }));
 
   return new Response(JSON.stringify(galleryItems), {

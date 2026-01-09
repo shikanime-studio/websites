@@ -37,7 +37,7 @@ export const GET: APIRoute = async ({ locals }) => {
     reviewCount: Math.floor(Math.random() * 200) + 10,
     status: "OPEN" as const,
     price: undefined,
-    href: `/characters/${char.id}`,
+    href: `/characters/${String(char.id)}`,
   }));
 
   return new Response(JSON.stringify(characterItems), {

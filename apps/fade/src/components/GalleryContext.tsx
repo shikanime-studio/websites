@@ -23,8 +23,6 @@ export function GalleryProvider({
     refetchOnWindowFocus: false,
   });
 
-    setSelectedIndex(0);
-
   const selectFile = useCallback(
     (index: number) => {
       setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)));
@@ -78,7 +76,6 @@ export function GalleryProvider({
       value={{
         files,
         selectedIndex,
-        isLoading: isFetching,
         selectFile,
         navigateNext,
         navigatePrevious,
