@@ -4,6 +4,7 @@ import {
   FileQuestion,
   ImageOff,
 } from "lucide-react";
+import { Image } from "@unpic/react";
 import { useGallery } from "./GalleryContext";
 import { useFile } from "../hooks/useFile";
 
@@ -45,11 +46,12 @@ export function MainViewer() {
           file &&
           url &&
           (file.type.startsWith("image/") ? (
-            <img
+            <Image
               key={url}
               src={url}
               alt={selectedFile.handle.name}
               className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+              layout="fullWidth"
             />
           ) : (
             <div className="flex flex-col items-center gap-4 opacity-50">
