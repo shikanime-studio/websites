@@ -6,8 +6,8 @@ import { useFile } from "../hooks/useFile";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
+import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
-import { useImageInfo } from "./ImageInfoContext";
 import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
@@ -84,7 +84,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
   const { file } = useFile(fileItem);
   const exifData = useExif(file ?? null);
-  const { width, height } = useImageInfo();
+  const { width, height } = useCanvasInfo();
 
   if (!file) return null;
 

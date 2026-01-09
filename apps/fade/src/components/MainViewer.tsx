@@ -4,8 +4,8 @@ import { Suspense, useEffect, useRef } from "react";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useGallery } from "../hooks/useGallery";
+import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
-import { useImageInfo } from "./ImageInfoContext";
 import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
@@ -66,7 +66,7 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
-  const { setDimensions, resetDimensions } = useImageInfo();
+  const { setDimensions, resetDimensions } = useCanvasInfo();
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
