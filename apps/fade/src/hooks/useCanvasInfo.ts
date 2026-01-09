@@ -7,7 +7,9 @@ interface CanvasInfoContextType {
   resetDimensions: () => void;
 }
 
-export const CanvasInfoContext = createContext<CanvasInfoContextType | null>(null);
+export const CanvasInfoContext = createContext<CanvasInfoContextType | null>(
+  null,
+);
 
 export function useCanvasInfo() {
   const context = useContext(CanvasInfoContext);
