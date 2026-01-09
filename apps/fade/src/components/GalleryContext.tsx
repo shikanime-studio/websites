@@ -23,12 +23,6 @@ export function GalleryProvider({
     refetchOnWindowFocus: false,
   });
 
-  const [prevHandle, setPrevHandle] = useState(handle);
-  if (handle !== prevHandle) {
-    setPrevHandle(handle);
-    setSelectedIndex(0);
-  }
-
   const selectFile = useCallback(
     (index: number) => {
       setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)));
