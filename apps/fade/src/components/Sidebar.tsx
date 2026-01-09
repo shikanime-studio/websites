@@ -5,9 +5,10 @@ import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
+import {  useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
-import { useGallery } from "./GalleryContext";
 import { FileIcon } from "./FileIcon";
+import type {FileItem} from "../hooks/useGallery";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
@@ -66,7 +67,7 @@ export function Sidebar() {
             }
           >
             {selectedFile ? (
-              <SidebarContent handle={selectedFile.handle} />
+              <SidebarContent fileItem={selectedFile} />
             ) : (
               <p className="py-5 text-center text-sm opacity-50">
                 No image selected
@@ -79,7 +80,8 @@ export function Sidebar() {
   );
 }
 
-function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
+function SidebarContent({ fileItem }: { fileItem: FileItem }) {
+  const { handle, sidecars } = fileItem;
   const { file } = useFile(handle);
   const { url } = useObjectUrl(file ?? null);
   const exifData = useExif(file ?? null);
@@ -149,7 +151,7 @@ function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
           </div>
 
           <dl className="m-0 flex flex-col gap-4">
-            {(exifData.make || exifData.model) && (
+            {(exifData.make ?? exifData.model) && (
               <div className="flex flex-col gap-1">
                 <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                   Camera
@@ -191,7 +193,7 @@ function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
                   <dd className="m-0 text-sm font-medium">
                     {exifData.exposureTime >= 1
                       ? exifData.exposureTime
-                      : `1/${Math.round(1 / exifData.exposureTime)}`}
+                      : `1/${Math.round(1 / exifData.exposureTime).toString()}`}
                     s
                   </dd>
                 </div>
@@ -218,6 +220,27 @@ function SidebarContent({ handle }: { handle: FileSystemFileHandle }) {
               )}
             </div>
           </dl>
+        </>
+      )}
+
+      {sidecars.length > 0 && (
+        <>
+          <div className="border-base-300 text-base-content/70 mb-5 mt-8 flex items-center gap-2 border-b pb-3">
+            <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
+              Grouped Files
+            </h2>
+          </div>
+          <div className="flex flex-col gap-2">
+            {sidecars.map((sidecarFile) => (
+              <div
+                key={sidecarFile.name}
+                className="flex items-center gap-2 text-sm opacity-70"
+              >
+                <FileIcon type="image/jpeg" className="h-4 w-4" />
+                <span className="truncate">{sidecarFile.name}</span>
+              </div>
+            ))}
+          </div>
         </>
       )}
     </div>

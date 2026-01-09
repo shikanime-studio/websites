@@ -1,31 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
+import { GalleryContext } from "../hooks/useGallery";
 import type { ReactNode } from "react";
-
-export interface FileItem {
-  handle: FileSystemFileHandle;
-}
-
-interface GalleryState {
-  files: Array<FileItem>;
-  selectedIndex: number;
-  isLoading: boolean;
-}
-
-interface GalleryContextValue extends GalleryState {
-  loadDirectory: () => Promise<void>;
-  selectFile: (index: number) => void;
-  navigateNext: () => void;
-  navigatePrevious: () => void;
-  selectedFile: FileItem | null;
-}
-
-const GalleryContext = createContext<GalleryContextValue | null>(null);
+import type { FileItem, GalleryState } from "../hooks/useGallery";
 
 export function GalleryProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<GalleryState>({
@@ -45,12 +21,54 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       setState((prev) => ({ ...prev, isLoading: true }));
 
       const directoryHandle = await window.showDirectoryPicker();
-      const items: Array<FileItem> = [];
+      const groups = new Map<string, Array<FileSystemFileHandle>>();
 
       for await (const handle of directoryHandle.values()) {
         if (handle.kind === "file") {
-          items.push({ handle });
+          const name = handle.name;
+          const lastDotIndex = name.lastIndexOf(".");
+          const basename =
+            lastDotIndex === -1 ? name : name.substring(0, lastDotIndex);
+
+          let group = groups.get(basename);
+          if (!group) {
+            group = [];
+            groups.set(basename, group);
+          }
+          group.push(handle);
         }
+      }
+
+      const items: Array<FileItem> = [];
+      const RASTER_EXTENSIONS = new Set([
+        "jpg",
+        "jpeg",
+        "png",
+        "webp",
+        "avif",
+      ]);
+
+      for (const handles of groups.values()) {
+        let primaryHandle = handles[0];
+        let bestScore = -1;
+
+        for (const handle of handles) {
+          const ext = handle.name.split(".").pop()?.toLowerCase() ?? "";
+          const score = RASTER_EXTENSIONS.has(ext) ? 2 : 1;
+
+          if (score > bestScore) {
+            bestScore = score;
+            primaryHandle = handle;
+          }
+        }
+
+        const sidecars = handles.filter((h) => h !== primaryHandle);
+        sidecars.sort((a, b) => a.name.localeCompare(b.name));
+
+        items.push({
+          handle: primaryHandle,
+          sidecars,
+        });
       }
 
       // Sort by filename
@@ -117,7 +135,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => { window.removeEventListener("keydown", handleKeyDown); };
   }, [state.files.length, navigateNext, navigatePrevious, selectFile]);
 
   const selectedFile =
@@ -137,13 +155,4 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       {children}
     </GalleryContext.Provider>
   );
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useGallery() {
-  const context = useContext(GalleryContext);
-  if (!context) {
-    throw new Error("useGallery must be used within a GalleryProvider");
-  }
-  return context;
 }

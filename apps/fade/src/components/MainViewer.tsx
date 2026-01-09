@@ -3,7 +3,7 @@ import { Image } from "@unpic/react";
 import { Suspense } from "react";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
-import { useGallery } from "./GalleryContext";
+import { useGallery } from "../hooks/useGallery";
 import { FileIcon } from "./FileIcon";
 
 export function MainViewer() {

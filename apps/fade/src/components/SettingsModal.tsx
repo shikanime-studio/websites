@@ -1,7 +1,7 @@
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useTheme } from "./ThemeContext";
+import { useTheme } from "../hooks/useTheme";
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -68,7 +68,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <div className="join">
               <button
                 className={`join-item btn btn-sm ${theme === "light" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => setTheme("light")}
+                onClick={() => { setTheme("light"); }}
                 aria-pressed={theme === "light"}
                 aria-label="Light Mode"
               >
@@ -77,7 +77,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </button>
               <button
                 className={`join-item btn btn-sm ${theme === "dark" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => setTheme("dark")}
+                onClick={() => { setTheme("dark"); }}
                 aria-pressed={theme === "dark"}
                 aria-label="Dark Mode"
               >
@@ -86,7 +86,7 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               </button>
               <button
                 className={`join-item btn btn-sm ${theme === "system" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => setTheme("system")}
+                onClick={() => { setTheme("system"); }}
                 aria-pressed={theme === "system"}
                 aria-label="System Mode"
               >

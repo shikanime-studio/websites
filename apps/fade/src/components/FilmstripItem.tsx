@@ -5,6 +5,7 @@ import { FileIcon } from "./FileIcon";
 
 interface FilmstripItemProps {
   handle: FileSystemFileHandle;
+  sidecars?: Array<FileSystemFileHandle>;
   isSelected: boolean;
   onClick: () => void;
   style: React.CSSProperties;
@@ -19,10 +20,10 @@ export function FilmstripItem(props: FilmstripItemProps) {
 }
 
 function FilmstripItemSkeleton({
+  handle,
   isSelected,
   onClick,
   style,
-  handle,
 }: FilmstripItemProps) {
   return (
     <button
