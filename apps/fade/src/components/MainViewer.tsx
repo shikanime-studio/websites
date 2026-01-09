@@ -1,10 +1,12 @@
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { Image } from "@unpic/react";
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useGallery } from "../hooks/useGallery";
+import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
+import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
@@ -44,9 +46,7 @@ export function MainViewer() {
             <span className="loading loading-spinner loading-lg"></span>
           }
         >
-          {selectedFile ? (
-            <MainViewerContent handle={selectedFile.handle} />
-          ) : null}
+          {selectedFile ? <MainViewerContent fileItem={selectedFile} /> : null}
         </Suspense>
       </div>
 
@@ -62,9 +62,18 @@ export function MainViewer() {
   );
 }
 
-function MainViewerContent({ handle }: { handle: FileSystemFileHandle }) {
-  const { file, mimeType } = useFile(handle);
+function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
+  const { handle } = fileItem;
+  const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
+  const { setDimensions, resetDimensions } = useCanvasInfo();
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (!file || !url || !mimeType?.startsWith("image/")) {
+      resetDimensions();
+    }
+  }, [file, url, mimeType, resetDimensions]);
 
   if (!file || !url) return null;
 
@@ -72,12 +81,17 @@ function MainViewerContent({ handle }: { handle: FileSystemFileHandle }) {
     <>
       {mimeType?.startsWith("image/") ? (
         <Image
+          ref={imgRef}
           key={url}
           src={url}
           alt={handle.name}
           className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
           layout="fullWidth"
           background="auto"
+          onLoad={(e) => {
+            const img = e.currentTarget as HTMLImageElement;
+            setDimensions(img.naturalWidth, img.naturalHeight);
+          }}
         />
       ) : mimeType?.startsWith("video/") ? (
         <video
@@ -99,7 +113,6 @@ function MainViewerContent({ handle }: { handle: FileSystemFileHandle }) {
             <p className="m-0 text-xl font-medium">
               Preview not available for this file type
             </p>
-            <p className="m-0 text-base opacity-70">{handle.name}</p>
           </div>
         </object>
       )}

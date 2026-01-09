@@ -65,12 +65,14 @@ export const GalleryContent: FC<GalleryContentProps> = ({
                 <CardComponent
                   title={item.title}
                   href={item.href}
-                  onClick={() => setSelectedCard(item)}
+                  onClick={() => {
+                    setSelectedCard(item);
+                  }}
                   images={item.images.map((img, i) => (
                     <Image
                       key={img.src}
                       src={img.src}
-                      alt={`${item.title} - image ${i + 1}`}
+                      alt={`${item.title} - image ${String(i + 1)}`}
                       width={img.width}
                       height={img.height}
                       layout="constrained"
@@ -81,7 +83,12 @@ export const GalleryContent: FC<GalleryContentProps> = ({
                   <CardStatus status={item.status} />
                   <CardBookmark />
                 </CardComponent>
-                <CardInfo {...item} onClick={() => setSelectedCard(item)} />
+                <CardInfo
+                  {...item}
+                  onClick={() => {
+                    setSelectedCard(item);
+                  }}
+                />
               </Card>
             </GalleryItem>
           ))
@@ -95,7 +102,12 @@ export const GalleryContent: FC<GalleryContentProps> = ({
         )}
       </Activity>
       {selectedCard && (
-        <CardModal card={selectedCard} onClose={() => setSelectedCard(null)} />
+        <CardModal
+          card={selectedCard}
+          onClose={() => {
+            setSelectedCard(null);
+          }}
+        />
       )}
     </>
   );
@@ -128,12 +140,14 @@ export const ShowcaseGalleryContent: FC<
                 <CardShowcaseCarousel
                   title={item.title}
                   href={item.href}
-                  onClick={() => setSelectedCard(item)}
+                  onClick={() => {
+                    setSelectedCard(item);
+                  }}
                   images={item.images.map((img, i) => (
                     <Image
                       key={img.src}
                       src={img.src}
-                      alt={`${item.title} - image ${i + 1}`}
+                      alt={`${item.title} - image ${String(i + 1)}`}
                       width={img.width}
                       height={img.height}
                       layout="constrained"
@@ -143,7 +157,12 @@ export const ShowcaseGalleryContent: FC<
                 >
                   {/* No CardStatus, No CardBookmark */}
                 </CardShowcaseCarousel>
-                <CardInfo {...item} onClick={() => setSelectedCard(item)} />
+                <CardInfo
+                  {...item}
+                  onClick={() => {
+                    setSelectedCard(item);
+                  }}
+                />
               </Card>
             </GalleryItem>
           ))
@@ -157,7 +176,12 @@ export const ShowcaseGalleryContent: FC<
         )}
       </Activity>
       {selectedCard && (
-        <CardModal card={selectedCard} onClose={() => setSelectedCard(null)} />
+        <CardModal
+          card={selectedCard}
+          onClose={() => {
+            setSelectedCard(null);
+          }}
+        />
       )}
     </>
   );

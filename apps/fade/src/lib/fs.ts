@@ -1,54 +1,81 @@
-import type { FileItem } from "../hooks/useGallery";
+import { fileTypeFromBlob } from "file-type";
+
+export interface FileItem {
+  handle: FileSystemFileHandle;
+  sidecars: Array<FileItem>;
+  mimeType?: string;
+}
 
 export async function scanDirectory(
   directoryHandle: FileSystemDirectoryHandle,
 ): Promise<Array<FileItem>> {
-  const groups = new Map<string, Array<FileSystemFileHandle>>();
+  const handles: Array<FileSystemFileHandle> = [];
 
   for await (const handle of directoryHandle.values()) {
     if (handle.kind === "file") {
-      const name = handle.name;
-      const lastDotIndex = name.lastIndexOf(".");
-      const basename =
-        lastDotIndex === -1 ? name : name.substring(0, lastDotIndex);
-
-      let group = groups.get(basename);
-      if (!group) {
-        group = [];
-        groups.set(basename, group);
-      }
-      group.push(handle);
+      handles.push(handle);
     }
   }
 
-  const items: Array<FileItem> = [];
-  const RASTER_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "avif"]);
+  const items = await Promise.all(
+    handles.map(async (handle) => {
+      const file = await handle.getFile();
+      const type = await fileTypeFromBlob(file);
+      return {
+        handle,
+        sidecars: [],
+        mimeType: type?.mime,
+      } as FileItem;
+    }),
+  );
 
-  for (const handles of groups.values()) {
-    let primaryHandle = handles[0];
+  const groups = new Map<string, Array<FileItem>>();
+
+  for (const item of items) {
+    const name = item.handle.name;
+    const lastDotIndex = name.lastIndexOf(".");
+    const basename =
+      lastDotIndex === -1 ? name : name.substring(0, lastDotIndex);
+
+    let group = groups.get(basename);
+    if (!group) {
+      group = [];
+      groups.set(basename, group);
+    }
+    group.push(item);
+  }
+
+  const result: Array<FileItem> = [];
+
+  for (const groupItems of groups.values()) {
+    let primaryItem = groupItems[0];
     let bestScore = -1;
 
-    for (const handle of handles) {
-      const ext = handle.name.split(".").pop()?.toLowerCase() ?? "";
-      const score = RASTER_EXTENSIONS.has(ext) ? 2 : 1;
+    for (const item of groupItems) {
+      let score = 0;
+      if (item.mimeType?.startsWith("image/")) {
+        score = 2;
+      } else if (item.mimeType?.startsWith("video/")) {
+        score = 2;
+      } else {
+        score = 1;
+      }
 
       if (score > bestScore) {
         bestScore = score;
-        primaryHandle = handle;
+        primaryItem = item;
       }
     }
 
-    const sidecars = handles.filter((h) => h !== primaryHandle);
-    sidecars.sort((a, b) => a.name.localeCompare(b.name));
+    const sidecars = groupItems.filter((i) => i !== primaryItem);
+    sidecars.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
 
-    items.push({
-      handle: primaryHandle,
-      sidecars,
-    });
+    primaryItem.sidecars = sidecars;
+    result.push(primaryItem);
   }
 
   // Sort by filename
-  items.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
+  result.sort((a, b) => a.handle.name.localeCompare(b.handle.name));
 
-  return items;
+  return result;
 }

@@ -1,20 +1,18 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { fileTypeFromBlob } from "file-type";
+import type { FileItem } from "../lib/fs";
 
-export function useFile(handle: FileSystemFileHandle | null) {
-  const { data: fileData } = useSuspenseQuery({
-    queryKey: ["file", handle?.name],
+export function useFile(fileItem: FileItem | null) {
+  const { data: file } = useSuspenseQuery({
+    queryKey: ["file", fileItem?.handle.name],
     queryFn: async () => {
-      if (!handle) return null;
-      const file = await handle.getFile();
-      const type = await fileTypeFromBlob(file);
-      return { file, mimeType: type?.mime ?? file.type };
+      if (!fileItem) return null;
+      return fileItem.handle.getFile();
     },
     staleTime: Infinity,
   });
 
   return {
-    file: fileData?.file,
-    mimeType: fileData?.mimeType,
+    file,
+    mimeType: fileItem?.mimeType,
   };
 }

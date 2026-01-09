@@ -1,18 +1,12 @@
 import { createContext, useContext } from "react";
-
-export interface FileItem {
-  handle: FileSystemFileHandle;
-  sidecars: Array<FileSystemFileHandle>;
-}
+import type { FileItem } from "../lib/fs";
 
 export interface GalleryState {
   files: Array<FileItem>;
   selectedIndex: number;
-  isLoading: boolean;
 }
 
 export interface GalleryContextValue extends GalleryState {
-  loadDirectory: () => Promise<void>;
   selectFile: (index: number) => void;
   navigateNext: () => void;
   navigatePrevious: () => void;

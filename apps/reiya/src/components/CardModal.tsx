@@ -31,7 +31,9 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
       }
     };
     window.addEventListener("keydown", handleEsc);
-    return () => window.removeEventListener("keydown", handleEsc);
+    return () => {
+      window.removeEventListener("keydown", handleEsc);
+    };
   }, [onClose]);
 
   const handleScroll = () => {
@@ -94,7 +96,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                   src={img.src}
                   width={img.width}
                   height={img.height}
-                  alt={`${card.title}`}
+                  alt={card.title}
                   layout="constrained"
                   className="h-auto w-full object-contain"
                 />
