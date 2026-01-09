@@ -1,7 +1,7 @@
+import { Image } from "@unpic/react";
 import { FaArrowRight } from "react-icons/fa6";
 import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from "./Card";
 import { EmptyState } from "./EmptyState";
-import { Image } from "./Image";
 import type { CardData } from "./Card";
 import type { FC } from "react";
 
@@ -72,6 +72,7 @@ const FeaturedCarouselItem: FC<FeaturedCarouselItemProps> = ({ item }) => {
                 alt={`${item.title} - image`}
                 width={img.width}
                 height={img.height}
+                layout="constrained"
                 className="h-full w-full object-contain"
               />
             ))}

@@ -2,6 +2,7 @@
 import Logo from "../assets/logo.png";
 import LoginButton from "./LoginButton";
 import LogoutButton from "./LogoutButton";
+import { Image } from "@unpic/react";
 import { BsFillPersonVcardFill, BsThreeDotsVertical } from "react-icons/bs";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 
@@ -151,13 +152,16 @@ const { session } = Astro.props;
           <div class="dropdown dropdown-end">
             <button type="button" class="avatar btn btn-circle btn-ghost">
               <div class="w-10 rounded-full">
-                <img
+                <Image
                   src={
                     session.user.image ||
                     `https://ui-avatars.com/api/?name=${session.user.name}`
                   }
                   alt={`${session.user.name} Avatar`}
-                  class="h-full w-full object-cover"
+                  width={40}
+                  height={40}
+                  layout="constrained"
+                  className="h-full w-full object-cover"
                 />
               </div>
             </button>
