@@ -48,7 +48,7 @@ export interface CardInfoProps extends CardData {
 
 export const CardInfo: FC<CardInfoProps> = ({
   title,
-  href = "#",
+  href,
   artist,
   rating,
   reviewCount,
@@ -367,7 +367,7 @@ export const CardShowcaseCarousel: FC<CardShowcaseCarouselProps> = ({
   children,
   onClick,
 }) => {
-  const firstImage = images[0] || (
+  const firstImage = images[0] ?? (
     <Image
       src={`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(
         title,

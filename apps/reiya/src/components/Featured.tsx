@@ -20,7 +20,7 @@ export const Featured: FC<FeaturedProps> = ({
 }) => {
   return (
     <div className={`flex w-full flex-col gap-6 ${className}`}>
-      {(title || viewAllLink) && (
+      {(title ?? viewAllLink) && (
         <div className="flex items-center justify-between px-1">
           {title && (
             <h2 className="text-xl font-bold text-gray-900">{title}</h2>

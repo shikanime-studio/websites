@@ -5,6 +5,7 @@ import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useGallery } from "../hooks/useGallery";
 import { FileIcon } from "./FileIcon";
+import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
@@ -44,9 +45,7 @@ export function MainViewer() {
             <span className="loading loading-spinner loading-lg"></span>
           }
         >
-          {selectedFile ? (
-            <MainViewerContent handle={selectedFile.handle} />
-          ) : null}
+          {selectedFile ? <MainViewerContent fileItem={selectedFile} /> : null}
         </Suspense>
       </div>
 
@@ -62,8 +61,9 @@ export function MainViewer() {
   );
 }
 
-function MainViewerContent({ handle }: { handle: FileSystemFileHandle }) {
-  const { file, mimeType } = useFile(handle);
+function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
+  const { handle } = fileItem;
+  const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
 
   if (!file || !url) return null;
@@ -99,7 +99,6 @@ function MainViewerContent({ handle }: { handle: FileSystemFileHandle }) {
             <p className="m-0 text-xl font-medium">
               Preview not available for this file type
             </p>
-            <p className="m-0 text-base opacity-70">{handle.name}</p>
           </div>
         </object>
       )}

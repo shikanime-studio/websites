@@ -13,8 +13,8 @@ export const GET: APIRoute = async ({ locals }) => {
       ? [
           {
             src: maker.avatarImageUrl,
-            width: maker.avatarImageWidth || 0,
-            height: maker.avatarImageHeight || 0,
+            width: maker.avatarImageWidth ?? 0,
+            height: maker.avatarImageHeight ?? 0,
           },
         ]
       : [
@@ -29,8 +29,8 @@ export const GET: APIRoute = async ({ locals }) => {
       avatar: maker.avatarImageUrl
         ? {
             src: maker.avatarImageUrl,
-            width: maker.avatarImageWidth || 0,
-            height: maker.avatarImageHeight || 0,
+            width: maker.avatarImageWidth ?? 0,
+            height: maker.avatarImageHeight ?? 0,
           }
         : {
             src: `https://placehold.co/100x100/ccc/FFF?text=${encodeURIComponent(maker.name)}`,
@@ -42,7 +42,7 @@ export const GET: APIRoute = async ({ locals }) => {
     rating: 5.0,
     reviewCount: Math.floor(Math.random() * 50) + 1,
     status: "OPEN" as const,
-    href: `/artists/${maker.id}`,
+    href: `/artists/${String(maker.id)}`,
   }));
 
   return new Response(JSON.stringify(artistItems), {

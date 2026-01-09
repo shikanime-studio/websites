@@ -8,7 +8,7 @@ import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
 import { FileIcon } from "./FileIcon";
-import type { FileItem } from "../hooks/useGallery";
+import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
@@ -82,8 +82,8 @@ export function Sidebar() {
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
-  const { file } = useFile(handle);
-  const { url } = useObjectUrl(file ?? null);
+  const { file } = useFile(fileItem);
+  const { url,revoke } = useObjectUrl(file ?? null);
   const exifData = useExif(file ?? null);
   const [dimensions, setDimensions] = useState<{
     width: number;
@@ -91,7 +91,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   } | null>(null);
 
   useEffect(() => {
-    if (!file || !url || !file.type.startsWith("image/")) {
+    if (!file || !url || !fileItem.mimeType?.startsWith("image/")) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDimensions(null);
       return;
@@ -102,7 +102,11 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
       setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
     };
     img.src = url;
-  }, [file, url]);
+
+    return () => {
+      revoke();
+    };
+  }, [file, url, fileItem, revoke]);
 
   if (!file) return null;
 
@@ -231,13 +235,13 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
             </h2>
           </div>
           <div className="flex flex-col gap-2">
-            {sidecars.map((sidecarFile) => (
+            {sidecars.map((sidecarItem) => (
               <div
-                key={sidecarFile.name}
+                key={sidecarItem.handle.name}
                 className="flex items-center gap-2 text-sm opacity-70"
               >
-                <FileIcon type="image/jpeg" className="h-4 w-4" />
-                <span className="truncate">{sidecarFile.name}</span>
+                <FileIcon type={sidecarItem.mimeType} className="h-4 w-4" />
+                <span className="truncate">{sidecarItem.handle.name}</span>
               </div>
             ))}
           </div>

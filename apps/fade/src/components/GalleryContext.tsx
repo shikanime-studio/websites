@@ -25,8 +25,45 @@ export function GalleryProvider({
 
   // Reset selection when directory changes
   useEffect(() => {
-    setSelectedIndex(0);
+    // We can't synchronously update state in effect, but we can do it when the handle changes
+    // However, since 'files' is derived from 'handle' via suspense query,
+    // a change in handle triggers a new query and 'files' updates.
+    // We want to reset index when the directory (handle) changes.
+    // The previous implementation was setting state in effect which causes cascading updates.
+    // Instead of effect, we can key the provider or just accept that
+    // when handle changes, we might want to reset.
+    // A better pattern for "reset state on prop change" is using a key on the component
+    // or doing it in the parent.
+    // But given the constraints, let's keep it simple:
+    // If we must reset, we can do it in a way that doesn't trigger the lint error
+    // OR just ignore it if we're sure it's what we want (it is a cascading update).
+    //
+    // However, the best React way is to derive state or key the component.
+    // Since we can't easily key the whole provider without unmounting children state,
+    // we can use the 'key' prop on the returned Provider to force reset if needed,
+    // but that resets everything.
+    //
+    // Let's try to ignore the lint rule for now as it is a specific behavior we want
+    // (reset index when handle changes), OR use a ref to track prev handle.
   }, [handle]);
+
+  // Actually, to fix "setState in effect", we should usually derive state during render
+  // or use a key.
+  // Let's use the key approach on the internal state holder or similar.
+  // For now, let's just suppress the warning if we can't refactor the whole architecture,
+  // BUT the lint error is explicit.
+
+  // Refactoring to use 'key' to reset state:
+  // We can wrap the inner logic in a component that takes 'handle' as a key?
+  // No, that would remount children.
+
+  // Let's just fix it by tracking the handle in a ref and resetting if it changes during render?
+  // No, that's "derived state from props".
+  const [prevHandle, setPrevHandle] = useState(handle);
+  if (handle !== prevHandle) {
+    setPrevHandle(handle);
+    setSelectedIndex(0);
+  }
 
   const selectFile = useCallback(
     (index: number) => {

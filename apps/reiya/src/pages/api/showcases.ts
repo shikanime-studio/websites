@@ -11,12 +11,12 @@ export const GET: APIRoute = async ({ locals }) => {
     title: item.name,
     images: item.imageUrls,
     artist: {
-      name: item.maker?.name || "Unknown Artist",
+      name: item.maker?.name ?? "Unknown Artist",
       avatar: item.maker?.avatarImageUrl
         ? {
             src: item.maker.avatarImageUrl,
-            width: item.maker.avatarImageWidth || 0,
-            height: item.maker.avatarImageHeight || 0,
+            width: item.maker.avatarImageWidth ?? 0,
+            height: item.maker.avatarImageHeight ?? 0,
           }
         : {
             src: "https://placehold.co/100x100/ccc/FFF?text=?",
@@ -31,7 +31,7 @@ export const GET: APIRoute = async ({ locals }) => {
     status: (item.availabilityStatus?.toUpperCase() === "AVAILABLE"
       ? "OPEN"
       : "CLOSED") as "OPEN" | "CLOSED" | "WAITLIST",
-    price: item.priceRange || undefined,
+    price: item.priceRange ?? undefined,
   }));
 
   return new Response(JSON.stringify(showcases), {
