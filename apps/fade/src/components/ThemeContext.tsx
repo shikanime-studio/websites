@@ -1,16 +1,9 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { createContext, useContext, useEffect } from "react";
+import { useEffect } from "react";
 import { settingsCollection } from "../lib/db";
+import { ThemeContext } from "../hooks/useTheme";
 import type { Theme } from "../lib/db";
 import type { ReactNode } from "react";
-
-interface ThemeContextValue {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
-}
-
-const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { data } = useLiveQuery((q) =>
@@ -34,7 +27,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
       applySystemTheme();
       mediaQuery.addEventListener("change", applySystemTheme);
-      return () => mediaQuery.removeEventListener("change", applySystemTheme);
+      return () => {
+        mediaQuery.removeEventListener("change", applySystemTheme);
+      };
     } else {
       root.setAttribute("data-theme", theme);
     }
@@ -64,13 +59,4 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       {children}
     </ThemeContext.Provider>
   );
-}
-
-// eslint-disable-next-line react-refresh/only-export-components
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
 }

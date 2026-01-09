@@ -12,7 +12,7 @@ export function useThumbnail(
   const { data } = useSuspenseQuery({
     queryKey: ["thumbnail", handle?.name, width, height, quality],
     queryFn: async () => {
-      if (!file || !mimeType || !mimeType.startsWith("image/")) {
+      if (!file || !mimeType?.startsWith("image/")) {
         return null;
       }
 

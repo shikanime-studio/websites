@@ -1,6 +1,6 @@
 import { Activity, useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useGallery } from "./GalleryContext";
+import { useGallery } from "../hooks/useGallery";
 import { FilmstripItem } from "./FilmstripItem";
 
 const ITEM_SIZE = 88;
@@ -20,7 +20,9 @@ export function Filmstrip() {
     });
 
     observer.observe(containerRef.current);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   const overscan =
@@ -63,7 +65,7 @@ export function Filmstrip() {
       <div
         className="relative h-full w-full"
         style={{
-          width: `${virtualizer.getTotalSize()}px`,
+          width: `${virtualizer.getTotalSize().toString()}px`,
         }}
       >
         {files.map((fileItem, index) => {
@@ -74,10 +76,13 @@ export function Filmstrip() {
             <Activity mode={mode} key={fileItem.handle.name}>
               <FilmstripItem
                 handle={fileItem.handle}
+                sidecars={fileItem.sidecars}
                 isSelected={index === selectedIndex}
-                onClick={() => selectFile(index)}
+                onClick={() => {
+                  selectFile(index);
+                }}
                 style={{
-                  transform: `translateX(${start}px)`,
+                  transform: `translateX(${start.toString()}px)`,
                   width: "80px",
                 }}
               />

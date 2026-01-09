@@ -1,6 +1,6 @@
 import { FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
-import { useGallery } from "./GalleryContext";
+import { useGallery } from "../hooks/useGallery";
 import { SettingsModal } from "./SettingsModal";
 
 export function ToolBar() {
@@ -28,7 +28,9 @@ export function ToolBar() {
         <div className="navbar-end gap-2">
           <button
             className="btn btn-sm btn-outline btn-warning gap-2 font-medium"
-            onClick={loadDirectory}
+            onClick={() => {
+              void loadDirectory();
+            }}
             disabled={isLoading}
           >
             {isLoading ? (
@@ -40,7 +42,9 @@ export function ToolBar() {
           </button>
           <button
             className="btn btn-sm btn-square btn-ghost"
-            onClick={() => setIsSettingsOpen(true)}
+            onClick={() => {
+              setIsSettingsOpen(true);
+            }}
             aria-label="Settings"
           >
             <Settings className="h-4.5 w-4.5" />
@@ -50,7 +54,9 @@ export function ToolBar() {
 
       <SettingsModal
         isOpen={isSettingsOpen}
-        onClose={() => setIsSettingsOpen(false)}
+        onClose={() => {
+          setIsSettingsOpen(false);
+        }}
       />
     </>
   );
