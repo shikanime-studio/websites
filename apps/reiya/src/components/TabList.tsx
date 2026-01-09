@@ -33,10 +33,8 @@ export const TabList: FC<TabListProps> = ({
   );
 };
 
-interface TabProps extends Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  "value" | "onChange"
-> {
+interface TabProps
+  extends Omit<InputHTMLAttributes<HTMLInputElement>, "value" | "onChange"> {
   children?: ReactNode;
   className?: string;
   value: string;
