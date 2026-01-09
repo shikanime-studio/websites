@@ -1,5 +1,6 @@
 ---
 import FluidLayout from "../../layouts/FluidLayout.astro";
+import { Image } from "@unpic/react";
 import { createAuth } from "../../lib/auth";
 import { createD1Database } from "../../lib/db";
 
@@ -24,12 +25,16 @@ const user = session?.user;
             <div class="flex items-center gap-4">
               <div class="avatar">
                 <div class="w-24 rounded-full">
-                  <img
+                  <Image
                     src={
                       user.image ||
                       `https://ui-avatars.com/api/?name=${user.name}`
                     }
                     alt={user.name}
+                    width={96}
+                    height={96}
+                    layout="constrained"
+                    className="h-full w-full object-cover"
                   />
                 </div>
               </div>

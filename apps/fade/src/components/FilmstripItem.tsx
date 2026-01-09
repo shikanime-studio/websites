@@ -1,4 +1,5 @@
 import { FileQuestion } from "lucide-react";
+import { Image } from "@unpic/react";
 import { useFile } from "../hooks/useFile";
 
 interface FilmstripItemProps {
@@ -29,11 +30,11 @@ export function FilmstripItem({
       aria-current={isSelected ? "true" : "false"}
     >
       {url && file?.type?.startsWith("image/") ? (
-        <img
+        <Image
           src={url}
           alt={handle.name}
           className="h-full w-full object-cover"
-          loading="lazy"
+          layout="fullWidth"
         />
       ) : (
         <div className="flex h-full w-full items-center justify-center">

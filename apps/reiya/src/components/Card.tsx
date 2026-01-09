@@ -6,7 +6,7 @@ import {
   FaCircleCheck,
   FaRegClone,
 } from "react-icons/fa6";
-import { Image } from "./Image";
+import { Image } from "@unpic/react";
 import type { FC, MouseEvent, ReactNode } from "react";
 
 export interface CardData {
@@ -77,6 +77,7 @@ export const CardInfo: FC<CardInfoProps> = ({
               width={artist.avatar.width}
               height={artist.avatar.height}
               alt={artist.name}
+              layout="constrained"
               className="h-5 w-5 overflow-hidden rounded-full ring-1 ring-gray-100"
             />
           </div>
@@ -305,12 +306,14 @@ export const CardCarousel: FC<CardCarouselProps> = ({
             ))
           ) : (
             <div className="carousel-item h-full w-full shrink-0 snap-center">
-              <img
+              <Image
                 src={`https://placehold.co/600x800/ffe4e6/be123c?text=${encodeURIComponent(
                   title,
                 )}`}
                 alt={title}
-                className="h-full w-full object-contain"
+                width={600}
+                height={800}
+                imageClassName="h-full w-full object-contain"
               />
             </div>
           )}
@@ -365,12 +368,14 @@ export const CardShowcaseCarousel: FC<CardShowcaseCarouselProps> = ({
   onClick,
 }) => {
   const firstImage = images[0] || (
-    <img
+    <Image
       src={`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(
         title,
       )}`}
       alt={title}
-      className="h-auto w-full"
+      width={600}
+      height={400}
+      imageClassName="h-auto w-full"
     />
   );
 
