@@ -20,7 +20,9 @@ export function Filmstrip() {
     });
 
     observer.observe(containerRef.current);
-    return () => { observer.disconnect(); };
+    return () => {
+      observer.disconnect();
+    };
   }, []);
 
   const overscan =
@@ -76,7 +78,9 @@ export function Filmstrip() {
                 handle={fileItem.handle}
                 sidecars={fileItem.sidecars}
                 isSelected={index === selectedIndex}
-                onClick={() => { selectFile(index); }}
+                onClick={() => {
+                  selectFile(index);
+                }}
                 style={{
                   transform: `translateX(${start.toString()}px)`,
                   width: "80px",

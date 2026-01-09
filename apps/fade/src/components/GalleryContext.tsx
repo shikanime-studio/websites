@@ -40,13 +40,7 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
       }
 
       const items: Array<FileItem> = [];
-      const RASTER_EXTENSIONS = new Set([
-        "jpg",
-        "jpeg",
-        "png",
-        "webp",
-        "avif",
-      ]);
+      const RASTER_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "avif"]);
 
       for (const handles of groups.values()) {
         let primaryHandle = handles[0];
@@ -135,7 +129,9 @@ export function GalleryProvider({ children }: { children: ReactNode }) {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => { window.removeEventListener("keydown", handleKeyDown); };
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
   }, [state.files.length, navigateNext, navigatePrevious, selectFile]);
 
   const selectedFile =

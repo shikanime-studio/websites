@@ -5,10 +5,10 @@ import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
-import {  useGallery } from "../hooks/useGallery";
+import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
 import { FileIcon } from "./FileIcon";
-import type {FileItem} from "../hooks/useGallery";
+import type { FileItem } from "../hooks/useGallery";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();

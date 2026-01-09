@@ -27,7 +27,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
       applySystemTheme();
       mediaQuery.addEventListener("change", applySystemTheme);
-      return () => { mediaQuery.removeEventListener("change", applySystemTheme); };
+      return () => {
+        mediaQuery.removeEventListener("change", applySystemTheme);
+      };
     } else {
       root.setAttribute("data-theme", theme);
     }
