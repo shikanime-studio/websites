@@ -1,10 +1,11 @@
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import { Image } from "@unpic/react";
-import { Suspense } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useGallery } from "../hooks/useGallery";
 import { FileIcon } from "./FileIcon";
+import { useImageInfo } from "./ImageInfoContext";
 import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
@@ -65,6 +66,14 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
+  const { setDimensions, resetDimensions } = useImageInfo();
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (!file || !url || !mimeType?.startsWith("image/")) {
+      resetDimensions();
+    }
+  }, [file, url, mimeType, resetDimensions]);
 
   if (!file || !url) return null;
 
@@ -72,12 +81,17 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
     <>
       {mimeType?.startsWith("image/") ? (
         <Image
+          ref={imgRef}
           key={url}
           src={url}
           alt={handle.name}
           className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
           layout="fullWidth"
           background="auto"
+          onLoad={(e) => {
+            const img = e.currentTarget as HTMLImageElement;
+            setDimensions(img.naturalWidth, img.naturalHeight);
+          }}
         />
       ) : mimeType?.startsWith("video/") ? (
         <video

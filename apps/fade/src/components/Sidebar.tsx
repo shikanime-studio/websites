@@ -1,13 +1,13 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { Camera, ChevronLeft, ChevronRight, Info } from "lucide-react";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
-import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
 import { formatBytes } from "../lib/intl";
 import { FileIcon } from "./FileIcon";
+import { useImageInfo } from "./ImageInfoContext";
 import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
@@ -83,30 +83,8 @@ export function Sidebar() {
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
   const { file } = useFile(fileItem);
-  const { url, revoke } = useObjectUrl(file ?? null);
   const exifData = useExif(file ?? null);
-  const [dimensions, setDimensions] = useState<{
-    width: number;
-    height: number;
-  } | null>(null);
-
-  useEffect(() => {
-    if (!file || !url || !fileItem.mimeType?.startsWith("image/")) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setDimensions(null);
-      return;
-    }
-
-    const img = new Image();
-    img.onload = () => {
-      setDimensions({ width: img.naturalWidth, height: img.naturalHeight });
-    };
-    img.src = url;
-
-    return () => {
-      revoke();
-    };
-  }, [file, url, fileItem, revoke]);
+  const { width, height } = useImageInfo();
 
   if (!file) return null;
 
@@ -126,13 +104,13 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {dimensions && (
+        {width && height && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {dimensions.width} × {dimensions.height}
+              {width} × {height}
             </dd>
           </div>
         )}
