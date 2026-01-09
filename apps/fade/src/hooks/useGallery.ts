@@ -8,7 +8,6 @@ export interface FileItem {
 export interface GalleryState {
   files: Array<FileItem>;
   selectedIndex: number;
-  isLoading: boolean;
 }
 
 export interface GalleryContextValue extends GalleryState {

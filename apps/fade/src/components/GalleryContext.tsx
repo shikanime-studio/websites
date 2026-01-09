@@ -13,10 +13,7 @@ export function GalleryProvider({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const {
-    data: files,
-    isFetching,
-  } = useSuspenseQuery({
+  const { data: files } = useSuspenseQuery({
     queryKey: ["gallery", handle],
     queryFn: async () => {
       if (!handle) return [];
@@ -84,7 +81,6 @@ export function GalleryProvider({
       value={{
         files,
         selectedIndex,
-        isLoading: isFetching,
         selectFile,
         navigateNext,
         navigatePrevious,
