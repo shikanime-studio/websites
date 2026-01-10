@@ -66,14 +66,14 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
-  const { setDimensions, resetDimensions } = useCanvasInfo();
+  const { setImage } = useCanvasInfo();
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     if (!file || !url || !mimeType?.startsWith("image/")) {
-      resetDimensions();
+      setImage(null);
     }
-  }, [file, url, mimeType, resetDimensions]);
+  }, [file, url, mimeType, setImage]);
 
   if (!file || !url) return null;
 
@@ -89,8 +89,7 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
           layout="fullWidth"
           background="auto"
           onLoad={(e) => {
-            const img = e.currentTarget as HTMLImageElement;
-            setDimensions(img.naturalWidth, img.naturalHeight);
+            setImage(e.currentTarget as HTMLImageElement);
           }}
         />
       ) : mimeType?.startsWith("video/") ? (
