@@ -39,11 +39,7 @@ export function Histogram({ className }: HistogramProps) {
     }
 
     // Find max value to normalize
-    const maxCount = Math.max(
-      ...r,
-      ...g,
-      ...b
-    );
+    const maxCount = Math.max(...r, ...g, ...b);
 
     // Normalize to 0-100 range
     const normalize = (arr: Array<number>) =>
@@ -59,7 +55,9 @@ export function Histogram({ className }: HistogramProps) {
   if (!data) return null;
 
   return (
-    <div className={`relative h-32 w-full bg-black/20 rounded-md overflow-hidden ${className ?? ""}`}>
+    <div
+      className={`relative h-32 w-full bg-black/20 rounded-md overflow-hidden ${className ?? ""}`}
+    >
       <svg
         viewBox="0 0 256 100"
         preserveAspectRatio="none"
