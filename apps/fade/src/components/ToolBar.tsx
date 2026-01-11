@@ -1,5 +1,6 @@
 import { FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
+import { siGithub } from "simple-icons/icons";
 import { useDirectory } from "../hooks/useDirectory";
 import { useGallery } from "../hooks/useGallery";
 import { SettingsModal } from "./SettingsModal";
@@ -37,6 +38,23 @@ export function ToolBar() {
             <FolderOpen className="h-4 w-4" />
             <span>Open Folder</span>
           </button>
+          <a
+            href="https://github.com/shikanime-studio/websites/tree/main/apps/fade"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-sm btn-square btn-ghost"
+            aria-label="GitHub Repository"
+          >
+            <svg
+              role="img"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4.5 w-4.5 fill-current"
+            >
+              <title>{siGithub.title}</title>
+              <path d={siGithub.path} />
+            </svg>
+          </a>
           <button
             className="btn btn-sm btn-square btn-ghost"
             onClick={() => {
