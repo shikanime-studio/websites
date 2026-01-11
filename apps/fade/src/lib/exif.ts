@@ -34,7 +34,7 @@ export type ExifTagEntry =
   | { tagId: ExifTagId.LensModel; value: string }
   | { tagId: number; value: unknown };
 
-export function getTypeSize(type: ExifType): number {
+export function sizeOf(type: ExifType): number {
   switch (type) {
     case ExifType.BYTE:
     case ExifType.ASCII:
@@ -130,7 +130,7 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
 
   getTagEntry(offset: number, headerOffset: number, littleEndian?: boolean) {
     const { tagId, type, count } = this.getTagHeader(offset, littleEndian);
-    const typeSize = getTypeSize(type);
+    const typeSize = sizeOf(type);
     const totalSize = typeSize * count;
 
     let valueOffset = offset + 8;
