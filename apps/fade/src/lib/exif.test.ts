@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getExifTags } from "./exif";
+import { ExifTagId, getExifTags } from "./exif";
 import type { FileItem } from "./fs";
 
 // Mock FileItem creator
@@ -99,12 +99,13 @@ describe("getExifTags", () => {
 
     const file = new File([jpegData], "test.jpg", { type: "image/jpeg" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make?.value).toBe("JPEG");
+    expect(tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value).toBe(
+      "JPEG",
+    );
   });
 
   it("should extract EXIF tags from PNG", async () => {
     const exifData = createExifBlock("PNG ");
-
     const pngSignature = new Uint8Array([
       0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
     ]);
@@ -139,7 +140,9 @@ describe("getExifTags", () => {
 
     const file = new File([pngData], "test.png", { type: "image/png" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make?.value).toBe("PNG");
+    expect(tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value).toBe(
+      "PNG",
+    );
   });
 
   it("should extract EXIF tags from WebP", async () => {
@@ -185,13 +188,17 @@ describe("getExifTags", () => {
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make?.value).toBe("WebP");
+    expect(tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value).toBe(
+      "WebP",
+    );
   });
 
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make?.value).toBe("TIFF");
+    expect(tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value).toBe(
+      "TIFF",
+    );
   });
 });

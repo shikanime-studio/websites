@@ -5,6 +5,7 @@ import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
+import { ExifTagId } from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { useCanvasInfo } from "../hooks/useCanvasInfo";
 import { FileIcon } from "./FileIcon";
@@ -89,6 +90,16 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
 
   if (!file) return null;
 
+  const tags = Object.fromEntries(exifData?.map((e) => [e.tagId, e.value]) ?? []);
+
+  const make = tags[ExifTagId.Make] as string | undefined;
+  const model = tags[ExifTagId.Model] as string | undefined;
+  const lensModel = tags[ExifTagId.LensModel] as string | undefined;
+  const fNumber = tags[ExifTagId.FNumber] as number | undefined;
+  const exposureTime = tags[ExifTagId.ExposureTime] as number | undefined;
+  const iso = tags[ExifTagId.ISO] as number | undefined;
+  const focalLength = tags[ExifTagId.FocalLength] as number | undefined;
+
   return (
     <div>
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
@@ -128,7 +139,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
         </div>
       </dl>
 
-      {exifData && Object.keys(exifData).length > 0 && (
+      {exifData && exifData.length > 0 && (
         <>
           <div className="border-base-300 text-base-content/70 mt-8 mb-5 flex items-center gap-2 border-b pb-3">
             <Camera className="h-4.5 w-4.5" />
@@ -138,70 +149,70 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
           </div>
 
           <dl className="m-0 flex flex-col gap-4">
-            {(exifData.make ?? exifData.model) && (
+            {(make ?? model) && (
               <div className="flex flex-col gap-1">
                 <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                   Camera
                 </dt>
                 <dd className="m-0 text-sm font-medium">
-                  {[exifData.make, exifData.model].filter(Boolean).join(" ")}
+                  {[make, model].filter(Boolean).join(" ")}
                 </dd>
               </div>
             )}
 
-            {exifData.lensModel && (
+            {lensModel && (
               <div className="flex flex-col gap-1">
                 <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                   Lens
                 </dt>
                 <dd className="m-0 text-sm font-medium">
-                  {exifData.lensModel}
+                  {lensModel}
                 </dd>
               </div>
             )}
 
             <div className="grid grid-cols-2 gap-4">
-              {exifData.fNumber && (
+              {fNumber && (
                 <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     Aperture
                   </dt>
                   <dd className="m-0 text-sm font-medium">
-                    f/{exifData.fNumber}
+                    f/{fNumber}
                   </dd>
                 </div>
               )}
 
-              {exifData.exposureTime && (
+              {exposureTime && (
                 <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     Shutter
                   </dt>
                   <dd className="m-0 text-sm font-medium">
-                    {exifData.exposureTime >= 1
-                      ? exifData.exposureTime
-                      : `1/${Math.round(1 / exifData.exposureTime).toString()}`}
+                    {exposureTime >= 1
+                      ? exposureTime
+                      : `1/${Math.round(1 / exposureTime).toString()}`}
                     s
                   </dd>
                 </div>
               )}
 
-              {exifData.iso && (
+              {iso && (
                 <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     ISO
                   </dt>
-                  <dd className="m-0 text-sm font-medium">{exifData.iso}</dd>
+                  <dd className="m-0 text-sm font-medium">{iso}</dd>
                 </div>
               )}
 
-              {exifData.focalLength && (
+              {focalLength && (
                 <div className="flex flex-col gap-1">
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     Focal Length
                   </dt>
                   <dd className="m-0 text-sm font-medium">
-                    {exifData.focalLength}mm
+                    {focalLength}mm
                   </dd>
                 </div>
               )}
