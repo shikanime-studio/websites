@@ -90,7 +90,9 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
 
   if (!file) return null;
 
-  const tags = Object.fromEntries(exifData?.map((e) => [e.tagId, e.value]) ?? []);
+  const tags = Object.fromEntries(
+    exifData?.map((e) => [e.tagId, e.value]) ?? [],
+  );
 
   const make = tags[ExifTagId.Make] as string | undefined;
   const model = tags[ExifTagId.Model] as string | undefined;
@@ -165,9 +167,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
                 <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                   Lens
                 </dt>
-                <dd className="m-0 text-sm font-medium">
-                  {lensModel}
-                </dd>
+                <dd className="m-0 text-sm font-medium">{lensModel}</dd>
               </div>
             )}
 
@@ -177,9 +177,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     Aperture
                   </dt>
-                  <dd className="m-0 text-sm font-medium">
-                    f/{fNumber}
-                  </dd>
+                  <dd className="m-0 text-sm font-medium">f/{fNumber}</dd>
                 </div>
               )}
 
@@ -211,9 +209,7 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
                   <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
                     Focal Length
                   </dt>
-                  <dd className="m-0 text-sm font-medium">
-                    {focalLength}mm
-                  </dd>
+                  <dd className="m-0 text-sm font-medium">{focalLength}mm</dd>
                 </div>
               )}
             </div>
