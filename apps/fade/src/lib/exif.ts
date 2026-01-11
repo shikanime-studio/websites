@@ -1,3 +1,5 @@
+import type { FileItem } from "./fs";
+
 export interface ExifTags {
   make?: string;
   model?: string;
@@ -23,19 +25,17 @@ const TAGS = {
 
 type TagId = keyof typeof TAGS;
 
-export async function getExifTags(file: File): Promise<ExifTags> {
-  const buffer = await file.arrayBuffer();
-  const view = new DataView(buffer);
-
-  switch (file.type) {
+export async function getExifTags(source: FileItem): Promise<ExifTags> {
+  const file = await source.handle.getFile();
+  switch (source.mimeType) {
     case "image/jpeg":
-      return parseJpeg(view);
+      return parseJpeg(new DataView(await file.arrayBuffer()));
     case "image/png":
-      return parsePng(view);
+      return parsePng(new DataView(await file.arrayBuffer()));
     case "image/webp":
-      return parseWebP(view);
+      return parseWebP(new DataView(await file.arrayBuffer()));
     case "image/tiff":
-      return parseExifData(view, 0);
+      return parseExifData(new DataView(await file.arrayBuffer()), 0);
     default:
       return {};
   }

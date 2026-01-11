@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { getExifTags } from "./exif";
+import type { FileItem } from "./fs";
+
+// Mock FileItem creator
+function createFileItem(file: File): FileItem {
+  return {
+    handle: {
+      getFile: () => Promise.resolve(file),
+    } as unknown as FileSystemFileHandle,
+    sidecars: [],
+    mimeType: file.type,
+  };
+}
 
 describe("getExifTags", () => {
   // Helper to create EXIF data block
@@ -86,7 +98,7 @@ describe("getExifTags", () => {
     jpegData.set(exifData, offset);
 
     const file = new File([jpegData], "test.jpg", { type: "image/jpeg" });
-    const tags = await getExifTags(file);
+    const tags = await getExifTags(createFileItem(file));
     expect(tags.make).toBe("JPEG");
   });
 
@@ -126,7 +138,7 @@ describe("getExifTags", () => {
     pngData.set(crc, offset);
 
     const file = new File([pngData], "test.png", { type: "image/png" });
-    const tags = await getExifTags(file);
+    const tags = await getExifTags(createFileItem(file));
     expect(tags.make).toBe("PNG");
   });
 
@@ -172,14 +184,14 @@ describe("getExifTags", () => {
     // Padding if needed (though our createExifBlock returns even length usually, check make string)
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
-    const tags = await getExifTags(file);
+    const tags = await getExifTags(createFileItem(file));
     expect(tags.make).toBe("WebP");
   });
 
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
-    const tags = await getExifTags(file);
+    const tags = await getExifTags(createFileItem(file));
     expect(tags.make).toBe("TIFF");
   });
 });
