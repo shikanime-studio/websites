@@ -84,7 +84,7 @@ export function Sidebar() {
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   const { handle, sidecars } = fileItem;
   const { file } = useFile(fileItem);
-  const exifData = useExif(file ?? null);
+  const exifData = useExif(fileItem);
   const { image } = useCanvasInfo();
 
   if (!file) return null;
@@ -92,10 +92,10 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   return (
     <div>
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
-        {file.type.startsWith("image/") ? (
+        {fileItem.mimeType?.startsWith("image/") ? (
           <Histogram />
         ) : (
-          <FileIcon type={file.type} className="h-8 w-8 opacity-50" />
+          <FileIcon type={fileItem.mimeType} className="h-8 w-8 opacity-50" />
         )}
       </div>
 
