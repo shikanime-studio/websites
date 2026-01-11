@@ -57,8 +57,6 @@ export function isContainer(type: ExifType) {
 }
 
 export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
-  readonly [Symbol.toStringTag] = "ExifDataView";
-
   getAscii(offset: number, length: number): string {
     let str = "";
     for (let i = 0; i < length; i++) {
@@ -184,8 +182,6 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
 }
 
 class JpgDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
-  readonly [Symbol.toStringTag] = "JpgDataView";
-
   getTagEntries(offset: number): Array<ExifTagEntry> {
     const length = this.byteLength;
 
@@ -222,8 +218,6 @@ class JpgDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
 }
 
 class PngDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
-  readonly [Symbol.toStringTag] = "PngDataView";
-
   getTagEntries(offset: number): Array<ExifTagEntry> {
     const length = this.byteLength;
 
@@ -253,8 +247,6 @@ class PngDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
 }
 
 class WebPDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
-  readonly [Symbol.toStringTag] = "WebPDataView";
-
   getTagEntries(offset: number): Array<ExifTagEntry> {
     const length = this.byteLength;
 
