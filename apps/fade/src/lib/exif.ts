@@ -1,236 +1,300 @@
-export interface ExifTags {
-  make?: string;
-  model?: string;
-  dateTimeOriginal?: string;
-  fNumber?: number;
-  exposureTime?: number;
-  iso?: number;
-  focalLength?: number;
-  lensModel?: string;
+import type { FileItem } from "./fs";
+
+export enum ExifType {
+  BYTE = 1,
+  ASCII = 2,
+  SHORT = 3,
+  LONG = 4,
+  RATIONAL = 5,
+  SLONG = 9,
+  SRATIONAL = 10,
 }
 
-const TAGS = {
-  0x010f: "make",
-  0x0110: "model",
-  0x8769: "exifOffset",
-  0x829a: "exposureTime",
-  0x829d: "fNumber",
-  0x8827: "iso",
-  0x9003: "dateTimeOriginal",
-  0x920a: "focalLength",
-  0xa433: "lensModel",
-} as const;
-
-type TagId = keyof typeof TAGS;
-
-export async function getExifTags(file: File): Promise<ExifTags> {
-  const buffer = await file.arrayBuffer();
-  const view = new DataView(buffer);
-
-  switch (file.type) {
-    case "image/jpeg":
-      return parseJpeg(view);
-    case "image/png":
-      return parsePng(view);
-    case "image/webp":
-      return parseWebP(view);
-    case "image/tiff":
-      return parseExifData(view, 0);
-    default:
-      return {};
-  }
+export enum ExifTagId {
+  Make = 0x010f,
+  Model = 0x0110,
+  ExifOffset = 0x8769,
+  ExposureTime = 0x829a,
+  FNumber = 0x829d,
+  ISO = 0x8827,
+  DateTimeOriginal = 0x9003,
+  FocalLength = 0x920a,
+  LensModel = 0xa433,
 }
 
-function parseJpeg(view: DataView): ExifTags {
-  let offset = 2;
-  const length = view.byteLength;
+export type ExifTagEntry =
+  | { tagId: ExifTagId.Make; value: string }
+  | { tagId: ExifTagId.Model; value: string }
+  | { tagId: ExifTagId.ExifOffset; value: number }
+  | { tagId: ExifTagId.ExposureTime; value: number }
+  | { tagId: ExifTagId.FNumber; value: number }
+  | { tagId: ExifTagId.ISO; value: number }
+  | { tagId: ExifTagId.DateTimeOriginal; value: string }
+  | { tagId: ExifTagId.FocalLength; value: number }
+  | { tagId: ExifTagId.LensModel; value: string }
+  | { tagId: number; value: unknown };
 
-  while (offset < length) {
-    if (offset + 1 >= length) break;
-    const marker = view.getUint16(offset);
-    offset += 2;
-
-    if (marker === 0xffe1) {
-      if (offset + 1 >= length) break;
-      const segmentLength = view.getUint16(offset);
-      if (
-        view.getUint32(offset + 2) === 0x45786966 &&
-        view.getUint16(offset + 6) === 0x0000
-      ) {
-        return parseExifData(view, offset + 8);
-      }
-      offset += segmentLength;
-    } else {
-      if ((marker & 0xff00) !== 0xff00) break;
-      if (offset + 1 >= length) break;
-      const segmentLength = view.getUint16(offset);
-      offset += segmentLength;
-    }
-  }
-
-  return {};
-}
-
-function parsePng(view: DataView): ExifTags {
-  let offset = 8;
-  const length = view.byteLength;
-
-  while (offset < length) {
-    if (offset + 8 > length) break;
-    const chunkLength = view.getUint32(offset);
-
-    // Check for 'eXIf' chunk (0x65584966)
-    if (view.getUint32(offset + 4) === 0x65584966) {
-      return parseExifData(view, offset + 8);
-    }
-
-    offset += 12 + chunkLength;
-  }
-
-  return {};
-}
-
-function parseWebP(view: DataView): ExifTags {
-  let offset = 12; // Skip RIFF header (12 bytes)
-  const length = view.byteLength;
-
-  while (offset < length) {
-    if (offset + 8 > length) break;
-    const chunkId = view.getUint32(offset);
-    const chunkLength = view.getUint32(offset + 4, true); // WebP chunks are little-endian size
-
-    // Check for 'EXIF' chunk (0x45584946)
-    if (chunkId === 0x45584946) {
-      return parseExifData(view, offset + 8);
-    }
-
-    offset += 8 + chunkLength;
-
-    // Add padding byte if chunk size is odd
-    if (chunkLength % 2 !== 0) {
-      offset += 1;
-    }
-  }
-
-  return {};
-}
-
-function parseExifData(view: DataView, start: number): ExifTags {
-  const result: ExifTags = {};
-
-  // Check byte order
-  const littleEndian = view.getUint16(start) === 0x4949;
-
-  // First IFD offset
-  const firstIfdOffset = view.getUint32(start + 4, littleEndian);
-  if (firstIfdOffset < 8) return result;
-
-  const tags: Record<string, unknown> = {};
-
-  function readTag(tagOffset: number) {
-    const tagId = view.getUint16(tagOffset, littleEndian) as TagId;
-    const type = view.getUint16(tagOffset + 2, littleEndian);
-    const count = view.getUint32(tagOffset + 4, littleEndian);
-
-    // Value or offset to value
-    let valueOffset = tagOffset + 8;
-    const typeSize = getTypeSize(type);
-    const totalSize = typeSize * count;
-
-    if (totalSize > 4) {
-      valueOffset = view.getUint32(tagOffset + 8, littleEndian) + start;
-    }
-
-    if (tagId in TAGS) {
-      const tagName = TAGS[tagId];
-      if (tagName === "exifOffset") {
-        const exifOffset = view.getUint32(tagOffset + 8, littleEndian);
-        readIfd(start + exifOffset);
-      } else {
-        tags[tagName] = readValue(view, valueOffset, type, count, littleEndian);
-      }
-    }
-  }
-
-  function readIfd(offset: number) {
-    const entryCount = view.getUint16(offset, littleEndian);
-    for (let i = 0; i < entryCount; i++) {
-      readTag(offset + 2 + i * 12);
-    }
-  }
-
-  // Read IFD0
-  readIfd(start + firstIfdOffset);
-
-  // Map extracted tags to result interface
-  if (tags.make) result.make = tags.make as string;
-  if (tags.model) result.model = tags.model as string;
-  if (tags.dateTimeOriginal)
-    result.dateTimeOriginal = tags.dateTimeOriginal as string;
-  if (tags.fNumber) result.fNumber = tags.fNumber as number;
-  if (tags.exposureTime) result.exposureTime = tags.exposureTime as number;
-  if (tags.iso) result.iso = tags.iso as number;
-  if (tags.focalLength) result.focalLength = tags.focalLength as number;
-  if (tags.lensModel) result.lensModel = tags.lensModel as string;
-
-  return result;
-}
-
-function getTypeSize(type: number): number {
+export function sizeOf(type: ExifType): number {
   switch (type) {
-    case 1:
-      return 1; // BYTE
-    case 2:
-      return 1; // ASCII
-    case 3:
-      return 2; // SHORT
-    case 4:
-      return 4; // LONG
-    case 5:
-      return 8; // RATIONAL
-    case 9:
-      return 4; // SLONG
-    case 10:
-      return 8; // SRATIONAL
+    case ExifType.BYTE:
+    case ExifType.ASCII:
+      return 1;
+    case ExifType.SHORT:
+      return 2;
+    case ExifType.LONG:
+    case ExifType.SLONG:
+      return 4;
+    case ExifType.RATIONAL:
+    case ExifType.SRATIONAL:
+      return 8;
     default:
       return 0;
   }
 }
 
-function readValue(
-  view: DataView,
-  offset: number,
-  type: number,
-  count: number,
-  littleEndian: boolean,
-): unknown {
-  switch (type) {
-    case 2: {
-      // ASCII
-      let str = "";
-      for (let i = 0; i < count; i++) {
-        const charCode = view.getUint8(offset + i);
-        if (charCode === 0) break;
-        str += String.fromCharCode(charCode);
+export function isContainer(type: ExifType) {
+  return type === ExifType.ASCII || type === ExifType.BYTE;
+}
+
+export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
+  getAscii(offset: number, length: number): string {
+    let str = "";
+    for (let i = 0; i < length; i++) {
+      const charCode = this.getUint8(offset + i);
+      if (charCode === 0) break;
+      str += String.fromCharCode(charCode);
+    }
+    return str.trim();
+  }
+
+  getRational(offset: number, littleEndian?: boolean): number {
+    const numerator = this.getUint32(offset, littleEndian);
+    const denominator = this.getUint32(offset + 4, littleEndian);
+    return numerator / denominator;
+  }
+
+  getSRational(offset: number, littleEndian?: boolean): number {
+    const sNumerator = this.getInt32(offset, littleEndian);
+    const sDenominator = this.getInt32(offset + 4, littleEndian);
+    return sNumerator / sDenominator;
+  }
+
+  getIfd(offset: number, littleEndian?: boolean): number {
+    return this.getUint16(offset, littleEndian);
+  }
+
+  getIfdOffset(offset: number, littleEndian?: boolean): number {
+    return this.getUint32(offset + 4, littleEndian);
+  }
+
+  isLittleEndian(offset: number) {
+    return this.getUint16(offset, true) === 0x4949;
+  }
+
+  getTagHeader(offset: number, littleEndian?: boolean) {
+    return {
+      tagId: this.getUint16(offset, littleEndian),
+      type: this.getUint16(offset + 2, littleEndian) as ExifType,
+      count: this.getUint32(offset + 4, littleEndian),
+    };
+  }
+
+  getValue(offset: number, type: ExifType, littleEndian?: boolean) {
+    switch (type) {
+      case ExifType.SHORT:
+        return this.getUint16(offset, littleEndian);
+      case ExifType.LONG:
+        return this.getUint32(offset, littleEndian);
+      case ExifType.RATIONAL:
+        return this.getRational(offset, littleEndian);
+      case ExifType.SRATIONAL:
+        return this.getSRational(offset, littleEndian);
+      default:
+        return null;
+    }
+  }
+
+  getContainer(offset: number, type: ExifType, count: number) {
+    switch (type) {
+      case ExifType.ASCII:
+        return this.getAscii(offset, count);
+      case ExifType.BYTE:
+        return this.buffer.slice(
+          this.byteOffset + offset,
+          this.byteOffset + offset + count,
+        );
+      default:
+        return null;
+    }
+  }
+
+  getTagEntry(offset: number, headerOffset: number, littleEndian?: boolean) {
+    const { tagId, type, count } = this.getTagHeader(offset, littleEndian);
+    const typeSize = sizeOf(type);
+    const totalSize = typeSize * count;
+
+    let valueOffset = offset + 8;
+    if (totalSize > 4) {
+      valueOffset = this.getUint32(offset + 8, littleEndian) + headerOffset;
+    }
+
+    const value = isContainer(type)
+      ? this.getContainer(valueOffset, type, count)
+      : this.getValue(valueOffset, type, littleEndian);
+
+    return {
+      tagId,
+      type,
+      value,
+    };
+  }
+
+  getTagEntries(offset: number): Array<ExifTagEntry> {
+    const result: Array<ExifTagEntry> = [];
+
+    // Check byte order
+    const littleEndian = this.isLittleEndian(offset);
+
+    // First IFD offset
+    const firstIfdOffset = this.getIfdOffset(offset, littleEndian);
+    if (firstIfdOffset < 8) return result;
+
+    const ifdOffsetsToRead: Array<number> = [offset + firstIfdOffset];
+
+    while (ifdOffsetsToRead.length > 0) {
+      const currentIfdOffset = ifdOffsetsToRead.pop();
+      if (currentIfdOffset === undefined) break;
+
+      const entryCount = this.getIfd(currentIfdOffset, littleEndian);
+      for (let i = 0; i < entryCount; i++) {
+        const tagOffset = currentIfdOffset + 2 + i * 12;
+        const tag = this.getTagEntry(tagOffset, offset, littleEndian);
+        result.push(tag);
+
+        if (tag.tagId === (ExifTagId.ExifOffset as number)) {
+          ifdOffsetsToRead.push(offset + (tag.value as number));
+        }
       }
-      return str.trim();
     }
-    case 3: // SHORT
-      return view.getUint16(offset, littleEndian);
-    case 4: // LONG
-      return view.getUint32(offset, littleEndian);
-    case 5: {
-      // RATIONAL
-      const numerator = view.getUint32(offset, littleEndian);
-      const denominator = view.getUint32(offset + 4, littleEndian);
-      return numerator / denominator;
+
+    return result;
+  }
+}
+
+class JpgDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
+  getTagEntries(offset: number): Array<ExifTagEntry> {
+    const length = this.byteLength;
+
+    // Skip SOI marker if present at offset
+    if (offset + 1 < length && this.getUint16(offset) === 0xffd8) {
+      offset += 2;
     }
-    case 10: {
-      // SRATIONAL
-      const sNumerator = view.getInt32(offset, littleEndian);
-      const sDenominator = view.getInt32(offset + 4, littleEndian);
-      return sNumerator / sDenominator;
+
+    while (offset < length) {
+      if (offset + 1 >= length) break;
+      const marker = this.getUint16(offset);
+      offset += 2;
+
+      if (marker === 0xffe1) {
+        if (offset + 1 >= length) break;
+        const segmentLength = this.getUint16(offset);
+        if (
+          this.getUint32(offset + 2) === 0x45786966 &&
+          this.getUint16(offset + 6) === 0x0000
+        ) {
+          return super.getTagEntries(offset + 8);
+        }
+        offset += segmentLength;
+      } else {
+        if ((marker & 0xff00) !== 0xff00) break;
+        if (offset + 1 >= length) break;
+        const segmentLength = this.getUint16(offset);
+        offset += segmentLength;
+      }
     }
+
+    return [];
+  }
+}
+
+class PngDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
+  getTagEntries(offset: number): Array<ExifTagEntry> {
+    const length = this.byteLength;
+
+    // Skip PNG signature if present at offset
+    if (
+      offset + 7 < length &&
+      this.getUint32(offset) === 0x89504e47 &&
+      this.getUint32(offset + 4) === 0x0d0a1a0a
+    ) {
+      offset += 8;
+    }
+
+    while (offset < length) {
+      if (offset + 8 > length) break;
+      const chunkLength = this.getUint32(offset);
+
+      // Check for 'eXIf' chunk (0x65584966)
+      if (this.getUint32(offset + 4) === 0x65584966) {
+        return super.getTagEntries(offset + 8);
+      }
+
+      offset += 12 + chunkLength;
+    }
+
+    return [];
+  }
+}
+
+class WebPDataView<T extends ArrayBufferLike> extends ExifDataView<T> {
+  getTagEntries(offset: number): Array<ExifTagEntry> {
+    const length = this.byteLength;
+
+    // Skip RIFF header if present at offset
+    if (
+      offset + 11 < length &&
+      this.getUint32(offset) === 0x52494646 && // RIFF
+      this.getUint32(offset + 8) === 0x57454250 // WEBP
+    ) {
+      offset += 12;
+    }
+
+    while (offset < length) {
+      if (offset + 8 > length) break;
+      const chunkId = this.getUint32(offset);
+      const chunkLength = this.getUint32(offset + 4, true); // WebP chunks are little-endian size
+
+      // Check for 'EXIF' chunk (0x45584946)
+      if (chunkId === 0x45584946) {
+        return super.getTagEntries(offset + 8);
+      }
+
+      offset += 8 + chunkLength;
+
+      // Add padding byte if chunk size is odd
+      if (chunkLength % 2 !== 0) {
+        offset += 1;
+      }
+    }
+
+    return [];
+  }
+}
+
+export async function getTagEntries(
+  source: FileItem,
+  offset = 0,
+): Promise<Array<ExifTagEntry> | null> {
+  const file = await source.handle.getFile();
+  switch (source.mimeType) {
+    case "image/jpeg":
+      return new JpgDataView(await file.arrayBuffer()).getTagEntries(offset);
+    case "image/png":
+      return new PngDataView(await file.arrayBuffer()).getTagEntries(offset);
+    case "image/webp":
+      return new WebPDataView(await file.arrayBuffer()).getTagEntries(offset);
+    case "image/tiff":
+      return new ExifDataView(await file.arrayBuffer()).getTagEntries(offset);
     default:
       return null;
   }
