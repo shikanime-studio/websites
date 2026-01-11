@@ -99,7 +99,7 @@ describe("getExifTags", () => {
 
     const file = new File([jpegData], "test.jpg", { type: "image/jpeg" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make).toBe("JPEG");
+    expect(tags.make?.value).toBe("JPEG");
   });
 
   it("should extract EXIF tags from PNG", async () => {
@@ -139,7 +139,7 @@ describe("getExifTags", () => {
 
     const file = new File([pngData], "test.png", { type: "image/png" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make).toBe("PNG");
+    expect(tags.make?.value).toBe("PNG");
   });
 
   it("should extract EXIF tags from WebP", async () => {
@@ -185,13 +185,13 @@ describe("getExifTags", () => {
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make).toBe("WebP");
+    expect(tags.make?.value).toBe("WebP");
   });
 
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
     const tags = await getExifTags(createFileItem(file));
-    expect(tags.make).toBe("TIFF");
+    expect(tags.make?.value).toBe("TIFF");
   });
 });
