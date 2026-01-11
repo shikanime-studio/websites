@@ -159,23 +159,23 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
     const firstIfdOffset = this.getIfdOffset(offset, littleEndian);
     if (firstIfdOffset < 8) return result;
 
-    const readTag = (tagOffset: number) => {
-      const tag = this.getTagEntry(tagOffset, offset, littleEndian);
-      result.push(tag);
-      if (tag.tagId === (ExifTagId.ExifOffset as number)) {
-        readIfd(offset + (tag.value as number));
-      }
-    };
+    const ifdOffsetsToRead: Array<number> = [offset + firstIfdOffset];
 
-    const readIfd = (tagOffset: number) => {
-      const entryCount = this.getIfd(tagOffset, littleEndian);
+    while (ifdOffsetsToRead.length > 0) {
+      const currentIfdOffset = ifdOffsetsToRead.pop();
+      if (currentIfdOffset === undefined) break;
+
+      const entryCount = this.getIfd(currentIfdOffset, littleEndian);
       for (let i = 0; i < entryCount; i++) {
-        readTag(tagOffset + 2 + i * 12);
-      }
-    };
+        const tagOffset = currentIfdOffset + 2 + i * 12;
+        const tag = this.getTagEntry(tagOffset, offset, littleEndian);
+        result.push(tag);
 
-    // Read IFD0
-    readIfd(offset + firstIfdOffset);
+        if (tag.tagId === (ExifTagId.ExifOffset as number)) {
+          ifdOffsetsToRead.push(offset + (tag.value as number));
+        }
+      }
+    }
 
     return result;
   }
