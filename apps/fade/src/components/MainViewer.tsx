@@ -5,7 +5,9 @@ import { useFile } from "../hooks/useFile";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { useGallery } from "../hooks/useGallery";
 import { useCanvasInfo } from "../hooks/useCanvasInfo";
+import { useRawImage } from "../hooks/useRawImage";
 import { FileIcon } from "./FileIcon";
+import { RawCanvas } from "./RawCanvas";
 import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
@@ -65,6 +67,7 @@ export function MainViewer() {
 function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const { file, mimeType } = useFile(fileItem);
+  const { data: rawData } = useRawImage(fileItem);
   const { url } = useObjectUrl(file ?? null);
   const { setImage } = useCanvasInfo();
   const imgRef = useRef<HTMLImageElement>(null);
@@ -74,6 +77,16 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
       setImage(null);
     }
   }, [file, url, mimeType, setImage]);
+
+  if (mimeType === "image/x-fujifilm-raf" && rawData) {
+    return (
+      <RawCanvas
+        width={rawData.width}
+        height={rawData.height}
+        data={rawData.data}
+      />
+    );
+  }
 
   if (!file || !url) return null;
 
