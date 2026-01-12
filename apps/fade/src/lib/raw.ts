@@ -67,9 +67,9 @@ export class RafDataView<T extends ArrayBufferLike>
         height = this.getUint16(dataOffset, false);
         width = this.getUint16(dataOffset + 2, false);
       } else if (tagId === 0x0121) {
-          // Output dimensions often better?
-          // height = this.getUint16(dataOffset, false);
-          // width = this.getUint16(dataOffset + 2, false);
+        // Output dimensions often better?
+        // height = this.getUint16(dataOffset, false);
+        // width = this.getUint16(dataOffset + 2, false);
       }
 
       offset += 4 + size;
@@ -85,48 +85,56 @@ export class RafDataView<T extends ArrayBufferLike>
   }
 
   getRawData(): { width: number; height: number; data: Uint16Array } | null {
-      const metadata = this.getMetadata();
-      if (!metadata) return null;
+    const metadata = this.getMetadata();
+    if (!metadata) return null;
 
-      const cfaOffset = this.getUint32(RafOffset.CfaOffset, false);
-      const cfaLength = this.getUint32(RafOffset.CfaLength, false);
+    const cfaOffset = this.getUint32(RafOffset.CfaOffset, false);
+    const cfaLength = this.getUint32(RafOffset.CfaLength, false);
 
-      if (cfaOffset <= 0 || cfaLength <= 0 || cfaOffset + cfaLength > this.byteLength) {
-          return null;
+    if (
+      cfaOffset <= 0 ||
+      cfaLength <= 0 ||
+      cfaOffset + cfaLength > this.byteLength
+    ) {
+      return null;
+    }
+
+    // Assuming 16-bit data (2 bytes per pixel)
+    // Check if size matches width * height * 2
+    // Some RAFs might be packed or compressed.
+    // If uncompressed, size should be roughly width * height * 2 (or more for alignment)
+
+    // Let's just return the buffer for now.
+    // We need to handle endianness for the raw values?
+    // Raw data usually matches the file endianness (Big Endian).
+    // But creating a Uint16Array on a Little Endian system (like most) will swap bytes if we just cast the buffer.
+    // We should read it carefully or use DataView if performance allows, or swap bytes if needed.
+
+    // For now, let's try to interpret it.
+
+    const rawData = new Uint8Array(
+      this.buffer,
+      this.byteOffset + cfaOffset,
+      cfaLength,
+    );
+    // We need to convert this to Uint16 values.
+    const pixelCount = metadata.width * metadata.height;
+    const pixels = new Uint16Array(pixelCount);
+
+    // Basic decoding (Big Endian 16-bit)
+    // This is slow in JS, but fine for a demo.
+    // Note: X-Trans sensors might have complex layout.
+    for (let i = 0; i < pixelCount; i++) {
+      if (i * 2 + 1 < rawData.length) {
+        pixels[i] = (rawData[i * 2] << 8) | rawData[i * 2 + 1];
       }
+    }
 
-      // Assuming 16-bit data (2 bytes per pixel)
-      // Check if size matches width * height * 2
-      // Some RAFs might be packed or compressed.
-      // If uncompressed, size should be roughly width * height * 2 (or more for alignment)
-
-      // Let's just return the buffer for now.
-      // We need to handle endianness for the raw values?
-      // Raw data usually matches the file endianness (Big Endian).
-      // But creating a Uint16Array on a Little Endian system (like most) will swap bytes if we just cast the buffer.
-      // We should read it carefully or use DataView if performance allows, or swap bytes if needed.
-
-      // For now, let's try to interpret it.
-
-      const rawData = new Uint8Array(this.buffer, this.byteOffset + cfaOffset, cfaLength);
-      // We need to convert this to Uint16 values.
-      const pixelCount = metadata.width * metadata.height;
-      const pixels = new Uint16Array(pixelCount);
-
-      // Basic decoding (Big Endian 16-bit)
-      // This is slow in JS, but fine for a demo.
-      // Note: X-Trans sensors might have complex layout.
-      for (let i = 0; i < pixelCount; i++) {
-          if (i * 2 + 1 < rawData.length) {
-              pixels[i] = (rawData[i * 2] << 8) | rawData[i * 2 + 1];
-          }
-      }
-
-      return {
-          width: metadata.width,
-          height: metadata.height,
-          data: pixels
-      };
+    return {
+      width: metadata.width,
+      height: metadata.height,
+      data: pixels,
+    };
   }
 
   getExif(offset: number): ExifDataView<T> | null {

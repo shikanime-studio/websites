@@ -50,7 +50,10 @@ export function useDemosaic(
       gl.STATIC_DRAW,
     );
 
-    const positionAttributeLocation = gl.getAttribLocation(program, "aPosition");
+    const positionAttributeLocation = gl.getAttribLocation(
+      program,
+      "aPosition",
+    );
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
