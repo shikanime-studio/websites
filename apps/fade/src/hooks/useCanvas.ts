@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
+import { useWebGPU } from "./useWebGPU";
 import type { RefObject } from "react";
 
 export function useCanvas(ref: RefObject<HTMLCanvasElement | null>) {
-  const [gl, setGl] = useState<WebGL2RenderingContext | null>(null);
+  const [context, setContext] = useState<GPUCanvasContext | null>(null);
+  const { device, adapter } = useWebGPU();
 
   useEffect(() => {
     const canvas = ref.current;
-    if (!canvas) return;
+    if (!canvas || !device || !adapter) return;
 
-    const context = canvas.getContext("webgl2");
-    if (!context) {
-      alert("WebGL2 not supported");
+    const ctx = canvas.getContext("webgpu");
+    if (!ctx) {
+      console.error("Could not get WebGPU context");
       return;
     }
+    setContext(ctx);
+  }, [ref, device, adapter]);
 
-    setGl(context);
-  }, [ref]);
-
-  return gl;
+  return { device, context };
 }

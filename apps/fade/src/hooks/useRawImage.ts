@@ -1,24 +1,36 @@
-import { useQuery } from "@tanstack/react-query";
-import { RafDataView } from "../lib/raw";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { createRawImageDataView } from "../lib/raw";
+import { FujiTagId } from "../lib/raf";
 import type { FileItem } from "../lib/fs";
 
 export function useRawImage(fileItem: FileItem | null) {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["raw-image", fileItem?.handle.name],
     queryFn: async () => {
       if (!fileItem) return null;
-      if (fileItem.mimeType !== "image/x-fujifilm-raf") return null;
 
-      const file = await fileItem.handle.getFile();
-      const buffer = await file.arrayBuffer();
-      const view = new RafDataView(buffer);
-      const raw = view.getRawData();
+      const view = await createRawImageDataView(fileItem);
+      if (!view) return null;
 
-      if (!raw) return null;
+      const data = view.getCfa();
+      if (!data) return null;
+      const header = view.getCfaHeader();
+      if (!header) return null;
+      const tags = header.getTagEntries();
+      const dimEntry = tags.find(
+        (t) => t.tagId === (FujiTagId.Dimensions as number),
+      );
 
-      return raw;
+      let width = 0;
+      let height = 0;
+
+      if (dimEntry && Array.isArray(dimEntry.value)) {
+        // Dimensions value is [height, width]
+        [height, width] = dimEntry.value as [number, number];
+      }
+
+      return { width, height, data };
     },
-    enabled: !!fileItem && fileItem.mimeType === "image/x-fujifilm-raf",
     staleTime: Infinity,
   });
 }

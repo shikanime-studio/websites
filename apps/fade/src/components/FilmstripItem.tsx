@@ -66,7 +66,7 @@ function FilmstripItemContent({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? "true" : "false"}
     >
-      {url && mimeType?.startsWith("image/") ? (
+      {url && mimeType.startsWith("image/") ? (
         <Image
           src={url}
           alt={handle.name}
