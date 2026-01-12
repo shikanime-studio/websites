@@ -11,12 +11,13 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.4",
-    "@astrojs/partytown": "^2.1.4",
     "@astrojs/sitemap": "^3.5.0",
     "@fontsource-variable/inter": "^5.2.8",
     "@tailwindcss/vite": "^4.0.0",
+    "@types/mixpanel-browser": "^2.60.0",
     "astro": "^5.13.2",
     "daisyui": "^5.5.5",
+    "mixpanel-browser": "^2.73.0",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {

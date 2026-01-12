@@ -1,19 +1,11 @@
 import cloudflare from "@astrojs/cloudflare";
-import partytown from "@astrojs/partytown";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  integrations: [
-    sitemap(),
-    partytown({
-      config: {
-        forward: ["dataLayer.push"],
-      },
-    }),
-  ],
+  integrations: [sitemap()],
   output: "server",
   adapter: cloudflare({
     imageService: "compile",
@@ -21,5 +13,11 @@ export default defineConfig({
   site: "https://links.shikanime.studio",
   vite: {
     plugins: [tailwindcss()],
+    css: {
+      transformer: "lightningcss",
+    },
+    build: {
+      cssMinify: "lightningcss",
+    },
   },
 });
