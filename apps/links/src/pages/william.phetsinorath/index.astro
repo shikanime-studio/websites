@@ -2,12 +2,12 @@
 import { Image } from "astro:assets";
 import Avatar from "../../assets/avatar.webp";
 import AvatarHappy from "../../assets/avatar-happy.webp";
-import Layout from "../../layouts/Layout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export const prerender = true;
 ---
 
-<Layout
+<BaseLayout
   title="William Phetsinorath"
   description="Senior Software Engineer – Data & AI"
 >
@@ -62,4 +62,4 @@ export const prerender = true;
   >
     📖 Blog
   </a>
-</Layout>
+</BaseLayout>
