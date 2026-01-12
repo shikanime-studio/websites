@@ -6,9 +6,10 @@ import type { FileItem } from "../lib/fs";
 
 interface RawImageProps {
   fileItem: FileItem;
+  exposure: number;
 }
 
-export function RawImage({ fileItem }: RawImageProps) {
+export function RawImage({ fileItem, exposure }: RawImageProps) {
   const { data: rawData } = useRawImage(fileItem);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { device, context } = useCanvas(canvasRef);
@@ -17,7 +18,7 @@ export function RawImage({ fileItem }: RawImageProps) {
   const height = rawData?.height ?? 0;
   const data = rawData?.data ?? new Uint16Array(0);
 
-  useDemosaic(device, context, width, height, data);
+  useDemosaic(device, context, width, height, data, exposure);
 
   if (!rawData || width === 0 || height === 0) return null;
 

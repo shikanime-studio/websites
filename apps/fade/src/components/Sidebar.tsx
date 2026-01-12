@@ -1,5 +1,11 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { Camera, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import {
+  Camera,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+  SlidersHorizontal,
+} from "lucide-react";
 import { Suspense } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
@@ -76,9 +82,44 @@ export function Sidebar() {
               </p>
             )}
           </Suspense>
+
+          <div className="border-base-300 text-base-content/70 mb-5 mt-8 flex items-center gap-2 border-b pb-3">
+            <SlidersHorizontal className="h-4.5 w-4.5" />
+            <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
+              Adjustments
+            </h2>
+          </div>
+          <AdjustmentControls />
         </div>
       )}
     </aside>
+  );
+}
+
+function AdjustmentControls() {
+  const { exposure, setExposure } = useCanvasInfo();
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <label className="text-xs font-medium opacity-70">Exposure</label>
+          <span className="text-xs font-mono opacity-70">
+            {exposure > 0 ? "+" : ""}
+            {exposure.toFixed(2)}
+          </span>
+        </div>
+        <input
+          type="range"
+          min={-5}
+          max={5}
+          step={0.01}
+          value={exposure}
+          onChange={(e) => setExposure(parseFloat(e.target.value))}
+          className="range range-xs range-warning"
+        />
+      </div>
+    </div>
   );
 }
 

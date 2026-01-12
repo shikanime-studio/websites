@@ -3,6 +3,8 @@ import { createContext, useContext } from "react";
 interface CanvasInfoContextType {
   image: HTMLImageElement | null;
   setImage: (image: HTMLImageElement | null) => void;
+  exposure: number;
+  setExposure: (exposure: number) => void;
 }
 
 export const CanvasInfoContext = createContext<CanvasInfoContextType | null>(

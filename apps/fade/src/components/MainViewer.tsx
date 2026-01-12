@@ -67,7 +67,7 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const { file, mimeType } = useFile(fileItem);
   const { url } = useObjectUrl(file ?? null);
-  const { setImage } = useCanvasInfo();
+  const { setImage, exposure } = useCanvasInfo();
   const imgRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
@@ -76,8 +76,15 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
     }
   }, [file, url, mimeType, setImage]);
 
+  useEffect(() => {
+    if (imgRef.current) {
+      imgRef.current.style.filter = `brightness(${Math.pow(2, exposure)})`;
+    }
+  }, [exposure]);
+
   if (mimeType === "image/x-fujifilm-raf") {
-    return <RawImage fileItem={fileItem} />;
+    // @ts-expect-error - exposure prop will be added to RawImage
+    return <RawImage fileItem={fileItem} exposure={exposure} />;
   }
 
   if (!file || !url) return null;
@@ -90,7 +97,7 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
           key={url}
           src={url}
           alt={handle.name}
-          className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+          className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl transition-all duration-200"
           layout="fullWidth"
           background="auto"
           onLoad={(e) => {
