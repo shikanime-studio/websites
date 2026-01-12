@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { DirectoryProvider } from "../components/DirectoryProvider";
+import { WebGPUProvider } from "../components/WebGPUProvider";
 import { Filmstrip } from "../components/Filmstrip";
 import { GalleryProvider } from "../components/GalleryProvider";
 import { CanvasInfoProvider } from "../components/CanvasInfoProvider";
@@ -32,16 +33,18 @@ function GalleryContainer() {
 
 function App() {
   return (
-    <DirectoryProvider>
-      <Suspense
-        fallback={
-          <div className="flex h-screen items-center justify-center">
-            <span className="loading loading-spinner loading-lg text-warning"></span>
-          </div>
-        }
-      >
-        <GalleryContainer />
-      </Suspense>
-    </DirectoryProvider>
+    <WebGPUProvider>
+      <DirectoryProvider>
+        <Suspense
+          fallback={
+            <div className="flex h-screen items-center justify-center">
+              <span className="loading loading-spinner loading-lg text-warning"></span>
+            </div>
+          }
+        >
+          <GalleryContainer />
+        </Suspense>
+      </DirectoryProvider>
+    </WebGPUProvider>
   );
 }

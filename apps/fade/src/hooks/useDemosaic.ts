@@ -1,102 +1,94 @@
 import { useEffect } from "react";
-import fragmentShaderSource from "../shaders/fragment.glsl?raw";
-import vertexShaderSource from "../shaders/vertex.glsl?raw";
+import shaderSource from "../shaders/shader.wgsl?raw";
 
 export function useDemosaic(
-  gl: WebGL2RenderingContext | null,
+  device: GPUDevice | null,
+  context: GPUCanvasContext | null,
   width: number,
   height: number,
   data: Uint16Array,
 ) {
   useEffect(() => {
-    if (!gl) return;
+    if (!device || !context || width <= 0 || height <= 0) return;
 
-    // Create shader program
-    const vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    if (!vertexShader) return;
-    gl.shaderSource(vertexShader, vertexShaderSource);
-    gl.compileShader(vertexShader);
-    if (!gl.getShaderParameter(vertexShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(vertexShader));
-      return;
-    }
+    const format = navigator.gpu.getPreferredCanvasFormat();
+    context.configure({
+      device,
+      format,
+      alphaMode: "premultiplied",
+    });
 
-    const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-    if (!fragmentShader) return;
-    gl.shaderSource(fragmentShader, fragmentShaderSource);
-    gl.compileShader(fragmentShader);
-    if (!gl.getShaderParameter(fragmentShader, gl.COMPILE_STATUS)) {
-      console.error(gl.getShaderInfoLog(fragmentShader));
-      return;
-    }
+    const shaderModule = device.createShaderModule({
+      code: shaderSource,
+    });
 
-    const program = gl.createProgram();
-    gl.attachShader(program, vertexShader);
-    gl.attachShader(program, fragmentShader);
-    gl.linkProgram(program);
-    if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
-      console.error(gl.getProgramInfoLog(program));
-      return;
-    }
+    const pipeline = device.createRenderPipeline({
+      layout: "auto",
+      vertex: {
+        module: shaderModule,
+        entryPoint: "vs_main",
+      },
+      fragment: {
+        module: shaderModule,
+        entryPoint: "fs_main",
+        targets: [
+          {
+            format,
+          },
+        ],
+      },
+      primitive: {
+        topology: "triangle-strip",
+      },
+    });
 
-    gl.useProgram(program);
+    // Create texture for raw data
+    const texture = device.createTexture({
+      size: [width, height],
+      format: "r16uint",
+      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+    });
 
-    // Set up geometry (full screen quad)
-    const positionBuffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    gl.bufferData(
-      gl.ARRAY_BUFFER,
-      new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]),
-      gl.STATIC_DRAW,
+    // Upload data
+    device.queue.writeTexture(
+      { texture },
+      data as unknown as BufferSource,
+      { bytesPerRow: width * 2 },
+      { width, height },
     );
 
-    const positionAttributeLocation = gl.getAttribLocation(
-      program,
-      "aPosition",
-    );
-    gl.enableVertexAttribArray(positionAttributeLocation);
-    gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
-
-    // Set up texture
-    const texture = gl.createTexture();
-    gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-
-    // R16UI for integer data
-    gl.texImage2D(
-      gl.TEXTURE_2D,
-      0,
-      gl.R16UI,
-      width,
-      height,
-      0,
-      gl.RED_INTEGER,
-      gl.UNSIGNED_SHORT,
-      data,
-    );
-
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-    const textureLocation = gl.getUniformLocation(program, "uTexture");
-    gl.uniform1i(textureLocation, 0);
-
-    const resolutionLocation = gl.getUniformLocation(program, "uResolution");
-    gl.uniform2f(resolutionLocation, width, height);
+    // Bind Group
+    const bindGroup = device.createBindGroup({
+      layout: pipeline.getBindGroupLayout(0),
+      entries: [
+        {
+          binding: 0,
+          resource: texture.createView(),
+        },
+      ],
+    });
 
     // Render
-    gl.viewport(0, 0, width, height);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    const commandEncoder = device.createCommandEncoder();
+    const textureView = context.getCurrentTexture().createView();
 
-    // Cleanup
-    return () => {
-      gl.deleteProgram(program);
-      gl.deleteShader(vertexShader);
-      gl.deleteShader(fragmentShader);
-      gl.deleteBuffer(positionBuffer);
-      gl.deleteTexture(texture);
+    const renderPassDescriptor: GPURenderPassDescriptor = {
+      colorAttachments: [
+        {
+          view: textureView,
+          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+          loadOp: "clear",
+          storeOp: "store",
+        },
+      ],
     };
-  }, [gl, width, height, data]);
+
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
+    passEncoder.setPipeline(pipeline);
+    passEncoder.setBindGroup(0, bindGroup);
+    passEncoder.draw(4);
+    passEncoder.end();
+
+    device.queue.submit([commandEncoder.finish()]);
+  }, [device, context, width, height, data]);
 }

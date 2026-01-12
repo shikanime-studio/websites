@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useFile } from "./useFile";
+import { usePreview } from "./usePreview";
 import type { FileItem } from "../lib/fs";
 
 export function useThumbnail(
@@ -8,17 +8,20 @@ export function useThumbnail(
   height = 256,
   quality = 1.0,
 ) {
-  const { file, mimeType } = useFile(fileItem);
+  const { blob, mimeType } = usePreview(fileItem);
 
   const { data } = useSuspenseQuery({
-    queryKey: ["thumbnail", fileItem?.handle.name, width, height, quality],
+    queryKey: ["thumbnail", fileItem?.handle.name, { width, height, quality }],
     queryFn: async () => {
-      if (!file || !mimeType?.startsWith("image/")) {
+      if (
+        !blob ||
+        (!blob.type.startsWith("image/") && mimeType !== "image/x-fujifilm-raf")
+      ) {
         return null;
       }
 
       try {
-        const bitmap = await createImageBitmap(file);
+        const bitmap = await createImageBitmap(blob);
 
         // Calculate scaling to cover the requested width/height
         const scale = Math.max(width / bitmap.width, height / bitmap.height);
@@ -50,7 +53,7 @@ export function useThumbnail(
   });
 
   return {
-    mimeType,
     url: data,
+    mimeType: "image/webp",
   };
 }
