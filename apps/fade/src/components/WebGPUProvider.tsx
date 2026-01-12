@@ -39,7 +39,9 @@ export function WebGPUProvider({ children }: { children: ReactNode }) {
 
     const onLost = (info: GPUDeviceLostInfo) => {
       alert(`WebGPU device lost: ${info.reason}`);
-      return queryClient.invalidateQueries({ queryKey: ["webgpu", "device", adapter?.info.device] });
+      return queryClient.invalidateQueries({
+        queryKey: ["webgpu", "device", adapter?.info.device],
+      });
     };
 
     device.lost.then(onLost).catch(() => {
