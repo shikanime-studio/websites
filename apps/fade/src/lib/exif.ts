@@ -1,7 +1,7 @@
-export const TiffMarker = {
-  LittleEndian: 0x4949, // 'II'
-  BigEndian: 0x4d4d, // 'MM'
-} as const;
+export enum Endianness {
+  Little = 0x4949, // 'II'
+  Big = 0x4d4d, // 'MM'
+}
 
 export enum ExifType {
   BYTE = 1,
@@ -82,16 +82,8 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
     return sNumerator / sDenominator;
   }
 
-  getIfd(offset: number, littleEndian?: boolean): number {
-    return this.getUint16(offset, littleEndian);
-  }
-
-  getIfdOffset(offset: number, littleEndian?: boolean): number {
-    return this.getUint32(offset + 4, littleEndian);
-  }
-
-  isLittleEndian(offset: number) {
-    return this.getUint16(offset, true) === TiffMarker.LittleEndian;
+  isLittleEndian() {
+    return this.getUint16(0, true) === Endianness.Little.valueOf();
   }
 
   getTagHeader(offset: number, littleEndian?: boolean) {
@@ -131,14 +123,14 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
     }
   }
 
-  getTagEntry(offset: number, headerOffset: number, littleEndian?: boolean) {
+  getTagEntry(offset: number, littleEndian?: boolean) {
     const { tagId, type, count } = this.getTagHeader(offset, littleEndian);
     const typeSize = sizeOf(type);
     const totalSize = typeSize * count;
 
     let valueOffset = offset + 8;
     if (totalSize > 4) {
-      valueOffset = this.getUint32(offset + 8, littleEndian) + headerOffset;
+      valueOffset = this.getUint32(offset + 8, littleEndian);
     }
 
     const value = isContainer(type)
@@ -152,30 +144,30 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
     };
   }
 
-  getTagEntries(offset: number): Array<ExifTagEntry> {
+  getTagEntries(): Array<ExifTagEntry> {
     const result: Array<ExifTagEntry> = [];
 
     // Check byte order
-    const littleEndian = this.isLittleEndian(offset);
+    const littleEndian = this.isLittleEndian();
 
     // First IFD offset
-    const firstIfdOffset = this.getIfdOffset(offset, littleEndian);
+    const firstIfdOffset = this.getUint32(4, littleEndian);
     if (firstIfdOffset < 8) return result;
 
-    const ifdOffsetsToRead: Array<number> = [offset + firstIfdOffset];
+    const ifdOffsetsToRead: Array<number> = [firstIfdOffset];
 
     while (ifdOffsetsToRead.length > 0) {
       const currentIfdOffset = ifdOffsetsToRead.pop();
       if (currentIfdOffset === undefined) break;
 
-      const entryCount = this.getIfd(currentIfdOffset, littleEndian);
+      const entryCount = this.getUint16(currentIfdOffset, littleEndian);
       for (let i = 0; i < entryCount; i++) {
         const tagOffset = currentIfdOffset + 2 + i * 12;
-        const tag = this.getTagEntry(tagOffset, offset, littleEndian);
+        const tag = this.getTagEntry(tagOffset, littleEndian);
         result.push(tag);
 
         if (tag.tagId === (ExifTagId.ExifOffset as number)) {
-          ifdOffsetsToRead.push(offset + (tag.value as number));
+          ifdOffsetsToRead.push(tag.value as number);
         }
       }
     }

@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { RafDataView } from "../lib/raw";
+import { RafDataView } from "../lib/raf";
 import { useFile } from "./useFile";
 import type { FileItem } from "../lib/fs";
 
@@ -14,7 +14,7 @@ export function usePreview(fileItem: FileItem | null) {
       if (mimeType === "image/x-fujifilm-raf") {
         const buffer = await file.arrayBuffer();
         const view = new RafDataView(buffer);
-        const jpgView = view.getEmbeddedImage();
+        const jpgView = view.getJpegImage();
         if (!jpgView) return null;
         return new Blob([jpgView as unknown as BlobPart], { type: "image/jpeg" });
       }

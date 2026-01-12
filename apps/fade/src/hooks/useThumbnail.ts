@@ -22,8 +22,7 @@ export function useThumbnail(
     queryFn: async () => {
       if (
         !blob ||
-        (!blob.type.startsWith("image/") &&
-          mimeType !== "image/x-fujifilm-raf")
+        (!blob.type.startsWith("image/") && mimeType !== "image/x-fujifilm-raf")
       ) {
         return null;
       }

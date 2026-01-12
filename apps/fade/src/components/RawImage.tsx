@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useCanvas } from "../hooks/useCanvas";
 import { useDemosaic } from "../hooks/useDemosaic";
 import { useRawImage } from "../hooks/useRawImage";
@@ -25,8 +25,8 @@ export function RawImage({ fileItem }: RawImageProps) {
     <canvas
       ref={canvasRef}
       width={width}
-        height={height}
-        className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-      />
-    );
+      height={height}
+      className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+    />
+  );
 }
