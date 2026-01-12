@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
@@ -11,7 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "../components/ThemeProvider";
-import { init as initMixpanel } from "../lib/mixpanel";
+import { MixpanelProvider } from "../components/MixpanelProvider";
 
 const queryClient = new QueryClient();
 
@@ -42,32 +41,37 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  useEffect(() => {
-    initMixpanel();
-  }, []);
-
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Outlet />
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-              defaultOpen: true,
-            },
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-              defaultOpen: false,
-            },
-          ]}
-        />
-      </ThemeProvider>
+      <MixpanelProvider
+        token="ced3fefc3848552e1238a6fe3628e881"
+        config={{
+          autocapture: true,
+          record_sessions_percent: 100,
+          api_host: "https://api-eu.mixpanel.com",
+        }}
+      >
+        <ThemeProvider>
+          <Outlet />
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "TanStack Query",
+                render: <ReactQueryDevtoolsPanel />,
+                defaultOpen: true,
+              },
+              {
+                name: "TanStack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+                defaultOpen: false,
+              },
+            ]}
+          />
+        </ThemeProvider>
+      </MixpanelProvider>
     </QueryClientProvider>
   );
 }
