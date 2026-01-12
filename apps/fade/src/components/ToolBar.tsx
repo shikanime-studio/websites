@@ -1,13 +1,15 @@
-import { FolderOpen, Image, Settings } from "lucide-react";
+import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
 import { siGithub } from "simple-icons/icons";
 import { useDirectory } from "../hooks/useDirectory";
 import { useGallery } from "../hooks/useGallery";
+import { useCompat } from "../hooks/useCompat";
 import { SettingsModal } from "./SettingsModal";
 
 export function ToolBar() {
   const { select } = useDirectory();
   const { files, selectedIndex } = useGallery();
+  const { isFileSystemAccessSupported } = useCompat();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
@@ -29,6 +31,19 @@ export function ToolBar() {
         </div>
 
         <div className="navbar-end gap-2">
+          {!isFileSystemAccessSupported && (
+            <div
+              className="tooltip tooltip-bottom tooltip-warning"
+              data-tip="Browser support is limited"
+            >
+              <button
+                className="btn btn-sm btn-ghost btn-square text-warning"
+                aria-label="Warning"
+              >
+                <AlertTriangle className="h-5 w-5" />
+              </button>
+            </div>
+          )}
           <button
             className="btn btn-sm btn-outline btn-warning gap-2 font-medium"
             onClick={() => {
