@@ -11,7 +11,7 @@ export function DirectoryProvider({ children }: { children: ReactNode }) {
     try {
       // Check if the API is supported
       if (!isFileSystemAccessSupported) {
-        alert("File System Access API is not supported in this browser");
+        alert("Browser support is limited");
         return;
       }
 

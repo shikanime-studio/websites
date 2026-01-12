@@ -34,7 +34,7 @@ export function ToolBar() {
           {!isFileSystemAccessSupported && (
             <div
               className="tooltip tooltip-bottom tooltip-warning"
-              data-tip="Browser not supported"
+              data-tip="Browser support is limited"
             >
               <button
                 className="btn btn-sm btn-ghost btn-square text-warning"
