@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { ExifTagId, getTagEntries } from "./exif";
+import { ExifTagId } from "./exif";
+import { createImageDataView } from "./img";
 import type { FileItem } from "./fs";
+import type { ExifTagEntry } from "./exif";
 
 // Mock FileItem creator
 function createFileItem(file: File): FileItem {
@@ -98,10 +100,14 @@ describe("getTagEntries", () => {
     jpegData.set(exifData, offset);
 
     const file = new File([jpegData], "test.jpg", { type: "image/jpeg" });
-    const tags = await getTagEntries(createFileItem(file));
-    expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
-    ).toBe("JPEG");
+    const item = createFileItem(file);
+    const view = await createImageDataView(item);
+    const tags = view?.getExif(0)?.getTagEntries(0);
+
+    expect(tags).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make);
+    expect(makeTag?.value).toBe("JPEG");
   });
 
   it("should extract EXIF tags from PNG", async () => {
@@ -139,9 +145,11 @@ describe("getTagEntries", () => {
     pngData.set(crc, offset);
 
     const file = new File([pngData], "test.png", { type: "image/png" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
     ).toBe("PNG");
   });
 
@@ -187,18 +195,29 @@ describe("getTagEntries", () => {
     // Padding if needed (though our createExifBlock returns even length usually, check make string)
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      tags?.find((t: ExifTagEntry) => t.tagId === (ExifTagId.Make as number))
+        ?.value,
     ).toBe("WebP");
   });
 
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
     ).toBe("TIFF");
+  });
+
+  it("should return null for non-supported file types", async () => {
+    const file = new File(["dummy"], "test.txt", { type: "text/plain" });
+    const item = createFileItem(file);
+    const view = await createImageDataView(item);
+    expect(view).toBeNull();
   });
 });
