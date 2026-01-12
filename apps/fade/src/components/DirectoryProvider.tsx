@@ -10,7 +10,7 @@ export function DirectoryProvider({ children }: { children: ReactNode }) {
     try {
       // Check if the API is supported
       if (!isSupported) {
-        alert("Browser support is limited");
+        alert("Your browser does not support opening local directories.");
         return;
       }
 
