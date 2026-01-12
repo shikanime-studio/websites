@@ -10,8 +10,8 @@ interface RawCanvasProps {
 
 export function RawCanvas({ width, height, data }: RawCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const gl = useCanvas(canvasRef);
-  useDemosaic(gl, width, height, data);
+  const { device, context } = useCanvas(canvasRef);
+  useDemosaic(device, context, width, height, data);
 
   return (
     <canvas
