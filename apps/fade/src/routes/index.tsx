@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
-import { DirectoryProvider } from "../components/DirectoryContext";
+import { DirectoryProvider } from "../components/DirectoryProvider";
 import { Filmstrip } from "../components/Filmstrip";
-import { GalleryProvider } from "../components/GalleryContext";
+import { GalleryProvider } from "../components/GalleryProvider";
 import { CanvasInfoProvider } from "../components/CanvasInfoProvider";
 import { MainViewer } from "../components/MainViewer";
 import { Sidebar } from "../components/Sidebar";
