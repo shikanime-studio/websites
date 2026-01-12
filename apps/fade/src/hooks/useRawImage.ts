@@ -17,7 +17,9 @@ export function useRawImage(fileItem: FileItem | null) {
       const header = view.getCfaHeader();
       if (!header) return null;
       const tags = header.getTagEntries();
-      const dimEntry = tags.find((t) => t.tagId === (FujiTagId.Dimensions as number));
+      const dimEntry = tags.find(
+        (t) => t.tagId === (FujiTagId.Dimensions as number),
+      );
 
       let width = 0;
       let height = 0;

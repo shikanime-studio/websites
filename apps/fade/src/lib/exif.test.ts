@@ -146,7 +146,9 @@ describe("getTagEntries", () => {
     pngData.set(crc, offset);
 
     const file = new File([pngData], "test.png", { type: "image/png" });
-    const view = (await createImageDataView(createFileItem(file))) as ImageDataView;
+    const view = (await createImageDataView(
+      createFileItem(file),
+    )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
@@ -196,7 +198,9 @@ describe("getTagEntries", () => {
     // Padding if needed (though our createExifBlock returns even length usually, check make string)
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
-    const view = (await createImageDataView(createFileItem(file))) as ImageDataView;
+    const view = (await createImageDataView(
+      createFileItem(file),
+    )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
       tags?.find((t: ExifTagEntry) => t.tagId === (ExifTagId.Make as number))
@@ -207,7 +211,9 @@ describe("getTagEntries", () => {
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
-    const view = (await createImageDataView(createFileItem(file))) as ImageDataView;
+    const view = (await createImageDataView(
+      createFileItem(file),
+    )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison

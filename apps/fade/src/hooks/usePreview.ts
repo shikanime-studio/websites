@@ -16,7 +16,9 @@ export function usePreview(fileItem: FileItem | null) {
         const view = new RafDataView(buffer);
         const jpgView = view.getJpegImage();
         if (!jpgView) return null;
-        return new Blob([jpgView as unknown as BlobPart], { type: "image/jpeg" });
+        return new Blob([jpgView as unknown as BlobPart], {
+          type: "image/jpeg",
+        });
       }
 
       return file;

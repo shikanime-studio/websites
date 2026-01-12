@@ -208,7 +208,7 @@ describe("createRawImageDataView", () => {
     });
     const item = createFileItem(file);
     const view = await createRawImageDataView(item);
-      const tags = view?.getCfaHeader()?.getTagEntries();
+    const tags = view?.getCfaHeader()?.getTagEntries();
 
     expect(tags).toBeDefined();
     const qualityTag = tags?.find(
