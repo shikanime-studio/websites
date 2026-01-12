@@ -23,7 +23,7 @@ export function WebGPUProvider({ children }: { children: ReactNode }) {
   });
 
   const { data: device } = useSuspenseQuery({
-    queryKey: ["webgpu", "device", adapter],
+    queryKey: ["webgpu", "device", adapter?.info.device],
     queryFn: async () => {
       if (!adapter) return null;
       return await adapter.requestDevice();

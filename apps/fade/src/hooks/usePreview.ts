@@ -7,7 +7,7 @@ export function usePreview(fileItem: FileItem | null) {
   const { file, mimeType } = useFile(fileItem);
 
   const { data: blob } = useSuspenseQuery({
-    queryKey: ["preview-blob", file?.name, file?.lastModified],
+    queryKey: ["preview", file?.name, file?.lastModified],
     queryFn: async () => {
       if (!file) return null;
 

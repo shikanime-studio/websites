@@ -24,7 +24,7 @@ export function useExif(fileItem: FileItem | null) {
           exifView = view.getExif();
         }
 
-        return exifView ? exifView.getTagEntries(0) : null;
+        return exifView ? exifView.getTagEntries() : null;
       } catch (err) {
         console.error("Failed to parse EXIF:", err);
         return null;

@@ -11,14 +11,7 @@ export function useThumbnail(
   const { blob, mimeType } = usePreview(fileItem);
 
   const { data } = useSuspenseQuery({
-    queryKey: [
-      "thumbnail",
-      fileItem?.handle.name,
-      width,
-      height,
-      quality,
-      !!blob,
-    ],
+    queryKey: ["thumbnail", fileItem?.handle.name, { width, height, quality }],
     queryFn: async () => {
       if (
         !blob ||

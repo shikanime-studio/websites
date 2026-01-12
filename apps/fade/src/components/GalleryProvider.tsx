@@ -14,7 +14,7 @@ export function GalleryProvider({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { data: files } = useSuspenseQuery({
-    queryKey: ["gallery", handle],
+    queryKey: ["gallery", handle?.name],
     queryFn: async () => {
       if (!handle) return [];
       return scanDirectory(handle);
