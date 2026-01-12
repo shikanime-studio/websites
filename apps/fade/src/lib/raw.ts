@@ -44,9 +44,14 @@ export class RafDataView<T extends ArrayBufferLike>
     return null;
   }
 
+  getEmbeddedImageBlob(): Blob | null {
+    const jpgView = this.getEmbeddedImage();
+    if (!jpgView) return null;
+    return new Blob([jpgView as unknown as BlobPart], { type: "image/jpeg" });
+  }
+
   getMetadata(): RafMetadata | null {
     const headerOffset = this.getUint32(RafOffset.CfaHeaderOffset, false);
-    // const headerLength = this.getUint32(RafOffset.CfaHeaderLength, false);
 
     if (headerOffset <= 0 || headerOffset >= this.byteLength) return null;
 
@@ -103,37 +108,22 @@ export class RafDataView<T extends ArrayBufferLike>
     // Check if size matches width * height * 2
     // Some RAFs might be packed or compressed.
     // If uncompressed, size should be roughly width * height * 2 (or more for alignment)
-
-    // Let's just return the buffer for now.
-    // We need to handle endianness for the raw values?
-    // Raw data usually matches the file endianness (Big Endian).
-    // But creating a Uint16Array on a Little Endian system (like most) will swap bytes if we just cast the buffer.
-    // We should read it carefully or use DataView if performance allows, or swap bytes if needed.
-
-    // For now, let's try to interpret it.
-
-    const rawData = new Uint8Array(
-      this.buffer,
-      this.byteOffset + cfaOffset,
-      cfaLength,
-    );
-    // We need to convert this to Uint16 values.
-    const pixelCount = metadata.width * metadata.height;
-    const pixels = new Uint16Array(pixelCount);
-
-    // Basic decoding (Big Endian 16-bit)
-    // This is slow in JS, but fine for a demo.
-    // Note: X-Trans sensors might have complex layout.
-    for (let i = 0; i < pixelCount; i++) {
-      if (i * 2 + 1 < rawData.length) {
-        pixels[i] = (rawData[i * 2] << 8) | rawData[i * 2 + 1];
-      }
+    const expectedSize = metadata.width * metadata.height * 2;
+    if (cfaLength < expectedSize) {
+      return null;
     }
+
+    const data = new Uint16Array(
+      this.buffer.slice(
+        this.byteOffset + cfaOffset,
+        this.byteOffset + cfaOffset + cfaLength,
+      ),
+    );
 
     return {
       width: metadata.width,
       height: metadata.height,
-      data: pixels,
+      data,
     };
   }
 

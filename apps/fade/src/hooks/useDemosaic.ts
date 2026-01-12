@@ -9,7 +9,7 @@ export function useDemosaic(
   data: Uint16Array,
 ) {
   useEffect(() => {
-    if (!device || !context) return;
+    if (!device || !context || width <= 0 || height <= 0) return;
 
     const format = navigator.gpu.getPreferredCanvasFormat();
     context.configure({

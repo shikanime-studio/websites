@@ -26,15 +26,18 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
   let dim = textureDimensions(uTexture);
   // Ensure coord is within bounds
   let coord = vec2<i32>(floor(uv * vec2<f32>(dim)));
-  
+
   // Load raw value (R16Uint -> u32)
-  let val = textureLoad(uTexture, coord, 0).r;
-  
+  let raw_val = textureLoad(uTexture, coord, 0).r;
+
+  // Swap endianness (little endian read from big endian data)
+  let val = ((raw_val & 0xFFu) << 8u) | ((raw_val & 0xFF00u) >> 8u);
+
   let maxVal = 16383.0;
   var norm = f32(val) / maxVal;
-  
+
   // Gamma correction
   norm = pow(norm, 1.0 / 2.2);
-  
+
   return vec4<f32>(norm, norm, norm, 1.0);
 }
