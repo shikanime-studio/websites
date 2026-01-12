@@ -56,7 +56,7 @@ export function Histogram({ className }: HistogramProps) {
 
   return (
     <div
-      className={`relative h-32 w-full bg-black/20 rounded-md overflow-hidden ${className ?? ""}`}
+      className={`relative h-32 w-full bg-black rounded-md overflow-hidden ${className ?? ""}`}
     >
       <svg
         viewBox="0 0 256 100"
