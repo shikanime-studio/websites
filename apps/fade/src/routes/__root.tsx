@@ -44,11 +44,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <MixpanelProvider
-        token="ced3fefc3848552e1238a6fe3628e881"
+        token={import.meta.env.VITE_MIXPANEL_TOKEN}
         config={{
           autocapture: true,
           record_sessions_percent: 100,
-          api_host: "https://api-eu.mixpanel.com",
+          api_host: import.meta.env.VITE_MIXPANEL_API_HOST,
         }}
       >
         <ThemeProvider>
