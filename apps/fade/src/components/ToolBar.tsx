@@ -1,6 +1,6 @@
 import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
 import { useState } from "react";
-import { siGithub } from "simple-icons/icons";
+import { siGithub } from "simple-icons";
 import { useDirectory } from "../hooks/useDirectory";
 import { useGallery } from "../hooks/useGallery";
 import { SettingsModal } from "./SettingsModal";
