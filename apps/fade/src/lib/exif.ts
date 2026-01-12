@@ -1,3 +1,8 @@
+export const TiffMarker = {
+  LittleEndian: 0x4949, // 'II'
+  BigEndian: 0x4d4d, // 'MM'
+} as const;
+
 export enum ExifType {
   BYTE = 1,
   ASCII = 2,
@@ -86,7 +91,7 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
   }
 
   isLittleEndian(offset: number) {
-    return this.getUint16(offset, true) === 0x4949;
+    return this.getUint16(offset, true) === TiffMarker.LittleEndian;
   }
 
   getTagHeader(offset: number, littleEndian?: boolean) {
