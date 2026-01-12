@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { ExifTagId, getTagEntries } from "./exif";
+import { ExifTagId } from "./exif";
+import { createImageDataView } from "./img";
 import type { FileItem } from "./fs";
+import type { ExifTagEntry } from "./exif";
 
 // Mock FileItem creator
 function createFileItem(file: File): FileItem {
@@ -98,10 +100,14 @@ describe("getTagEntries", () => {
     jpegData.set(exifData, offset);
 
     const file = new File([jpegData], "test.jpg", { type: "image/jpeg" });
-    const tags = await getTagEntries(createFileItem(file));
-    expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
-    ).toBe("JPEG");
+    const item = createFileItem(file);
+    const view = await createImageDataView(item);
+    const tags = view?.getExif(0)?.getTagEntries(0);
+
+    expect(tags).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make);
+    expect(makeTag?.value).toBe("JPEG");
   });
 
   it("should extract EXIF tags from PNG", async () => {
@@ -139,9 +145,11 @@ describe("getTagEntries", () => {
     pngData.set(crc, offset);
 
     const file = new File([pngData], "test.png", { type: "image/png" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
     ).toBe("PNG");
   });
 
@@ -187,18 +195,89 @@ describe("getTagEntries", () => {
     // Padding if needed (though our createExifBlock returns even length usually, check make string)
 
     const file = new File([webpData], "test.webp", { type: "image/webp" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      tags?.find((t: ExifTagEntry) => t.tagId === (ExifTagId.Make as number))
+        ?.value,
     ).toBe("WebP");
   });
 
   it("should extract EXIF tags from TIFF", async () => {
     const exifData = createExifBlock("TIFF");
     const file = new File([exifData], "test.tiff", { type: "image/tiff" });
-    const tags = await getTagEntries(createFileItem(file));
+    const view = await createImageDataView(createFileItem(file));
+    const tags = view?.getExif(0)?.getTagEntries(0);
     expect(
-      tags?.find((t) => t.tagId === (ExifTagId.Make as number))?.value,
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
     ).toBe("TIFF");
+  });
+
+  it("should return null for non-supported file types", async () => {
+    const file = new File(["dummy"], "test.txt", { type: "text/plain" });
+    const item = createFileItem(file);
+    const view = await createImageDataView(item);
+    expect(view).toBeNull();
+  });
+
+  it("should extract EXIF tags from RAF (Fujifilm)", async () => {
+    // Create a valid JPEG with EXIF
+    const exifData = createExifBlock("Fujifilm XT-5");
+    const soi = new Uint8Array([0xff, 0xd8]);
+    const app1Marker = new Uint8Array([0xff, 0xe1]);
+    const exifHeader = new Uint8Array([0x45, 0x78, 0x69, 0x66, 0x00, 0x00]);
+    const segmentLengthVal = 2 + exifHeader.length + exifData.length;
+    const segmentLength = new Uint8Array([
+      (segmentLengthVal >> 8) & 0xff,
+      segmentLengthVal & 0xff,
+    ]);
+
+    const jpegData = new Uint8Array(
+      soi.length +
+        app1Marker.length +
+        segmentLength.length +
+        exifHeader.length +
+        exifData.length,
+    );
+    let offset = 0;
+    jpegData.set(soi, offset);
+    offset += soi.length;
+    jpegData.set(app1Marker, offset);
+    offset += app1Marker.length;
+    jpegData.set(segmentLength, offset);
+    offset += segmentLength.length;
+    jpegData.set(exifHeader, offset);
+    offset += exifHeader.length;
+    jpegData.set(exifData, offset);
+
+    // Create RAF structure
+    // Header needs to be at least 100 bytes
+    const rafHeader = new Uint8Array(100);
+    const headerView = new DataView(rafHeader.buffer);
+
+    // Offset to JPEG Image Offset is at 84 (Big Endian)
+    // We'll put the JPEG right after the header (offset 100)
+    headerView.setUint32(84, 100, false);
+
+    // Length of JPEG Image is at 88 (Big Endian)
+    headerView.setUint32(88, jpegData.length, false);
+
+    const rafData = new Uint8Array(rafHeader.length + jpegData.length);
+    rafData.set(rafHeader, 0);
+    rafData.set(jpegData, rafHeader.length);
+
+    const file = new File([rafData], "test.raf", {
+      type: "image/x-fujifilm-raf",
+    });
+    const item = createFileItem(file);
+    const view = await createImageDataView(item);
+    const tags = view?.getExif(0)?.getTagEntries(0);
+
+    expect(tags).toBeDefined();
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
+    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make);
+    expect(makeTag).toBeDefined();
+    expect(makeTag?.value).toBe("Fujifilm XT-5");
   });
 });

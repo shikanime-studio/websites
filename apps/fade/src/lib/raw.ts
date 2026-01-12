@@ -1,18 +1,49 @@
-export async function parseRaf(file: File): Promise<Blob | null> {
-  const header = await file.slice(0, 100).arrayBuffer();
-  const view = new DataView(header);
+import { JpgDataView } from "./img";
+import type { ImageDataView } from "./img";
+import type { ExifDataView } from "./exif";
+import type { FileItem } from "./fs";
 
-  // Check if header is large enough to contain offsets
-  if (view.byteLength < 88) return null;
+export class RafDataView<T extends ArrayBufferLike>
+  extends DataView<T>
+  implements ImageDataView
+{
+  getEmbeddedImage(): JpgDataView<T> | null {
+    if (this.byteLength < 88) return null;
 
-  // Offset to JPEG Image Offset is at 84 (Big Endian)
-  const jpegOffset = view.getUint32(84, false);
-  // Length of JPEG Image is at 88 (Big Endian)
-  const jpegLength = view.getUint32(88, false);
+    // Offset to JPEG Image Offset is at 84 (Big Endian)
+    const jpegOffset = this.getUint32(84, false);
+    // Length of JPEG Image is at 88 (Big Endian)
+    const jpegLength = this.getUint32(88, false);
 
-  if (jpegOffset > 0 && jpegLength > 0) {
-    return file.slice(jpegOffset, jpegOffset + jpegLength, "image/jpeg");
+    if (
+      jpegOffset > 0 &&
+      jpegLength > 0 &&
+      jpegOffset + jpegLength <= this.byteLength
+    ) {
+      return new JpgDataView(
+        this.buffer,
+        this.byteOffset + jpegOffset,
+        jpegLength,
+      );
+    }
+
+    return null;
   }
 
-  return null;
+  getExif(offset: number): ExifDataView<T> | null {
+    const jpg = this.getEmbeddedImage();
+    return jpg ? jpg.getExif(offset) : null;
+  }
+}
+
+export async function createRawImageDataView(
+  source: FileItem,
+): Promise<RafDataView<ArrayBuffer> | null> {
+  const file = await source.handle.getFile();
+  switch (source.mimeType) {
+    case "image/x-fujifilm-raf":
+      return new RafDataView(await file.arrayBuffer() );
+    default:
+      return null;
+  }
 }

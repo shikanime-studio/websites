@@ -1,5 +1,5 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getTagEntries } from "../lib/exif";
+import { createImageDataView } from "../lib/img";
 import type { ExifTagEntry } from "../lib/exif";
 import type { FileItem } from "../lib/fs";
 
@@ -10,7 +10,9 @@ export function useExif(fileItem: FileItem | null) {
       if (!fileItem) return null;
 
       try {
-        return await getTagEntries(fileItem);
+        const view = await createImageDataView(fileItem);
+        const exifView = view?.getExif(0);
+        return exifView ? exifView.getTagEntries(0) : null;
       } catch (err) {
         console.error("Failed to parse EXIF:", err);
         return null;
