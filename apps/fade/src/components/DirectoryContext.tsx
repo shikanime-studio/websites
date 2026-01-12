@@ -1,16 +1,15 @@
 import { useCallback, useState } from "react";
-import { DirectoryContext } from "../hooks/useDirectory";
-import { useCompat } from "../hooks/useCompat";
+import { DirectoryContext, useFileSystemSupport } from "../hooks/useDirectory";
 import type { ReactNode } from "react";
 
 export function DirectoryProvider({ children }: { children: ReactNode }) {
   const [handle, setHandle] = useState<FileSystemDirectoryHandle | null>(null);
-  const { isFileSystemAccessSupported } = useCompat();
+  const isSupported = useFileSystemSupport();
 
   const select = useCallback(async () => {
     try {
       // Check if the API is supported
-      if (!isFileSystemAccessSupported) {
+      if (!isSupported) {
         alert("Browser support is limited");
         return;
       }
@@ -23,13 +22,14 @@ export function DirectoryProvider({ children }: { children: ReactNode }) {
         console.error("Error loading directory:", error);
       }
     }
-  }, [isFileSystemAccessSupported]);
+  }, [isSupported]);
 
   return (
     <DirectoryContext.Provider
       value={{
         handle,
         select,
+        isSupported,
       }}
     >
       {children}
