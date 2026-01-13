@@ -1,3 +1,20 @@
+/**
+ * Histogram Compute Shader
+ * 
+ * Goal: Calculate and Normalize color histograms for image analysis.
+ * 
+ * Pass 1 (cs_main):
+ * - Iterates over the image pixels.
+ * - Counts occurrences of each R, G, B value (0-255).
+ * - Uses shared memory (localBins) for fast intra-workgroup counting before merging to global memory.
+ * 
+ * Pass 2 (cs_normalize):
+ * - Finds the maximum frequency count across all bins.
+ * - Normalizes all bin counts relative to this maximum (0-100 scale).
+ * - Crucial for Visualization: Normalization ensures the histogram fits vertically in the UI graph,
+ *   regardless of image resolution or pixel count distribution.
+ */
+
 struct Bins {
     r: array<atomic<u32>, 256>,
     g: array<atomic<u32>, 256>,
