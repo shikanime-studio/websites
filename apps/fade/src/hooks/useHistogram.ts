@@ -38,23 +38,19 @@ function useHistogramPipeline() {
   }, [device]);
 }
 
-function useHistogramBindGroup(
-  pipelines: {
-    computePipeline: GPUComputePipeline;
-    normalizePipeline: GPUComputePipeline;
-  } | null,
-  image: HTMLImageElement | null,
-) {
+export function useHistogram(image: HTMLImageElement | null) {
   const { device } = useGPU();
+  const pipelines = useHistogramPipeline();
+  const [data, setData] = useState<Bins | null>(null);
 
-  return useMemo(() => {
-    if (!device || !pipelines || !image) return null;
+  useEffect(() => {
+    if (!device || !pipelines || !image) return;
 
     const { computePipeline, normalizePipeline } = pipelines;
     const width = image.naturalWidth;
     const height = image.naturalHeight;
 
-    if (width === 0 || height === 0) return null;
+    if (width === 0 || height === 0) return;
 
     const texture = device.createTexture({
       size: [width, height],
@@ -103,42 +99,6 @@ function useHistogramBindGroup(
       ],
     });
 
-    return {
-      bindGroupCompute,
-      bindGroupNormalize,
-      storageBuffer,
-      normalizedBuffer,
-      readBuffer,
-      texture,
-      width,
-      height,
-      bufferSize,
-    };
-  }, [device, pipelines, image]);
-}
-
-export function useHistogram(image: HTMLImageElement | null) {
-  const { device } = useGPU();
-  const pipelines = useHistogramPipeline();
-  const resources = useHistogramBindGroup(pipelines, image);
-  const [data, setData] = useState<Bins | null>(null);
-
-  useEffect(() => {
-    if (!device || !pipelines || !resources) return;
-
-    const { computePipeline, normalizePipeline } = pipelines;
-    const {
-      bindGroupCompute,
-      bindGroupNormalize,
-      storageBuffer,
-      normalizedBuffer,
-      readBuffer,
-      texture,
-      width,
-      height,
-      bufferSize,
-    } = resources;
-
     const compute = async () => {
       const commandEncoder = device.createCommandEncoder();
 
@@ -164,7 +124,11 @@ export function useHistogram(image: HTMLImageElement | null) {
 
       device.queue.submit([commandEncoder.finish()]);
 
-      await readBuffer.mapAsync(GPUMapMode.READ);
+      try {
+        await readBuffer.mapAsync(GPUMapMode.READ);
+      } catch {
+        return;
+      }
 
       const arrayBuffer = readBuffer.getMappedRange();
       const result = new Float32Array(arrayBuffer);
@@ -190,7 +154,7 @@ export function useHistogram(image: HTMLImageElement | null) {
       readBuffer.destroy();
       texture.destroy();
     };
-  }, [device, pipelines, resources]);
+  }, [device, pipelines, image]);
 
   return data;
 }

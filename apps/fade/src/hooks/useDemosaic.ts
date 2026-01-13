@@ -34,16 +34,25 @@ function useDemosaicPipeline() {
   }, [device, format]);
 }
 
-function useDemosaicBindGroup(
-  pipeline: GPURenderPipeline | null,
+export function useDemosaic(
+  context: GPUCanvasContext | null,
   width: number,
   height: number,
   data: ArrayBufferLike,
 ) {
-  const { device } = useGPU();
+  const { device, format } = useGPU();
+  const pipeline = useDemosaicPipeline();
 
-  return useMemo(() => {
-    if (!device || !pipeline || width <= 0 || height <= 0) return null;
+  useEffect(() => {
+    if (
+      !device ||
+      !context ||
+      !format ||
+      !pipeline ||
+      width <= 0 ||
+      height <= 0
+    )
+      return;
 
     // Create texture for raw data
     const texture = device.createTexture({
@@ -60,7 +69,7 @@ function useDemosaicBindGroup(
       { width, height },
     );
 
-    return device.createBindGroup({
+    const bindGroup = device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
       entries: [
         {
@@ -69,21 +78,6 @@ function useDemosaicBindGroup(
         },
       ],
     });
-  }, [device, pipeline, width, height, data]);
-}
-
-export function useDemosaic(
-  context: GPUCanvasContext | null,
-  width: number,
-  height: number,
-  data: ArrayBufferLike,
-) {
-  const { device, format } = useGPU();
-  const pipeline = useDemosaicPipeline();
-  const bindGroup = useDemosaicBindGroup(pipeline, width, height, data);
-
-  useEffect(() => {
-    if (!device || !context || !format || !pipeline || !bindGroup) return;
 
     context.configure({
       device,
@@ -113,5 +107,9 @@ export function useDemosaic(
     passEncoder.end();
 
     device.queue.submit([commandEncoder.finish()]);
-  }, [device, context, format, pipeline, bindGroup]);
+
+    return () => {
+      texture.destroy();
+    };
+  }, [device, context, format, pipeline, width, height, data]);
 }
