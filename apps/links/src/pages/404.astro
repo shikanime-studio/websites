@@ -1,10 +1,10 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import BaseLayout from "../layouts/BaseLayout.astro";
 
 export const prerender = true;
 ---
 
-<Layout title="404 • Wrong Portal" description="Not Found">
+<BaseLayout title="404 • Wrong Portal" description="Not Found">
   <main class="max-w-xl p-6 text-center">
     <div class="mockup-window mt-6 border bg-white">
       <div class="bg-base-200 px-6 py-10">
@@ -32,4 +32,4 @@ export const prerender = true;
       <span>Not Found</span>
     </div>
   </main>
-</Layout>
+</BaseLayout>
