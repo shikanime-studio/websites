@@ -1,39 +1,22 @@
-import { Activity, useEffect, useRef, useState } from "react";
+import { Activity, useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useGallery } from "../hooks/useGallery";
+import { useElementSize } from "../hooks/useElementSize";
 import { FilmstripItem } from "./FilmstripItem";
 
 const ITEM_SIZE = 88;
 
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery();
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setContainerWidth(entry.contentRect.width);
-      }
-    });
-
-    observer.observe(containerRef.current);
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  const overscan =
-    containerWidth > 0 ? Math.ceil(containerWidth / ITEM_SIZE) : 5;
+  const ref = useRef<HTMLDivElement>(null);
+  const { width } = useElementSize(ref);
 
   const virtualizer = useVirtualizer({
     horizontal: true,
     count: files.length,
-    getScrollElement: () => containerRef.current,
+    getScrollElement: () => ref.current,
     estimateSize: () => ITEM_SIZE,
-    overscan,
+    overscan: width > 0 ? Math.ceil(width / ITEM_SIZE) : 5,
   });
 
   // Scroll selected thumbnail into view
@@ -60,7 +43,7 @@ export function Filmstrip() {
   return (
     <div
       className="bg-base-200 border-base-300 scrollbar-thin h-30 overflow-x-auto overflow-y-hidden border-t"
-      ref={containerRef}
+      ref={ref}
     >
       <div
         className="relative h-full w-full"
