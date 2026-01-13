@@ -19,7 +19,9 @@ export function DirectoryProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       // User cancelled the picker
       if ((error as Error).name !== "AbortError") {
-        console.error("Error loading directory:", error);
+        alert(
+          "We couldn't open that directory. Please try again or choose a different one.",
+        );
       }
     }
   }, [isSupported]);

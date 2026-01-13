@@ -1,18 +1,18 @@
 import { useState } from "react";
-import { CanvasInfoContext } from "../hooks/useCanvasInfo";
+import { ImageInfoContext } from "../hooks/useImageInfo";
 import type { ReactNode } from "react";
 
-export function CanvasInfoProvider({ children }: { children: ReactNode }) {
+export function ImageInfoProvider({ children }: { children: ReactNode }) {
   const [image, setImage] = useState<HTMLImageElement | null>(null);
 
   return (
-    <CanvasInfoContext.Provider
+    <ImageInfoContext.Provider
       value={{
         image,
         setImage,
       }}
     >
       {children}
-    </CanvasInfoContext.Provider>
+    </ImageInfoContext.Provider>
   );
 }

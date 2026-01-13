@@ -2,9 +2,8 @@ import { createContext, useContext } from "react";
 import type { Theme } from "../lib/db";
 
 export interface ThemeContextValue {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  theme?: Theme;
+  setTheme: (theme?: Theme) => void;
 }
 
 export const ThemeContext = createContext<ThemeContextValue | null>(null);

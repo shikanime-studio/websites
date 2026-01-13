@@ -1,56 +1,15 @@
-import { useMemo } from "react";
-import { useCanvasInfo } from "../hooks/useCanvasInfo";
+import { useImageInfo } from "../hooks/useImageInfo";
+import { useHistogram } from "../hooks/useHistogram";
 
 interface HistogramProps {
   className?: string;
 }
 
-export function Histogram({ className }: HistogramProps) {
-  const { image } = useCanvasInfo();
-
-  const data = useMemo(() => {
-    if (!image) {
-      return null;
-    }
-
-    const canvas = document.createElement("canvas");
-    // Use a smaller size for performance, still enough for histogram
-    const size = 256;
-    canvas.width = size;
-    canvas.height = size;
-    const ctx = canvas.getContext("2d");
-
-    if (!ctx) return null;
-
-    // Draw image to small canvas
-    ctx.drawImage(image, 0, 0, size, size);
-    const imageData = ctx.getImageData(0, 0, size, size);
-    const pixels = imageData.data;
-
-    const r = new Array<number>(256).fill(0);
-    const g = new Array<number>(256).fill(0);
-    const b = new Array<number>(256).fill(0);
-
-    // Count pixel values
-    for (let i = 0; i < pixels.length; i += 4) {
-      r[pixels[i]]++;
-      g[pixels[i + 1]]++;
-      b[pixels[i + 2]]++;
-    }
-
-    // Find max value to normalize
-    const maxCount = Math.max(...r, ...g, ...b);
-
-    // Normalize to 0-100 range
-    const normalize = (arr: Array<number>) =>
-      arr.map((v) => (v / maxCount) * 100);
-
-    return {
-      r: normalize(r),
-      g: normalize(g),
-      b: normalize(b),
-    };
-  }, [image]);
+function HistogramContent({
+  className,
+  image,
+}: HistogramProps & { image: HTMLImageElement }) {
+  const data = useHistogram(image);
 
   if (!data) return null;
 
@@ -92,4 +51,12 @@ export function Histogram({ className }: HistogramProps) {
       </svg>
     </div>
   );
+}
+
+export function Histogram({ className }: HistogramProps) {
+  const { image } = useImageInfo();
+
+  if (!image) return null;
+
+  return <HistogramContent className={className} image={image} />;
 }

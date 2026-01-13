@@ -1,22 +1,19 @@
 import { useEffect, useState } from "react";
-import { useWebGPU } from "./useWebGPU";
 import type { RefObject } from "react";
 
 export function useCanvas(ref: RefObject<HTMLCanvasElement | null>) {
   const [context, setContext] = useState<GPUCanvasContext | null>(null);
-  const { device, adapter } = useWebGPU();
-
   useEffect(() => {
     const canvas = ref.current;
-    if (!canvas || !device || !adapter) return;
+    if (!canvas) return;
 
     const ctx = canvas.getContext("webgpu");
     if (!ctx) {
-      console.error("Could not get WebGPU context");
+      console.error("Could not get GPU context");
       return;
     }
     setContext(ctx);
-  }, [ref, device, adapter]);
+  }, [ref]);
 
-  return { device, context };
+  return { context };
 }

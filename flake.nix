@@ -51,9 +51,12 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
-          treefmt.config.programs.sqlfluff = {
-            enable = true;
-            dialect = "sqlite";
+          treefmt.config.programs = {
+            sqlfluff = {
+              enable = true;
+              dialect = "sqlite";
+            };
+            wgslfmt.enable = true;
           };
           treefmt.config.settings.global.excludes = [
             "*.gen.ts"

@@ -21,6 +21,7 @@ declare namespace App {
 
 interface ImportMetaEnv {
   readonly PUBLIC_GOOGLE_CLIENT_ID: string;
+  readonly SITE: string;
 }
 
 interface ImportMeta {

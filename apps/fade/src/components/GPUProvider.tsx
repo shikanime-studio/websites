@@ -1,17 +1,17 @@
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { WebGPUContext, useWebGPUSupport } from "../hooks/useWebGPU";
+import { GPUContext, useGPUSupport } from "../hooks/useGPU";
 import type { ReactNode } from "react";
 
-export function WebGPUProvider({ children }: { children: ReactNode }) {
+export function GPUProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
-  const isWebGPUSupported = useWebGPUSupport();
+  const isSupported = useGPUSupport();
 
   const { data: adapter } = useSuspenseQuery({
-    queryKey: ["webgpu", "adapter"],
+    queryKey: ["gpu", "adapter"],
     queryFn: async () => {
-      if (!isWebGPUSupported) {
-        alert("WebGPU not supported");
+      if (!isSupported) {
+        alert("GPU not supported");
         return null;
       }
       return await navigator.gpu.requestAdapter();
@@ -23,10 +23,22 @@ export function WebGPUProvider({ children }: { children: ReactNode }) {
   });
 
   const { data: device } = useSuspenseQuery({
-    queryKey: ["webgpu", "device", adapter?.info.device],
+    queryKey: ["gpu", "device", adapter?.info.device],
     queryFn: async () => {
       if (!adapter) return null;
       return await adapter.requestDevice();
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
+  });
+
+  const { data: format } = useSuspenseQuery({
+    queryKey: ["gpu", "format"],
+    queryFn: () => {
+      if (!device) return null;
+      return navigator.gpu.getPreferredCanvasFormat();
     },
     staleTime: Infinity,
     gcTime: Infinity,
@@ -38,26 +50,27 @@ export function WebGPUProvider({ children }: { children: ReactNode }) {
     if (!device) return;
 
     const onLost = (info: GPUDeviceLostInfo) => {
-      alert(`WebGPU device lost: ${info.reason}`);
+      alert(`GPU device lost: ${info.reason}`);
       return queryClient.invalidateQueries({
-        queryKey: ["webgpu", "device", adapter?.info.device],
+        queryKey: ["gpu", "device", adapter?.info.device],
       });
     };
 
     device.lost.then(onLost).catch(() => {
-      alert("WebGPU device lost unexpectedly");
+      alert("GPU device lost unexpectedly");
     });
   }, [device, queryClient, adapter?.info.device]);
 
   return (
-    <WebGPUContext.Provider
+    <GPUContext.Provider
       value={{
         device,
         adapter,
-        isSupported: isWebGPUSupported,
+        format,
+        isSupported,
       }}
     >
       {children}
-    </WebGPUContext.Provider>
+    </GPUContext.Provider>
   );
 }

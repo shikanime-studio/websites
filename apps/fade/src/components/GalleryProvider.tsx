@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { GalleryContext } from "../hooks/useGallery";
 import { scanDirectory } from "../lib/fs";
+import { useKeymap } from "../hooks/useKeymap";
 import type { ReactNode } from "react";
 
 export function GalleryProvider({
@@ -38,36 +39,25 @@ export function GalleryProvider({
     setSelectedIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  // Keyboard navigation
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (files.length === 0) return;
+  useKeymap("navigateNext", () => {
+    if (files.length === 0) return;
+    navigateNext();
+  });
 
-      switch (event.key) {
-        case "ArrowRight":
-          navigateNext();
-          event.preventDefault();
-          break;
-        case "ArrowLeft":
-          navigatePrevious();
-          event.preventDefault();
-          break;
-        case "Home":
-          selectFile(0);
-          event.preventDefault();
-          break;
-        case "End":
-          selectFile(files.length - 1);
-          event.preventDefault();
-          break;
-      }
-    };
+  useKeymap("navigatePrevious", () => {
+    if (files.length === 0) return;
+    navigatePrevious();
+  });
 
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [files.length, navigateNext, navigatePrevious, selectFile]);
+  useKeymap("selectFirst", () => {
+    if (files.length === 0) return;
+    selectFile(0);
+  });
+
+  useKeymap("selectLast", () => {
+    if (files.length === 0) return;
+    selectFile(files.length - 1);
+  });
 
   const selectedFile = files.length > 0 ? files[selectedIndex] : null;
 

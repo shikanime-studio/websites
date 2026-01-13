@@ -1,6 +1,4 @@
-import mixpanel from "mixpanel-browser";
-import { useMemo } from "react";
-import { MixpanelContext } from "../hooks/useMixpanel";
+import { MixpanelContext, useMixpanelInstance } from "../hooks/useMixpanel";
 import type { Config } from "mixpanel-browser";
 import type { ReactNode } from "react";
 
@@ -17,13 +15,7 @@ export function MixpanelProvider({
   config,
   name,
 }: MixpanelProviderProps) {
-  const value = useMemo(() => {
-    if (!name) {
-      mixpanel.init(token, config ?? {});
-      return {};
-    }
-    return { instance: mixpanel.init(token, config ?? {}, name) };
-  }, [token, config, name]);
+  const value = useMixpanelInstance(token, config, name);
 
   return (
     <MixpanelContext.Provider value={value}>
