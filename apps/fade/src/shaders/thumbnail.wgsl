@@ -70,8 +70,8 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4f {
     var totalWeight = 0.0;
 
     // Sample a grid within the pixel footprint
-    for (var x = 0.0; x < steps; x   += 1.0) {
-        for (var y = 0.0; y < steps; y   += 1.0) {
+    for (var x = 0.0; x < steps; x     += 1.0) {
+        for (var y = 0.0; y < steps; y     += 1.0) {
             // Offset from 0 to 1 across the footprint
             let offX = (x + 0.5) / steps - 0.5;
             let offY = (y + 0.5) / steps - 0.5;
@@ -79,8 +79,8 @@ fn fs_main(input: VertexOutput) -> @location(0) vec4f {
             // Adjust UV based on derivatives
             let sampleUV = input.uv + dUVdx * offX + dUVdy * offY;
 
-            color   += textureSampleLevel(myTexture, mySampler, sampleUV, 0.0);
-            totalWeight   += 1.0;
+            color     += textureSampleLevel(myTexture, mySampler, sampleUV, 0.0);
+            totalWeight     += 1.0;
         }
     }
 
