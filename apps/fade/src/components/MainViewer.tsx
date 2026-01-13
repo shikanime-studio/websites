@@ -78,12 +78,11 @@ function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
 
   useEffect(() => {
     if (imgRef.current) {
-      imgRef.current.style.filter = `brightness(${Math.pow(2, exposure)})`;
+      imgRef.current.style.filter = `brightness(${Math.pow(2, exposure).toString()})`;
     }
   }, [exposure]);
 
   if (mimeType === "image/x-fujifilm-raf") {
-    // @ts-expect-error - exposure prop will be added to RawImage
     return <RawImage fileItem={fileItem} exposure={exposure} />;
   }
 

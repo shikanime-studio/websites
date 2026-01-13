@@ -7,6 +7,7 @@ export function useDemosaic(
   width: number,
   height: number,
   data: Uint16Array,
+  exposure: number,
 ) {
   useEffect(() => {
     if (!device || !context || width <= 0 || height <= 0) return;
@@ -57,6 +58,14 @@ export function useDemosaic(
       { width, height },
     );
 
+    // Create uniform buffer for params
+    const paramsBuffer = device.createBuffer({
+      size: 4, // 1 float (exposure)
+      usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+    });
+
+    device.queue.writeBuffer(paramsBuffer, 0, new Float32Array([exposure]));
+
     // Bind Group
     const bindGroup = device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
@@ -64,6 +73,12 @@ export function useDemosaic(
         {
           binding: 0,
           resource: texture.createView(),
+        },
+        {
+          binding: 1,
+          resource: {
+            buffer: paramsBuffer,
+          },
         },
       ],
     });
@@ -90,5 +105,5 @@ export function useDemosaic(
     passEncoder.end();
 
     device.queue.submit([commandEncoder.finish()]);
-  }, [device, context, width, height, data]);
+  }, [device, context, width, height, data, exposure]);
 }

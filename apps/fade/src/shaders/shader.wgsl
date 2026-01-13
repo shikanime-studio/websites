@@ -21,6 +21,12 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 
 @group(0) @binding(0) var uTexture: texture_2d<u32>;
 
+struct Params {
+  exposure: f32,
+};
+
+@group(0) @binding(1) var<uniform> params: Params;
+
 @fragment
 fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
   let dim = textureDimensions(uTexture);
@@ -35,6 +41,9 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
 
   let maxVal = 16383.0;
   var norm = f32(val) / maxVal;
+
+  // Exposure compensation
+  norm = norm * pow(2.0, params.exposure);
 
   // Gamma correction
   norm = pow(norm, 1.0 / 2.2);
