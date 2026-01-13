@@ -6,6 +6,7 @@ import { GPUProvider } from "../components/GPUProvider";
 import { Filmstrip } from "../components/Filmstrip";
 import { GalleryProvider } from "../components/GalleryProvider";
 import { ImageInfoProvider } from "../components/ImageInfoProvider";
+import { LightingProvider } from "../components/LightingProvider";
 import { MainViewer } from "../components/MainViewer";
 import { Sidebar } from "../components/Sidebar";
 import { ToolBar } from "../components/ToolBar";
@@ -28,8 +29,10 @@ function GalleryContainer() {
         <ToolBar />
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <ImageInfoProvider>
-            <MainViewer />
-            <Sidebar />
+            <LightingProvider>
+              <MainViewer />
+              <Sidebar />
+            </LightingProvider>
           </ImageInfoProvider>
         </div>
         <Filmstrip />

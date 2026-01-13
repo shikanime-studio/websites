@@ -5,6 +5,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Info,
+  RotateCcw,
+  Sun,
 } from "lucide-react";
 import { Activity, Suspense, useState } from "react";
 import { settingsCollection } from "../lib/db";
@@ -14,6 +16,7 @@ import { useGallery } from "../hooks/useGallery";
 import { ExifTagId } from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { useImageInfo } from "../hooks/useImageInfo";
+import { useLighting } from "../hooks/useLighting";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
 import type { FileItem } from "../lib/fs";
@@ -89,9 +92,190 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
   return (
     <>
       <GeneralSection fileItem={fileItem} />
+      <LightingSection />
       <CameraSection fileItem={fileItem} />
       <GroupedFilesSection fileItem={fileItem} />
     </>
+  );
+}
+
+function LightingSection() {
+  const {
+    exposure,
+    setExposure,
+    contrast,
+    setContrast,
+    saturation,
+    setSaturation,
+    highlights,
+    setHighlights,
+    shadows,
+    setShadows,
+    whites,
+    setWhites,
+    blacks,
+    setBlacks,
+    tint,
+    setTint,
+    temperature,
+    setTemperature,
+    vibrance,
+    setVibrance,
+    hue,
+    setHue,
+    reset,
+  } = useLighting();
+
+  return (
+    <CollapsibleSection title="Lighting" icon={Sun} className="mt-8">
+      <div className="flex flex-col gap-4">
+        {/* Exposure */}
+        <Slider
+          label="Exposure"
+          value={exposure}
+          min={-5}
+          max={5}
+          step={0.05}
+          onChange={setExposure}
+        />
+        {/* Contrast */}
+        <Slider
+          label="Contrast"
+          value={contrast}
+          min={0}
+          max={2}
+          step={0.01}
+          onChange={setContrast}
+        />
+        {/* Saturation */}
+        <Slider
+          label="Saturation"
+          value={saturation}
+          min={0}
+          max={2}
+          step={0.01}
+          onChange={setSaturation}
+        />
+        {/* Highlights */}
+        <Slider
+          label="Highlights"
+          value={highlights}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setHighlights}
+        />
+        {/* Shadows */}
+        <Slider
+          label="Shadows"
+          value={shadows}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setShadows}
+        />
+        {/* Whites */}
+        <Slider
+          label="Whites"
+          value={whites}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setWhites}
+        />
+        {/* Blacks */}
+        <Slider
+          label="Blacks"
+          value={blacks}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setBlacks}
+        />
+        {/* Tint */}
+        <Slider
+          label="Tint"
+          value={tint}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setTint}
+        />
+        {/* Temperature */}
+        <Slider
+          label="Temperature"
+          value={temperature}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setTemperature}
+        />
+        {/* Vibrance */}
+        <Slider
+          label="Vibrance"
+          value={vibrance}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setVibrance}
+        />
+        {/* Hue */}
+        <Slider
+          label="Hue"
+          value={hue}
+          min={-1}
+          max={1}
+          step={0.01}
+          onChange={setHue}
+        />
+
+        <div className="flex justify-end pt-2">
+          <button
+            onClick={reset}
+            className="btn btn-ghost btn-xs text-xs opacity-50 hover:opacity-100"
+          >
+            <RotateCcw className="mr-1 h-3 w-3" />
+            Reset
+          </button>
+        </div>
+      </div>
+    </CollapsibleSection>
+  );
+}
+
+function Slider({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (value: number) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex justify-between">
+        <label className="text-xs font-medium opacity-70">{label}</label>
+        <span className="text-xs opacity-50">{value.toFixed(2)}</span>
+      </div>
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={value}
+        onChange={(e) => {
+          onChange(parseFloat(e.target.value));
+        }}
+        className="range range-xs"
+      />
+    </div>
   );
 }
 
