@@ -1,14 +1,14 @@
 /**
  * RAW Visualization Shader
- * 
+ *
  * Goal: Directly visualize raw sensor data without full demosaicing algorithms.
- * 
+ *
  * Process:
  * 1. Reads raw 16-bit integer values from the source texture.
  * 2. Handles endianness swapping (common in RAW formats like RAF).
  * 3. Normalizes 14-bit sensor data (0-16383) to 0.0-1.0 float range.
  * 4. Applies basic Gamma Correction (2.2) for correct display on monitors.
- * 
+ *
  * This provides a quick "preview" mode of the raw data structure.
  */
 
