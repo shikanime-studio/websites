@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import rafShader from "../shaders/raf.wgsl?raw";
 import { useGPU } from "./useGPU";
 
@@ -43,73 +44,93 @@ export function useDemosaic(
   const { device, format } = useGPU();
   const pipeline = useDemosaicPipeline();
 
-  useEffect(() => {
-    if (
-      !device ||
-      !context ||
-      !format ||
-      !pipeline ||
-      width <= 0 ||
-      height <= 0
-    )
-      return;
+  useSuspenseQuery({
+    queryKey: [
+      "demosaic",
+      width,
+      height,
+      !!context,
+      !!device,
+      !!format,
+      !!pipeline,
+    ],
+    queryFn: async () => {
+      if (
+        !device ||
+        !context ||
+        !format ||
+        !pipeline ||
+        width <= 0 ||
+        height <= 0
+      ) {
+        return null;
+      }
 
-    // Create texture for raw data
-    const texture = device.createTexture({
-      size: [width, height],
-      format: "r16uint",
-      usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-    });
+      let texture: GPUTexture | null = null;
 
-    // Upload data
-    device.queue.writeTexture(
-      { texture },
-      data,
-      { bytesPerRow: width * 2 },
-      { width, height },
-    );
+      try {
+        // Create texture for raw data
+        texture = device.createTexture({
+          size: [width, height],
+          format: "r16uint",
+          usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
+        });
 
-    const bindGroup = device.createBindGroup({
-      layout: pipeline.getBindGroupLayout(0),
-      entries: [
-        {
-          binding: 0,
-          resource: texture.createView(),
-        },
-      ],
-    });
+        // Upload data
+        device.queue.writeTexture(
+          { texture },
+          data,
+          { bytesPerRow: width * 2 },
+          { width, height },
+        );
 
-    context.configure({
-      device,
-      format,
-      alphaMode: "premultiplied",
-    });
+        const bindGroup = device.createBindGroup({
+          layout: pipeline.getBindGroupLayout(0),
+          entries: [
+            {
+              binding: 0,
+              resource: texture.createView(),
+            },
+          ],
+        });
 
-    // Render
-    const commandEncoder = device.createCommandEncoder();
-    const textureView = context.getCurrentTexture().createView();
+        context.configure({
+          device,
+          format,
+          alphaMode: "premultiplied",
+        });
 
-    const renderPassDescriptor: GPURenderPassDescriptor = {
-      colorAttachments: [
-        {
-          view: textureView,
-          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
-          loadOp: "clear",
-          storeOp: "store",
-        },
-      ],
-    };
+        // Render
+        const commandEncoder = device.createCommandEncoder();
+        const textureView = context.getCurrentTexture().createView();
 
-    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(pipeline);
-    passEncoder.setBindGroup(0, bindGroup);
-    passEncoder.draw(4);
-    passEncoder.end();
+        const renderPassDescriptor: GPURenderPassDescriptor = {
+          colorAttachments: [
+            {
+              view: textureView,
+              clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 1.0 },
+              loadOp: "clear",
+              storeOp: "store",
+            },
+          ],
+        };
 
-    device.queue.submit([commandEncoder.finish()]);
+        const passEncoder =
+          commandEncoder.beginRenderPass(renderPassDescriptor);
+        passEncoder.setPipeline(pipeline);
+        passEncoder.setBindGroup(0, bindGroup);
+        passEncoder.draw(4);
+        passEncoder.end();
 
-    return () => {
-      texture.destroy();
-    };
-  }, [device, context, format, pipeline, width, height, data]);
+        device.queue.submit([commandEncoder.finish()]);
+
+        await device.queue.onSubmittedWorkDone();
+
+        return true;
+      } finally {
+        texture?.destroy();
+      }
+    },
+    staleTime: Infinity,
+  });
 }

@@ -9,6 +9,7 @@ import { useThumbnail } from "../hooks/useThumbnail";
 import { settingsCollection } from "../lib/db";
 import { FileIcon } from "./FileIcon";
 import type { FileItem } from "../lib/fs";
+import { useFile } from "@/hooks/useFile";
 
 const ITEM_SIZE = 88;
 
@@ -199,7 +200,8 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem;
-  const { mimeType, url } = useThumbnail(fileItem, 80, 80);
+  const { mimeType } = useFile(fileItem);
+  const { url } = useThumbnail(fileItem, 80, 80);
 
   return (
     <button
@@ -213,7 +215,7 @@ function FilmstripItemContent({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? "true" : "false"}
     >
-      {url && mimeType.startsWith("image/") ? (
+      {url && mimeType?.startsWith("image/") ? (
         <Image
           src={url}
           alt={handle.name}
