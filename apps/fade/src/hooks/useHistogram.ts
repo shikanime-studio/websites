@@ -52,7 +52,7 @@ export function useHistogram(image: HTMLImageElement | null) {
       !!device,
       !!pipelines,
     ],
-    queryFn: async ({ signal }) => {
+    queryFn: async () => {
       if (!device || !pipelines || !image) return null;
 
       const { computePipeline, normalizePipeline } = pipelines;
@@ -140,8 +140,6 @@ export function useHistogram(image: HTMLImageElement | null) {
         device.queue.submit([commandEncoder.finish()]);
 
         await readBuffer.mapAsync(GPUMapMode.READ);
-
-        if (signal.aborted) return null;
 
         const arrayBuffer = readBuffer.getMappedRange();
         const result = new Float32Array(arrayBuffer);
