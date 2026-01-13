@@ -1,8 +1,19 @@
+import { Suspense } from "react";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useHistogram } from "../hooks/useHistogram";
 
 interface HistogramProps {
   className?: string;
+}
+
+function HistogramSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={`relative h-32 w-full bg-zinc-800/50 rounded-md overflow-hidden flex items-center justify-center ${className ?? ""}`}
+    >
+      <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-500 border-t-transparent" />
+    </div>
+  );
 }
 
 function HistogramContent({
@@ -58,5 +69,9 @@ export function Histogram({ className }: HistogramProps) {
 
   if (!image) return null;
 
-  return <HistogramContent className={className} image={image} />;
+  return (
+    <Suspense fallback={<HistogramSkeleton className={className} />}>
+      <HistogramContent className={className} image={image} />
+    </Suspense>
+  );
 }

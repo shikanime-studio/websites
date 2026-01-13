@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { useCanvas } from "../hooks/useCanvas";
 import { useDemosaic } from "../hooks/useDemosaic";
 import { useModal } from "../hooks/useModal";
@@ -38,18 +38,34 @@ function RawCanvas({ fileItem, onDoubleClick, className }: RawCanvasProps) {
   );
 }
 
+function RawCanvasSkeleton({ className }: { className?: string }) {
+  return (
+    <div
+      className={`${className ?? ""} flex items-center justify-center bg-zinc-800/50`}
+    >
+      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+    </div>
+  );
+}
+
 export function RawImageViewer({ fileItem }: RawImageViewerProps) {
   const { modal, setModal } = useModal();
 
   return (
     <>
-      <RawCanvas
-        fileItem={fileItem}
-        onDoubleClick={() => {
-          setModal("fullscreen");
-        }}
-        className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-      />
+      <Suspense
+        fallback={
+          <RawCanvasSkeleton className="aspect-square h-full max-h-full w-full max-w-full rounded-lg shadow-2xl" />
+        }
+      >
+        <RawCanvas
+          fileItem={fileItem}
+          onDoubleClick={() => {
+            setModal("fullscreen");
+          }}
+          className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+        />
+      </Suspense>
       <FullscreenModal
         open={modal === "fullscreen"}
         onClose={() => {
@@ -57,10 +73,16 @@ export function RawImageViewer({ fileItem }: RawImageViewerProps) {
         }}
       >
         <FullscreenNavigation>
-          <RawCanvas
-            fileItem={fileItem}
-            className="max-h-full max-w-full object-contain"
-          />
+          <Suspense
+            fallback={
+              <RawCanvasSkeleton className="h-full max-h-full w-full max-w-full" />
+            }
+          >
+            <RawCanvas
+              fileItem={fileItem}
+              className="max-h-full max-w-full object-contain"
+            />
+          </Suspense>
         </FullscreenNavigation>
       </FullscreenModal>
     </>
