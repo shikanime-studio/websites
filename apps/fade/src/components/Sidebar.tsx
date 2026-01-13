@@ -1,5 +1,11 @@
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { Camera, ChevronDown, ChevronLeft, ChevronRight, Info } from "lucide-react";
+import {
+  Camera,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Info,
+} from "lucide-react";
 import { Activity, Suspense, useState } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
