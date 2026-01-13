@@ -22,7 +22,7 @@ function useHistogramPipeline() {
       layout: "auto",
       compute: {
         module: shaderModule,
-        entryPoint: "cs_bins",
+        entryPoint: "cs_main",
       },
     });
 
@@ -56,7 +56,6 @@ function useHistogramBindGroup(
 
     if (width === 0 || height === 0) return null;
 
-    // 1. Create Texture
     const texture = device.createTexture({
       size: [width, height],
       format: "rgba8unorm",
@@ -71,16 +70,13 @@ function useHistogramBindGroup(
       height,
     ]);
 
-    // 2. Create Buffers
-    const bufferSize = 256 * 3 * 4; // 3 arrays of 256 elements (4 bytes each)
+    const bufferSize = 256 * 3 * 4;
 
-    // Buffer for atomic counts (u32)
     const storageBuffer = device.createBuffer({
       size: bufferSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
     });
 
-    // Buffer for normalized values (f32)
     const normalizedBuffer = device.createBuffer({
       size: bufferSize,
       usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
@@ -94,15 +90,15 @@ function useHistogramBindGroup(
     const bindGroupCompute = device.createBindGroup({
       layout: computePipeline.getBindGroupLayout(0),
       entries: [
-        { binding: 0, resource: { buffer: storageBuffer } },
-        { binding: 1, resource: texture.createView() },
+        { binding: 0, resource: texture.createView() },
+        { binding: 1, resource: { buffer: storageBuffer } },
       ],
     });
 
     const bindGroupNormalize = device.createBindGroup({
       layout: normalizePipeline.getBindGroupLayout(0),
       entries: [
-        { binding: 0, resource: { buffer: storageBuffer } },
+        { binding: 1, resource: { buffer: storageBuffer } },
         { binding: 2, resource: { buffer: normalizedBuffer } },
       ],
     });
@@ -144,21 +140,18 @@ export function useHistogram(image: HTMLImageElement | null) {
     } = resources;
 
     const compute = async () => {
-      // 4. Encode Commands
       const commandEncoder = device.createCommandEncoder();
 
-      // Pass 1: Compute Histogram
       const pass1 = commandEncoder.beginComputePass();
       pass1.setPipeline(computePipeline);
       pass1.setBindGroup(0, bindGroupCompute);
       pass1.dispatchWorkgroups(Math.ceil(width / 16), Math.ceil(height / 16));
       pass1.end();
 
-      // Pass 2: Normalize
       const pass2 = commandEncoder.beginComputePass();
       pass2.setPipeline(normalizePipeline);
       pass2.setBindGroup(0, bindGroupNormalize);
-      pass2.dispatchWorkgroups(1); // 256 threads in 1 workgroup covers all bins
+      pass2.dispatchWorkgroups(1);
       pass2.end();
 
       commandEncoder.copyBufferToBuffer(
@@ -171,13 +164,11 @@ export function useHistogram(image: HTMLImageElement | null) {
 
       device.queue.submit([commandEncoder.finish()]);
 
-      // 5. Read back
       await readBuffer.mapAsync(GPUMapMode.READ);
 
       const arrayBuffer = readBuffer.getMappedRange();
       const result = new Float32Array(arrayBuffer);
 
-      // result has 768 elements. 0-255 R, 256-511 G, 512-767 B.
       const r = Array.from(result.slice(0, 256));
       const g = Array.from(result.slice(256, 512));
       const b = Array.from(result.slice(512, 768));
