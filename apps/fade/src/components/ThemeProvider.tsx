@@ -6,37 +6,34 @@ import type { Theme } from "../lib/db";
 import type { ReactNode } from "react";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { data } = useLiveQuery((q) =>
+  const { data: theme } = useLiveQuery((q) =>
     q
       .from({ settings: settingsCollection })
       .where(({ settings }) => eq(settings.id, "theme"))
       .findOne(),
   );
 
-  const theme = (data?.value as Theme | undefined) ?? "system";
+  const themeValue = theme?.value as Theme | undefined;
 
   useEffect(() => {
     const root = document.documentElement;
 
-    if (theme === "system") {
-      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-      const applySystemTheme = () => {
-        const systemTheme = mediaQuery.matches ? "dark" : "light";
-        root.setAttribute("data-theme", systemTheme);
-      };
-
-      applySystemTheme();
-      mediaQuery.addEventListener("change", applySystemTheme);
-      return () => {
-        mediaQuery.removeEventListener("change", applySystemTheme);
-      };
+    if (themeValue) {
+      root.setAttribute("data-theme", themeValue);
     } else {
-      root.setAttribute("data-theme", theme);
+      root.removeAttribute("data-theme");
     }
-  }, [theme]);
+  }, [themeValue]);
 
-  const setTheme = (newTheme: Theme) => {
-    if (data) {
+  const setTheme = (newTheme?: Theme) => {
+    if (!newTheme) {
+      if (theme) {
+        settingsCollection.delete("theme");
+      }
+      return;
+    }
+
+    if (theme) {
       settingsCollection.update("theme", (draft) => {
         draft.value = newTheme;
       });
@@ -48,14 +45,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const toggleTheme = () => {
-    const nextTheme =
-      theme === "system" ? "dark" : theme === "dark" ? "light" : "dark";
-    setTheme(nextTheme);
-  };
-
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: themeValue, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -46,6 +46,7 @@ export function useThumbnail(
 
         return canvas.toDataURL("image/webp", quality);
       } catch {
+        alert("We encountered an issue creating a thumbnail for this image.");
         return null;
       }
     },

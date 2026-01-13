@@ -25,8 +25,8 @@ export function useExif(fileItem: FileItem | null) {
         }
 
         return exifView ? exifView.getTagEntries() : null;
-      } catch (err) {
-        console.error("Failed to parse EXIF:", err);
+      } catch {
+        alert("We couldn't read the camera data (EXIF) for this image.");
         return null;
       }
     },

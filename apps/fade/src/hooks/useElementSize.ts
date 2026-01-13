@@ -4,18 +4,13 @@ import type { RefObject } from "react";
 export function useElementSize<T extends HTMLElement>(
   ref: RefObject<T | null>,
 ) {
-  const [size, setSize] = useState({ width: 0, height: 0 });
+  const [entries, setEntries] = useState<Array<ResizeObserverEntry>>([]);
 
   useEffect(() => {
     if (!ref.current) return;
 
-    const observer = new ResizeObserver((entries) => {
-      for (const entry of entries) {
-        setSize({
-          width: entry.contentRect.width,
-          height: entry.contentRect.height,
-        });
-      }
+    const observer = new ResizeObserver((observedEntries) => {
+      setEntries(observedEntries);
     });
 
     observer.observe(ref.current);
@@ -24,5 +19,5 @@ export function useElementSize<T extends HTMLElement>(
     };
   }, [ref]);
 
-  return size;
+  return entries[0]?.contentRect ?? { width: 0, height: 0 };
 }

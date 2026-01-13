@@ -19,16 +19,16 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
   return output;
 }
 
-@group(0) @binding(0) var uTexture: texture_2d<u32>;
+@group(0) @binding(0) var sourceTexture: texture_2d<u32>;
 
 @fragment
 fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
-  let dim = textureDimensions(uTexture);
+  let dim = textureDimensions(sourceTexture);
   // Ensure coord is within bounds
   let coord = vec2<i32>(floor(uv * vec2<f32>(dim)));
 
   // Load raw value (R16Uint -> u32)
-  let raw_val = textureLoad(uTexture, coord, 0).r;
+  let raw_val = textureLoad(sourceTexture, coord, 0).r;
 
   // Swap endianness (little endian read from big endian data)
   let val = ((raw_val & 0xFFu) << 8u) | ((raw_val & 0xFF00u) >> 8u);

@@ -139,7 +139,6 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
 
     return {
       tagId,
-      type,
       value,
     };
   }

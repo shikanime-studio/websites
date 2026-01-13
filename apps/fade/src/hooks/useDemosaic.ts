@@ -1,28 +1,18 @@
-import { useEffect } from "react";
-import shaderSource from "../shaders/shader.wgsl?raw";
+import { useEffect, useMemo } from "react";
+import rafShader from "../shaders/raf.wgsl?raw";
+import { useGPU } from "./useGPU";
 
-export function useDemosaic(
-  device: GPUDevice | null,
-  context: GPUCanvasContext | null,
-  width: number,
-  height: number,
-  data: Uint16Array,
-) {
-  useEffect(() => {
-    if (!device || !context || width <= 0 || height <= 0) return;
+function useDemosaicPipeline() {
+  const { device, format } = useGPU();
 
-    const format = navigator.gpu.getPreferredCanvasFormat();
-    context.configure({
-      device,
-      format,
-      alphaMode: "premultiplied",
-    });
+  return useMemo(() => {
+    if (!device || !format) return null;
 
     const shaderModule = device.createShaderModule({
-      code: shaderSource,
+      code: rafShader,
     });
 
-    const pipeline = device.createRenderPipeline({
+    return device.createRenderPipeline({
       layout: "auto",
       vertex: {
         module: shaderModule,
@@ -41,6 +31,19 @@ export function useDemosaic(
         topology: "triangle-strip",
       },
     });
+  }, [device, format]);
+}
+
+function useDemosaicBindGroup(
+  pipeline: GPURenderPipeline | null,
+  width: number,
+  height: number,
+  data: ArrayBufferLike,
+) {
+  const { device } = useGPU();
+
+  return useMemo(() => {
+    if (!device || !pipeline || width <= 0 || height <= 0) return null;
 
     // Create texture for raw data
     const texture = device.createTexture({
@@ -52,13 +55,12 @@ export function useDemosaic(
     // Upload data
     device.queue.writeTexture(
       { texture },
-      data as unknown as BufferSource,
+      data,
       { bytesPerRow: width * 2 },
       { width, height },
     );
 
-    // Bind Group
-    const bindGroup = device.createBindGroup({
+    return device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
       entries: [
         {
@@ -66,6 +68,27 @@ export function useDemosaic(
           resource: texture.createView(),
         },
       ],
+    });
+  }, [device, pipeline, width, height, data]);
+}
+
+export function useDemosaic(
+  context: GPUCanvasContext | null,
+  width: number,
+  height: number,
+  data: ArrayBufferLike,
+) {
+  const { device, format } = useGPU();
+  const pipeline = useDemosaicPipeline();
+  const bindGroup = useDemosaicBindGroup(pipeline, width, height, data);
+
+  useEffect(() => {
+    if (!device || !context || !format || !pipeline || !bindGroup) return;
+
+    context.configure({
+      device,
+      format,
+      alphaMode: "premultiplied",
     });
 
     // Render
@@ -90,5 +113,5 @@ export function useDemosaic(
     passEncoder.end();
 
     device.queue.submit([commandEncoder.finish()]);
-  }, [device, context, width, height, data]);
+  }, [device, context, format, pipeline, bindGroup]);
 }

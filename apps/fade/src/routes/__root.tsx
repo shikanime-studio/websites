@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
+  ClientOnly,
   HeadContent,
   Outlet,
   Scripts,
@@ -37,7 +38,6 @@ export const Route = createRootRoute({
   }),
   component: RootComponent,
   shellComponent: RootDocument,
-  ssr: false,
 });
 
 function RootComponent() {
@@ -51,26 +51,28 @@ function RootComponent() {
           api_host: import.meta.env.VITE_MIXPANEL_API_HOST,
         }}
       >
-        <ThemeProvider>
-          <Outlet />
-          <TanStackDevtools
-            config={{
-              position: "bottom-right",
-            }}
-            plugins={[
-              {
-                name: "TanStack Query",
-                render: <ReactQueryDevtoolsPanel />,
-                defaultOpen: true,
-              },
-              {
-                name: "TanStack Router",
-                render: <TanStackRouterDevtoolsPanel />,
-                defaultOpen: false,
-              },
-            ]}
-          />
-        </ThemeProvider>
+        <ClientOnly>
+          <ThemeProvider>
+            <Outlet />
+            <TanStackDevtools
+              config={{
+                position: "bottom-right",
+              }}
+              plugins={[
+                {
+                  name: "TanStack Query",
+                  render: <ReactQueryDevtoolsPanel />,
+                  defaultOpen: true,
+                },
+                {
+                  name: "TanStack Router",
+                  render: <TanStackRouterDevtoolsPanel />,
+                  defaultOpen: false,
+                },
+              ]}
+            />
+          </ThemeProvider>
+        </ClientOnly>
       </MixpanelProvider>
     </QueryClientProvider>
   );

@@ -1,12 +1,9 @@
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
-import { Image } from "@unpic/react";
-import { Suspense, useEffect, useRef } from "react";
-import { useFile } from "../hooks/useFile";
-import { useObjectUrl } from "../hooks/useObjectUrl";
+import { Activity, Suspense } from "react";
 import { useGallery } from "../hooks/useGallery";
-import { useCanvasInfo } from "../hooks/useCanvasInfo";
-import { FileIcon } from "./FileIcon";
-import { RawImage } from "./RawImage";
+import { useFile } from "../hooks/useFile";
+import { ImageViewer } from "./ImageViewer";
+import { RawImageViewer } from "./RawImageViewer";
 import type { FileItem } from "../lib/fs";
 
 export function MainViewer() {
@@ -14,17 +11,7 @@ export function MainViewer() {
     useGallery();
 
   if (files.length === 0) {
-    return (
-      <div className="bg-base-200/50 relative flex min-w-0 flex-1 flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-4 opacity-50">
-          <ImageOff className="h-16 w-16 opacity-30" />
-          <p className="m-0 text-base font-medium">No files loaded</p>
-          <p className="m-0 text-sm opacity-70">
-            Click &quot;Open Folder&quot; to select a directory
-          </p>
-        </div>
-      </div>
-    );
+    return <EmptyMainViewer />;
   }
 
   const canGoPrevious = selectedIndex > 0;
@@ -47,7 +34,9 @@ export function MainViewer() {
             <span className="loading loading-spinner loading-lg"></span>
           }
         >
-          {selectedFile ? <MainViewerContent fileItem={selectedFile} /> : null}
+          <Activity mode={selectedFile ? "visible" : "hidden"}>
+            <MainViewerContent fileItem={selectedFile ?? undefined} />
+          </Activity>
         </Suspense>
       </div>
 
@@ -63,63 +52,30 @@ export function MainViewer() {
   );
 }
 
-function MainViewerContent({ fileItem }: { fileItem: FileItem }) {
-  const { handle } = fileItem;
-  const { file, mimeType } = useFile(fileItem);
-  const { url } = useObjectUrl(file ?? null);
-  const { setImage } = useCanvasInfo();
-  const imgRef = useRef<HTMLImageElement>(null);
+function EmptyMainViewer() {
+  return (
+    <div className="bg-base-200/50 relative flex min-w-0 flex-1 flex-col items-center justify-center">
+      <div className="flex flex-col items-center gap-4 opacity-50">
+        <ImageOff className="h-16 w-16 opacity-30" />
+        <p className="m-0 text-base font-medium">No files loaded</p>
+        <p className="m-0 text-sm opacity-70">
+          Click &quot;Open Folder&quot; to select a directory
+        </p>
+      </div>
+    </div>
+  );
+}
 
-  useEffect(() => {
-    if (!file || !url || !mimeType?.startsWith("image/")) {
-      setImage(null);
-    }
-  }, [file, url, mimeType, setImage]);
+interface MainViewerContentProps {
+  fileItem?: FileItem;
+}
+
+function MainViewerContent({ fileItem }: MainViewerContentProps) {
+  const { mimeType } = useFile(fileItem ?? null);
 
   if (mimeType === "image/x-fujifilm-raf") {
-    return <RawImage fileItem={fileItem} />;
+    return <RawImageViewer fileItem={fileItem ?? undefined} />;
   }
 
-  if (!file || !url) return null;
-
-  return (
-    <>
-      {mimeType?.startsWith("image/") ? (
-        <Image
-          ref={imgRef}
-          key={url}
-          src={url}
-          alt={handle.name}
-          className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-          layout="fullWidth"
-          background="auto"
-          onLoad={(e) => {
-            setImage(e.currentTarget as HTMLImageElement);
-          }}
-        />
-      ) : mimeType?.startsWith("video/") ? (
-        <video
-          key={url}
-          src={url}
-          className="animate-fade-in max-h-full max-w-full rounded-lg shadow-2xl"
-          controls
-          autoPlay
-          loop
-        />
-      ) : (
-        <object
-          data={url}
-          type={mimeType}
-          className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
-        >
-          <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
-            <FileIcon type={mimeType} className="h-32 w-32 opacity-30" />
-            <p className="m-0 text-xl font-medium">
-              Preview not available for this file type
-            </p>
-          </div>
-        </object>
-      )}
-    </>
-  );
+  return <ImageViewer fileItem={fileItem ?? undefined} />;
 }

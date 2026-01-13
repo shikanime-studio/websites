@@ -1,14 +1,23 @@
+import { ClientOnly } from "@tanstack/react-router";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useTheme } from "../hooks/useTheme";
 
 interface SettingsModalProps {
-  isOpen: boolean;
+  open: boolean;
   onClose: () => void;
 }
 
-export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
+export function SettingsModal(props: SettingsModalProps) {
+  return (
+    <ClientOnly fallback={null}>
+      <SettingsModalContent {...props} />
+    </ClientOnly>
+  );
+}
+
+function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -26,9 +35,6 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       }
     }
   }, [isOpen]);
-
-  // Ensure we mount only when document is available (client-side)
-  if (typeof document === "undefined") return null;
 
   return createPortal(
     <dialog
@@ -61,44 +67,48 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             <div>
               <span className="font-medium">Theme</span>
               <p className="mt-0.5 text-xs opacity-70">
-                Switch between light, dark, or system mode
+                Switch between light and dark mode
               </p>
             </div>
 
-            <div className="join">
-              <button
-                className={`join-item btn btn-sm ${theme === "light" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => {
-                  setTheme("light");
-                }}
-                aria-pressed={theme === "light"}
-                aria-label="Light Mode"
-              >
-                <Sun className="h-4 w-4" />
-                Light
-              </button>
-              <button
-                className={`join-item btn btn-sm ${theme === "dark" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => {
-                  setTheme("dark");
-                }}
-                aria-pressed={theme === "dark"}
-                aria-label="Dark Mode"
-              >
-                <Moon className="h-4 w-4" />
-                Dark
-              </button>
-              <button
-                className={`join-item btn btn-sm ${theme === "system" ? "btn-active btn-neutral" : ""}`}
-                onClick={() => {
-                  setTheme("system");
-                }}
-                aria-pressed={theme === "system"}
-                aria-label="System Mode"
-              >
-                <Monitor className="h-4 w-4" />
-                System
-              </button>
+            <div className="flex items-center gap-2">
+              <div className="join">
+                <button
+                  className={`join-item btn btn-sm ${theme === "light" ? "btn-active btn-neutral" : ""}`}
+                  onClick={() => {
+                    setTheme("light");
+                  }}
+                  aria-pressed={theme === "light"}
+                  aria-label="Light Mode"
+                >
+                  <Sun className="h-4 w-4" />
+                  Light
+                </button>
+                <button
+                  className={`join-item btn btn-sm ${theme === "dark" ? "btn-active btn-neutral" : ""}`}
+                  onClick={() => {
+                    setTheme("dark");
+                  }}
+                  aria-pressed={theme === "dark"}
+                  aria-label="Dark Mode"
+                >
+                  <Moon className="h-4 w-4" />
+                  Dark
+                </button>
+              </div>
+
+              {theme && (
+                <button
+                  className="btn btn-sm btn-ghost"
+                  onClick={() => {
+                    setTheme(undefined);
+                  }}
+                  title="Reset to system default"
+                  aria-label="Reset to system default"
+                >
+                  <Monitor className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>
