@@ -10,6 +10,7 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import appCss from "../styles.css?url";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { MixpanelProvider } from "../components/MixpanelProvider";
 
 const queryClient = new QueryClient();
 
@@ -42,26 +43,35 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
-        <Outlet />
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-              defaultOpen: true,
-            },
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-              defaultOpen: false,
-            },
-          ]}
-        />
-      </ThemeProvider>
+      <MixpanelProvider
+        token={import.meta.env.VITE_MIXPANEL_TOKEN}
+        config={{
+          autocapture: true,
+          record_sessions_percent: 100,
+          api_host: import.meta.env.VITE_MIXPANEL_API_HOST,
+        }}
+      >
+        <ThemeProvider>
+          <Outlet />
+          <TanStackDevtools
+            config={{
+              position: "bottom-right",
+            }}
+            plugins={[
+              {
+                name: "TanStack Query",
+                render: <ReactQueryDevtoolsPanel />,
+                defaultOpen: true,
+              },
+              {
+                name: "TanStack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+                defaultOpen: false,
+              },
+            ]}
+          />
+        </ThemeProvider>
+      </MixpanelProvider>
     </QueryClientProvider>
   );
 }

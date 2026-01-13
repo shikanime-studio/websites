@@ -2,12 +2,12 @@
 import { Image } from "astro:assets";
 import Avatar from "../../assets/avatar.webp";
 import AvatarHappy from "../../assets/avatar-happy.webp";
-import Layout from "../../layouts/Layout.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
 
 export const prerender = true;
 ---
 
-<Layout title="Shikanime" description="もう一度人生を楽しくしましょう！">
+<BaseLayout title="Shikanime" description="もう一度人生を楽しくしましょう！">
   <label class="swap">
     <input type="checkbox" />
     <div class="swap-on">
@@ -56,4 +56,4 @@ export const prerender = true;
   >
     🐦 X
   </a>
-</Layout>
+</BaseLayout>
