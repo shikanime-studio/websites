@@ -144,6 +144,7 @@ function LightingSection() {
           max={2}
           step={0.01}
           onChange={setContrast}
+          defaultValue={1}
         />
         <Slider
           label="Saturation"
@@ -152,6 +153,7 @@ function LightingSection() {
           max={2}
           step={0.01}
           onChange={setSaturation}
+          defaultValue={1}
         />
         <Slider
           label="Highlights"
@@ -239,6 +241,7 @@ function Slider({
   max,
   step,
   onChange,
+  defaultValue = 0,
 }: {
   label: string;
   value: number;
@@ -246,6 +249,7 @@ function Slider({
   max: number;
   step: number;
   onChange: (value: number) => void;
+  defaultValue?: number;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -261,6 +265,9 @@ function Slider({
         value={value}
         onChange={(e) => {
           onChange(parseFloat(e.target.value));
+        }}
+        onDoubleClick={() => {
+          onChange(defaultValue);
         }}
         className="range range-xs"
       />
