@@ -106,7 +106,7 @@ export function useImageRender(
       console.error("Failed to create texture from image:", e);
       return null;
     }
-  }, [device, image, image?.src]);
+  }, [device, image]);
 
   useEffect(() => {
     if (!device || !context || !format || !pipeline || !texture) {
