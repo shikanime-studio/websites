@@ -9,7 +9,7 @@ export interface Bins {
   b: Array<number>;
 }
 
-function useHistogramPipeline() {
+function useHistogramComputePipeline() {
   const { device } = useGPU();
 
   return useMemo(() => {
@@ -19,29 +19,40 @@ function useHistogramPipeline() {
       code: histogramShader,
     });
 
-    const computePipeline = device.createComputePipeline({
+    return device.createComputePipeline({
       layout: "auto",
       compute: {
         module: shaderModule,
         entryPoint: "cs_main",
       },
     });
+  }, [device]);
+}
 
-    const normalizePipeline = device.createComputePipeline({
+function useHistogramNormalizePipeline() {
+  const { device } = useGPU();
+
+  return useMemo(() => {
+    if (!device) return null;
+
+    const shaderModule = device.createShaderModule({
+      code: histogramShader,
+    });
+
+    return device.createComputePipeline({
       layout: "auto",
       compute: {
         module: shaderModule,
         entryPoint: "cs_normalize",
       },
     });
-
-    return { computePipeline, normalizePipeline };
   }, [device]);
 }
 
 export function useHistogram(image: HTMLImageElement | null) {
   const { device } = useGPU();
-  const pipelines = useHistogramPipeline();
+  const computePipeline = useHistogramComputePipeline();
+  const normalizePipeline = useHistogramNormalizePipeline();
 
   const { data } = useSuspenseQuery({
     queryKey: [
@@ -50,12 +61,12 @@ export function useHistogram(image: HTMLImageElement | null) {
       image?.naturalWidth,
       image?.naturalHeight,
       !!device,
-      !!pipelines,
+      !!computePipeline,
+      !!normalizePipeline,
     ],
     queryFn: async () => {
-      if (!device || !pipelines || !image) return null;
-
-      const { computePipeline, normalizePipeline } = pipelines;
+      if (!device || !computePipeline || !normalizePipeline || !image)
+        return null;
       const width = image.naturalWidth;
       const height = image.naturalHeight;
 

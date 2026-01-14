@@ -55,7 +55,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
   return createPortal(
     <dialog className="modal modal-open">
       <div className="modal-box flex max-h-[90vh] w-11/12 max-w-6xl flex-col overflow-hidden rounded-3xl bg-white p-0 shadow-2xl md:flex-row">
-        {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
@@ -64,7 +63,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
           <FaXmark className="h-5 w-5" />
         </button>
 
-        {/* Right Top Actions (Mobile) */}
         <div className="absolute top-4 right-4 z-20 flex gap-2 md:hidden">
           <button
             type="button"
@@ -80,7 +78,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
           </button>
         </div>
 
-        {/* Left Side: Images Scroll */}
         <div
           ref={imageContainerRef}
           onScroll={handleScroll}
@@ -104,7 +101,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
             ))}
           </div>
 
-          {/* Scroll To Top Button */}
           <button
             type="button"
             onClick={scrollToTop}
@@ -118,9 +114,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
           </button>
         </div>
 
-        {/* Right Side: Details */}
         <div className="z-10 flex h-[60vh] w-full flex-col overflow-hidden bg-white shadow-[-5px_0_15px_-5px_rgba(0,0,0,0.1)] md:h-auto md:w-[40%]">
-          {/* Header Actions (Desktop) */}
           <div className="sticky top-0 z-10 hidden justify-end gap-2 p-4 md:flex">
             <button
               type="button"
@@ -137,10 +131,8 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
           </div>
 
           <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-6 pt-2 pb-8 md:px-8">
-            {/* Breadcrumbs / Category */}
             <div className="text-sm text-gray-500">Illustration</div>
 
-            {/* Title & Price */}
             <div className="flex flex-col gap-2">
               <h2 className="text-3xl leading-tight font-bold text-gray-900">
                 {card.title}
@@ -153,7 +145,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
               </div>
             </div>
 
-            {/* Tags */}
             <div className="flex flex-col gap-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
                 <FaCheck className="text-gray-900" /> Personal
@@ -166,7 +157,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
               </div>
             </div>
 
-            {/* Artist Profile */}
             <div className="flex items-center gap-3 rounded-xl border border-gray-100 bg-gray-50 p-4">
               <Image
                 src={card.artist.avatar.src}
@@ -189,14 +179,12 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
               </div>
             </div>
 
-            {/* Note */}
             <div className="rounded-xl bg-blue-50 p-4 text-sm leading-relaxed text-blue-900">
               Thanks for considering me for your commission! Please only start a
               request if you find the service details and my Terms of Service
               acceptable.
             </div>
 
-            {/* Description Tab (Mock) */}
             <div className="border-b border-gray-200">
               <div className="flex gap-6">
                 <button
@@ -229,7 +217,6 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
             </div>
           </div>
 
-          {/* Sticky Footer Action Buttons */}
           <div className="sticky bottom-0 mt-auto border-t border-gray-100 bg-white p-4">
             <div className="flex gap-3">
               <button

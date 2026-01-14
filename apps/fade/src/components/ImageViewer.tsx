@@ -1,5 +1,4 @@
-import { Image } from "@unpic/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useFile } from "../hooks/useFile";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useModal } from "../hooks/useModal";
@@ -7,6 +6,7 @@ import { useObjectUrl } from "../hooks/useObjectUrl";
 import { FileIcon } from "./FileIcon";
 import { FullscreenModal } from "./FullscreenModal";
 import { FullscreenNavigation } from "./FullscreenNavigation";
+import { ImageRender } from "./ImageRender";
 import type { FileItem } from "../lib/fs";
 
 interface ImageViewerProps {
@@ -17,8 +17,14 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
   const { file, mimeType } = useFile(fileItem ?? null);
   const { url } = useObjectUrl(file ?? null);
   const { setImage } = useImageInfo();
-  const imgRef = useRef<HTMLImageElement>(null);
   const { modal, setModal } = useModal();
+  const [loadedImage, setLoadedImage] = useState<HTMLImageElement | null>(null);
+  const [prevUrl, setPrevUrl] = useState<string | null>(null);
+
+  if (url !== prevUrl) {
+    setPrevUrl(url ?? null);
+    setLoadedImage(null);
+  }
 
   useEffect(() => {
     if (!file || !url || !mimeType?.startsWith("image/")) {
@@ -32,21 +38,31 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
     <>
       {mimeType?.startsWith("image/") ? (
         <>
-          <Image
-            ref={imgRef}
-            key={url}
+          <img
             src={url}
             alt={fileItem?.handle.name ?? ""}
-            className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-            layout="fullWidth"
-            background="auto"
+            className="hidden"
             onLoad={(e) => {
-              setImage(e.currentTarget as HTMLImageElement);
-            }}
-            onDoubleClick={() => {
-              setModal("fullscreen");
+              const img = e.currentTarget;
+              setLoadedImage(img);
+              setImage(img);
             }}
           />
+          <div className="contents">
+            {loadedImage ? (
+              <ImageRender
+                image={loadedImage}
+                className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                onDoubleClick={() => {
+                  setModal("fullscreen");
+                }}
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+              </div>
+            )}
+          </div>
           <FullscreenModal
             open={modal === "fullscreen"}
             onClose={() => {
@@ -54,13 +70,12 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
             }}
           >
             <FullscreenNavigation>
-              <Image
-                src={url}
-                alt={fileItem?.handle.name ?? ""}
-                className="max-h-full max-w-full object-contain"
-                layout="fullWidth"
-                background="auto"
-              />
+              {loadedImage && (
+                <ImageRender
+                  image={loadedImage}
+                  className="max-h-full max-w-full object-contain"
+                />
+              )}
             </FullscreenNavigation>
           </FullscreenModal>
         </>
