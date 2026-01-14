@@ -154,9 +154,7 @@ export const ShowcaseGalleryContent: FC<
                       className="h-full w-full object-contain"
                     />
                   ))}
-                >
-                  {/* No CardStatus, No CardBookmark */}
-                </CardShowcaseCarousel>
+                />
                 <CardInfo
                   {...item}
                   onClick={() => {

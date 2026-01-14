@@ -129,7 +129,6 @@ function LightingSection() {
   return (
     <CollapsibleSection title="Lighting" icon={Sun} className="mt-8">
       <div className="flex flex-col gap-4">
-        {/* Exposure */}
         <Slider
           label="Exposure"
           value={exposure}
@@ -138,7 +137,6 @@ function LightingSection() {
           step={0.05}
           onChange={setExposure}
         />
-        {/* Contrast */}
         <Slider
           label="Contrast"
           value={contrast}
@@ -147,7 +145,6 @@ function LightingSection() {
           step={0.01}
           onChange={setContrast}
         />
-        {/* Saturation */}
         <Slider
           label="Saturation"
           value={saturation}
@@ -156,7 +153,6 @@ function LightingSection() {
           step={0.01}
           onChange={setSaturation}
         />
-        {/* Highlights */}
         <Slider
           label="Highlights"
           value={highlights}
@@ -165,7 +161,6 @@ function LightingSection() {
           step={0.01}
           onChange={setHighlights}
         />
-        {/* Shadows */}
         <Slider
           label="Shadows"
           value={shadows}
@@ -174,7 +169,6 @@ function LightingSection() {
           step={0.01}
           onChange={setShadows}
         />
-        {/* Whites */}
         <Slider
           label="Whites"
           value={whites}
@@ -183,7 +177,6 @@ function LightingSection() {
           step={0.01}
           onChange={setWhites}
         />
-        {/* Blacks */}
         <Slider
           label="Blacks"
           value={blacks}
@@ -192,7 +185,6 @@ function LightingSection() {
           step={0.01}
           onChange={setBlacks}
         />
-        {/* Tint */}
         <Slider
           label="Tint"
           value={tint}
@@ -201,7 +193,6 @@ function LightingSection() {
           step={0.01}
           onChange={setTint}
         />
-        {/* Temperature */}
         <Slider
           label="Temperature"
           value={temperature}
@@ -210,7 +201,6 @@ function LightingSection() {
           step={0.01}
           onChange={setTemperature}
         />
-        {/* Vibrance */}
         <Slider
           label="Vibrance"
           value={vibrance}
@@ -219,7 +209,6 @@ function LightingSection() {
           step={0.01}
           onChange={setVibrance}
         />
-        {/* Hue */}
         <Slider
           label="Hue"
           value={hue}

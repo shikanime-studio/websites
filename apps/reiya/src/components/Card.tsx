@@ -170,7 +170,6 @@ export const CardNavigation: FC<CardNavigationProps> = ({
 }) => {
   return (
     <>
-      {/* Navigation Arrows - Only visible on hover and if multiple images */}
       <button
         type="button"
         onClick={onNextClick}
