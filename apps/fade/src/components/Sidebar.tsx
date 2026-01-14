@@ -8,7 +8,7 @@ import {
   RotateCcw,
   Sun,
 } from "lucide-react";
-import { Activity, Suspense, useState } from "react";
+import { Activity, Suspense } from "react";
 import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useExif } from "../hooks/useExif";
@@ -19,6 +19,7 @@ import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
+import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
 
 export function Sidebar() {
@@ -127,7 +128,12 @@ function LightingSection() {
   } = useLighting();
 
   return (
-    <CollapsibleSection title="Lighting" icon={Sun} className="mt-8">
+    <CollapsibleSection
+      title="Lighting"
+      id="sidebarSectionCollapsedLighting"
+      icon={Sun}
+      className="mt-8"
+    >
       <div className="flex flex-col gap-4">
         <Slider
           label="Exposure"
@@ -283,7 +289,11 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   if (!file) return null;
 
   return (
-    <CollapsibleSection title="Info" icon={Info}>
+    <CollapsibleSection
+      title="Info"
+      id="sidebarSectionCollapsedInfo"
+      icon={Info}
+    >
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
         {fileItem.mimeType?.startsWith("image/") ? (
           <Histogram />
@@ -340,7 +350,12 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
   const focalLength = tags[ExifTagId.FocalLength] as number | undefined;
 
   return (
-    <CollapsibleSection title="Camera" icon={Camera} className="mt-8">
+    <CollapsibleSection
+      title="Camera"
+      id="sidebarSectionCollapsedCamera"
+      icon={Camera}
+      className="mt-8"
+    >
       <dl className="m-0 flex flex-col gap-4">
         {(make ?? model) && (
           <div className="flex flex-col gap-1">
@@ -415,7 +430,11 @@ function GroupedFilesSection({ fileItem }: { fileItem: FileItem }) {
   if (sidecars.length === 0) return null;
 
   return (
-    <CollapsibleSection title="Grouped Files" className="mt-8">
+    <CollapsibleSection
+      title="Grouped Files"
+      id="sidebarSectionCollapsedGroupedFiles"
+      className="mt-8"
+    >
       <div className="flex flex-col gap-2">
         {sidecars.map((sidecarItem) => (
           <div
@@ -433,22 +452,41 @@ function GroupedFilesSection({ fileItem }: { fileItem: FileItem }) {
 
 function CollapsibleSection({
   title,
+  id,
   icon: Icon,
   children,
   className = "",
 }: {
   title: string;
+  id: Extract<Setting, { value: boolean }>["id"];
   icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
 }) {
-  const [isOpen, setIsOpen] = useState(true);
+  const { data } = useLiveQuery((q) =>
+    q
+      .from({ settings: settingsCollection })
+      .where(({ settings }) => eq(settings.id, id))
+      .findOne(),
+  );
+
+  const isCollapsed = (data?.value as boolean) || false;
+  const isOpen = !isCollapsed;
 
   return (
     <div className={className}>
       <button
         onClick={() => {
-          setIsOpen(!isOpen);
+          if (data) {
+            settingsCollection.update(id, (draft) => {
+              draft.value = !isCollapsed;
+            });
+          } else {
+            settingsCollection.insert({
+              id,
+              value: !isCollapsed,
+            } as Setting);
+          }
         }}
         className="border-base-300 text-base-content/70 mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
       >

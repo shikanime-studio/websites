@@ -17,6 +17,22 @@ export const setting = z.discriminatedUnion("id", [
     id: z.literal("filmstripCollapsed"),
     value: z.boolean(),
   }),
+  z.object({
+    id: z.literal("sidebarSectionCollapsedInfo"),
+    value: z.boolean(),
+  }),
+  z.object({
+    id: z.literal("sidebarSectionCollapsedLighting"),
+    value: z.boolean(),
+  }),
+  z.object({
+    id: z.literal("sidebarSectionCollapsedCamera"),
+    value: z.boolean(),
+  }),
+  z.object({
+    id: z.literal("sidebarSectionCollapsedGroupedFiles"),
+    value: z.boolean(),
+  }),
 ]);
 
 export type Setting = z.infer<typeof setting>;
