@@ -10,7 +10,7 @@
  * 4. Applies basic Gamma Correction (2.2) for correct display on monitors.
  *
  * 5. Applies Lighting adjustments (Exposure, Contrast, etc.)
- * 
+ *
  * This provides a quick "preview" mode of the raw data structure.
  */
 
@@ -39,9 +39,9 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
 struct Lighting {
     // x: exposure, y: contrast, z: saturation, w: vibrance
   params1: vec4<f32>,
-  // x: highlights, y: shadows, z: whites, w: blacks
+    // x: highlights, y: shadows, z: whites, w: blacks
     params2: vec4<f32>,
-  // x: tint, y: temperature, z: hue, w: padding
+    // x: tint, y: temperature, z: hue, w: padding
     params3: vec4<f32>,
 }
 
@@ -85,8 +85,7 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
 
     var color = vec4<f32>(norm, norm, norm, 1.0);
 
-    // --- Apply Lighting ---
-    // Unpack parameters
+    // Unpack lighting parameters
     let exposure = lighting.params1.x;
     let contrast = lighting.params1.y;
     let saturation = lighting.params1.z;
@@ -101,18 +100,18 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
     let temperature = lighting.params3.y;
     let hue = lighting.params3.z;
 
-    // 1. Exposure
+    // Exposure
     color = vec4<f32>(color.rgb * pow(2.0, exposure), color.a);
 
-    // 2. White Balance
+    // White Balance
     let tempAdj = vec3<f32>(temperature * 0.1, 0.0, -temperature * 0.1);
     let tintAdj = vec3<f32>(0.0, tint * 0.1, 0.0);
     color = vec4<f32>(color.rgb + tempAdj + tintAdj, color.a);
 
-    // 3. Contrast
+    // Contrast
     color = vec4<f32>((color.rgb - 0.5) * contrast + 0.5, color.a);
 
-    // 4. Highlights / Shadows
+    // Highlights / Shadows
     let luma = dot(color.rgb, vec3<f32>(0.299, 0.587, 0.114));
     if luma > 0.5 {
         color = vec4<f32>(color.rgb + (1.0 - luma) * highlights * 0.2, color.a);
@@ -120,13 +119,13 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
         color = vec4<f32>(color.rgb + luma * shadows * 0.2, color.a);
     }
 
-    // 5. Whites / Blacks
+    // Whites / Blacks
     color = vec4<f32>(color.rgb * (1.0 + whites * 0.1) + blacks * 0.1, color.a);
 
-    // 6. Saturation & Vibrance (For raw, which is initially grayscale here, this might just colorize it if tint/temp added color, or do nothing if it's pure gray. But usually we want to allow saturation if we demosaiced. Here we are visualizing RAW, which is grayscale bayer usually. But if we applied temp/tint, we have color now.)
+    // Saturation & Vibrance
     let gray = vec3<f32>(luma);
     var satColor = mix(gray, color.rgb, saturation);
-    
+
     // Vibrance
     let maxComp = max(color.r, max(color.g, color.b));
     let minComp = min(color.r, min(color.g, color.b));
@@ -135,7 +134,7 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
 
     color = vec4<f32>(satColor, color.a);
 
-    // 7. Hue
+    // Hue
     if hue != 0.0 {
         var hsv = rgb2hsv(color.rgb);
         hsv.x = fract(hsv.x + hue / 360.0);
