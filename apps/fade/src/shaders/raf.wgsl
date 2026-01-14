@@ -130,14 +130,20 @@ fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
     let maxComp = max(color.r, max(color.g, color.b));
     let minComp = min(color.r, min(color.g, color.b));
     let currentSat = maxComp - minComp;
-    satColor = mix(satColor, color.rgb, (1.0 - currentSat) * vibrance);
+    let vib = clamp(vibrance, -1.0, 1.0);
+    let vibStrength = (1.0 - currentSat) * abs(vib);
+    if vib > 0.0 {
+        satColor = mix(satColor, color.rgb, vibStrength);
+    } else if vib < 0.0 {
+        satColor = mix(satColor, gray, vibStrength);
+    }
 
     color = vec4<f32>(satColor, color.a);
 
-    // Hue
+    // Hue: slider range [-1, 1] represents [-1, 1] turns around the wheel
     if hue != 0.0 {
         var hsv = rgb2hsv(color.rgb);
-        hsv.x = fract(hsv.x + hue / 360.0);
+        hsv.x = fract(hsv.x + hue);
         color = vec4<f32>(hsv2rgb(hsv), color.a);
     }
 
