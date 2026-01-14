@@ -1,35 +1,12 @@
-import { createContext, useState } from "react";
+import { useState } from "react";
+import { LightingContext } from "../hooks/useLighting";
 import type { ReactNode } from "react";
 
-interface LightingContextType {
-  exposure: number;
-  setExposure: (value: number) => void;
-  contrast: number;
-  setContrast: (value: number) => void;
-  saturation: number;
-  setSaturation: (value: number) => void;
-  highlights: number;
-  setHighlights: (value: number) => void;
-  shadows: number;
-  setShadows: (value: number) => void;
-  whites: number;
-  setWhites: (value: number) => void;
-  blacks: number;
-  setBlacks: (value: number) => void;
-  tint: number;
-  setTint: (value: number) => void;
-  temperature: number;
-  setTemperature: (value: number) => void;
-  vibrance: number;
-  setVibrance: (value: number) => void;
-  hue: number;
-  setHue: (value: number) => void;
-  reset: () => void;
+interface LightingProviderProps {
+  children: ReactNode;
 }
 
-export const LightingContext = createContext<LightingContextType | null>(null);
-
-export function LightingProvider({ children }: { children: ReactNode }) {
+export function LightingProvider({ children }: LightingProviderProps) {
   const [exposure, setExposure] = useState(0);
   const [contrast, setContrast] = useState(1);
   const [saturation, setSaturation] = useState(1);
