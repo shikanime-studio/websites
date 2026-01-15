@@ -19,46 +19,64 @@ export function LightingProvider({ children }: LightingProviderProps) {
   const [vibrance, setVibrance] = useState(0);
   const [hue, setHue] = useState(0);
 
-  const reset = () => {
-    setExposure(0);
-    setContrast(1);
-    setSaturation(1);
-    setHighlights(0);
-    setShadows(0);
-    setWhites(0);
-    setBlacks(0);
-    setTint(0);
-    setTemperature(0);
-    setVibrance(0);
-    setHue(0);
-  };
-
   return (
     <LightingContext.Provider
       value={{
         exposure,
         setExposure,
+        resetExposure: () => {
+          setExposure(0);
+        },
         contrast,
         setContrast,
+        resetContrast: () => {
+          setContrast(1);
+        },
         saturation,
         setSaturation,
+        resetSaturation: () => {
+          setSaturation(1);
+        },
         highlights,
         setHighlights,
+        resetHighlights: () => {
+          setHighlights(0);
+        },
         shadows,
         setShadows,
+        resetShadows: () => {
+          setShadows(0);
+        },
         whites,
         setWhites,
+        resetWhites: () => {
+          setWhites(0);
+        },
         blacks,
         setBlacks,
+        resetBlacks: () => {
+          setBlacks(0);
+        },
         tint,
         setTint,
+        resetTint: () => {
+          setTint(0);
+        },
         temperature,
         setTemperature,
+        resetTemperature: () => {
+          setTemperature(0);
+        },
         vibrance,
         setVibrance,
+        resetVibrance: () => {
+          setVibrance(0);
+        },
         hue,
         setHue,
-        reset,
+        resetHue: () => {
+          setHue(0);
+        },
       }}
     >
       {children}

@@ -5,7 +5,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Info,
-  RotateCcw,
   Sun,
 } from "lucide-react";
 import { Activity, Suspense } from "react";
@@ -104,27 +103,37 @@ function LightingSection() {
   const {
     exposure,
     setExposure,
+    resetExposure,
     contrast,
     setContrast,
+    resetContrast,
     saturation,
     setSaturation,
+    resetSaturation,
     highlights,
     setHighlights,
+    resetHighlights,
     shadows,
     setShadows,
+    resetShadows,
     whites,
     setWhites,
+    resetWhites,
     blacks,
     setBlacks,
+    resetBlacks,
     tint,
     setTint,
+    resetTint,
     temperature,
     setTemperature,
+    resetTemperature,
     vibrance,
     setVibrance,
+    resetVibrance,
     hue,
     setHue,
-    reset,
+    resetHue,
   } = useLighting();
 
   return (
@@ -142,6 +151,7 @@ function LightingSection() {
           max={5}
           step={0.05}
           onChange={setExposure}
+          onDoubleClick={resetExposure}
         />
         <Slider
           label="Contrast"
@@ -150,7 +160,7 @@ function LightingSection() {
           max={2}
           step={0.01}
           onChange={setContrast}
-          defaultValue={1}
+          onDoubleClick={resetContrast}
         />
         <Slider
           label="Saturation"
@@ -159,7 +169,7 @@ function LightingSection() {
           max={2}
           step={0.01}
           onChange={setSaturation}
-          defaultValue={1}
+          onDoubleClick={resetSaturation}
         />
         <Slider
           label="Highlights"
@@ -168,6 +178,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setHighlights}
+          onDoubleClick={resetHighlights}
         />
         <Slider
           label="Shadows"
@@ -176,6 +187,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setShadows}
+          onDoubleClick={resetShadows}
         />
         <Slider
           label="Whites"
@@ -184,6 +196,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setWhites}
+          onDoubleClick={resetWhites}
         />
         <Slider
           label="Blacks"
@@ -192,6 +205,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setBlacks}
+          onDoubleClick={resetBlacks}
         />
         <Slider
           label="Tint"
@@ -200,6 +214,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setTint}
+          onDoubleClick={resetTint}
         />
         <Slider
           label="Temperature"
@@ -208,6 +223,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setTemperature}
+          onDoubleClick={resetTemperature}
         />
         <Slider
           label="Vibrance"
@@ -216,6 +232,7 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setVibrance}
+          onDoubleClick={resetVibrance}
         />
         <Slider
           label="Hue"
@@ -224,17 +241,8 @@ function LightingSection() {
           max={1}
           step={0.01}
           onChange={setHue}
+          onDoubleClick={resetHue}
         />
-
-        <div className="flex justify-end pt-2">
-          <button
-            onClick={reset}
-            className="btn btn-ghost btn-xs text-xs opacity-50 hover:opacity-100"
-          >
-            <RotateCcw className="mr-1 h-3 w-3" />
-            Reset
-          </button>
-        </div>
       </div>
     </CollapsibleSection>
   );
@@ -247,7 +255,7 @@ function Slider({
   max,
   step,
   onChange,
-  defaultValue = 0,
+  onDoubleClick,
 }: {
   label: string;
   value: number;
@@ -255,7 +263,7 @@ function Slider({
   max: number;
   step: number;
   onChange: (value: number) => void;
-  defaultValue?: number;
+  onDoubleClick?: () => void;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -273,7 +281,9 @@ function Slider({
           onChange(parseFloat(e.target.value));
         }}
         onDoubleClick={() => {
-          onChange(defaultValue);
+          if (onDoubleClick) {
+            onDoubleClick();
+          }
         }}
         className="range range-xs"
       />
@@ -339,7 +349,10 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
 
   if (!exifData || exifData.length === 0) return null;
 
-  const tags = Object.fromEntries(exifData.map((e) => [e.tagId, e.value]));
+  const tags: Record<number, unknown> = {};
+  for (const entry of exifData) {
+    tags[entry.tagId] = entry.value;
+  }
 
   const make = tags[ExifTagId.Make] as string | undefined;
   const model = tags[ExifTagId.Model] as string | undefined;
@@ -458,7 +471,7 @@ function CollapsibleSection({
   className = "",
 }: {
   title: string;
-  id: Extract<Setting, { value: boolean }>["id"];
+  id: string;
   icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
