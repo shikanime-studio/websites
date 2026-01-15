@@ -349,10 +349,7 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
 
   if (!exifData || exifData.length === 0) return null;
 
-  const tags: Record<number, unknown> = {};
-  for (const entry of exifData) {
-    tags[entry.tagId] = entry.value;
-  }
+  const tags = Object.fromEntries(exifData.map((e) => [e.tagId, e.value]));
 
   const make = tags[ExifTagId.Make] as string | undefined;
   const model = tags[ExifTagId.Model] as string | undefined;
