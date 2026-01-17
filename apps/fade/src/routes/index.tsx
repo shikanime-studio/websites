@@ -26,15 +26,15 @@ function GalleryContainer() {
   return (
     <GalleryProvider handle={handle}>
       <div className="bg-base-100 text-base-content selection:bg-warning selection:text-warning-content flex h-screen flex-col">
-        <ToolBar />
-        <div className="flex min-h-0 flex-1 overflow-hidden">
-          <ImageInfoProvider>
-            <LightingProvider>
+        <ImageInfoProvider>
+          <LightingProvider>
+            <ToolBar />
+            <div className="flex min-h-0 flex-1 overflow-hidden">
               <MainViewer />
               <Sidebar />
-            </LightingProvider>
-          </ImageInfoProvider>
-        </div>
+            </div>
+          </LightingProvider>
+        </ImageInfoProvider>
         <Filmstrip />
       </div>
     </GalleryProvider>

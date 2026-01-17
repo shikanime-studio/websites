@@ -1,7 +1,10 @@
-import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
+import { AlertTriangle, Download, FolderOpen, Image, Settings } from "lucide-react";
 import { siGithub } from "simple-icons";
 import { useDirectory } from "../hooks/useDirectory";
 import { useGallery } from "../hooks/useGallery";
+import { useImageInfo } from "../hooks/useImageInfo";
+import { useImageDownload } from "../hooks/useImageRender";
+import { useLighting } from "../hooks/useLighting";
 import { useModal } from "../hooks/useModal";
 import { SettingsModal } from "./SettingsModal";
 
@@ -57,6 +60,9 @@ function ToolBarStatus() {
 
 function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
   const { select, isSupported } = useDirectory();
+  const { image } = useImageInfo();
+  const lighting = useLighting();
+  const downloadImage = useImageDownload(image, lighting);
 
   return (
     <div className="navbar-end gap-2">
@@ -82,6 +88,17 @@ function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
         <FolderOpen className="h-4 w-4" />
         <span>Open Folder</span>
       </button>
+      {image && (
+        <button
+          className="btn btn-sm btn-outline gap-2 font-medium"
+          onClick={() => {
+            void downloadImage();
+          }}
+        >
+          <Download className="h-4 w-4" />
+          <span>Export</span>
+        </button>
+      )}
       <a
         href="https://github.com/shikanime-studio/websites/tree/main/apps/fade"
         target="_blank"
