@@ -41,8 +41,6 @@
       perSystem = _: {
         devenv.shells.default = {
           imports = [
-            devlib.devenvModules.docs
-            devlib.devenvModules.formats
             devlib.devenvModules.git
             devlib.devenvModules.github
             devlib.devenvModules.javascript
