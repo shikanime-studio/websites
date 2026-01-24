@@ -1,7 +1,16 @@
 import { describe, expect, it } from "vitest";
-import { ExifTagId } from "./exif";
+import { MakeTagId } from "./exif";
 import { createRawImageDataView } from "./raw";
-import { FujiTagId, RafOffset } from "./raf";
+import {
+  CfaHeaderLength,
+  CfaHeaderOffset,
+  CfaLength,
+  CfaOffset,
+  JpegImageLength,
+  JpegImageOffset,
+  QualityTagId,
+  SharpnessTagId,
+} from "./raf";
 import type { FileItem } from "./fs";
 import type { ExifTagEntry } from "./exif";
 
@@ -162,10 +171,10 @@ describe("createRawImageDataView", () => {
 
     // Offset to JPEG Image Offset is at 84 (Big Endian)
     // We'll put the JPEG right after the header (offset 100)
-    headerView.setUint32(RafOffset.JpegImageOffset, 100, false);
+    headerView.setUint32(JpegImageOffset, 100, false);
 
     // Length of JPEG Image is at 88 (Big Endian)
-    headerView.setUint32(RafOffset.JpegImageLength, jpegData.length, false);
+    headerView.setUint32(JpegImageLength, jpegData.length, false);
 
     const rafData = new Uint8Array(rafHeader.length + jpegData.length);
     rafData.set(rafHeader, 0);
@@ -179,8 +188,7 @@ describe("createRawImageDataView", () => {
     const tags = view?.getJpegImage()?.getExif()?.getTagEntries();
 
     expect(tags).toBeDefined();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make);
+    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId);
     expect(makeTag).toBeDefined();
     expect(makeTag?.value).toBe("Fujifilm XT-5");
   });
@@ -195,8 +203,8 @@ describe("createRawImageDataView", () => {
 
     // Place fujiData at offset 100
     const fujiOffset = 100;
-    headerView.setUint32(RafOffset.CfaHeaderOffset, fujiOffset, false);
-    headerView.setUint32(RafOffset.CfaHeaderLength, fujiData.length, false);
+    headerView.setUint32(CfaHeaderOffset, fujiOffset, false);
+    headerView.setUint32(CfaHeaderLength, fujiData.length, false);
 
     // Construct file
     const rafData = new Uint8Array(fujiOffset + fujiData.length);
@@ -211,15 +219,13 @@ describe("createRawImageDataView", () => {
     const tags = view?.getCfaHeader()?.getTagEntries();
 
     expect(tags).toBeDefined();
-    const qualityTag = tags?.find(
-      (t) => t.tagId === (FujiTagId.Quality as number),
-    );
+    const qualityTag = tags?.find((t) => t.tagId === (QualityTagId as number));
     expect(qualityTag?.value).toBe("FINE");
 
     const sharpnessTag = tags?.find(
-      (t) => t.tagId === (FujiTagId.Sharpness as number),
+      (t) => t.tagId === (SharpnessTagId as number),
     );
-    expect(sharpnessTag?.value).toBe("Normal");
+    expect(sharpnessTag?.value).toBe(3);
   });
 
   it("should extract CFA data without validation", async () => {
@@ -233,8 +239,8 @@ describe("createRawImageDataView", () => {
     const cfaOffset = headerSize;
     const cfaLength = cfaData.byteLength;
 
-    headerView.setUint32(RafOffset.CfaOffset, cfaOffset, false);
-    headerView.setUint32(RafOffset.CfaLength, cfaLength, false);
+    headerView.setUint32(CfaOffset, cfaOffset, false);
+    headerView.setUint32(CfaLength, cfaLength, false);
 
     const rafData = new Uint8Array(cfaOffset + cfaLength);
     rafData.set(rafHeader, 0);
@@ -248,6 +254,12 @@ describe("createRawImageDataView", () => {
 
     const cfa = view?.getCfa();
     expect(cfa).toBeDefined();
-    expect(cfa).toEqual(cfaData);
+    if (!cfa) throw new Error("CFA data not found");
+    const cfaArray = new Uint16Array(
+      cfa.buffer,
+      cfa.byteOffset,
+      cfa.byteLength / 2,
+    );
+    expect(cfaArray).toEqual(cfaData);
   });
 });

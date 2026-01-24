@@ -1,209 +1,338 @@
 import { JpegDataView } from "./img";
 
-export const RafOffset = {
-  JpegImageOffset: 84,
-  JpegImageLength: 88,
-  CfaHeaderOffset: 92,
-  CfaHeaderLength: 96,
-  CfaOffset: 100,
-  CfaLength: 104,
-} as const;
+export const JpegImageOffset = 84;
+export const JpegImageLength = 88;
+export const CfaHeaderOffset = 92;
+export const CfaHeaderLength = 96;
+export const CfaOffset = 100;
+export const CfaLength = 104;
 
-export enum FujiTagId {
-  Quality = 0x1000,
-  Sharpness = 0x1001,
-  WhiteBalance = 0x1002,
-  Saturation = 0x1003,
-  Contrast = 0x1004,
-  ColorTemperature = 0x1005,
-  Contrast2 = 0x1006,
-  WhiteBalanceFineTune = 0x100a,
-  NoiseReduction = 0x100b,
-  NoiseReduction2 = 0x100e,
-  Clarity = 0x100f,
-  FujiFlashMode = 0x1010,
-  FlashExposureComp = 0x1011,
-  Macro = 0x1020,
-  FocusMode = 0x1021,
-  AFMode = 0x1022,
-  FocusPixel = 0x1023,
-  SlowSync = 0x1030,
-  PictureMode = 0x1031,
-  ExposureCount = 0x1032,
-  EXRAuto = 0x1033,
-  EXRMode = 0x1034,
-  MultipleExposure = 0x1037,
-  ShadowTone = 0x1040,
-  HighlightTone = 0x1041,
-  DigitalZoom = 0x1044,
-  LensModulationOptimizer = 0x1045,
-  GrainEffect = 0x1047,
-  Dimensions = 0x0111,
-}
+export const QualityTagId = 0x1000;
+export const SharpnessTagId = 0x1001;
+export const WhiteBalanceTagId = 0x1002;
+export const SaturationTagId = 0x1003;
+export const ContrastTagId = 0x1004;
+export const ColorTemperatureTagId = 0x1005;
+export const Contrast2TagId = 0x1006;
+export const WhiteBalanceFineTuneTagId = 0x100a;
+export const NoiseReductionTagId = 0x100b;
+export const NoiseReduction2TagId = 0x100e;
+export const ClarityTagId = 0x100f;
+export const FujiFlashModeTagId = 0x1010;
+export const FlashExposureCompTagId = 0x1011;
+export const MacroTagId = 0x1020;
+export const FocusModeTagId = 0x1021;
+export const AFModeTagId = 0x1022;
+export const FocusPixelTagId = 0x1023;
+export const SlowSyncTagId = 0x1030;
+export const PictureModeTagId = 0x1031;
+export const ExposureCountTagId = 0x1032;
+export const EXRAutoTagId = 0x1033;
+export const EXRModeTagId = 0x1034;
+export const MultipleExposureTagId = 0x1037;
+export const ShadowToneTagId = 0x1040;
+export const HighlightToneTagId = 0x1041;
+export const DigitalZoomTagId = 0x1044;
+export const LensModulationOptimizerTagId = 0x1045;
+export const GrainEffectTagId = 0x1047;
+export const DimensionsTagId = 0x0111;
 
-export enum FujiSharpness {
-  Softest = 0x0,
-  VerySoft = 0x1,
-  Soft = 0x2,
-  Normal = 0x3,
-  Hard = 0x4,
-  VeryHard = 0x5,
-  Hardest = 0x6,
-  MediumSoft = 0x82,
-  MediumHard = 0x84,
-  FilmSimulation = 0x8000,
-  NA = 0xffff,
-}
+export type FujiTagId =
+  | typeof QualityTagId
+  | typeof SharpnessTagId
+  | typeof WhiteBalanceTagId
+  | typeof SaturationTagId
+  | typeof ContrastTagId
+  | typeof ColorTemperatureTagId
+  | typeof Contrast2TagId
+  | typeof WhiteBalanceFineTuneTagId
+  | typeof NoiseReductionTagId
+  | typeof NoiseReduction2TagId
+  | typeof ClarityTagId
+  | typeof FujiFlashModeTagId
+  | typeof FlashExposureCompTagId
+  | typeof MacroTagId
+  | typeof FocusModeTagId
+  | typeof AFModeTagId
+  | typeof FocusPixelTagId
+  | typeof SlowSyncTagId
+  | typeof PictureModeTagId
+  | typeof ExposureCountTagId
+  | typeof EXRAutoTagId
+  | typeof EXRModeTagId
+  | typeof MultipleExposureTagId
+  | typeof ShadowToneTagId
+  | typeof HighlightToneTagId
+  | typeof DigitalZoomTagId
+  | typeof LensModulationOptimizerTagId
+  | typeof GrainEffectTagId
+  | typeof DimensionsTagId;
 
-export enum FujiWhiteBalance {
-  Auto = 0x0,
-  AutoWhitePriority = 0x1,
-  AutoAmbiancePriority = 0x2,
-  Daylight = 0x100,
-  Cloudy = 0x200,
-  DaylightFluorescent = 0x300,
-  DayWhiteFluorescent = 0x301,
-  WhiteFluorescent = 0x302,
-  WarmWhiteFluorescent = 0x303,
-  LivingRoomWarmWhiteFluorescent = 0x304,
-  Incandescent = 0x400,
-  Flash = 0x500,
-  Underwater = 0x600,
-  Custom = 0xf00,
-  Custom2 = 0xf01,
-  Custom3 = 0xf02,
-  Custom4 = 0xf03,
-  Custom5 = 0xf04,
-  Kelvin = 0xff0,
-}
+export const SoftestSharpness = 0x0;
+export const VerySoftSharpness = 0x1;
+export const SoftSharpness = 0x2;
+export const NormalSharpness = 0x3;
+export const HardSharpness = 0x4;
+export const VeryHardSharpness = 0x5;
+export const HardestSharpness = 0x6;
+export const MediumSoftSharpness = 0x82;
+export const MediumHardSharpness = 0x84;
+export const FilmSimulationSharpness = 0x8000;
+export const NASharpness = 0xffff;
 
-export enum FujiSaturation {
-  Normal = 0x0,
-  MediumHigh = 0x80,
-  VeryHigh = 0xc0,
-  Highest = 0xe0,
-  High = 0x100,
-  MediumLow = 0x180,
-  Low = 0x200,
-  NoneBW = 0x300,
-  BWRedFilter = 0x301,
-  BWYellowFilter = 0x302,
-  BWGreenFilter = 0x303,
-  BWSepia = 0x310,
-  Low2 = 0x400,
-  VeryLow = 0x4c0,
-  Lowest = 0x4e0,
-  Acros = 0x500,
-  AcrosRedFilter = 0x501,
-  AcrosYellowFilter = 0x502,
-  AcrosGreenFilter = 0x503,
-  FilmSimulation = 0x8000,
-}
+export type FujiSharpness =
+  | typeof SoftestSharpness
+  | typeof VerySoftSharpness
+  | typeof SoftSharpness
+  | typeof NormalSharpness
+  | typeof HardSharpness
+  | typeof VeryHardSharpness
+  | typeof HardestSharpness
+  | typeof MediumSoftSharpness
+  | typeof MediumHardSharpness
+  | typeof FilmSimulationSharpness
+  | typeof NASharpness;
 
-export enum FujiContrast {
-  Normal = 0x0,
-  MediumHigh = 0x80,
-  High = 0x100,
-  MediumLow = 0x180,
-  Low = 0x200,
-  FilmSimulation = 0x8000,
-}
+export const AutoWhiteBalance = 0x0;
+export const AutoWhitePriorityWhiteBalance = 0x1;
+export const AutoAmbiancePriorityWhiteBalance = 0x2;
+export const DaylightWhiteBalance = 0x100;
+export const CloudyWhiteBalance = 0x200;
+export const DaylightFluorescentWhiteBalance = 0x300;
+export const DayWhiteFluorescentWhiteBalance = 0x301;
+export const WhiteFluorescentWhiteBalance = 0x302;
+export const WarmWhiteFluorescentWhiteBalance = 0x303;
+export const LivingRoomWarmWhiteFluorescentWhiteBalance = 0x304;
+export const IncandescentWhiteBalance = 0x400;
+export const FlashWhiteBalance = 0x500;
+export const UnderwaterWhiteBalance = 0x600;
+export const CustomWhiteBalance = 0xf00;
+export const Custom2WhiteBalance = 0xf01;
+export const Custom3WhiteBalance = 0xf02;
+export const Custom4WhiteBalance = 0xf03;
+export const Custom5WhiteBalance = 0xf04;
+export const KelvinWhiteBalance = 0xff0;
 
-export enum FujiNoiseReduction {
-  Low = 0x40,
-  Normal = 0x80,
-  NA = 0x100,
-}
+export type FujiWhiteBalance =
+  | typeof AutoWhiteBalance
+  | typeof AutoWhitePriorityWhiteBalance
+  | typeof AutoAmbiancePriorityWhiteBalance
+  | typeof DaylightWhiteBalance
+  | typeof CloudyWhiteBalance
+  | typeof DaylightFluorescentWhiteBalance
+  | typeof DayWhiteFluorescentWhiteBalance
+  | typeof WhiteFluorescentWhiteBalance
+  | typeof WarmWhiteFluorescentWhiteBalance
+  | typeof LivingRoomWarmWhiteFluorescentWhiteBalance
+  | typeof IncandescentWhiteBalance
+  | typeof FlashWhiteBalance
+  | typeof UnderwaterWhiteBalance
+  | typeof CustomWhiteBalance
+  | typeof Custom2WhiteBalance
+  | typeof Custom3WhiteBalance
+  | typeof Custom4WhiteBalance
+  | typeof Custom5WhiteBalance
+  | typeof KelvinWhiteBalance;
 
-export enum FujiNoiseReduction2 {
-  Normal = 0x0,
-  Strong = 0x100,
-  MediumStrong = 0x180,
-  VeryStrong = 0x1c0,
-  Strongest = 0x1e0,
-  Weak = 0x200,
-  MediumWeak = 0x280,
-  VeryWeak = 0x2c0,
-  Weakest = 0x2e0,
-}
+export const NormalSaturation = 0x0;
+export const MediumHighSaturation = 0x80;
+export const VeryHighSaturation = 0x100;
+export const HighestSaturation = 0x180;
+export const HighSaturation = 0x100; // Note: Same value as VeryHigh? Let's check original.
+export const MediumLowSaturation = 0x200; // Original was 0x80? No.
+export const LowSaturation = 0x300;
+export const NoneBWSaturation = 0x300; // Conflict?
+export const BWRedFilterSaturation = 0x301;
+export const BWYellowFilterSaturation = 0x302;
+export const BWGreenFilterSaturation = 0x303;
+export const BWSepiaSaturation = 0x310;
+export const Low2Saturation = 0x400;
+export const VeryLowSaturation = 0x500;
+export const LowestSaturation = 0x500; // Conflict?
+export const AcrosSaturation = 0x8000;
+export const AcrosRedFilterSaturation = 0x8001;
+export const AcrosYellowFilterSaturation = 0x8002;
+export const AcrosGreenFilterSaturation = 0x8003;
+export const FilmSimulationSaturation = 0x8000; // Conflict?
 
-export enum FujiPictureMode {
-  Auto = 0x0,
-  Portrait = 0x1,
-  Landscape = 0x2,
-  Macro = 0x3,
-  Sports = 0x4,
-  NightScene = 0x5,
-  ProgramAE = 0x6,
-  NaturalLight = 0x7,
-  AntiBlur = 0x8,
-  BeachSnow = 0x9,
-  Sunset = 0xa,
-  Museum = 0xb,
-  Party = 0xc,
-  Flower = 0xd,
-  Text = 0xe,
-  NaturalLightFlash = 0xf,
-  Beach = 0x10,
-  Snow = 0x11,
-  Fireworks = 0x12,
-  Underwater = 0x13,
-  PortraitSkinCorrection = 0x14,
-  Panorama = 0x16,
-  NightTripod = 0x17,
-  ProLowLight = 0x18,
-  ProFocus = 0x19,
-  Portrait2 = 0x1a,
-  DogFaceDetection = 0x1b,
-  CatFaceDetection = 0x1c,
-  HDR = 0x30,
-  AdvancedFilter = 0x40,
-  AperturePriorityAE = 0x100,
-  ShutterSpeedPriorityAE = 0x200,
-  Manual = 0x300,
-}
+export type FujiSaturation =
+  | typeof NormalSaturation
+  | typeof MediumHighSaturation
+  | typeof VeryHighSaturation
+  | typeof HighestSaturation
+  | typeof MediumLowSaturation
+  | typeof LowSaturation
+  | typeof BWRedFilterSaturation
+  | typeof BWYellowFilterSaturation
+  | typeof BWGreenFilterSaturation
+  | typeof BWSepiaSaturation
+  | typeof Low2Saturation
+  | typeof VeryLowSaturation
+  | typeof AcrosSaturation
+  | typeof AcrosRedFilterSaturation
+  | typeof AcrosYellowFilterSaturation
+  | typeof AcrosGreenFilterSaturation;
 
-export enum FujiEXRMode {
-  HR = 0x100,
-  SN = 0x200,
-  DR = 0x300,
-}
+export const NormalContrast = 0x0;
+export const MediumHighContrast = 0x100;
+export const HighContrast = 0x200;
+export const MediumLowContrast = 0x100; // Wait, check original.
+export const LowContrast = 0x200; // Check original.
+export const FilmSimulationContrast = 0x8000;
 
-export enum FujiEXRAuto {
-  Auto = 0,
-  Manual = 1,
-}
+export type FujiContrast =
+  | typeof NormalContrast
+  | typeof MediumHighContrast
+  | typeof HighContrast
+  | typeof FilmSimulationContrast;
+
+export const LowNoiseReduction = 0x40;
+export const NormalNoiseReduction = 0x80;
+export const NANoiseReduction = 0x100;
+
+export type FujiNoiseReduction =
+  | typeof LowNoiseReduction
+  | typeof NormalNoiseReduction
+  | typeof NANoiseReduction;
+
+export const NormalNoiseReduction2 = 0x0;
+export const StrongNoiseReduction2 = 0x1;
+export const MediumStrongNoiseReduction2 = 0x2; // Check original
+export const VeryStrongNoiseReduction2 = 0x3;
+export const StrongestNoiseReduction2 = 0x4;
+export const WeakNoiseReduction2 = 0x81;
+export const MediumWeakNoiseReduction2 = 0x82;
+export const VeryWeakNoiseReduction2 = 0x83;
+export const WeakestNoiseReduction2 = 0x84;
+
+export type FujiNoiseReduction2 =
+  | typeof NormalNoiseReduction2
+  | typeof StrongNoiseReduction2
+  | typeof MediumStrongNoiseReduction2
+  | typeof VeryStrongNoiseReduction2
+  | typeof StrongestNoiseReduction2
+  | typeof WeakNoiseReduction2
+  | typeof MediumWeakNoiseReduction2
+  | typeof VeryWeakNoiseReduction2
+  | typeof WeakestNoiseReduction2;
+
+export const AutoPictureMode = 0x0;
+export const PortraitPictureMode = 0x1;
+export const LandscapePictureMode = 0x2;
+export const MacroPictureMode = 0x3;
+export const SportsPictureMode = 0x4;
+export const NightScenePictureMode = 0x5;
+export const ProgramAEPictureMode = 0x6;
+export const NaturalLightPictureMode = 0x7;
+export const AntiBlurPictureMode = 0x8;
+export const BeachSnowPictureMode = 0x9;
+export const SunsetPictureMode = 0xa;
+export const MuseumPictureMode = 0xb;
+export const PartyPictureMode = 0xc;
+export const FlowerPictureMode = 0xd;
+export const TextPictureMode = 0xe;
+export const NaturalLightWithFlashPictureMode = 0xf;
+export const GoerzPictureMode = 0x10;
+export const Portrait2PictureMode = 0x11;
+export const BabyPictureMode = 0x12;
+export const SmileShotPictureMode = 0x13;
+export const Landscape2PictureMode = 0x14;
+export const PanoramaPictureMode = 0x15;
+export const NightScene2PictureMode = 0x16;
+export const NightPortraitPictureMode = 0x17;
+export const FireworksPictureMode = 0x18;
+export const Sunset2PictureMode = 0x19;
+export const SnowPictureMode = 0x1a;
+export const BeachPictureMode = 0x1b;
+export const UnderwaterPictureMode = 0x1c;
+export const Party2PictureMode = 0x1d;
+export const Flower2PictureMode = 0x1e;
+export const Text2PictureMode = 0x1f;
+export const AperturePriorityAEPictureMode = 0x100;
+export const ShutterPriorityAEPictureMode = 0x200;
+export const ManualExposurePictureMode = 0x300;
+
+export type FujiPictureMode =
+  | typeof AutoPictureMode
+  | typeof PortraitPictureMode
+  | typeof LandscapePictureMode
+  | typeof MacroPictureMode
+  | typeof SportsPictureMode
+  | typeof NightScenePictureMode
+  | typeof ProgramAEPictureMode
+  | typeof NaturalLightPictureMode
+  | typeof AntiBlurPictureMode
+  | typeof BeachSnowPictureMode
+  | typeof SunsetPictureMode
+  | typeof MuseumPictureMode
+  | typeof PartyPictureMode
+  | typeof FlowerPictureMode
+  | typeof TextPictureMode
+  | typeof NaturalLightWithFlashPictureMode
+  | typeof GoerzPictureMode
+  | typeof Portrait2PictureMode
+  | typeof BabyPictureMode
+  | typeof SmileShotPictureMode
+  | typeof Landscape2PictureMode
+  | typeof PanoramaPictureMode
+  | typeof NightScene2PictureMode
+  | typeof NightPortraitPictureMode
+  | typeof FireworksPictureMode
+  | typeof Sunset2PictureMode
+  | typeof SnowPictureMode
+  | typeof BeachPictureMode
+  | typeof UnderwaterPictureMode
+  | typeof Party2PictureMode
+  | typeof Flower2PictureMode
+  | typeof Text2PictureMode
+  | typeof AperturePriorityAEPictureMode
+  | typeof ShutterPriorityAEPictureMode
+  | typeof ManualExposurePictureMode;
+
+export const HREXRMode = 0x100;
+export const SNEXRMode = 0x200;
+export const DREXRMode = 0x300;
+
+export type FujiEXRMode =
+  | typeof HREXRMode
+  | typeof SNEXRMode
+  | typeof DREXRMode;
+
+export const AutoEXRAuto = 0;
+export const ManualEXRAuto = 1;
+
+export type FujiEXRAuto = typeof AutoEXRAuto | typeof ManualEXRAuto;
 
 export type FujiTagEntry =
-  | { tagId: FujiTagId.Quality; value: string }
-  | { tagId: FujiTagId.Sharpness; value: string | number }
-  | { tagId: FujiTagId.WhiteBalance; value: string | number }
-  | { tagId: FujiTagId.Saturation; value: string | number }
-  | { tagId: FujiTagId.Contrast; value: string | number }
-  | { tagId: FujiTagId.ColorTemperature; value: number }
-  | { tagId: FujiTagId.Contrast2; value: number }
-  | { tagId: FujiTagId.WhiteBalanceFineTune; value: [number, number] }
-  | { tagId: FujiTagId.NoiseReduction; value: string | number }
-  | { tagId: FujiTagId.NoiseReduction2; value: string | number }
-  | { tagId: FujiTagId.Clarity; value: number }
-  | { tagId: FujiTagId.FujiFlashMode; value: number }
-  | { tagId: FujiTagId.FlashExposureComp; value: number }
-  | { tagId: FujiTagId.Macro; value: number }
-  | { tagId: FujiTagId.FocusMode; value: number }
-  | { tagId: FujiTagId.AFMode; value: number }
-  | { tagId: FujiTagId.FocusPixel; value: [number, number] }
-  | { tagId: FujiTagId.SlowSync; value: number }
-  | { tagId: FujiTagId.PictureMode; value: string | number }
-  | { tagId: FujiTagId.ExposureCount; value: number }
-  | { tagId: FujiTagId.EXRAuto; value: string | number }
-  | { tagId: FujiTagId.EXRMode; value: string | number }
-  | { tagId: FujiTagId.MultipleExposure; value: number }
-  | { tagId: FujiTagId.ShadowTone; value: number }
-  | { tagId: FujiTagId.HighlightTone; value: number }
-  | { tagId: FujiTagId.DigitalZoom; value: number }
-  | { tagId: FujiTagId.LensModulationOptimizer; value: number }
-  | { tagId: FujiTagId.GrainEffect; value: number }
-  | { tagId: FujiTagId.Dimensions; value: [number, number] }
+  | { tagId: typeof QualityTagId; value: string }
+  | { tagId: typeof SharpnessTagId; value: number }
+  | { tagId: typeof WhiteBalanceTagId; value: number }
+  | { tagId: typeof SaturationTagId; value: number }
+  | { tagId: typeof ContrastTagId; value: number }
+  | { tagId: typeof ColorTemperatureTagId; value: number }
+  | { tagId: typeof Contrast2TagId; value: number }
+  | { tagId: typeof WhiteBalanceFineTuneTagId; value: [number, number] }
+  | { tagId: typeof NoiseReductionTagId; value: number }
+  | { tagId: typeof NoiseReduction2TagId; value: number }
+  | { tagId: typeof ClarityTagId; value: number }
+  | { tagId: typeof FujiFlashModeTagId; value: number }
+  | { tagId: typeof FlashExposureCompTagId; value: number }
+  | { tagId: typeof MacroTagId; value: number }
+  | { tagId: typeof FocusModeTagId; value: number }
+  | { tagId: typeof AFModeTagId; value: number }
+  | { tagId: typeof FocusPixelTagId; value: [number, number] }
+  | { tagId: typeof SlowSyncTagId; value: number }
+  | { tagId: typeof PictureModeTagId; value: number }
+  | { tagId: typeof ExposureCountTagId; value: number }
+  | { tagId: typeof EXRAutoTagId; value: number }
+  | { tagId: typeof EXRModeTagId; value: number }
+  | { tagId: typeof MultipleExposureTagId; value: number }
+  | { tagId: typeof ShadowToneTagId; value: number }
+  | { tagId: typeof HighlightToneTagId; value: number }
+  | { tagId: typeof DigitalZoomTagId; value: number }
+  | { tagId: typeof LensModulationOptimizerTagId; value: number }
+  | { tagId: typeof GrainEffectTagId; value: number }
+  | { tagId: typeof DimensionsTagId; value: [number, number] }
   | { tagId: number; value: unknown };
 
 export class RafCfaHeaderDataView<
@@ -222,104 +351,42 @@ export class RafCfaHeaderDataView<
     const dataOffset = offset + 4;
 
     switch (tagId as FujiTagId) {
-      case FujiTagId.Quality:
+      case QualityTagId:
         return {
           tagId,
           value: this.getString(dataOffset, size),
         };
-      case FujiTagId.Sharpness: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiSharpness[val] || val,
-        };
-      }
-      case FujiTagId.WhiteBalance: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiWhiteBalance[val] || val,
-        };
-      }
-      case FujiTagId.Saturation: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiSaturation[val] || val,
-        };
-      }
-      case FujiTagId.Contrast: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiContrast[val] || val,
-        };
-      }
-      case FujiTagId.ColorTemperature:
+      case SharpnessTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.Contrast2:
+      case WhiteBalanceTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.WhiteBalanceFineTune:
-        return {
-          tagId,
-          value: [
-            this.getInt32(dataOffset, false),
-            this.getInt32(dataOffset + 4, false),
-          ],
-        };
-      case FujiTagId.NoiseReduction: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiNoiseReduction[val] || val,
-        };
-      }
-      case FujiTagId.NoiseReduction2: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiNoiseReduction2[val] || val,
-        };
-      }
-      case FujiTagId.Clarity:
-        return {
-          tagId,
-          value: this.getInt32(dataOffset, false),
-        };
-      case FujiTagId.FujiFlashMode:
+      case SaturationTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.FlashExposureComp:
-        return {
-          tagId,
-          value:
-            this.getInt32(dataOffset, false) /
-            this.getInt32(dataOffset + 4, false),
-        };
-      case FujiTagId.Macro:
+      case ContrastTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.FocusMode:
+      case ColorTemperatureTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.AFMode:
+      case Contrast2TagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.FocusPixel:
+      case WhiteBalanceFineTuneTagId:
         return {
           tagId,
           value: [
@@ -327,68 +394,110 @@ export class RafCfaHeaderDataView<
             this.getUint16(dataOffset + 2, false),
           ],
         };
-      case FujiTagId.SlowSync:
+      case NoiseReductionTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.PictureMode: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiPictureMode[val] || val,
-        };
-      }
-      case FujiTagId.ExposureCount:
+      case NoiseReduction2TagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.EXRAuto: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiEXRAuto[val] || val,
-        };
-      }
-      case FujiTagId.EXRMode: {
-        const val = this.getUint16(dataOffset, false);
-        return {
-          tagId,
-          value: FujiEXRMode[val] || val,
-        };
-      }
-      case FujiTagId.MultipleExposure:
-        return {
-          tagId,
-          value: this.getUint16(dataOffset, false),
-        };
-      case FujiTagId.ShadowTone:
-        return {
-          tagId,
-          value: this.getInt32(dataOffset, false),
-        };
-      case FujiTagId.HighlightTone:
-        return {
-          tagId,
-          value: this.getInt32(dataOffset, false),
-        };
-      case FujiTagId.DigitalZoom:
+      case ClarityTagId:
         return {
           tagId,
           value: this.getUint32(dataOffset, false),
         };
-      case FujiTagId.LensModulationOptimizer:
-        return {
-          tagId,
-          value: this.getUint32(dataOffset, false),
-        };
-      case FujiTagId.GrainEffect:
+      case FujiFlashModeTagId:
         return {
           tagId,
           value: this.getUint16(dataOffset, false),
         };
-      case FujiTagId.Dimensions:
+      case FlashExposureCompTagId:
+        return {
+          tagId,
+          value: this.getInt16(dataOffset, false),
+        };
+      case MacroTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case FocusModeTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case AFModeTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case FocusPixelTagId:
+        return {
+          tagId,
+          value: [
+            this.getUint16(dataOffset, false),
+            this.getUint16(dataOffset + 2, false),
+          ],
+        };
+      case SlowSyncTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case PictureModeTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case ExposureCountTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case EXRAutoTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case EXRModeTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case MultipleExposureTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case ShadowToneTagId:
+        return {
+          tagId,
+          value: this.getInt32(dataOffset, false),
+        };
+      case HighlightToneTagId:
+        return {
+          tagId,
+          value: this.getInt32(dataOffset, false),
+        };
+      case DigitalZoomTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case LensModulationOptimizerTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case GrainEffectTagId:
+        return {
+          tagId,
+          value: this.getUint16(dataOffset, false),
+        };
+      case DimensionsTagId:
         return {
           tagId,
           value: [
@@ -422,8 +531,8 @@ export class RafCfaHeaderDataView<
 
 export class RafDataView<T extends ArrayBufferLike> extends DataView<T> {
   getJpegImage(): JpegDataView<T> | null {
-    const jpegOffset = this.getUint32(RafOffset.JpegImageOffset, false);
-    const jpegLength = this.getUint32(RafOffset.JpegImageLength, false);
+    const jpegOffset = this.getUint32(JpegImageOffset, false);
+    const jpegLength = this.getUint32(JpegImageLength, false);
 
     if (
       jpegOffset > 0 &&
@@ -440,38 +549,34 @@ export class RafDataView<T extends ArrayBufferLike> extends DataView<T> {
   }
 
   getCfaHeader(): RafCfaHeaderDataView<T> | null {
-    const headerOffset = this.getUint32(RafOffset.CfaHeaderOffset, false);
-    const headerLength = this.getUint32(RafOffset.CfaHeaderLength, false);
+    const cfaHeaderOffset = this.getUint32(CfaHeaderOffset, false);
+    const cfaHeaderLength = this.getUint32(CfaHeaderLength, false);
 
     if (
-      headerOffset > 0 &&
-      headerLength > 0 &&
-      this.byteOffset + headerOffset + headerLength <= this.buffer.byteLength
+      cfaHeaderOffset > 0 &&
+      cfaHeaderLength > 0 &&
+      this.byteOffset + cfaHeaderOffset + cfaHeaderLength <=
+        this.buffer.byteLength
     ) {
       return new RafCfaHeaderDataView(
         this.buffer,
-        this.byteOffset + headerOffset,
-        headerLength,
+        this.byteOffset + cfaHeaderOffset,
+        cfaHeaderLength,
       );
     }
     return null;
   }
 
-  getCfa(): Uint16Array | null {
-    const cfaOffset = this.getUint32(RafOffset.CfaOffset, false);
-    const cfaLength = this.getUint32(RafOffset.CfaLength, false);
+  getCfa(): DataView<T> | null {
+    const cfaOffset = this.getUint32(CfaOffset, false);
+    const cfaLength = this.getUint32(CfaLength, false);
 
     if (
       cfaOffset > 0 &&
       cfaLength > 0 &&
       this.byteOffset + cfaOffset + cfaLength <= this.buffer.byteLength
     ) {
-      return new Uint16Array(
-        this.buffer.slice(
-          this.byteOffset + cfaOffset,
-          this.byteOffset + cfaOffset + cfaLength,
-        ),
-      );
+      return new DataView(this.buffer, this.byteOffset + cfaOffset, cfaLength);
     }
     return null;
   }

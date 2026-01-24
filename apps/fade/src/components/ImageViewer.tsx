@@ -40,7 +40,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
         <>
           <img
             src={url}
-            alt={fileItem?.handle.name ?? ""}
+            alt={fileItem?.handle.name}
             className="hidden"
             onLoad={(e) => {
               const img = e.currentTarget;

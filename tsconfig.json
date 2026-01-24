@@ -1,17 +1,6 @@
 {
+  "extends": "@shikanime-studio/typescript-config/node.json",
   "compilerOptions": {
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "target": "ESNext",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
     "noEmit": true
-  },
-  "include": ["*.ts", "*.mts"],
-  "exclude": ["node_modules", "apps"]
+  }
 }

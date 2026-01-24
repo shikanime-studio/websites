@@ -6,7 +6,7 @@ import { useRawImageRender } from "../hooks/useRawImageRender";
 import type { FileItem } from "../lib/fs";
 
 interface RawImageRenderProps {
-  fileItem?: FileItem;
+  fileItem?: FileItem | undefined;
   className?: string;
   onDoubleClick?: () => void;
 }
