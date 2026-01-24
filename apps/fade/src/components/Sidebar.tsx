@@ -317,10 +317,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           <Histogram />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <FileIcon
-              type={fileItem.mimeType}
-              className="h-8 w-8 opacity-50"
-            />
+            <FileIcon type={fileItem.mimeType} className="h-8 w-8 opacity-50" />
           </div>
         )}
       </div>
