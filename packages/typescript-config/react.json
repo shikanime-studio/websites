@@ -1,9 +1,18 @@
 {
-  "extends": ["./base.json", "@tsconfig/vite-react/tsconfig.json"],
+  "extends": "./base.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "erasableSyntaxOnly": true,
+    "noUncheckedSideEffectImports": true
   }
 }

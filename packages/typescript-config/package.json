@@ -1,11 +1,4 @@
 {
   "name": "@shikanime-studio/typescript-config",
-  "version": "0.0.0",
-  "dependencies": {
-    "@tsconfig/strictest": "^2.0.0"
-  },
-  "devDependencies": {
-    "@tsconfig/node-lts": "^24.0.0",
-    "@tsconfig/vite-react": "^7.0.2"
-  }
+  "version": "0.0.0"
 }
