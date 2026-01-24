@@ -80,16 +80,29 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
-          treefmt.config.programs = {
-            sqlfluff = {
-              enable = true;
-              dialect = "sqlite";
+          tasks = {
+            "npm:lint" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run lint";
             };
-            wgslfmt.enable = true;
+            "npm:test" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run test";
+            };
           };
-          treefmt.config.settings.global.excludes = [
-            "*.gen.ts"
-          ];
+          treefmt.config = {
+            programs = {
+              sqlfluff = {
+                enable = true;
+                dialect = "sqlite";
+              };
+              wgslfmt.enable = true;
+            };
+            settings.global.excludes = [
+              "*.gen.ts"
+              "apps/**/node_modules/*"
+            ];
+          };
         };
       };
       systems = [
