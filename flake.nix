@@ -49,18 +49,14 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
-          git-hooks.hooks = {
-            lint = {
-              enable = true;
-              name = "Lint";
-              entry = "npm run lint";
-              pass_filenames = false;
+          tasks = {
+            "npm:lint" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run lint";
             };
-            test = {
-              enable = true;
-              name = "Test";
-              entry = "npm run test";
-              pass_filenames = false;
+            "npm:test" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run test";
             };
           };
           treefmt.config = {
