@@ -2,11 +2,6 @@
   "extends": "@shikanime-studio/typescript-config/react.json",
   "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "types": ["vite/client", "wicg-file-system-access", "@webgpu/types"],
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
-    "noUncheckedSideEffectImports": true
+    "types": ["vite/client", "wicg-file-system-access", "@webgpu/types"]
   }
 }

@@ -2,6 +2,5 @@
   "extends": "@shikanime-studio/typescript-config/node.json",
   "compilerOptions": {
     "noEmit": true
-  },
-  "include": ["*.ts", "*.mts"]
+  }
 }
