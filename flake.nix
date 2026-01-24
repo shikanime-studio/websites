@@ -49,6 +49,16 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
+          tasks = {
+            "npm:lint" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run lint";
+            };
+            "npm:test" = {
+              before = [ "devenv:enterTest" ];
+              exec = "npm run test";
+            };
+          };
           treefmt.config.programs = {
             sqlfluff = {
               enable = true;
