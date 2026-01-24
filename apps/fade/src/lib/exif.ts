@@ -1,54 +1,70 @@
-export enum Endianness {
-  Little = 0x4949, // 'II'
-  Big = 0x4d4d, // 'MM'
-}
+export const LittleEndianness = 0x4949; // 'II'
+export const BigEndianness = 0x4d4d; // 'MM'
 
-export enum ExifType {
-  BYTE = 1,
-  ASCII = 2,
-  SHORT = 3,
-  LONG = 4,
-  RATIONAL = 5,
-  SLONG = 9,
-  SRATIONAL = 10,
-}
+export type Endianness = typeof LittleEndianness | typeof BigEndianness;
 
-export enum ExifTagId {
-  Make = 0x010f,
-  Model = 0x0110,
-  ExifOffset = 0x8769,
-  ExposureTime = 0x829a,
-  FNumber = 0x829d,
-  ISO = 0x8827,
-  DateTimeOriginal = 0x9003,
-  FocalLength = 0x920a,
-  LensModel = 0xa433,
-}
+export const ByteExifType = 1;
+export const AsciiExifType = 2;
+export const ShortExifType = 3;
+export const LongExifType = 4;
+export const RationalExifType = 5;
+export const SLongExifType = 9;
+export const SRationalExifType = 10;
+
+export type ExifType =
+  | typeof ByteExifType
+  | typeof AsciiExifType
+  | typeof ShortExifType
+  | typeof LongExifType
+  | typeof RationalExifType
+  | typeof SLongExifType
+  | typeof SRationalExifType;
+
+export const MakeTagId = 0x010f;
+export const ModelTagId = 0x0110;
+export const ExifOffsetTagId = 0x8769;
+export const ExposureTimeTagId = 0x829a;
+export const FNumberTagId = 0x829d;
+export const ISOTagId = 0x8827;
+export const DateTimeOriginalTagId = 0x9003;
+export const FocalLengthTagId = 0x920a;
+export const LensModelTagId = 0xa433;
+
+export type ExifTagId =
+  | typeof MakeTagId
+  | typeof ModelTagId
+  | typeof ExifOffsetTagId
+  | typeof ExposureTimeTagId
+  | typeof FNumberTagId
+  | typeof ISOTagId
+  | typeof DateTimeOriginalTagId
+  | typeof FocalLengthTagId
+  | typeof LensModelTagId;
 
 export type ExifTagEntry =
-  | { tagId: ExifTagId.Make; value: string }
-  | { tagId: ExifTagId.Model; value: string }
-  | { tagId: ExifTagId.ExifOffset; value: number }
-  | { tagId: ExifTagId.ExposureTime; value: number }
-  | { tagId: ExifTagId.FNumber; value: number }
-  | { tagId: ExifTagId.ISO; value: number }
-  | { tagId: ExifTagId.DateTimeOriginal; value: string }
-  | { tagId: ExifTagId.FocalLength; value: number }
-  | { tagId: ExifTagId.LensModel; value: string }
+  | { tagId: typeof MakeTagId; value: string }
+  | { tagId: typeof ModelTagId; value: string }
+  | { tagId: typeof ExifOffsetTagId; value: number }
+  | { tagId: typeof ExposureTimeTagId; value: number }
+  | { tagId: typeof FNumberTagId; value: number }
+  | { tagId: typeof ISOTagId; value: number }
+  | { tagId: typeof DateTimeOriginalTagId; value: string }
+  | { tagId: typeof FocalLengthTagId; value: number }
+  | { tagId: typeof LensModelTagId; value: string }
   | { tagId: number; value: unknown };
 
 export function sizeOf(type: ExifType): number {
   switch (type) {
-    case ExifType.BYTE:
-    case ExifType.ASCII:
+    case ByteExifType:
+    case AsciiExifType:
       return 1;
-    case ExifType.SHORT:
+    case ShortExifType:
       return 2;
-    case ExifType.LONG:
-    case ExifType.SLONG:
+    case LongExifType:
+    case SLongExifType:
       return 4;
-    case ExifType.RATIONAL:
-    case ExifType.SRATIONAL:
+    case RationalExifType:
+    case SRationalExifType:
       return 8;
     default:
       return 0;
@@ -56,7 +72,7 @@ export function sizeOf(type: ExifType): number {
 }
 
 export function isContainer(type: ExifType) {
-  return type === ExifType.ASCII || type === ExifType.BYTE;
+  return type === AsciiExifType || type === ByteExifType;
 }
 
 export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
@@ -83,7 +99,7 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
   }
 
   isLittleEndian() {
-    return this.getUint16(0, true) === Endianness.Little.valueOf();
+    return this.getUint16(0, true) === LittleEndianness.valueOf();
   }
 
   getTagHeader(offset: number, littleEndian?: boolean) {
@@ -96,13 +112,13 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
 
   getValue(offset: number, type: ExifType, littleEndian?: boolean) {
     switch (type) {
-      case ExifType.SHORT:
+      case ShortExifType:
         return this.getUint16(offset, littleEndian);
-      case ExifType.LONG:
+      case LongExifType:
         return this.getUint32(offset, littleEndian);
-      case ExifType.RATIONAL:
+      case RationalExifType:
         return this.getRational(offset, littleEndian);
-      case ExifType.SRATIONAL:
+      case SRationalExifType:
         return this.getSRational(offset, littleEndian);
       default:
         return null;
@@ -111,9 +127,9 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
 
   getContainer(offset: number, type: ExifType, count: number) {
     switch (type) {
-      case ExifType.ASCII:
+      case AsciiExifType:
         return this.getAscii(offset, count);
-      case ExifType.BYTE:
+      case ByteExifType:
         return this.buffer.slice(
           this.byteOffset + offset,
           this.byteOffset + offset + count,
@@ -165,7 +181,7 @@ export class ExifDataView<T extends ArrayBufferLike> extends DataView<T> {
         const tag = this.getTagEntry(tagOffset, littleEndian);
         result.push(tag);
 
-        if (tag.tagId === (ExifTagId.ExifOffset as number)) {
+        if (tag.tagId === (ExifOffsetTagId as number)) {
           ifdOffsetsToRead.push(tag.value as number);
         }
       }

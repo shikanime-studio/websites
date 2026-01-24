@@ -7,9 +7,9 @@ import { useGallery } from "../hooks/useGallery";
 import { useElementSize } from "../hooks/useElementSize";
 import { useThumbnail } from "../hooks/useThumbnail";
 import { settingsCollection } from "../lib/db";
+import { useFile } from "../hooks/useFile";
 import { FileIcon } from "./FileIcon";
 import type { FileItem } from "../lib/fs";
-import { useFile } from "@/hooks/useFile";
 
 const ITEM_SIZE = 88;
 

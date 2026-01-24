@@ -1,46 +1,30 @@
-import css from "@eslint/css";
-import eslint from "@eslint/js";
-import json from "@eslint/json";
-import markdown from "@eslint/markdown";
-import { tanstackConfig } from "@tanstack/eslint-config";
-import astro from "eslint-plugin-astro";
-import react from "eslint-plugin-react";
-import reactHooks from "eslint-plugin-react-hooks";
-import reactRefresh from "eslint-plugin-react-refresh";
-import { defineConfig, globalIgnores } from "eslint/config";
-import globals from "globals";
-import { tailwind4 } from "tailwind-csstree";
-import tseslint from "typescript-eslint";
+import config from "@shikanime-studio/eslint-config";
+import { defineConfig } from "eslint/config";
+import {browser, node} from "globals";
 
 export default defineConfig(
-  globalIgnores([
-    "**/.astro",
-    "**/.devenv",
-    "**/*.d.ts",
-    "**/dist",
-    "**/package-lock.json",
-  ]),
-  tanstackConfig,
   {
-    files: ["**/*.{js,mjs,cjs,ts,mts,cts,jsx,tsx}"],
     extends: [
-      eslint.configs.recommended,
-      tseslint.configs.strictTypeChecked,
-      tseslint.configs.stylisticTypeChecked,
-      react.configs.flat.recommended,
-      react.configs.flat["jsx-runtime"],
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
+      ...config.configs.astro,
     ],
+    files: ["**/*.astro"],
+  },
+  {
+    extends: [
+      ...config.configs.base,
+      ...config.configs.react,
+      ...config.configs.tanstack,
+    ],
+    files: ["**/*.{js,mjs,ts,mts,jsx,tsx}"],
     languageOptions: {
+      globals: {
+        ...browser,
+        ...node,
+      },
       parserOptions: {
         project: null,
         projectService: true,
         tsconfigRootDir: import.meta.dirname,
-      },
-      globals: {
-        ...globals.browser,
-        ...globals.node,
       },
     },
     settings: {
@@ -50,33 +34,15 @@ export default defineConfig(
     },
   },
   {
-    files: ["**/*.astro"],
     extends: [
-      eslint.configs.recommended,
-      tseslint.configs.strict,
-      tseslint.configs.stylistic,
-      astro.configs["flat/recommended"],
-      astro.configs["flat/jsx-a11y-strict"],
+      ...config.configs.tailwind,
     ],
+    files: ["**/*.{css}"],
   },
   {
-    files: ["**/*.json"],
-    language: "json/json",
-    extends: [json.configs.recommended],
-  },
-  {
-    files: ["**/*.md"],
-    language: "markdown/commonmark",
-    extends: [markdown.configs.recommended],
-  },
-  {
-    files: ["**/*.css"],
-    plugins: {
-      css,
-    },
-    language: "css/css",
-    languageOptions: {
-      customSyntax: tailwind4,
+    files: ["**/*.d.ts"],
+    rules: {
+      "@typescript-eslint/triple-slash-reference": "off",
     },
   },
 );
