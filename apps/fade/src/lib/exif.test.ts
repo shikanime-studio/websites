@@ -149,9 +149,9 @@ describe("getTagEntries", () => {
       createFileItem(file),
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
-    expect(
-      tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value,
-    ).toBe("PNG");
+    expect(tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value).toBe(
+      "PNG",
+    );
   });
 
   it("should extract EXIF tags from WebP", async () => {
@@ -201,8 +201,7 @@ describe("getTagEntries", () => {
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
-      tags?.find((t: ExifTagEntry) => t.tagId === (MakeTagId as number))
-        ?.value,
+      tags?.find((t: ExifTagEntry) => t.tagId === (MakeTagId as number))?.value,
     ).toBe("WebP");
   });
 
@@ -213,9 +212,9 @@ describe("getTagEntries", () => {
       createFileItem(file),
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
-    expect(
-      tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value,
-    ).toBe("TIFF");
+    expect(tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value).toBe(
+      "TIFF",
+    );
   });
 
   it("should return null for non-supported file types", async () => {

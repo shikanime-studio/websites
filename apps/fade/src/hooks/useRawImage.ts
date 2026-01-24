@@ -19,7 +19,7 @@ export function useRawImage(fileItem: FileItem | null) {
       const tags = header.getTagEntries();
       const dimEntry = tags.find(
         (t) => t.tagId === (DimensionsTagId as number),
-      )
+      );
 
       let width = 0;
       let height = 0;

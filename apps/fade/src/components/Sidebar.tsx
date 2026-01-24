@@ -317,7 +317,10 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           <Histogram />
         ) : (
           <div className="flex h-full w-full items-center justify-center">
-            <FileIcon type={fileItem.mimeType ?? ""} className="h-8 w-8 opacity-50" />
+            <FileIcon
+              type={fileItem.mimeType ?? ""}
+              className="h-8 w-8 opacity-50"
+            />
           </div>
         )}
       </div>
@@ -461,7 +464,7 @@ function GroupedFilesSection({ fileItem }: { fileItem: FileItem }) {
             key={sidecarItem.handle.name}
             className="flex items-center gap-2 text-sm opacity-70"
           >
-            <FileIcon type={sidecarItem.mimeType} className="h-4 w-4" />
+            <FileIcon type={sidecarItem.mimeType ?? ""} className="h-4 w-4" />
             <span className="truncate">{sidecarItem.handle.name}</span>
           </div>
         ))}

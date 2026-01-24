@@ -93,7 +93,6 @@ export type FujiSharpness =
   | typeof FilmSimulationSharpness
   | typeof NASharpness;
 
-
 export const AutoWhiteBalance = 0x0;
 export const AutoWhitePriorityWhiteBalance = 0x1;
 export const AutoAmbiancePriorityWhiteBalance = 0x2;
@@ -290,7 +289,6 @@ export type FujiPictureMode =
   | typeof ShutterPriorityAEPictureMode
   | typeof ManualExposurePictureMode;
 
-
 export const HREXRMode = 0x100;
 export const SNEXRMode = 0x200;
 export const DREXRMode = 0x300;
@@ -304,7 +302,6 @@ export const AutoEXRAuto = 0;
 export const ManualEXRAuto = 1;
 
 export type FujiEXRAuto = typeof AutoEXRAuto | typeof ManualEXRAuto;
-
 
 export type FujiTagEntry =
   | { tagId: typeof QualityTagId; value: string }

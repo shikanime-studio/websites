@@ -219,9 +219,7 @@ describe("createRawImageDataView", () => {
     const tags = view?.getCfaHeader()?.getTagEntries();
 
     expect(tags).toBeDefined();
-    const qualityTag = tags?.find(
-      (t) => t.tagId === (QualityTagId as number),
-    );
+    const qualityTag = tags?.find((t) => t.tagId === (QualityTagId as number));
     expect(qualityTag?.value).toBe("FINE");
 
     const sharpnessTag = tags?.find(
