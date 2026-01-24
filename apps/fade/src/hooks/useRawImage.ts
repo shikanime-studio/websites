@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createRawImageDataView } from "../lib/raw";
-import { FujiTagId } from "../lib/raf";
+import { DimensionsTagId } from "../lib/raf";
 import type { FileItem } from "../lib/fs";
 
 export function useRawImage(fileItem: FileItem | null) {
@@ -18,8 +18,8 @@ export function useRawImage(fileItem: FileItem | null) {
       if (!header) return null;
       const tags = header.getTagEntries();
       const dimEntry = tags.find(
-        (t) => t.tagId === (FujiTagId.Dimensions as number),
-      );
+        (t) => t.tagId === (DimensionsTagId as number),
+      )
 
       let width = 0;
       let height = 0;

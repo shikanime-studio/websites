@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",
+    "@shikanime-studio/typescript-config": "^0.0.0",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-db": "^0.1.62",
     "@tanstack/react-devtools": "^0.7.0",

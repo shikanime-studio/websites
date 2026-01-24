@@ -12,7 +12,15 @@ import { settingsCollection } from "../lib/db";
 import { useFile } from "../hooks/useFile";
 import { useExif } from "../hooks/useExif";
 import { useGallery } from "../hooks/useGallery";
-import { ExifTagId } from "../lib/exif";
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
@@ -308,7 +316,9 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
         {fileItem.mimeType?.startsWith("image/") ? (
           <Histogram />
         ) : (
-          <FileIcon type={fileItem.mimeType} className="h-8 w-8 opacity-50" />
+          <div className="flex h-full w-full items-center justify-center">
+            <FileIcon type={fileItem.mimeType ?? ""} className="h-8 w-8 opacity-50" />
+          </div>
         )}
       </div>
 
@@ -351,13 +361,13 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
 
   const tags = Object.fromEntries(exifData.map((e) => [e.tagId, e.value]));
 
-  const make = tags[ExifTagId.Make] as string | undefined;
-  const model = tags[ExifTagId.Model] as string | undefined;
-  const lensModel = tags[ExifTagId.LensModel] as string | undefined;
-  const fNumber = tags[ExifTagId.FNumber] as number | undefined;
-  const exposureTime = tags[ExifTagId.ExposureTime] as number | undefined;
-  const iso = tags[ExifTagId.ISO] as number | undefined;
-  const focalLength = tags[ExifTagId.FocalLength] as number | undefined;
+  const make = tags[MakeTagId] as string | undefined;
+  const model = tags[ModelTagId] as string | undefined;
+  const lensModel = tags[LensModelTagId] as string | undefined;
+  const fNumber = tags[FNumberTagId] as number | undefined;
+  const exposureTime = tags[ExposureTimeTagId] as number | undefined;
+  const iso = tags[ISOTagId] as number | undefined;
+  const focalLength = tags[FocalLengthTagId] as number | undefined;
 
   return (
     <CollapsibleSection

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { ExifTagId } from "./exif";
+import { MakeTagId } from "./exif";
 import { createImageDataView } from "./img";
 import type { ImageDataView } from "./img";
 import type { FileItem } from "./fs";
@@ -106,8 +106,7 @@ describe("getTagEntries", () => {
     const tags = view.getExif()?.getTagEntries();
 
     expect(tags).toBeDefined();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make);
+    const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId);
     expect(makeTag?.value).toBe("JPEG");
   });
 
@@ -151,8 +150,7 @@ describe("getTagEntries", () => {
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
+      tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value,
     ).toBe("PNG");
   });
 
@@ -203,7 +201,7 @@ describe("getTagEntries", () => {
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
-      tags?.find((t: ExifTagEntry) => t.tagId === (ExifTagId.Make as number))
+      tags?.find((t: ExifTagEntry) => t.tagId === (MakeTagId as number))
         ?.value,
     ).toBe("WebP");
   });
@@ -216,8 +214,7 @@ describe("getTagEntries", () => {
     )) as ImageDataView;
     const tags = view.getExif()?.getTagEntries();
     expect(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
-      tags?.find((t: ExifTagEntry) => t.tagId === ExifTagId.Make)?.value,
+      tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value,
     ).toBe("TIFF");
   });
 

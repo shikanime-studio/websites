@@ -1,23 +1,9 @@
 {
   "devDependencies": {
-    "@eslint/css": "^0.14.1",
-    "@eslint/js": "^9.39.1",
-    "@eslint/json": "^0.14.0",
-    "@eslint/markdown": "^7.5.1",
-    "@tanstack/eslint-config": "^0.3.4",
-    "@types/eslint-plugin-jsx-a11y": "^6.10.1",
-    "@typescript-eslint/eslint-plugin": "^8.49.0",
-    "@typescript-eslint/parser": "^8.49.0",
+    "@shikanime-studio/eslint-config": "^0.0.0",
+    "@shikanime-studio/typescript-config": "^0.0.0",
     "eslint": "^9.39.1",
-    "eslint-plugin-astro": "^1.5.0",
-    "eslint-plugin-jsx-a11y": "^6.10.2",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "eslint-plugin-react-refresh": "^0.4.24",
-    "globals": "^16.5.0",
-    "jiti": "^2.6.1",
-    "tailwind-csstree": "^0.1.4",
-    "typescript-eslint": "^8.49.0",
+    "globals": "^17.1.0",
     "vitest": "^4.0.15"
   },
   "packageManager": "npm@11.7.0+sha512.c22099a6fff8d5b2286c2a09df5352b4858a7c0c716320f58989d60ad8b29ecf2ce6fdfe97ccb41c23ffb1272e1fa079f868487dd6b81d02a2a9e199c095a117",
@@ -31,7 +17,9 @@
     "apps/fade",
     "apps/links",
     "apps/reiya",
-    "apps/www"
+    "apps/www",
+    "packages/eslint-config",
+    "packages/typescript-config"
   ],
   "dependencies": {
     "@tanstack/devtools-vite": "^0.4.1",
