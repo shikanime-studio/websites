@@ -59,16 +59,19 @@
               exec = "npm run test";
             };
           };
-          treefmt.config.programs = {
-            sqlfluff = {
-              enable = true;
-              dialect = "sqlite";
+          treefmt.config = {
+            programs = {
+              sqlfluff = {
+                enable = true;
+                dialect = "sqlite";
+              };
+              wgslfmt.enable = true;
             };
-            wgslfmt.enable = true;
+            settings.global.excludes = [
+              "*.gen.ts"
+              "apps/**/node_modules/*"
+            ];
           };
-          treefmt.config.settings.global.excludes = [
-            "*.gen.ts"
-          ];
         };
       };
       systems = [
