@@ -30,17 +30,6 @@ export const DateTimeOriginalTagId = 0x9003;
 export const FocalLengthTagId = 0x920a;
 export const LensModelTagId = 0xa433;
 
-export type ExifTagId =
-  | typeof MakeTagId
-  | typeof ModelTagId
-  | typeof ExifOffsetTagId
-  | typeof ExposureTimeTagId
-  | typeof FNumberTagId
-  | typeof ISOTagId
-  | typeof DateTimeOriginalTagId
-  | typeof FocalLengthTagId
-  | typeof LensModelTagId;
-
 export type ExifTagEntry =
   | { tagId: typeof MakeTagId; value: string }
   | { tagId: typeof ModelTagId; value: string }
