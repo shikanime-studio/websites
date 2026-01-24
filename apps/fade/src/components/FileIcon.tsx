@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 interface FileIconProps {
-  type?: string;
+  type?: string | undefined;
   className?: string;
 }
 
