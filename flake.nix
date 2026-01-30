@@ -73,7 +73,6 @@
         devenv.shells.default = {
           imports = [
             devlib.devenvModules.git
-            devlib.devenvModules.github
             devlib.devenvModules.javascript
             devlib.devenvModules.nix
             devlib.devenvModules.opentofu
