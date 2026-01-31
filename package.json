@@ -10,8 +10,7 @@
   "type": "module",
   "name": "@shikanime/websites",
   "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run"
+    "lint": "eslint ."
   },
   "workspaces": [
     "apps/fade",
