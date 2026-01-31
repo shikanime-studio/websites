@@ -85,12 +85,12 @@
             git-hooks.hooks = {
               npm-run-lint = {
                 enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run lint --prefix $dir --if-present --workspaces";
+                entry = "${getExe' pkgs.nodejs "npm"} run lint --if-present --workspaces";
                 pass_filenames = false;
               };
               npm-run-test = {
                 enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run test --prefix $dir --if-present --workspaces";
+                entry = "${getExe' pkgs.nodejs "npm"} run test --if-present --workspaces";
                 pass_filenames = false;
               };
             };
