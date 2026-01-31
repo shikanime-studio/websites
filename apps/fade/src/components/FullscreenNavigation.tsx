@@ -22,7 +22,7 @@ export function FullscreenNavigation({ children }: FullscreenNavigationProps) {
     >
       {files.length > 1 && (
         <button
-          className="btn btn-circle btn-ghost absolute left-4 text-white z-50"
+          className="btn btn-circle btn-ghost absolute left-4 z-50 text-white"
           onClick={(e) => {
             e.stopPropagation();
             navigatePrevious();
@@ -34,7 +34,7 @@ export function FullscreenNavigation({ children }: FullscreenNavigationProps) {
       {children}
       {files.length > 1 && (
         <button
-          className="btn btn-circle btn-ghost absolute right-4 text-white z-50"
+          className="btn btn-circle btn-ghost absolute right-4 z-50 text-white"
           onClick={(e) => {
             e.stopPropagation();
             navigateNext();

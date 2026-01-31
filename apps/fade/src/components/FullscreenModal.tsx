@@ -48,13 +48,13 @@ function FullscreenModalContent({
       }}
     >
       <button
-        className="btn btn-sm btn-circle btn-ghost absolute top-4 right-4 text-white z-50"
+        className="btn btn-sm btn-circle btn-ghost absolute top-4 right-4 z-50 text-white"
         onClick={onClose}
       >
         ✕
       </button>
       <div
-        className="modal-box max-w-none w-full h-full bg-transparent shadow-none p-0 flex items-center justify-center overflow-hidden rounded-none"
+        className="modal-box flex h-full w-full max-w-none items-center justify-center overflow-hidden rounded-none bg-transparent p-0 shadow-none"
         onClick={(e) => {
           if (e.target === e.currentTarget) onClose();
         }}

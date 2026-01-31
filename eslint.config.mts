@@ -1,12 +1,10 @@
 import config from "@shikanime-studio/eslint-config";
 import { defineConfig } from "eslint/config";
-import {browser, node} from "globals";
+import { browser, node } from "globals";
 
 export default defineConfig(
   {
-    extends: [
-      ...config.configs.astro,
-    ],
+    extends: [...config.configs.astro],
     files: ["**/*.astro"],
   },
   {
@@ -34,9 +32,7 @@ export default defineConfig(
     },
   },
   {
-    extends: [
-      ...config.configs.tailwind,
-    ],
+    extends: [...config.configs.tailwind],
     files: ["**/*.{css}"],
   },
   {

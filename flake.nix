@@ -66,6 +66,7 @@
       imports = [
         devenv.flakeModule
         devlib.flakeModule
+        devlib.flakeModules.treefmt
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
@@ -104,7 +105,6 @@
               };
               settings.global.excludes = [
                 "*.gen.ts"
-                "apps/**/node_modules/*"
               ];
             };
           };
