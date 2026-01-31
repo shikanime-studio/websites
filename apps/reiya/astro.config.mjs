@@ -4,7 +4,6 @@ import react from "@astrojs/react";
 import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
-import tidewave from "tidewave/vite-plugin";
 
 // https://astro.build/config
 export default defineConfig({
@@ -42,7 +41,7 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ["better-auth"],
     },
-    plugins: [tailwindcss(), tidewave()],
+    plugins: [tailwindcss()],
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
       // Without this, MessageChannel from node:worker_threads needs to be polyfilled.
