@@ -1,6 +1,5 @@
 {
   "name": "@shikanime/www",
-  "version": "2024.10",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,7 +14,7 @@
     "@astrojs/cloudflare": "^12.6.6",
     "@astrojs/sitemap": "^3.5.0",
     "@fontsource-variable/inter": "^5.2.8",
-    "@shikanime-studio/typescript-config": "^0.0.0",
+    "@shikanime-studio/typescript-config": "*",
     "@tailwindcss/vite": "^4.0.0",
     "@types/mixpanel-browser": "^2.60.0",
     "astro": "^5.13.2",

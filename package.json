@@ -1,7 +1,7 @@
 {
   "devDependencies": {
-    "@shikanime-studio/eslint-config": "^0.0.0",
-    "@shikanime-studio/typescript-config": "^0.0.0",
+    "@shikanime-studio/eslint-config": "*",
+    "@shikanime-studio/typescript-config": "*",
     "eslint": "^9.39.1",
     "globals": "^17.1.0"
   },
