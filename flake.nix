@@ -105,7 +105,6 @@
               };
               settings.global.excludes = [
                 "*.gen.ts"
-                "apps/**/node_modules/*"
               ];
             };
           };
