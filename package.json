@@ -11,10 +11,6 @@
   "scripts": {
     "lint": "eslint ."
   },
-  "overrides": {
-    "esbuild": "^0.25.0",
-    "undici": "^6.21.1"
-  },
   "workspaces": [
     "apps/fade",
     "apps/links",
