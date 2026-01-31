@@ -45,7 +45,6 @@
     "@types/better-sqlite3": "^7.6.13",
     "better-sqlite3": "^12.5.0",
     "drizzle-kit": "^0.31.4",
-    "tidewave": "^0.5.5",
     "tsx": "^4.21.0",
     "wrangler": "^4.51.0",
     "zod": "^4.0.0"
