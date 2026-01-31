@@ -5,7 +5,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-export default defineConfig({
+const config = defineConfig({
   plugins: [
     devtools(),
     cloudflare({ viteEnvironment: { name: "ssr" } }),
@@ -14,3 +14,5 @@ export default defineConfig({
     viteReact(),
   ],
 });
+
+export default config;

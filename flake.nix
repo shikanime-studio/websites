@@ -69,46 +69,29 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { lib, pkgs, ... }:
-        with lib;
-        {
-          devenv.shells.default = {
-            imports = [
-              devlib.devenvModules.git
-              devlib.devenvModules.javascript
-              devlib.devenvModules.nix
-              devlib.devenvModules.opentofu
-              devlib.devenvModules.shell
-              devlib.devenvModules.shikanime-studio
-            ];
-            git-hooks.hooks = {
-              npm-run-lint = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run lint --prefix $dir --if-present --workspaces";
-                pass_filenames = false;
-              };
-              npm-run-test = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run test --prefix $dir --if-present --workspaces";
-                pass_filenames = false;
-              };
+      perSystem = _: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.github
+            devlib.devenvModules.javascript
+            devlib.devenvModules.nix
+            devlib.devenvModules.opentofu
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
+          treefmt.config.programs = {
+            sqlfluff = {
+              enable = true;
+              dialect = "sqlite";
             };
-            treefmt.config = {
-              programs = {
-                sqlfluff = {
-                  enable = true;
-                  dialect = "sqlite";
-                };
-                wgslfmt.enable = true;
-              };
-              settings.global.excludes = [
-                "*.gen.ts"
-                "apps/**/node_modules/*"
-              ];
-            };
+            wgslfmt.enable = true;
           };
+          treefmt.config.settings.global.excludes = [
+            "*.gen.ts"
+          ];
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
