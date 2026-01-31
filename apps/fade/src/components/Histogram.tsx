@@ -9,7 +9,7 @@ interface HistogramProps {
 function HistogramSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`relative h-32 w-full bg-zinc-800/50 rounded-md overflow-hidden flex items-center justify-center ${className ?? ""}`}
+      className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md bg-zinc-800/50 ${className ?? ""}`}
     >
       <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-500 border-t-transparent" />
     </div>
@@ -26,7 +26,7 @@ function HistogramContent({
 
   return (
     <div
-      className={`relative h-32 w-full bg-black rounded-md overflow-hidden ${className ?? ""}`}
+      className={`relative h-32 w-full overflow-hidden rounded-md bg-black ${className ?? ""}`}
     >
       <svg
         viewBox="0 0 256 100"

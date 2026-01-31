@@ -1,7 +1,14 @@
 {
   "extends": "@shikanime-studio/typescript-config/react.json",
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": [
+    "**/*.ts",
+    "**/*.tsx"
+  ],
   "compilerOptions": {
-    "types": ["vite/client", "wicg-file-system-access", "@webgpu/types"]
+    "types": [
+      "vite/client",
+      "wicg-file-system-access",
+      "@webgpu/types"
+    ]
   }
 }

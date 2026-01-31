@@ -66,6 +66,7 @@
       imports = [
         devenv.flakeModule
         devlib.flakeModule
+        devlib.flakeModules.treefmt
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];

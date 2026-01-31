@@ -67,7 +67,7 @@ jobs:
           REPO: ${{ github.repository }}
         run: gh release create "$REF_NAME" --repo "$REPO" --generate-notes || true
 name: Release
-"on":
+'on':
   push:
     branches:
       - main

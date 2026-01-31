@@ -108,7 +108,7 @@ jobs:
           sign-commits: true
           username: operator6o
 name: Commands
-"on":
+'on':
   issue_comment:
     types:
       - created

@@ -79,7 +79,7 @@ export function Filmstrip() {
 
       <Activity mode={isCollapsed ? "hidden" : "visible"}>
         <div
-          className="scrollbar-thin h-full overflow-y-hidden overflow-x-auto"
+          className="scrollbar-thin h-full overflow-x-auto overflow-y-hidden"
           ref={ref}
         >
           {files.length === 0 ? (
