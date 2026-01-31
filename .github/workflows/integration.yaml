@@ -18,7 +18,7 @@ jobs:
           github_access_token: ${{ steps.createGithubAppToken.outputs.token || secrets.GITHUB_TOKEN }}
       - run: nix run nixpkgs#direnv allow
       - run: nix run nixpkgs#direnv export gha >> "$GITHUB_ENV"
-      - run: nix flake check --accept-flake-config --no-pure-eval
+      - run: nix flake check --accept-flake-config --no-pure-eval --verbose
 name: Integration
 'on':
   pull_request:
