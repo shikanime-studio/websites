@@ -1,6 +1,5 @@
 {
   "name": "@shikanime/reiya",
-  "version": "2025.01",
   "private": true,
   "type": "module",
   "scripts": {
@@ -21,7 +20,7 @@
     "@astrojs/partytown": "^2.1.4",
     "@astrojs/react": "^4.3.0",
     "@astrojs/sitemap": "^3.5.0",
-    "@better-auth/passkey": "^1.4.5",
+    "@better-auth/passkey": "^1.4.18",
     "@fontsource-variable/bricolage-grotesque": "^5.2.10",
     "@shikanime-studio/typescript-config": "^0.0.0",
     "@tailwindcss/typography": "^0.5.16",
@@ -31,7 +30,7 @@
     "@types/react-dom": "^19.2.3",
     "@unpic/react": "^1.0.2",
     "astro": "^5.13.2",
-    "better-auth": "^1.4.5",
+    "better-auth": "^1.4.18",
     "daisyui": "^5.5.5",
     "drizzle-orm": "^0.44.4",
     "drizzle-seed": "^0.3.1",
