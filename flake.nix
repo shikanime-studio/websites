@@ -83,16 +83,14 @@
               devlib.devenvModules.shell
               devlib.devenvModules.shikanime-studio
             ];
-            git-hooks.hooks = {
-              npm-run-lint = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run lint --if-present --workspaces";
-                pass_filenames = false;
+            tasks = {
+              "npm:lint" = {
+                before = [ "devenv:enterTest" ];
+                exec = "${getExe' pkgs.nodejs "npm"} run lint --if-present --workspaces";
               };
-              npm-run-test = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run test --if-present --workspaces";
-                pass_filenames = false;
+              "npm:test" = {
+                before = [ "devenv:enterTest" ];
+                exec = "${getExe' pkgs.nodejs "npm"} run test --if-present --workspaces";
               };
             };
             treefmt.config = {
