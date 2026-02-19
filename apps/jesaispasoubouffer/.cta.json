@@ -11,5 +11,8 @@
   "routerOnly": false,
   "version": 1,
   "framework": "react-cra",
-  "chosenAddOns": ["cloudflare", "better-auth"]
+  "chosenAddOns": [
+    "cloudflare",
+    "better-auth"
+  ]
 }

@@ -69,35 +69,32 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { lib, ... }:
-        with lib;
-        {
-          devenv.shells.default = {
-            imports = [
-              devlib.devenvModules.git
-              devlib.devenvModules.javascript
-              devlib.devenvModules.nix
-              devlib.devenvModules.opentofu
-              devlib.devenvModules.shell
-              devlib.devenvModules.shikanime-studio
-            ];
-            treefmt.config = {
-              programs = {
-                sqlfluff = {
-                  enable = true;
-                  dialect = "sqlite";
-                };
-                wgslfmt.enable = true;
+      perSystem = _: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.javascript
+            devlib.devenvModules.nix
+            devlib.devenvModules.opentofu
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
+          treefmt.config = {
+            programs = {
+              sqlfluff = {
+                enable = true;
+                dialect = "sqlite";
               };
-              settings.global.excludes = [
-                "*.gen.ts"
-                "apps/*/node_modules/*"
-                "packages/*/node_modules/*"
-              ];
+              wgslfmt.enable = true;
             };
+            settings.global.excludes = [
+              "*.gen.ts"
+              "apps/*/node_modules/*"
+              "packages/*/node_modules/*"
+            ];
           };
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"
