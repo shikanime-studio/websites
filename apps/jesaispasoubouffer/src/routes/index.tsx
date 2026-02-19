@@ -38,6 +38,7 @@ type RecommendResponse
     alternatives: Restaurant[]
   }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function App() {
   const [coords, setCoords] = useState<Coords | null>(null)
   const [radius, setRadius] = useState(1500)

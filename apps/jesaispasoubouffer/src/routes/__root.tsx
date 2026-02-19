@@ -30,6 +30,7 @@ export const Route = createRootRoute({
   shellComponent: RootDocument,
 })
 
+// eslint-disable-next-line react-refresh/only-export-components
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">

@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import { useEffect, useMemo } from 'react'
 import imageShader from '../shaders/image.wgsl?raw'
 import { useGPU } from './useGPU'
@@ -62,7 +63,7 @@ function useImagePipeline() {
 }
 
 export function useImageRender(
-  context: GPUCanvasContext | null,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   image: HTMLImageElement | null,
   lighting: LightingParams = {
     exposure: 0,
@@ -111,7 +112,14 @@ export function useImageRender(
   }, [device, image])
 
   useEffect(() => {
-    if (!device || !context || !format || !pipeline || !texture) {
+    const canvas = canvasRef.current
+    if (!device || !canvas || !format || !pipeline || !texture) {
+      return
+    }
+
+    const context = canvas.getContext('webgpu')
+    if (!context) {
+      console.error('Could not get GPU context')
       return
     }
 
@@ -190,8 +198,8 @@ export function useImageRender(
 
     device.queue.submit([commandEncoder.finish()])
   }, [
+    canvasRef,
     device,
-    context,
     format,
     pipeline,
     texture,
