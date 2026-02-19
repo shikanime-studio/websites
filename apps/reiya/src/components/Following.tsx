@@ -1,4 +1,3 @@
-import type { FC } from 'react'
 import {
   fetchArtists,
   fetchCharacters,
@@ -9,7 +8,7 @@ import { GalleryContent } from './Gallery'
 import { QueryProvider } from './QueryProvider'
 import { Tab, TabContent, TabList } from './TabList'
 
-export const Following: FC = () => {
+export function Following() {
   return (
     <QueryProvider>
       <TabList defaultTab="merchs">

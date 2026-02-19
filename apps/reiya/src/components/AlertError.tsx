@@ -1,4 +1,4 @@
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 export interface AlertErrorProps {
   title?: string
@@ -6,11 +6,11 @@ export interface AlertErrorProps {
   onClose?: () => void
 }
 
-export const AlertError: FC<AlertErrorProps> = ({
+export function AlertError({
   title,
   children,
   onClose,
-}) => {
+}: AlertErrorProps) {
   return (
     <div className="alert alert-error cursor-pointer shadow-lg">
       <div className="flex w-full flex-col gap-2">
