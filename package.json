@@ -17,21 +17,20 @@
     "globals": "^16.5.0",
     "jiti": "^2.6.1",
     "tailwind-csstree": "^0.1.4",
-    "typescript-eslint": "^8.49.0",
-    "vitest": "^4.0.15"
+    "typescript-eslint": "^8.49.0"
   },
   "packageManager": "npm@11.7.0+sha512.c22099a6fff8d5b2286c2a09df5352b4858a7c0c716320f58989d60ad8b29ecf2ce6fdfe97ccb41c23ffb1272e1fa079f868487dd6b81d02a2a9e199c095a117",
   "type": "module",
   "name": "@shikanime/websites",
   "scripts": {
-    "lint": "eslint .",
-    "test": "vitest run"
+    "lint": "eslint ."
   },
   "workspaces": [
     "apps/fade",
     "apps/links",
     "apps/reiya",
-    "apps/www"
+    "apps/www",
+    "apps/jesaispasoubouffer"
   ],
   "dependencies": {
     "@tanstack/devtools-vite": "^0.4.1",
