@@ -1,8 +1,8 @@
-import type { FC, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Image } from '@unpic/react'
+import { ArrowRight } from 'lucide-react'
 import { Activity } from 'react'
-import { FaArrowRight } from 'react-icons/fa6'
 import {
   fetchArtists,
   fetchCharacters,
@@ -26,9 +26,11 @@ interface ExploreSectionHeadProps {
   children?: ReactNode
 }
 
-export const ExploreSectionTitle: FC<{ children: ReactNode }> = ({
+export function ExploreSectionTitle({
   children,
-}) => {
+}: {
+  children: ReactNode
+}) {
   return (
     <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
       {children}
@@ -36,25 +38,28 @@ export const ExploreSectionTitle: FC<{ children: ReactNode }> = ({
   )
 }
 
-export const ExploreSectionExpend: FC<{
+export function ExploreSectionExpend({
+  href,
+  children,
+}: {
   href: string
   children: ReactNode
-}> = ({ href, children }) => {
+}) {
   return (
     <a
       href={href}
       className="flex items-center gap-1 text-sm font-bold text-gray-500 transition-colors hover:text-gray-900"
     >
       {children}
-      <FaArrowRight className="h-3 w-3" />
+      <ArrowRight className="h-3 w-3" />
     </a>
   )
 }
 
-export const ExploreSectionHead: FC<ExploreSectionHeadProps> = ({
+export function ExploreSectionHead({
   className = '',
   children,
-}) => {
+}: ExploreSectionHeadProps) {
   return (
     <div className={`flex items-center justify-between px-1 ${className}`}>
       {children}
@@ -62,16 +67,16 @@ export const ExploreSectionHead: FC<ExploreSectionHeadProps> = ({
   )
 }
 
-export const ExploreSection: FC<ExploreSectionProps> = ({
+export function ExploreSection({
   className = '',
   children,
-}) => {
+}: ExploreSectionProps) {
   return (
     <section className={`flex flex-col gap-6 ${className}`}>{children}</section>
   )
 }
 
-const ExploreFeaturedContent: FC = () => {
+function ExploreFeaturedContent() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['showcases'],
     queryFn: fetchShowcases,
@@ -92,10 +97,10 @@ const ExploreFeaturedContent: FC = () => {
   )
 }
 
-export const ExploreFeatured: FC<ExploreSectionProps> = ({
+export function ExploreFeatured({
   className,
   children,
-}) => {
+}: ExploreSectionProps) {
   return (
     <QueryProvider>
       <ExploreSection className={className}>
@@ -106,7 +111,7 @@ export const ExploreFeatured: FC<ExploreSectionProps> = ({
   )
 }
 
-const ExploreArtistsContent: FC = () => {
+function ExploreArtistsContent() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['artists'],
     queryFn: fetchArtists,
@@ -127,10 +132,10 @@ const ExploreArtistsContent: FC = () => {
   )
 }
 
-export const ExploreArtists: FC<ExploreSectionProps> = ({
+export function ExploreArtists({
   className,
   children,
-}) => {
+}: ExploreSectionProps) {
   return (
     <QueryProvider>
       <ExploreSection className={className}>
@@ -141,7 +146,7 @@ export const ExploreArtists: FC<ExploreSectionProps> = ({
   )
 }
 
-const ExploreCharactersContent: FC = () => {
+function ExploreCharactersContent() {
   const { data: items = [], isLoading } = useQuery({
     queryKey: ['characters'],
     queryFn: fetchCharacters,
@@ -162,10 +167,10 @@ const ExploreCharactersContent: FC = () => {
   )
 }
 
-export const ExploreCharacters: FC<ExploreSectionProps> = ({
+export function ExploreCharacters({
   className,
   children,
-}) => {
+}: ExploreSectionProps) {
   return (
     <QueryProvider>
       <ExploreSection className={className}>
@@ -176,7 +181,7 @@ export const ExploreCharacters: FC<ExploreSectionProps> = ({
   )
 }
 
-const ExploreConventionsContent: FC = () => {
+function ExploreConventionsContent() {
   const { data: events = [], isLoading } = useQuery({
     queryKey: ['events'],
     queryFn: fetchEvents,
@@ -263,7 +268,7 @@ const ExploreConventionsContent: FC = () => {
   )
 }
 
-export const ExploreConventions: FC = () => {
+export function ExploreConventions() {
   return (
     <QueryProvider>
       <ExploreConventionsContent />
@@ -271,7 +276,7 @@ export const ExploreConventions: FC = () => {
   )
 }
 
-const ExploreShowcaseContent: FC = () => {
+function ExploreShowcaseContent() {
   const filters = [
     'Random',
     'Latest',
@@ -315,7 +320,7 @@ const ExploreShowcaseContent: FC = () => {
   )
 }
 
-export const ExploreShowcase: FC = () => {
+export function ExploreShowcase() {
   return (
     <QueryProvider>
       <ExploreShowcaseContent />
