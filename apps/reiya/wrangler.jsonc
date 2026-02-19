@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "reiya",
+  "compatibility_date": "2025-12-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "./dist/_worker.js/index.js",
+  "routes": [
+    {
+      "pattern": "reiya.shikanime.studio",
+      "custom_domain": true,
+      "zone_name": "shikanime.studio"
+    }
+  ],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "reiya",
+      "database_id": "7b838da3-58f3-4db0-b4c4-e5e59db90fce"
+    }
+  ]
+}

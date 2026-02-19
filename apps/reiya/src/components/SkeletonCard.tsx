@@ -1,4 +1,4 @@
-import type { FC } from "react";
+import type { FC } from 'react'
 
 export const SkeletonCard: FC = () => {
   return (
@@ -17,5 +17,5 @@ export const SkeletonCard: FC = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}

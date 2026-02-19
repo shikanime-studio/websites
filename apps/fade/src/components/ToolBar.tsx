@@ -1,12 +1,12 @@
-import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
-import { siGithub } from "simple-icons";
-import { useDirectory } from "../hooks/useDirectory";
-import { useGallery } from "../hooks/useGallery";
-import { useModal } from "../hooks/useModal";
-import { SettingsModal } from "./SettingsModal";
+import { AlertTriangle, FolderOpen, Image, Settings } from 'lucide-react'
+import { siGithub } from 'simple-icons'
+import { useDirectory } from '../hooks/useDirectory'
+import { useGallery } from '../hooks/useGallery'
+import { useModal } from '../hooks/useModal'
+import { SettingsModal } from './SettingsModal'
 
 export function ToolBar() {
-  const { modal, setModal } = useModal();
+  const { modal, setModal } = useModal()
 
   return (
     <>
@@ -15,19 +15,19 @@ export function ToolBar() {
         <ToolBarStatus />
         <ToolBarActions
           onSettingsClick={() => {
-            setModal("settings");
+            setModal('settings')
           }}
         />
       </div>
 
       <SettingsModal
-        open={modal === "settings"}
+        open={modal === 'settings'}
         onClose={() => {
-          setModal(undefined);
+          setModal(undefined)
         }}
       />
     </>
-  );
+  )
 }
 
 function ToolBarLogo() {
@@ -38,25 +38,28 @@ function ToolBarLogo() {
         <span className="text-base font-semibold tracking-wide">Fade</span>
       </div>
     </div>
-  );
+  )
 }
 
 function ToolBarStatus() {
-  const { files, selectedIndex } = useGallery();
+  const { files, selectedIndex } = useGallery()
 
   return (
     <div className="navbar-center">
       {files.length > 0 && (
         <span className="text-sm tabular-nums opacity-70">
-          {selectedIndex + 1} / {files.length}
+          {selectedIndex + 1}
+          {' '}
+          /
+          {files.length}
         </span>
       )}
     </div>
-  );
+  )
 }
 
 function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
-  const { select, isSupported } = useDirectory();
+  const { select, isSupported } = useDirectory()
 
   return (
     <div className="navbar-end gap-2">
@@ -76,7 +79,7 @@ function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
       <button
         className="btn btn-sm btn-outline btn-warning gap-2 font-medium"
         onClick={() => {
-          void select();
+          void select()
         }}
       >
         <FolderOpen className="h-4 w-4" />
@@ -107,5 +110,5 @@ function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
         <Settings className="h-4.5 w-4.5" />
       </button>
     </div>
-  );
+  )
 }

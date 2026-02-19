@@ -1,18 +1,18 @@
-import { createContext, useContext } from "react";
+import { createContext, use } from 'react'
 
-export type ModalType = "settings" | "fullscreen" | undefined;
+export type ModalType = 'settings' | 'fullscreen' | undefined
 
 export interface ModalContextType {
-  modal: ModalType;
-  setModal: (modal: ModalType) => void;
+  modal: ModalType
+  setModal: (modal: ModalType) => void
 }
 
-export const ModalContext = createContext<ModalContextType | null>(null);
+export const ModalContext = createContext<ModalContextType | null>(null)
 
 export function useModal() {
-  const context = useContext(ModalContext);
+  const context = use(ModalContext)
   if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
+    throw new Error('useModal must be used within a ModalProvider')
   }
-  return context;
+  return context
 }

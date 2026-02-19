@@ -1,9 +1,9 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
   --font-sans:
-    "Bricolage Grotesque Variable", ui-sans-serif, system-ui, sans-serif,
-    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    'Bricolage Grotesque Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @plugin "@tailwindcss/typography";
@@ -13,7 +13,7 @@
 }
 
 @plugin "daisyui/theme" {
-  name: "dragonred";
+  name: 'dragonred';
   default: true;
   --color-primary: #ed2533;
   --color-secondary: #f4ceb5;

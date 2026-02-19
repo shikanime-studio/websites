@@ -1,0 +1,17 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "fade",
+  "compatibility_date": "2025-12-25",
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "@tanstack/react-start/server-entry",
+  "routes": [
+    {
+      "pattern": "fade.shikanime.studio",
+      "custom_domain": true,
+      "zone_name": "shikanime.studio"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

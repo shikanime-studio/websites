@@ -1,85 +1,85 @@
-import { useState } from "react";
-import { LightingContext } from "../hooks/useLighting";
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react'
+import { useState } from 'react'
+import { LightingContext } from '../hooks/useLighting'
 
 interface LightingProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
 export function LightingProvider({ children }: LightingProviderProps) {
-  const [exposure, setExposure] = useState(0);
-  const [contrast, setContrast] = useState(1);
-  const [saturation, setSaturation] = useState(1);
-  const [highlights, setHighlights] = useState(0);
-  const [shadows, setShadows] = useState(0);
-  const [whites, setWhites] = useState(0);
-  const [blacks, setBlacks] = useState(0);
-  const [tint, setTint] = useState(0);
-  const [temperature, setTemperature] = useState(0);
-  const [vibrance, setVibrance] = useState(0);
-  const [hue, setHue] = useState(0);
+  const [exposure, setExposure] = useState(0)
+  const [contrast, setContrast] = useState(1)
+  const [saturation, setSaturation] = useState(1)
+  const [highlights, setHighlights] = useState(0)
+  const [shadows, setShadows] = useState(0)
+  const [whites, setWhites] = useState(0)
+  const [blacks, setBlacks] = useState(0)
+  const [tint, setTint] = useState(0)
+  const [temperature, setTemperature] = useState(0)
+  const [vibrance, setVibrance] = useState(0)
+  const [hue, setHue] = useState(0)
 
   return (
-    <LightingContext.Provider
+    <LightingContext
       value={{
         exposure,
         setExposure,
         resetExposure: () => {
-          setExposure(0);
+          setExposure(0)
         },
         contrast,
         setContrast,
         resetContrast: () => {
-          setContrast(1);
+          setContrast(1)
         },
         saturation,
         setSaturation,
         resetSaturation: () => {
-          setSaturation(1);
+          setSaturation(1)
         },
         highlights,
         setHighlights,
         resetHighlights: () => {
-          setHighlights(0);
+          setHighlights(0)
         },
         shadows,
         setShadows,
         resetShadows: () => {
-          setShadows(0);
+          setShadows(0)
         },
         whites,
         setWhites,
         resetWhites: () => {
-          setWhites(0);
+          setWhites(0)
         },
         blacks,
         setBlacks,
         resetBlacks: () => {
-          setBlacks(0);
+          setBlacks(0)
         },
         tint,
         setTint,
         resetTint: () => {
-          setTint(0);
+          setTint(0)
         },
         temperature,
         setTemperature,
         resetTemperature: () => {
-          setTemperature(0);
+          setTemperature(0)
         },
         vibrance,
         setVibrance,
         resetVibrance: () => {
-          setVibrance(0);
+          setVibrance(0)
         },
         hue,
         setHue,
         resetHue: () => {
-          setHue(0);
+          setHue(0)
         },
       }}
     >
       {children}
-    </LightingContext.Provider>
-  );
+    </LightingContext>
+  )
 }

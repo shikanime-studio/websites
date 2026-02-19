@@ -1,16 +1,16 @@
-import { FaBoxOpen } from "react-icons/fa6";
-import type { FC, ReactNode } from "react";
+import type { FC, ReactNode } from 'react'
+import { FaBoxOpen } from 'react-icons/fa6'
 
 interface EmptyStateProps {
-  title?: string;
-  description?: string;
-  action?: ReactNode;
-  icon?: ReactNode;
+  title?: string
+  description?: string
+  action?: ReactNode
+  icon?: ReactNode
 }
 
 export const EmptyState: FC<EmptyStateProps> = ({
-  title = "No items found",
-  description = "We couldn't find anything matching your criteria.",
+  title = 'No items found',
+  description = 'We couldn\'t find anything matching your criteria.',
   action,
   icon,
 }) => {
@@ -25,5 +25,5 @@ export const EmptyState: FC<EmptyStateProps> = ({
       </p>
       {action && <div className="mt-6">{action}</div>}
     </div>
-  );
-};
+  )
+}

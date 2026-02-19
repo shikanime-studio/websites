@@ -1,5 +1,8 @@
-import { useEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
+import type { FC } from 'react'
+import type { CardData } from './Card'
+import { Image } from '@unpic/react'
+import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import {
   FaArrowUp,
   FaBookmark,
@@ -9,48 +12,45 @@ import {
   FaHeart,
   FaShare,
   FaXmark,
-} from "react-icons/fa6";
-import { Image } from "@unpic/react";
-import type { FC } from "react";
-import type { CardData } from "./Card";
+} from 'react-icons/fa6'
 
 interface CardModalProps {
-  card: CardData;
-  onClose: () => void;
+  card: CardData
+  onClose: () => void
 }
 
 export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false)
+  const imageContainerRef = useRef<HTMLDivElement>(null)
 
   // Handle ESC key to close modal
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        onClose();
+      if (e.key === 'Escape') {
+        onClose()
       }
-    };
-    window.addEventListener("keydown", handleEsc);
+    }
+    window.addEventListener('keydown', handleEsc)
     return () => {
-      window.removeEventListener("keydown", handleEsc);
-    };
-  }, [onClose]);
+      window.removeEventListener('keydown', handleEsc)
+    }
+  }, [onClose])
 
   const handleScroll = () => {
     if (imageContainerRef.current) {
-      const { scrollTop } = imageContainerRef.current;
-      setShowScrollTop(scrollTop > 200);
+      const { scrollTop } = imageContainerRef.current
+      setShowScrollTop(scrollTop > 200)
     }
-  };
+  }
 
   const scrollToTop = () => {
     if (imageContainerRef.current) {
       imageContainerRef.current.scrollTo({
         top: 0,
-        behavior: "smooth",
-      });
+        behavior: 'smooth',
+      })
     }
-  };
+  }
 
   return createPortal(
     <dialog className="modal modal-open">
@@ -84,7 +84,7 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
           className="scrollbar-hide relative flex h-[40vh] w-full flex-col overflow-y-auto bg-gray-100 md:h-auto md:w-[60%]"
         >
           <div className="flex flex-col gap-4 p-4 md:p-8">
-            {card.images.map((img) => (
+            {card.images.map(img => (
               <div
                 key={img.src}
                 className="relative w-full overflow-hidden rounded-xl bg-white shadow-sm"
@@ -106,8 +106,8 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
             onClick={scrollToTop}
             className={`hover:text-primary absolute right-6 bottom-6 z-30 transform rounded-full bg-white p-3 text-gray-700 shadow-lg transition-all duration-300 ${
               showScrollTop
-                ? "translate-y-0 opacity-100"
-                : "pointer-events-none translate-y-10 opacity-0"
+                ? 'translate-y-0 opacity-100'
+                : 'pointer-events-none translate-y-10 opacity-0'
             }`}
           >
             <FaArrowUp className="h-5 w-5" />
@@ -140,20 +140,28 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
               <div className="flex items-baseline gap-2">
                 <span className="text-sm text-gray-500">From</span>
                 <span className="text-2xl font-bold text-gray-900">
-                  €{20 + (String(card.id).length % 80)}.00
+                  €
+                  {20 + (String(card.id).length % 80)}
+                  .00
                 </span>
               </div>
             </div>
 
             <div className="flex flex-col gap-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <FaCheck className="text-gray-900" /> Personal
+                <FaCheck className="text-gray-900" />
+                {' '}
+                Personal
               </div>
               <div className="flex items-center gap-2 text-gray-400">
-                <FaXmark className="text-gray-400" /> Monetized content
+                <FaXmark className="text-gray-400" />
+                {' '}
+                Monetized content
               </div>
               <div className="flex items-center gap-2 text-gray-400">
-                <FaXmark className="text-gray-400" /> Commercial merchandising
+                <FaXmark className="text-gray-400" />
+                {' '}
+                Commercial merchandising
               </div>
             </div>
 
@@ -174,7 +182,8 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                   )}
                 </div>
                 <div className="truncate text-sm text-gray-500">
-                  @{card.artist.name.replace(/\s/g, "").toLowerCase()}
+                  @
+                  {card.artist.name.replace(/\s/g, '').toLowerCase()}
                 </div>
               </div>
             </div>
@@ -197,7 +206,9 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
                   type="button"
                   className="border-b-2 border-transparent pb-3 text-sm font-medium text-gray-500 hover:text-gray-800"
                 >
-                  Reviews ({card.reviewCount})
+                  Reviews (
+                  {card.reviewCount}
+                  )
                 </button>
               </div>
             </div>
@@ -248,5 +259,5 @@ export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
       </form>
     </dialog>,
     document.body,
-  );
-};
+  )
+}

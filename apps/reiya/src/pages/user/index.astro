@@ -1,15 +1,15 @@
 ---
-import FluidLayout from "../../layouts/FluidLayout.astro";
-import { Image } from "@unpic/react";
-import { createAuth } from "../../lib/auth";
-import { createD1Database } from "../../lib/db";
+import { Image } from '@unpic/react'
+import FluidLayout from '../../layouts/FluidLayout.astro'
+import { createAuth } from '../../lib/auth'
+import { createD1Database } from '../../lib/db'
 
-const db = createD1Database(Astro.locals);
-const auth = createAuth(db, Astro.locals);
+const db = createD1Database(Astro.locals)
+const auth = createAuth(db, Astro.locals)
 
 const session = await auth.api.getSession({
   headers: Astro.request.headers,
-});
+})
 
 const user = session?.user;
 ---
@@ -19,7 +19,8 @@ const user = session?.user;
     <h1 class="text-3xl font-bold">User Settings</h1>
 
     {
-      user ? (
+      user
+? (
         <div class="card bg-base-100 max-w-2xl shadow-xl">
           <div class="card-body">
             <div class="flex items-center gap-4">
@@ -27,8 +28,8 @@ const user = session?.user;
                 <div class="w-24 rounded-full">
                   <Image
                     src={
-                      user.image ||
-                      `https://ui-avatars.com/api/?name=${user.name}`
+                      user.image
+                      || `https://ui-avatars.com/api/?name=${user.name}`
                     }
                     alt={user.name}
                     width={96}
@@ -72,7 +73,8 @@ const user = session?.user;
             </div>
           </div>
         </div>
-      ) : (
+      )
+: (
         <div class="alert alert-warning">
           <span>You need to be logged in to view this page.</span>
         </div>

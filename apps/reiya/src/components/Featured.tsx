@@ -1,21 +1,55 @@
-import { Image } from "@unpic/react";
-import { FaArrowRight } from "react-icons/fa6";
-import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from "./Card";
-import { EmptyState } from "./EmptyState";
-import type { CardData } from "./Card";
-import type { FC } from "react";
+import type { FC } from 'react'
+import type { CardData } from '../lib/api-client'
+import { Image } from '@unpic/react'
+import { FaArrowRight } from 'react-icons/fa6'
+import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from './Card'
+import { EmptyState } from './EmptyState'
+
+interface FeaturedCarouselItemProps {
+  item: CardData
+}
+
+const FeaturedCarouselItem: FC<FeaturedCarouselItemProps> = ({ item }) => {
+  return (
+    <div className="carousel-item w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
+      <Card>
+        <div className="w-full">
+          <CardCarousel
+            title={item.title}
+            href={item.href}
+            images={item.images.map(img => (
+              <Image
+                key={img.src}
+                src={img.src}
+                alt={`${item.title} - image`}
+                width={img.width}
+                height={img.height}
+                layout="constrained"
+                className="h-full w-full object-contain"
+              />
+            ))}
+          >
+            <CardStatus status={item.status} />
+            <CardBookmark />
+          </CardCarousel>
+        </div>
+        <CardInfo {...item} />
+      </Card>
+    </div>
+  )
+}
 
 interface FeaturedProps {
-  title?: string;
-  items: Array<CardData>;
-  className?: string;
-  viewAllLink?: string;
+  title?: string
+  items: Array<CardData>
+  className?: string
+  viewAllLink?: string
 }
 
 export const Featured: FC<FeaturedProps> = ({
   title,
   items,
-  className = "",
+  className = '',
   viewAllLink,
 }) => {
   return (
@@ -37,52 +71,20 @@ export const Featured: FC<FeaturedProps> = ({
         </div>
       )}
 
-      {items.length > 0 ? (
-        <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
-          {items.map((item) => (
-            <FeaturedCarouselItem key={item.id} item={item} />
-          ))}
-        </div>
-      ) : (
-        <EmptyState
-          title="No items yet"
-          description="We couldn't find any items to display in this section."
-        />
-      )}
+      {items.length > 0
+        ? (
+            <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
+              {items.map(item => (
+                <FeaturedCarouselItem key={item.id} item={item} />
+              ))}
+            </div>
+          )
+        : (
+            <EmptyState
+              title="No items yet"
+              description="We couldn't find any items to display in this section."
+            />
+          )}
     </div>
-  );
-};
-
-interface FeaturedCarouselItemProps {
-  item: CardData;
+  )
 }
-
-const FeaturedCarouselItem: FC<FeaturedCarouselItemProps> = ({ item }) => {
-  return (
-    <div className="carousel-item w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
-      <Card>
-        <div className="w-full">
-          <CardCarousel
-            title={item.title}
-            href={item.href}
-            images={item.images.map((img) => (
-              <Image
-                key={img.src}
-                src={img.src}
-                alt={`${item.title} - image`}
-                width={img.width}
-                height={img.height}
-                layout="constrained"
-                className="h-full w-full object-contain"
-              />
-            ))}
-          >
-            <CardStatus status={item.status} />
-            <CardBookmark />
-          </CardCarousel>
-        </div>
-        <CardInfo {...item} />
-      </Card>
-    </div>
-  );
-};

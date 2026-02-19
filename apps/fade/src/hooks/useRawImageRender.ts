@@ -1,40 +1,41 @@
-import { useEffect, useMemo } from "react";
-import rafShader from "../shaders/raf.wgsl?raw";
-import { useGPU } from "./useGPU";
+import { useEffect, useMemo } from 'react'
+import rafShader from '../shaders/raf.wgsl?raw'
+import { useGPU } from './useGPU'
 
 interface LightingParams {
-  exposure: number;
-  contrast: number;
-  saturation: number;
-  highlights: number;
-  shadows: number;
-  whites: number;
-  blacks: number;
-  tint: number;
-  temperature: number;
-  vibrance: number;
-  hue: number;
+  exposure: number
+  contrast: number
+  saturation: number
+  highlights: number
+  shadows: number
+  whites: number
+  blacks: number
+  tint: number
+  temperature: number
+  vibrance: number
+  hue: number
 }
 
 function useRawImagePipeline() {
-  const { device, format } = useGPU();
+  const { device, format } = useGPU()
 
   return useMemo(() => {
-    if (!device || !format) return null;
+    if (!device || !format)
+      return null
 
     const shaderModule = device.createShaderModule({
       code: rafShader,
-    });
+    })
 
     return device.createRenderPipeline({
-      layout: "auto",
+      layout: 'auto',
       vertex: {
         module: shaderModule,
-        entryPoint: "vs_main",
+        entryPoint: 'vs_main',
       },
       fragment: {
         module: shaderModule,
-        entryPoint: "fs_main",
+        entryPoint: 'fs_main',
         targets: [
           {
             format,
@@ -42,10 +43,10 @@ function useRawImagePipeline() {
         ],
       },
       primitive: {
-        topology: "triangle-strip",
+        topology: 'triangle-strip',
       },
-    });
-  }, [device, format]);
+    })
+  }, [device, format])
 }
 
 export function useRawImageRender(
@@ -67,18 +68,19 @@ export function useRawImageRender(
     hue: 0,
   },
 ) {
-  const { device, format } = useGPU();
-  const pipeline = useRawImagePipeline();
+  const { device, format } = useGPU()
+  const pipeline = useRawImagePipeline()
   const texture = useMemo(() => {
-    if (!device || width <= 0 || height <= 0) return null;
+    if (!device || width <= 0 || height <= 0)
+      return null
 
     try {
       // Create texture for raw data
       const tex = device.createTexture({
         size: [width, height],
-        format: "r16uint",
+        format: 'r16uint',
         usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
-      });
+      })
 
       // Upload data
       device.queue.writeTexture(
@@ -86,25 +88,26 @@ export function useRawImageRender(
         data,
         { bytesPerRow: width * 2 },
         { width, height },
-      );
+      )
 
-      return tex;
-    } catch (e) {
-      console.error("Failed to create/upload texture:", e);
-      return null;
+      return tex
     }
-  }, [device, width, height, data]);
+    catch (e) {
+      console.error('Failed to create/upload texture:', e)
+      return null
+    }
+  }, [device, width, height, data])
 
   useEffect(() => {
     if (!device || !context || !format || !pipeline || !texture) {
-      return;
+      return
     }
 
     // Create uniform buffer
     const uniformBuffer = device.createBuffer({
       size: 48, // 12 floats * 4 bytes
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
+    })
 
     device.queue.writeBuffer(
       uniformBuffer,
@@ -123,7 +126,7 @@ export function useRawImageRender(
         lighting.hue,
         0, // padding
       ]),
-    );
+    )
 
     const bindGroup = device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
@@ -137,34 +140,34 @@ export function useRawImageRender(
           resource: { buffer: uniformBuffer },
         },
       ],
-    });
+    })
 
     context.configure({
       device,
       format,
-      alphaMode: "premultiplied",
-    });
+      alphaMode: 'premultiplied',
+    })
 
-    const commandEncoder = device.createCommandEncoder();
-    const textureView = context.getCurrentTexture().createView();
+    const commandEncoder = device.createCommandEncoder()
+    const textureView = context.getCurrentTexture().createView()
 
     const passEncoder = commandEncoder.beginRenderPass({
       colorAttachments: [
         {
           view: textureView,
           clearValue: [0, 0, 0, 1],
-          loadOp: "clear",
-          storeOp: "store",
+          loadOp: 'clear',
+          storeOp: 'store',
         },
       ],
-    });
+    })
 
-    passEncoder.setPipeline(pipeline);
-    passEncoder.setBindGroup(0, bindGroup);
-    passEncoder.draw(4);
-    passEncoder.end();
+    passEncoder.setPipeline(pipeline)
+    passEncoder.setBindGroup(0, bindGroup)
+    passEncoder.draw(4)
+    passEncoder.end()
 
-    device.queue.submit([commandEncoder.finish()]);
+    device.queue.submit([commandEncoder.finish()])
   }, [
     device,
     context,
@@ -182,5 +185,5 @@ export function useRawImageRender(
     lighting.tint,
     lighting.temperature,
     lighting.hue,
-  ]);
+  ])
 }

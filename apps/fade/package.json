@@ -1,7 +1,7 @@
 {
   "name": "fade",
-  "private": true,
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",
-    "@shikanime-studio/typescript-config": "*",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-db": "^0.1.62",
     "@tanstack/react-devtools": "^0.7.0",
@@ -31,10 +30,10 @@
     "file-type": "^21.3.0",
     "lucide-react": "^0.561.0",
     "mixpanel-browser": "^2.73.0",
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "simple-icons": "^16.4.0",
-    "tailwindcss": "^4.0.6"
+    "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.8",
@@ -48,10 +47,10 @@
     "@vitejs/plugin-react": "^5.0.4",
     "@webgpu/types": "^0.1.68",
     "jsdom": "^27.0.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.9.3",
     "vite": "^7.1.7",
     "vitest": "^3.0.5",
     "web-vitals": "^5.1.0",
-    "wrangler": "^4.40.3"
+    "wrangler": "^4.51.0"
   }
 }

@@ -1,14 +1,14 @@
-import { useRef } from "react";
-import { useCanvas } from "../hooks/useCanvas";
-import { useLighting } from "../hooks/useLighting";
-import { useRawImage } from "../hooks/useRawImage";
-import { useRawImageRender } from "../hooks/useRawImageRender";
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from '../lib/fs'
+import { useRef } from 'react'
+import { useCanvas } from '../hooks/useCanvas'
+import { useLighting } from '../hooks/useLighting'
+import { useRawImage } from '../hooks/useRawImage'
+import { useRawImageRender } from '../hooks/useRawImageRender'
 
 interface RawImageRenderProps {
-  fileItem?: FileItem | undefined;
-  className?: string;
-  onDoubleClick?: () => void;
+  fileItem?: FileItem | undefined
+  className?: string
+  onDoubleClick?: () => void
 }
 
 export function RawImageRender({
@@ -16,16 +16,16 @@ export function RawImageRender({
   className,
   onDoubleClick,
 }: RawImageRenderProps) {
-  const { data: rawData } = useRawImage(fileItem ?? null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { context } = useCanvas(canvasRef);
-  const lighting = useLighting();
+  const { data: rawData } = useRawImage(fileItem ?? null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { context } = useCanvas(canvasRef)
+  const lighting = useLighting()
 
-  const width = rawData?.width ?? 0;
-  const height = rawData?.height ?? 0;
-  const data = rawData?.data ?? new Uint16Array(0);
+  const width = rawData?.width ?? 0
+  const height = rawData?.height ?? 0
+  const data = rawData?.data ?? new Uint16Array(0)
 
-  useRawImageRender(context, width, height, data.buffer, lighting);
+  useRawImageRender(context, width, height, data.buffer, lighting)
 
   return (
     <canvas
@@ -35,5 +35,5 @@ export function RawImageRender({
       className={className}
       onDoubleClick={onDoubleClick}
     />
-  );
+  )
 }
