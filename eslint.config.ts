@@ -19,6 +19,9 @@ export default antfu(
     typescript: true,
   },
   {
-    ignores: ['**/routeTree.gen.ts', '**/README.md'],
+    files: ['**/routeTree.gen.ts', '**/README.md'],
+    rules: {
+      'eslint-comments/no-unlimited-disable': 'off',
+    },
   },
 )
