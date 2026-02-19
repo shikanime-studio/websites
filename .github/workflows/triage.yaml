@@ -25,7 +25,7 @@ jobs:
         if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
         run: gh pr edit "$PR_NUMBER" --add-label ghstack
 name: Triage
-on:
+'on':
   pull_request:
     types:
       - opened
