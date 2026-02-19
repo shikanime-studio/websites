@@ -1,45 +1,46 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TanStackDevtools } from "@tanstack/react-devtools";
+import { TanStackDevtools } from '@tanstack/react-devtools'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
 import {
   ClientOnly,
+  createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
-  createRootRoute,
-} from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
-import appCss from "../styles.css?url";
-import { ThemeProvider } from "../components/ThemeProvider";
-import { MixpanelProvider } from "../components/MixpanelProvider";
+} from '@tanstack/react-router'
+import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
+import { MixpanelProvider } from '../components/MixpanelProvider'
+import { ThemeProvider } from '../components/ThemeProvider'
+import appCss from '../styles.css?url'
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient()
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
       {
-        charSet: "utf-8",
+        charSet: 'utf-8',
       },
       {
-        name: "viewport",
-        content: "width=device-width, initial-scale=1",
+        name: 'viewport',
+        content: 'width=device-width, initial-scale=1',
       },
       {
-        title: "Fade",
+        title: 'Fade',
       },
     ],
     links: [
       {
-        rel: "stylesheet",
+        rel: 'stylesheet',
         href: appCss,
       },
     ],
   }),
   component: RootComponent,
   shellComponent: RootDocument,
-});
+})
 
+// eslint-disable-next-line react-refresh/only-export-components
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
@@ -56,16 +57,16 @@ function RootComponent() {
             <Outlet />
             <TanStackDevtools
               config={{
-                position: "bottom-right",
+                position: 'bottom-right',
               }}
               plugins={[
                 {
-                  name: "TanStack Query",
+                  name: 'TanStack Query',
                   render: <ReactQueryDevtoolsPanel />,
                   defaultOpen: true,
                 },
                 {
-                  name: "TanStack Router",
+                  name: 'TanStack Router',
                   render: <TanStackRouterDevtoolsPanel />,
                   defaultOpen: false,
                 },
@@ -75,9 +76,10 @@ function RootComponent() {
         </ClientOnly>
       </MixpanelProvider>
     </QueryClientProvider>
-  );
+  )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -89,5 +91,5 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <Scripts />
       </body>
     </html>
-  );
+  )
 }

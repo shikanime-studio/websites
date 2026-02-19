@@ -66,51 +66,35 @@
       imports = [
         devenv.flakeModule
         devlib.flakeModule
-        devlib.flakeModules.treefmt
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { lib, pkgs, ... }:
-        with lib;
-        {
-          devenv.shells.default = {
-            imports = [
-              devlib.devenvModules.git
-              devlib.devenvModules.javascript
-              devlib.devenvModules.nix
-              devlib.devenvModules.opentofu
-              devlib.devenvModules.shell
-              devlib.devenvModules.shikanime-studio
+      perSystem = _: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.javascript
+            devlib.devenvModules.nix
+            devlib.devenvModules.opentofu
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
+          treefmt.config = {
+            programs = {
+              sqlfluff = {
+                enable = true;
+                dialect = "sqlite";
+              };
+              wgslfmt.enable = true;
+            };
+            settings.global.excludes = [
+              "*.gen.ts"
+              "apps/*/node_modules/*"
+              "packages/*/node_modules/*"
             ];
-            git-hooks.hooks = {
-              npm-run-lint = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run lint --if-present --workspaces";
-                pass_filenames = false;
-              };
-              npm-run-test = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run test --if-present --workspaces";
-                pass_filenames = false;
-              };
-            };
-            treefmt.config = {
-              programs = {
-                sqlfluff = {
-                  enable = true;
-                  dialect = "sqlite";
-                };
-                wgslfmt.enable = true;
-              };
-              settings.global.excludes = [
-                "*.gen.ts"
-                "apps/*/node_modules/*"
-                "packages/*/node_modules/*"
-              ];
-            };
           };
         };
+      };
       systems = [
         "x86_64-linux"
         "x86_64-darwin"

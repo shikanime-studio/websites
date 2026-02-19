@@ -1,67 +1,69 @@
-import { useEffect, useMemo } from "react";
-import imageShader from "../shaders/image.wgsl?raw";
-import { useGPU } from "./useGPU";
+import type { RefObject } from 'react'
+import { useEffect, useMemo } from 'react'
+import imageShader from '../shaders/image.wgsl?raw'
+import { useGPU } from './useGPU'
 
 interface LightingParams {
-  exposure: number;
-  contrast: number;
-  saturation: number;
-  highlights: number;
-  shadows: number;
-  whites: number;
-  blacks: number;
-  tint: number;
-  temperature: number;
-  vibrance: number;
-  hue: number;
+  exposure: number
+  contrast: number
+  saturation: number
+  highlights: number
+  shadows: number
+  whites: number
+  blacks: number
+  tint: number
+  temperature: number
+  vibrance: number
+  hue: number
 }
 
 function useImagePipeline() {
-  const { device, format } = useGPU();
+  const { device, format } = useGPU()
 
   return useMemo(() => {
-    if (!device || !format) return null;
+    if (!device || !format)
+      return null
 
     const shaderModule = device.createShaderModule({
       code: imageShader,
-    });
+    })
 
     return device.createRenderPipeline({
-      layout: "auto",
+      layout: 'auto',
       vertex: {
         module: shaderModule,
-        entryPoint: "vs_main",
+        entryPoint: 'vs_main',
       },
       fragment: {
         module: shaderModule,
-        entryPoint: "fs_main",
+        entryPoint: 'fs_main',
         targets: [
           {
             format,
             blend: {
               color: {
-                srcFactor: "src-alpha",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
+                srcFactor: 'src-alpha',
+                dstFactor: 'one-minus-src-alpha',
+                operation: 'add',
               },
               alpha: {
-                srcFactor: "one",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
+                srcFactor: 'one',
+                dstFactor: 'one-minus-src-alpha',
+                operation: 'add',
               },
             },
           },
         ],
       },
       primitive: {
-        topology: "triangle-strip",
+        topology: 'triangle-strip',
       },
-    });
-  }, [device, format]);
+    })
+  }, [device, format])
 }
 
 export function useImageRender(
-  context: GPUCanvasContext | null,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   image: HTMLImageElement | null,
   lighting: LightingParams = {
     exposure: 0,
@@ -77,52 +79,60 @@ export function useImageRender(
     hue: 0,
   },
 ) {
-  const { device, format } = useGPU();
-  const pipeline = useImagePipeline();
+  const { device, format } = useGPU()
+  const pipeline = useImagePipeline()
 
   const texture = useMemo(() => {
     if (!device || !image || !image.complete || image.naturalWidth === 0) {
-      return null;
+      return null
     }
 
     try {
       const tex = device.createTexture({
         size: [image.naturalWidth, image.naturalHeight],
-        format: "rgba8unorm",
+        format: 'rgba8unorm',
         usage:
-          GPUTextureUsage.TEXTURE_BINDING |
-          GPUTextureUsage.COPY_DST |
-          GPUTextureUsage.RENDER_ATTACHMENT,
-      });
+          GPUTextureUsage.TEXTURE_BINDING
+          | GPUTextureUsage.COPY_DST
+          | GPUTextureUsage.RENDER_ATTACHMENT,
+      })
 
       device.queue.copyExternalImageToTexture(
         { source: image },
         { texture: tex },
         { width: image.naturalWidth, height: image.naturalHeight },
-      );
+      )
 
-      return tex;
-    } catch (e) {
-      console.error("Failed to create texture from image:", e);
-      return null;
+      return tex
     }
-  }, [device, image]);
+    catch (e) {
+      console.error('Failed to create texture from image:', e)
+      return null
+    }
+  }, [device, image])
 
   useEffect(() => {
-    if (!device || !context || !format || !pipeline || !texture) {
-      return;
+    const canvas = canvasRef.current
+    if (!device || !canvas || !format || !pipeline || !texture) {
+      return
+    }
+
+    const context = canvas.getContext('webgpu')
+    if (!context) {
+      console.error('Could not get GPU context')
+      return
     }
 
     context.configure({
       device,
       format,
-      alphaMode: "premultiplied",
-    });
+      alphaMode: 'premultiplied',
+    })
 
     const uniformBuffer = device.createBuffer({
       size: 48, // 12 floats * 4 bytes
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-    });
+    })
 
     device.queue.writeBuffer(
       uniformBuffer,
@@ -141,7 +151,7 @@ export function useImageRender(
         lighting.hue,
         0, // padding
       ]),
-    );
+    )
 
     const bindGroup = device.createBindGroup({
       layout: pipeline.getBindGroupLayout(0),
@@ -155,8 +165,8 @@ export function useImageRender(
         {
           binding: 1,
           resource: device.createSampler({
-            magFilter: "linear",
-            minFilter: "linear",
+            magFilter: 'linear',
+            minFilter: 'linear',
           }),
         },
         {
@@ -164,32 +174,32 @@ export function useImageRender(
           resource: texture.createView(),
         },
       ],
-    });
+    })
 
-    const commandEncoder = device.createCommandEncoder();
-    const textureView = context.getCurrentTexture().createView();
+    const commandEncoder = device.createCommandEncoder()
+    const textureView = context.getCurrentTexture().createView()
 
     const renderPassDescriptor: GPURenderPassDescriptor = {
       colorAttachments: [
         {
           view: textureView,
           clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
-          loadOp: "clear",
-          storeOp: "store",
+          loadOp: 'clear',
+          storeOp: 'store',
         },
       ],
-    };
+    }
 
-    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor);
-    passEncoder.setPipeline(pipeline);
-    passEncoder.setBindGroup(0, bindGroup);
-    passEncoder.draw(4);
-    passEncoder.end();
+    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor)
+    passEncoder.setPipeline(pipeline)
+    passEncoder.setBindGroup(0, bindGroup)
+    passEncoder.draw(4)
+    passEncoder.end()
 
-    device.queue.submit([commandEncoder.finish()]);
+    device.queue.submit([commandEncoder.finish()])
   }, [
+    canvasRef,
     device,
-    context,
     format,
     pipeline,
     texture,
@@ -204,5 +214,5 @@ export function useImageRender(
     lighting.tint,
     lighting.temperature,
     lighting.hue,
-  ]);
+  ])
 }

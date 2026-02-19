@@ -1,10 +1,10 @@
 ---
-import "@fontsource-variable/inter";
-import "../assets/global.css";
+import '@fontsource-variable/inter'
+import '../assets/global.css'
 
 interface Props {
-  title?: string;
-  description?: string;
+  title?: string
+  description?: string
 }
 
 const { title, description } = Astro.props;
@@ -26,15 +26,15 @@ const { title, description } = Astro.props;
       </div>
     </div>
     <script>
-      import mixpanel from "mixpanel-browser";
+  import mixpanel from 'mixpanel-browser'
 
-      mixpanel.init(import.meta.env.PUBLIC_MIXPANEL_TOKEN, {
-        autocapture: true,
-        record_sessions_percent: 100,
-        api_host:
-          import.meta.env.PUBLIC_MIXPANEL_API_HOST ||
-          "https://api-eu.mixpanel.com",
-      });
-    </script>
+  mixpanel.init(import.meta.env.PUBLIC_MIXPANEL_TOKEN, {
+    autocapture: true,
+    record_sessions_percent: 100,
+    api_host:
+          import.meta.env.PUBLIC_MIXPANEL_API_HOST
+            || 'https://api-eu.mixpanel.com',
+  })
+  </script>
   </body>
 </html>

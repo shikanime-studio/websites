@@ -1,79 +1,79 @@
 import {
   createCollection,
   localStorageCollectionOptions,
-} from "@tanstack/react-db";
-import { z } from "zod";
+} from '@tanstack/react-db'
+import { z } from 'zod'
 
-export const setting = z.discriminatedUnion("id", [
+export const setting = z.discriminatedUnion('id', [
   z.object({
-    id: z.literal("theme"),
-    value: z.enum(["dark", "light"]),
+    id: z.literal('theme'),
+    value: z.enum(['dark', 'light']),
   }),
   z.object({
-    id: z.literal("sidebarCollapsed"),
+    id: z.literal('sidebarCollapsed'),
     value: z.boolean(),
   }),
   z.object({
-    id: z.literal("filmstripCollapsed"),
+    id: z.literal('filmstripCollapsed'),
     value: z.boolean(),
   }),
   z.object({
-    id: z.literal("sidebarSectionCollapsedInfo"),
+    id: z.literal('sidebarSectionCollapsedInfo'),
     value: z.boolean(),
   }),
   z.object({
-    id: z.literal("sidebarSectionCollapsedLighting"),
+    id: z.literal('sidebarSectionCollapsedLighting'),
     value: z.boolean(),
   }),
   z.object({
-    id: z.literal("sidebarSectionCollapsedCamera"),
+    id: z.literal('sidebarSectionCollapsedCamera'),
     value: z.boolean(),
   }),
   z.object({
-    id: z.literal("sidebarSectionCollapsedGroupedFiles"),
+    id: z.literal('sidebarSectionCollapsedGroupedFiles'),
     value: z.boolean(),
   }),
-]);
+])
 
-export type Setting = z.infer<typeof setting>;
-export type Theme = Extract<Setting, { id: "theme" }>["value"];
+export type Setting = z.infer<typeof setting>
+export type Theme = Extract<Setting, { id: 'theme' }>['value']
 
-export const keymap = z.discriminatedUnion("command", [
+export const keymap = z.discriminatedUnion('command', [
   z.object({
-    command: z.literal("navigateNext"),
-    key: z.string().default("ArrowRight"),
+    command: z.literal('navigateNext'),
+    key: z.string().default('ArrowRight'),
   }),
   z.object({
-    command: z.literal("navigatePrevious"),
-    key: z.string().default("ArrowLeft"),
+    command: z.literal('navigatePrevious'),
+    key: z.string().default('ArrowLeft'),
   }),
   z.object({
-    command: z.literal("selectFirst"),
-    key: z.string().default("Home"),
+    command: z.literal('selectFirst'),
+    key: z.string().default('Home'),
   }),
   z.object({
-    command: z.literal("selectLast"),
-    key: z.string().default("End"),
+    command: z.literal('selectLast'),
+    key: z.string().default('End'),
   }),
-]);
+])
 
-export type Keymap = z.infer<typeof keymap>;
-export type Command = Keymap["command"];
+export type Keymap = z.infer<typeof keymap>
+export type Command = Keymap['command']
 
 export const keymapsCollection = createCollection(
   localStorageCollectionOptions({
-    getKey: (item) => item.command,
-    id: "fade-keymaps",
+    getKey: item => item.command,
+    id: 'fade-keymaps',
     schema: keymap,
-    storageKey: "fade-keymaps",
+    storageKey: 'fade-keymaps',
   }),
-);
+)
 
 export const settingsCollection = createCollection(
   localStorageCollectionOptions({
-    getKey: (item) => item.id,
-    id: "fade-settings",
+    getKey: item => item.id,
+    id: 'fade-settings',
     schema: setting,
-    storageKey: "fade-settings",
+    storageKey: 'fade-settings',
   }),
-);
+)

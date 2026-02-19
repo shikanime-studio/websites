@@ -1,26 +1,26 @@
-import { Suspense } from "react";
-import { useModal } from "../hooks/useModal";
-import { FullscreenModal } from "./FullscreenModal";
-import { FullscreenNavigation } from "./FullscreenNavigation";
-import { RawImageRender } from "./RawImageRender";
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from '../lib/fs'
+import { Suspense } from 'react'
+import { useModal } from '../hooks/useModal'
+import { FullscreenModal } from './FullscreenModal'
+import { FullscreenNavigation } from './FullscreenNavigation'
+import { RawImageRender } from './RawImageRender'
 
 interface RawImageViewerProps {
-  fileItem?: FileItem;
+  fileItem?: FileItem
 }
 
 function RawCanvasSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`${className ?? ""} flex items-center justify-center bg-zinc-800/50`}
+      className={`${className ?? ''} flex items-center justify-center bg-zinc-800/50`}
     >
       <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
     </div>
-  );
+  )
 }
 
 export function RawImageViewer({ fileItem }: RawImageViewerProps) {
-  const { modal, setModal } = useModal();
+  const { modal, setModal } = useModal()
 
   return (
     <>
@@ -32,15 +32,15 @@ export function RawImageViewer({ fileItem }: RawImageViewerProps) {
         <RawImageRender
           fileItem={fileItem}
           onDoubleClick={() => {
-            setModal("fullscreen");
+            setModal('fullscreen')
           }}
           className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
         />
       </Suspense>
       <FullscreenModal
-        open={modal === "fullscreen"}
+        open={modal === 'fullscreen'}
         onClose={() => {
-          setModal(undefined);
+          setModal(undefined)
         }}
       >
         <FullscreenNavigation>
@@ -57,5 +57,5 @@ export function RawImageViewer({ fileItem }: RawImageViewerProps) {
         </FullscreenNavigation>
       </FullscreenModal>
     </>
-  );
+  )
 }

@@ -1,21 +1,21 @@
-import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
-import { Activity, Suspense } from "react";
-import { useGallery } from "../hooks/useGallery";
-import { useFile } from "../hooks/useFile";
-import { ImageViewer } from "./ImageViewer";
-import { RawImageViewer } from "./RawImageViewer";
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from '../lib/fs'
+import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
+import { Activity, Suspense } from 'react'
+import { useFile } from '../hooks/useFile'
+import { useGallery } from '../hooks/useGallery'
+import { ImageViewer } from './ImageViewer'
+import { RawImageViewer } from './RawImageViewer'
 
 export function MainViewer() {
-  const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
-    useGallery();
+  const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious }
+    = useGallery()
 
   if (files.length === 0) {
-    return <EmptyMainViewer />;
+    return <EmptyMainViewer />
   }
 
-  const canGoPrevious = selectedIndex > 0;
-  const canGoNext = selectedIndex < files.length - 1;
+  const canGoPrevious = selectedIndex > 0
+  const canGoNext = selectedIndex < files.length - 1
 
   return (
     <div className="bg-base-100 relative flex min-w-0 flex-1 items-center justify-center">
@@ -34,7 +34,7 @@ export function MainViewer() {
             <span className="loading loading-spinner loading-lg"></span>
           }
         >
-          <Activity mode={selectedFile ? "visible" : "hidden"}>
+          <Activity mode={selectedFile ? 'visible' : 'hidden'}>
             <MainViewerContent fileItem={selectedFile ?? undefined} />
           </Activity>
         </Suspense>
@@ -49,7 +49,7 @@ export function MainViewer() {
         <ChevronRight className="h-8 w-8" />
       </button>
     </div>
-  );
+  )
 }
 
 function EmptyMainViewer() {
@@ -63,19 +63,19 @@ function EmptyMainViewer() {
         </p>
       </div>
     </div>
-  );
+  )
 }
 
 interface MainViewerContentProps {
-  fileItem?: FileItem;
+  fileItem?: FileItem
 }
 
 function MainViewerContent({ fileItem }: MainViewerContentProps) {
-  const { mimeType } = useFile(fileItem ?? null);
+  const { mimeType } = useFile(fileItem ?? null)
 
-  if (mimeType === "image/x-fujifilm-raf") {
-    return <RawImageViewer fileItem={fileItem ?? undefined} />;
+  if (mimeType === 'image/x-fujifilm-raf') {
+    return <RawImageViewer fileItem={fileItem ?? undefined} />
   }
 
-  return <ImageViewer fileItem={fileItem ?? undefined} />;
+  return <ImageViewer fileItem={fileItem ?? undefined} />
 }

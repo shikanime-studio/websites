@@ -1,12 +1,12 @@
-import { createD1Database } from "../../lib/db";
-import { getAllCharacters } from "../../lib/items";
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro'
+import { createD1Database } from '../../lib/db'
+import { getAllCharacters } from '../../lib/items'
 
 export const GET: APIRoute = async ({ locals }) => {
-  const db = createD1Database(locals);
-  const characters = await getAllCharacters(db);
+  const db = createD1Database(locals)
+  const characters = await getAllCharacters(db)
 
-  const characterItems = characters.map((char) => ({
+  const characterItems = characters.map(char => ({
     id: char.id,
     title: char.name,
     images: char.imageUrl
@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ locals }) => {
           },
         ],
     artist: {
-      name: "Original Character",
+      name: 'Original Character',
       avatar: {
         src: `https://placehold.co/100x100/e2e8f0/64748b?text=OC`,
         width: 100,
@@ -35,14 +35,14 @@ export const GET: APIRoute = async ({ locals }) => {
     },
     rating: 5.0,
     reviewCount: Math.floor(Math.random() * 200) + 10,
-    status: "OPEN" as const,
+    status: 'OPEN' as const,
     price: undefined,
     href: `/characters/${String(char.id)}`,
-  }));
+  }))
 
   return new Response(JSON.stringify(characterItems), {
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
-  });
-};
+  })
+}

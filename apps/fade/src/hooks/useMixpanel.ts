@@ -1,19 +1,19 @@
-import mixpanel from "mixpanel-browser";
-import { createContext, useContext, useMemo } from "react";
-import type { Config, Mixpanel } from "mixpanel-browser";
+import type { Config, Mixpanel } from 'mixpanel-browser'
+import mixpanel from 'mixpanel-browser'
+import { createContext, useMemo } from 'react'
 
 export interface MixpanelContextValue {
-  instance?: Mixpanel;
+  instance?: Mixpanel
 }
 
-export const MixpanelContext = createContext<MixpanelContextValue | null>(null);
+export const MixpanelContext = createContext<MixpanelContextValue | null>(null)
 
 export function useMixpanel() {
-  const context = useContext(MixpanelContext);
+  const context = use(MixpanelContext)
   if (!context?.instance) {
-    return mixpanel;
+    return mixpanel
   }
-  return context.instance;
+  return context.instance
 }
 
 export function useMixpanelInstance(
@@ -23,9 +23,9 @@ export function useMixpanelInstance(
 ) {
   return useMemo(() => {
     if (!name) {
-      mixpanel.init(token, config ?? {});
-      return {};
+      mixpanel.init(token, config ?? {})
+      return {}
     }
-    return { instance: mixpanel.init(token, config ?? {}, name) };
-  }, [token, config, name]);
+    return { instance: mixpanel.init(token, config ?? {}, name) }
+  }, [token, config, name])
 }
