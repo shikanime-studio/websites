@@ -1,42 +1,48 @@
-import { useState } from "react";
-import { createPortal } from "react-dom";
-import { useTimeout } from "usehooks-ts";
-import type { FC, ReactNode } from "react";
+import type { FC, ReactNode } from 'react'
+import { useState } from 'react'
+import { createPortal } from 'react-dom'
+import { useTimeout } from 'usehooks-ts'
 
 export interface ToastProps {
-  children: ReactNode;
-  className?: string;
-  duration?: number;
-  onClose?: () => void;
+  children: ReactNode
+  className?: string
+  duration?: number
+  onClose?: () => void
 }
 
 export const Toast: FC<ToastProps> = ({
   children,
-  className = "",
+  className = '',
   duration,
   onClose,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false)
 
   useTimeout(
     () => {
-      onClose?.();
+      onClose?.()
     },
     duration && !isHovered ? duration : null,
-  );
+  )
 
   return createPortal(
     <div
       className={`toast toast-end toast-bottom z-50 ${className}`}
       onMouseEnter={() => {
-        setIsHovered(true);
+        setIsHovered(true)
       }}
       onMouseLeave={() => {
-        setIsHovered(false);
+        setIsHovered(false)
+      }}
+      onFocus={() => {
+        setIsHovered(true)
+      }}
+      onBlur={() => {
+        setIsHovered(false)
       }}
     >
       {children}
     </div>,
     document.body,
-  );
-};
+  )
+}

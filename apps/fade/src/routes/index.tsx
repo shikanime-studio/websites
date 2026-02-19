@@ -1,27 +1,27 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Suspense } from "react";
-import { z } from "zod";
-import { DirectoryProvider } from "../components/DirectoryProvider";
-import { GPUProvider } from "../components/GPUProvider";
-import { Filmstrip } from "../components/Filmstrip";
-import { GalleryProvider } from "../components/GalleryProvider";
-import { ImageInfoProvider } from "../components/ImageInfoProvider";
-import { LightingProvider } from "../components/LightingProvider";
-import { MainViewer } from "../components/MainViewer";
-import { Sidebar } from "../components/Sidebar";
-import { ToolBar } from "../components/ToolBar";
-import { useDirectory } from "../hooks/useDirectory";
-import { ModalProvider } from "../components/ModalProvider";
+import { createFileRoute } from '@tanstack/react-router'
+import { Suspense } from 'react'
+import { z } from 'zod'
+import { DirectoryProvider } from '../components/DirectoryProvider'
+import { Filmstrip } from '../components/Filmstrip'
+import { GalleryProvider } from '../components/GalleryProvider'
+import { GPUProvider } from '../components/GPUProvider'
+import { ImageInfoProvider } from '../components/ImageInfoProvider'
+import { LightingProvider } from '../components/LightingProvider'
+import { MainViewer } from '../components/MainViewer'
+import { ModalProvider } from '../components/ModalProvider'
+import { Sidebar } from '../components/Sidebar'
+import { ToolBar } from '../components/ToolBar'
+import { useDirectory } from '../hooks/useDirectory'
 
-export const Route = createFileRoute("/")({
+export const Route = createFileRoute('/')({
   component: App,
   validateSearch: z.object({
-    modal: z.enum(["settings", "fullscreen"]).optional(),
+    modal: z.enum(['settings', 'fullscreen']).optional(),
   }),
-});
+})
 
 function GalleryContainer() {
-  const { handle } = useDirectory();
+  const { handle } = useDirectory()
 
   return (
     <GalleryProvider handle={handle}>
@@ -38,22 +38,22 @@ function GalleryContainer() {
         <Filmstrip />
       </div>
     </GalleryProvider>
-  );
+  )
 }
 
 function App() {
-  const navigate = Route.useNavigate();
-  const search = Route.useSearch();
+  const navigate = Route.useNavigate()
+  const search = Route.useSearch()
 
   return (
     <GPUProvider>
       <DirectoryProvider>
         <Suspense
-          fallback={
+          fallback={(
             <div className="flex h-screen items-center justify-center">
               <span className="loading loading-spinner loading-lg text-warning"></span>
             </div>
-          }
+          )}
         >
           <ModalProvider navigate={navigate} search={search}>
             <GalleryContainer />
@@ -61,5 +61,5 @@ function App() {
         </Suspense>
       </DirectoryProvider>
     </GPUProvider>
-  );
+  )
 }

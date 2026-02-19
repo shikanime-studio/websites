@@ -1,12 +1,12 @@
-import { createD1Database } from "../../lib/db";
-import { getAllMakers } from "../../lib/items";
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro'
+import { createD1Database } from '../../lib/db'
+import { getAllMakers } from '../../lib/items'
 
 export const GET: APIRoute = async ({ locals }) => {
-  const db = createD1Database(locals);
-  const makers = await getAllMakers(db);
+  const db = createD1Database(locals)
+  const makers = await getAllMakers(db)
 
-  const artistItems = makers.map((maker) => ({
+  const artistItems = makers.map(maker => ({
     id: maker.id,
     title: maker.name,
     images: maker.avatarImageUrl
@@ -41,13 +41,13 @@ export const GET: APIRoute = async ({ locals }) => {
     },
     rating: 5.0,
     reviewCount: Math.floor(Math.random() * 50) + 1,
-    status: "OPEN" as const,
+    status: 'OPEN' as const,
     href: `/artists/${String(maker.id)}`,
-  }));
+  }))
 
   return new Response(JSON.stringify(artistItems), {
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
-  });
-};
+  })
+}

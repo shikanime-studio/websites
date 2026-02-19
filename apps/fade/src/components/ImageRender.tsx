@@ -1,12 +1,12 @@
-import { useRef } from "react";
-import { useCanvas } from "../hooks/useCanvas";
-import { useImageRender } from "../hooks/useImageRender";
-import { useLighting } from "../hooks/useLighting";
+import { useRef } from 'react'
+import { useCanvas } from '../hooks/useCanvas'
+import { useImageRender } from '../hooks/useImageRender'
+import { useLighting } from '../hooks/useLighting'
 
 interface ImageRenderProps {
-  image: HTMLImageElement;
-  className?: string;
-  onDoubleClick?: () => void;
+  image: HTMLImageElement
+  className?: string
+  onDoubleClick?: () => void
 }
 
 export function ImageRender({
@@ -14,11 +14,11 @@ export function ImageRender({
   className,
   onDoubleClick,
 }: ImageRenderProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const { context } = useCanvas(canvasRef);
-  const lighting = useLighting();
+  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const { context } = useCanvas(canvasRef)
+  const lighting = useLighting()
 
-  useImageRender(context, image, lighting);
+  useImageRender(context, image, lighting)
 
   return (
     <canvas
@@ -28,5 +28,5 @@ export function ImageRender({
       className={className}
       onDoubleClick={onDoubleClick}
     />
-  );
+  )
 }

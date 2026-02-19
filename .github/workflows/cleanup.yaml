@@ -26,7 +26,7 @@ jobs:
         if: startsWith(github.head_ref, 'gh/') && endsWith(github.head_ref, '/head')
         run: for role in base head orig; do git push origin --delete "${HEAD_REF%/head}/$role" || true; done
 name: Cleanup
-'on':
+on:
   pull_request:
     types:
       - closed

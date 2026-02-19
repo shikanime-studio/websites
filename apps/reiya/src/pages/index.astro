@@ -1,10 +1,10 @@
 ---
-import FluidLayout from "../layouts/FluidLayout.astro";
-import { createD1Database } from "../lib/db";
-import { categories as categoriesTable } from "../schema";
+import FluidLayout from '../layouts/FluidLayout.astro'
+import { createD1Database } from '../lib/db'
+import { categories as categoriesTable } from '../schema'
 
-const db = createD1Database(Astro.locals);
-const categories = await db.select().from(categoriesTable);
+const db = createD1Database(Astro.locals)
+const categories = await db.select().from(categoriesTable)
 const featuredCategories = categories.slice(0, 8);
 ---
 
@@ -15,8 +15,7 @@ const featuredCategories = categories.slice(0, 8);
         <div class="mx-auto flex max-w-2xl flex-col gap-7">
           <div class="flex flex-wrap items-center gap-2">
             <span class="badge badge-primary badge-lg font-black">Beta</span>
-            <span class="badge badge-ghost badge-lg font-bold"
-              >Artist Alley</span
+            <span class="badge badge-ghost badge-lg font-bold">Artist Alley</span
             >
             <span class="badge badge-ghost badge-lg font-bold">Conventions</span
             >
@@ -69,8 +68,9 @@ const featuredCategories = categories.slice(0, 8);
           </div>
           <div class="flex flex-wrap gap-2">
             {
-              featuredCategories.length > 0 ? (
-                featuredCategories.map((cat) => (
+              featuredCategories.length > 0
+? (
+                featuredCategories.map(cat => (
                   <a
                     href="/explore"
                     class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
@@ -79,7 +79,8 @@ const featuredCategories = categories.slice(0, 8);
                     {cat.name}
                   </a>
                 ))
-              ) : (
+              )
+: (
                 <>
                   <a
                     href="/explore"

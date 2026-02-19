@@ -1,12 +1,12 @@
-import { createD1Database } from "../../lib/db";
-import { getAllEvents } from "../../lib/items";
-import type { APIRoute } from "astro";
+import type { APIRoute } from 'astro'
+import { createD1Database } from '../../lib/db'
+import { getAllEvents } from '../../lib/items'
 
 export const GET: APIRoute = async ({ locals }) => {
-  const db = createD1Database(locals);
-  const events = await getAllEvents(db);
+  const db = createD1Database(locals)
+  const events = await getAllEvents(db)
 
-  const eventItems = events.map((event) => ({
+  const eventItems = events.map(event => ({
     id: event.id,
     title: event.name,
     images: event.imageUrl
@@ -25,7 +25,7 @@ export const GET: APIRoute = async ({ locals }) => {
           },
         ],
     artist: {
-      name: event.location ?? "Online",
+      name: event.location ?? 'Online',
       avatar: {
         src: `https://placehold.co/100x100/e2e8f0/64748b?text=EV`,
         width: 100,
@@ -35,17 +35,17 @@ export const GET: APIRoute = async ({ locals }) => {
     },
     rating: 5.0,
     reviewCount: Math.floor(Math.random() * 100) + 10,
-    status: "OPEN" as const,
+    status: 'OPEN' as const,
     price: new Date(event.startsAt).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
+      month: 'short',
+      day: 'numeric',
     }),
     href: `/events/${String(event.id)}`,
-  }));
+  }))
 
   return new Response(JSON.stringify(eventItems), {
     headers: {
-      "content-type": "application/json",
+      'content-type': 'application/json',
     },
-  });
-};
+  })
+}

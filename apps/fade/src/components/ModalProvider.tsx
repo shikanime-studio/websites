@@ -1,12 +1,12 @@
-import { ModalContext } from "../hooks/useModal";
-import type { ModalType } from "../hooks/useModal";
-import type { NavigateOptions } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import type { NavigateOptions } from '@tanstack/react-router'
+import type { ReactNode } from 'react'
+import type { ModalType } from '../hooks/useModal'
+import { ModalContext } from '../hooks/useModal'
 
 interface ModalProviderProps {
-  children: ReactNode;
-  navigate: (opts: NavigateOptions) => Promise<void>;
-  search: { modal?: ModalType };
+  children: ReactNode
+  navigate: (opts: NavigateOptions) => Promise<void>
+  search: { modal?: ModalType }
 }
 
 export function ModalProvider({
@@ -14,17 +14,13 @@ export function ModalProvider({
   navigate,
   search,
 }: ModalProviderProps) {
-  const { modal } = search;
+  const { modal } = search
 
   const setModal = (newModal: ModalType) => {
     void navigate({
       search: (prev: Record<string, unknown>) => ({ ...prev, modal: newModal }),
-    });
-  };
+    })
+  }
 
-  return (
-    <ModalContext.Provider value={{ modal, setModal }}>
-      {children}
-    </ModalContext.Provider>
-  );
+  return <ModalContext value={{ modal, setModal }}>{children}</ModalContext>
 }

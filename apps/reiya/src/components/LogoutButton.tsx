@@ -1,37 +1,37 @@
-import { useState } from "react";
-import { BsBoxArrowRight } from "react-icons/bs";
-import { authClient } from "../lib/auth-client";
-import { AlertError } from "./AlertError";
-import { Toast } from "./Toast";
+import { useState } from 'react'
+import { BsBoxArrowRight } from 'react-icons/bs'
+import { authClient } from '../lib/auth-client'
+import { AlertError } from './AlertError'
+import { Toast } from './Toast'
 
 export default function LogoutButton() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleLogout = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     authClient
       .signOut({
         fetchOptions: {
           onSuccess: () => {
-            window.location.href = "/";
+            window.location.href = '/'
           },
         },
       })
       .catch(() => {
-        setError("Failed to logout");
+        setError('Failed to logout')
       })
       .finally(() => {
-        setIsLoading(false);
-      });
-  };
+        setIsLoading(false)
+      })
+  }
 
   return (
     <>
       <button
         type="button"
         onClick={() => {
-          handleLogout();
+          handleLogout()
         }}
         className="btn btn-ghost"
         disabled={isLoading}
@@ -43,12 +43,12 @@ export default function LogoutButton() {
         <Toast
           duration={3000}
           onClose={() => {
-            setError(null);
+            setError(null)
           }}
         >
           <AlertError
             onClose={() => {
-              setError(null);
+              setError(null)
             }}
           >
             {error}
@@ -56,5 +56,5 @@ export default function LogoutButton() {
         </Toast>
       )}
     </>
-  );
+  )
 }

@@ -1,28 +1,28 @@
-import { useState } from "react";
-import { BsGoogle } from "react-icons/bs";
-import { authClient } from "../lib/auth-client";
-import { AlertError } from "./AlertError";
-import { Toast } from "./Toast";
+import { useState } from 'react'
+import { BsGoogle } from 'react-icons/bs'
+import { authClient } from '../lib/auth-client'
+import { AlertError } from './AlertError'
+import { Toast } from './Toast'
 
 export default function LoginButton() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const handleSignIn = () => {
-    setIsLoading(true);
+    setIsLoading(true)
     authClient.signIn
       .social({
-        provider: "google",
-        callbackURL: "/",
+        provider: 'google',
+        callbackURL: '/',
       })
       .catch(() => {
-        setError("An error occurred during sign in");
-        setIsLoading(false);
+        setError('An error occurred during sign in')
+        setIsLoading(false)
       })
       .finally(() => {
-        setIsLoading(false);
-      });
-  };
+        setIsLoading(false)
+      })
+  }
 
   return (
     <>
@@ -30,32 +30,34 @@ export default function LoginButton() {
         type="button"
         className="btn rounded-full px-4 font-bold"
         onClick={() => {
-          handleSignIn();
+          handleSignIn()
         }}
         disabled={isLoading}
       >
-        {isLoading ? (
-          <>
-            <span className="loading loading-spinner loading-xs"></span>
-            SIGNING IN
-          </>
-        ) : (
-          <>
-            <BsGoogle />
-            SIGN IN
-          </>
-        )}
+        {isLoading
+          ? (
+              <>
+                <span className="loading loading-spinner loading-xs"></span>
+                SIGNING IN
+              </>
+            )
+          : (
+              <>
+                <BsGoogle />
+                SIGN IN
+              </>
+            )}
       </button>
       {error && (
         <Toast
           duration={3000}
           onClose={() => {
-            setError(null);
+            setError(null)
           }}
         >
           <AlertError
             onClose={() => {
-              setError(null);
+              setError(null)
             }}
           >
             {error}
@@ -63,5 +65,5 @@ export default function LoginButton() {
         </Toast>
       )}
     </>
-  );
+  )
 }

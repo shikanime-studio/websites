@@ -1,9 +1,9 @@
-import type { FC, ReactNode } from "react";
+import type { FC, ReactNode } from 'react'
 
 export interface AlertErrorProps {
-  title?: string;
-  children: ReactNode;
-  onClose?: () => void;
+  title?: string
+  children: ReactNode
+  onClose?: () => void
 }
 
 export const AlertError: FC<AlertErrorProps> = ({
@@ -29,5 +29,5 @@ export const AlertError: FC<AlertErrorProps> = ({
         )}
       </div>
     </div>
-  );
-};
+  )
+}

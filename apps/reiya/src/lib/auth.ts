@@ -1,16 +1,16 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap } from "better-auth/plugins";
-import * as schema from "../schema";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
+import type { DrizzleD1Database } from 'drizzle-orm/d1'
+import { betterAuth } from 'better-auth'
+import { drizzleAdapter } from 'better-auth/adapters/drizzle'
+import { oneTap } from 'better-auth/plugins'
+import * as schema from '../schema'
 
-export const createAuth = (
+export function createAuth(
   db: DrizzleD1Database<typeof schema>,
   locals: App.Locals,
-) =>
-  betterAuth({
+) {
+  return betterAuth({
     database: drizzleAdapter(db, {
-      provider: "sqlite",
+      provider: 'sqlite',
       schema: {
         ...schema,
         rateLimit: schema.rateLimits,
@@ -21,8 +21,8 @@ export const createAuth = (
     secret: locals.runtime.env.BETTER_AUTH_SECRET,
     baseURL: import.meta.env.SITE,
     socialProviders: {
-      ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID &&
-      locals.runtime.env.GOOGLE_CLIENT_SECRET
+      ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID
+        && locals.runtime.env.GOOGLE_CLIENT_SECRET
         ? {
             google: {
               clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
@@ -33,14 +33,15 @@ export const createAuth = (
     },
     advanced: {
       ipAddress: {
-        ipAddressHeaders: ["cf-connecting-ip"],
+        ipAddressHeaders: ['cf-connecting-ip'],
       },
     },
     rateLimit: {
       window: 60,
       max: 100,
-      storage: "database",
+      storage: 'database',
     },
-  });
+  })
+}
 
-export type Auth = ReturnType<typeof createAuth>;
+export type Auth = ReturnType<typeof createAuth>

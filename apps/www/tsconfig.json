@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "@shikanime-studio/typescript-config/base.json",
-    "astro/tsconfigs/strict"
-  ],
+  "extends": "astro/tsconfigs/strict",
   "include": [
     ".astro/types.d.ts",
     "**/*"

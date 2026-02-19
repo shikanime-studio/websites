@@ -1,7 +1,7 @@
-import { desc, eq, gt, like, or } from "drizzle-orm";
-import { characters, events, items, licenses, makers } from "../schema";
-import type { Schema } from "../schema";
-import type { DrizzleD1Database } from "drizzle-orm/d1";
+import type { DrizzleD1Database } from 'drizzle-orm/d1'
+import type { Schema } from '../schema'
+import { desc, eq, gt, like, or } from 'drizzle-orm'
+import { characters, events, items, licenses, makers } from '../schema'
 
 export function getItemsByMaker(
   db: DrizzleD1Database<Schema>,
@@ -24,7 +24,7 @@ export function getItemsByMaker(
     .from(items)
     .leftJoin(makers, eq(items.makerId, makers.id))
     .where(eq(items.makerId, makerId))
-    .orderBy(desc(items.createdAt));
+    .orderBy(desc(items.createdAt))
 }
 
 export function getItemsByCharacterName(
@@ -53,7 +53,7 @@ export function getItemsByCharacterName(
         like(items.description, `%${characterName}%`),
       ),
     )
-    .orderBy(desc(items.createdAt));
+    .orderBy(desc(items.createdAt))
 }
 
 export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
@@ -73,7 +73,7 @@ export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
     })
     .from(items)
     .leftJoin(makers, eq(items.makerId, makers.id))
-    .orderBy(desc(items.createdAt));
+    .orderBy(desc(items.createdAt))
 }
 
 export function getItem(db: DrizzleD1Database<Schema>, id: number) {
@@ -96,7 +96,7 @@ export function getItem(db: DrizzleD1Database<Schema>, id: number) {
     .from(items)
     .leftJoin(makers, eq(items.makerId, makers.id))
     .where(eq(items.id, id))
-    .get();
+    .get()
 }
 
 export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
@@ -118,47 +118,47 @@ export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
     .from(items)
     .leftJoin(makers, eq(items.makerId, makers.id))
     .orderBy(desc(items.createdAt))
-    .limit(limit);
+    .limit(limit)
 }
 
 export function getUpcomingEvents(db: DrizzleD1Database<Schema>, limit = 3) {
-  const now = new Date().toISOString();
+  const now = new Date().toISOString()
   return db
     .select()
     .from(events)
     .where(gt(events.endsAt, now))
     .orderBy(events.startsAt)
-    .limit(limit);
+    .limit(limit)
 }
 
 export function getFeaturedMakers(db: DrizzleD1Database<Schema>, limit = 8) {
-  return db.select().from(makers).limit(limit);
+  return db.select().from(makers).limit(limit)
 }
 
 export function getAllMakers(db: DrizzleD1Database<Schema>) {
-  return db.select().from(makers).orderBy(makers.name);
+  return db.select().from(makers).orderBy(makers.name)
 }
 
 export function getMaker(db: DrizzleD1Database<Schema>, id: number) {
-  return db.select().from(makers).where(eq(makers.id, id)).get();
+  return db.select().from(makers).where(eq(makers.id, id)).get()
 }
 
 export function getLicenses(db: DrizzleD1Database<Schema>, limit = 10) {
-  return db.select().from(licenses).limit(limit);
+  return db.select().from(licenses).limit(limit)
 }
 
 export function getAllLicenses(db: DrizzleD1Database<Schema>) {
-  return db.select().from(licenses).orderBy(licenses.name);
+  return db.select().from(licenses).orderBy(licenses.name)
 }
 
 export function getAllEvents(db: DrizzleD1Database<Schema>) {
-  return db.select().from(events).orderBy(desc(events.startsAt));
+  return db.select().from(events).orderBy(desc(events.startsAt))
 }
 
 export function getAllCharacters(db: DrizzleD1Database<Schema>) {
-  return db.select().from(characters).orderBy(characters.name);
+  return db.select().from(characters).orderBy(characters.name)
 }
 
 export function getCharacter(db: DrizzleD1Database<Schema>, id: number) {
-  return db.select().from(characters).where(eq(characters.id, id)).get();
+  return db.select().from(characters).where(eq(characters.id, id)).get()
 }

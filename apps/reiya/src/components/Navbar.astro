@@ -1,18 +1,18 @@
 ---
-import Logo from "../assets/logo.png";
-import LoginButton from "./LoginButton";
-import LogoutButton from "./LogoutButton";
-import { Image } from "@unpic/react";
-import { BsFillPersonVcardFill, BsThreeDotsVertical } from "react-icons/bs";
-import { FaMagnifyingGlass } from "react-icons/fa6";
+import { Image } from '@unpic/react'
+import { BsFillPersonVcardFill, BsThreeDotsVertical } from 'react-icons/bs'
+import { FaMagnifyingGlass } from 'react-icons/fa6'
+import Logo from '../assets/logo.png'
+import LoginButton from './LoginButton'
+import LogoutButton from './LogoutButton'
 
 interface Props {
   session?: {
     user: {
-      name: string;
-      image?: string | null;
-    };
-  } | null;
+      name: string
+      image?: string | null
+    }
+  } | null
 }
 
 const { session } = Astro.props;
@@ -148,14 +148,15 @@ const { session } = Astro.props;
     <!-- User Menu / Login -->
     <div class="flex items-center pl-1">
       {
-        session ? (
+        session
+? (
           <div class="dropdown dropdown-end">
             <button type="button" class="avatar btn btn-circle btn-ghost">
               <div class="w-10 rounded-full">
                 <Image
                   src={
-                    session.user.image ||
-                    `https://ui-avatars.com/api/?name=${session.user.name}`
+                    session.user.image
+                    || `https://ui-avatars.com/api/?name=${session.user.name}`
                   }
                   alt={`${session.user.name} Avatar`}
                   width={40}
@@ -178,7 +179,8 @@ const { session } = Astro.props;
               </li>
             </ul>
           </div>
-        ) : (
+        )
+: (
           <LoginButton client:load />
         )
       }
