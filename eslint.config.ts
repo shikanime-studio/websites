@@ -19,6 +19,7 @@ export default antfu(
     regexp: true,
     stylistic: true,
     typescript: true,
+    yaml: false
   },
   {
     files: ['**/routeTree.gen.ts'],
