@@ -1,4 +1,4 @@
-import type { FC, MouseEvent, ReactNode } from 'react'
+import type { MouseEvent, ReactNode } from 'react'
 import type { CardData } from '../lib/api-client'
 import { Image } from '@unpic/react'
 import { useRef, useState } from 'react'
@@ -14,7 +14,7 @@ export interface CardProps {
   children?: ReactNode
 }
 
-export const Card: FC<CardProps> = ({ children }) => {
+export function Card({ children }: CardProps) {
   return <div className="flex w-full flex-col gap-3">{children}</div>
 }
 
@@ -22,14 +22,14 @@ export interface CardInfoProps extends CardData {
   onClick?: () => void
 }
 
-export const CardInfo: FC<CardInfoProps> = ({
+export function CardInfo({
   title,
   href,
   artist,
   rating,
   reviewCount,
   onClick,
-}) => {
+}: CardInfoProps) {
   const handleTitleClick = (e: MouseEvent) => {
     if (onClick) {
       e.preventDefault()
@@ -93,9 +93,9 @@ export interface CardRadiantBackgroundProps {
   image: string
 }
 
-export const CardRadiantBackground: FC<CardRadiantBackgroundProps> = ({
+export function CardRadiantBackground({
   image,
-}) => {
+}: CardRadiantBackgroundProps) {
   return (
     <div
       className="absolute inset-0 z-0 scale-110 opacity-60 blur-xl transition-all duration-700"
@@ -112,7 +112,7 @@ export interface CardPaginationProps {
   children?: ReactNode
 }
 
-export const CardPagination: FC<CardPaginationProps> = ({ children }) => {
+export function CardPagination({ children }: CardPaginationProps) {
   return (
     <div className="absolute right-0 bottom-3 left-0 z-20 flex justify-center gap-1.5">
       {children}
@@ -124,7 +124,7 @@ export interface CardPaginationDotProps {
   active?: boolean
 }
 
-export const CardPaginationDot: FC<CardPaginationDotProps> = ({ active }) => {
+export function CardPaginationDot({ active }: CardPaginationDotProps) {
   return (
     <div
       className={`h-1.5 w-1.5 rounded-full shadow-sm transition-all ${
@@ -139,10 +139,10 @@ export interface CardNavigationProps {
   onPrevClick: (e: MouseEvent) => void
 }
 
-export const CardNavigation: FC<CardNavigationProps> = ({
+export function CardNavigation({
   onNextClick,
   onPrevClick,
-}) => {
+}: CardNavigationProps) {
   return (
     <>
       <button
@@ -167,7 +167,7 @@ export interface CardStatusProps {
   status: 'OPEN' | 'CLOSED' | 'WAITLIST'
 }
 
-export const CardStatus: FC<CardStatusProps> = ({ status }) => {
+export function CardStatus({ status }: CardStatusProps) {
   if (status !== 'OPEN')
     return null
 
@@ -182,7 +182,7 @@ export interface CardBookmarkProps {
   onClick?: (e: MouseEvent) => void
 }
 
-export const CardBookmark: FC<CardBookmarkProps> = ({ onClick }) => {
+export function CardBookmark({ onClick }: CardBookmarkProps) {
   return (
     <button
       type="button"
@@ -203,13 +203,13 @@ export interface CardCarouselProps {
   onClick?: () => void
 }
 
-export const CardCarousel: FC<CardCarouselProps> = ({
+export function CardCarousel({
   title,
   images,
   href = '#',
   children,
   onClick,
-}) => {
+}: CardCarouselProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
 
@@ -329,12 +329,14 @@ export const CardCarousel: FC<CardCarouselProps> = ({
   )
 }
 
-export const CardCarouselCount: FC<{ count: number }> = ({ count }) => (
-  <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-md bg-black/60 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
-    <FaRegClone className="h-3 w-3" />
-    <span>{count}</span>
-  </div>
-)
+export function CardCarouselCount({ count }: { count: number }) {
+  return (
+    <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-md bg-black/60 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
+      <FaRegClone className="h-3 w-3" />
+      <span>{count}</span>
+    </div>
+  )
+}
 
 export interface CardShowcaseCarouselProps {
   title: string
@@ -344,13 +346,13 @@ export interface CardShowcaseCarouselProps {
   onClick?: () => void
 }
 
-export const CardShowcaseCarousel: FC<CardShowcaseCarouselProps> = ({
+export function CardShowcaseCarousel({
   title,
   images,
   href = '#',
   children,
   onClick,
-}) => {
+}: CardShowcaseCarouselProps) {
   const firstImage = images[0] ?? (
     <Image
       src={`https://placehold.co/600x400/ffe4e6/be123c?text=${encodeURIComponent(
