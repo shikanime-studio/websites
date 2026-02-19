@@ -1,3 +1,4 @@
+import type { RefObject } from 'react'
 import { useEffect, useMemo } from 'react'
 import rafShader from '../shaders/raf.wgsl?raw'
 import { useGPU } from './useGPU'
@@ -50,7 +51,7 @@ function useRawImagePipeline() {
 }
 
 export function useRawImageRender(
-  context: GPUCanvasContext | null,
+  canvasRef: RefObject<HTMLCanvasElement | null>,
   width: number,
   height: number,
   data: ArrayBufferLike,
@@ -99,7 +100,14 @@ export function useRawImageRender(
   }, [device, width, height, data])
 
   useEffect(() => {
-    if (!device || !context || !format || !pipeline || !texture) {
+    const canvas = canvasRef.current
+    if (!device || !canvas || !format || !pipeline || !texture) {
+      return
+    }
+
+    const context = canvas.getContext('webgpu')
+    if (!context) {
+      console.error('Could not get GPU context')
       return
     }
 
@@ -169,8 +177,8 @@ export function useRawImageRender(
 
     device.queue.submit([commandEncoder.finish()])
   }, [
+    canvasRef,
     device,
-    context,
     format,
     pipeline,
     texture,

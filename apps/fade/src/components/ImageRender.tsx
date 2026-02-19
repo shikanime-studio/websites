@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import { useCanvas } from '../hooks/useCanvas'
 import { useImageRender } from '../hooks/useImageRender'
 import { useLighting } from '../hooks/useLighting'
 
@@ -15,10 +14,9 @@ export function ImageRender({
   onDoubleClick,
 }: ImageRenderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const { context } = useCanvas(canvasRef)
   const lighting = useLighting()
 
-  useImageRender(context, image, lighting)
+  useImageRender(canvasRef, image, lighting)
 
   return (
     <canvas
