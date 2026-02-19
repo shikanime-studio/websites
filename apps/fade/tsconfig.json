@@ -2,19 +2,11 @@
   "compilerOptions": {
     "target": "ES2022",
     "jsx": "react-jsx",
-    "lib": [
-      "ES2022",
-      "DOM",
-      "DOM.Iterable"
-    ],
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "baseUrl": ".",
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "types": [
-      "vite/client",
-      "wicg-file-system-access",
-      "@webgpu/types"
-    ],
+    "types": ["vite/client", "wicg-file-system-access", "@webgpu/types"],
     "allowImportingTsExtensions": true,
     "strict": true,
     "noFallthroughCasesInSwitch": true,
@@ -25,9 +17,5 @@
     "skipLibCheck": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "vite.config.ts"
-  ]
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
 }
