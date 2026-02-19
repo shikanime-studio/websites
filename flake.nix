@@ -70,7 +70,7 @@
         treefmt-nix.flakeModule
       ];
       perSystem =
-        { lib, pkgs, ... }:
+        { lib, ... }:
         with lib;
         {
           devenv.shells.default = {
@@ -82,18 +82,6 @@
               devlib.devenvModules.shell
               devlib.devenvModules.shikanime-studio
             ];
-            git-hooks.hooks = {
-              npm-run-lint = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run lint --if-present --workspaces";
-                pass_filenames = false;
-              };
-              npm-run-test = {
-                enable = true;
-                entry = "${getExe' pkgs.nodejs "npm"} run test --if-present --workspaces";
-                pass_filenames = false;
-              };
-            };
             treefmt.config = {
               programs = {
                 sqlfluff = {
