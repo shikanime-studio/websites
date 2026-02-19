@@ -21,16 +21,4 @@ export default antfu(
   {
     ignores: ['**/routeTree.gen.ts', '**/README.md'],
   },
-  {
-    files: ['apps/reiya/src/schema.ts'],
-    rules: {
-      'ts/no-use-before-define': 'off',
-    },
-  },
-  {
-    files: ['apps/fade/src/routes/**/*.tsx'],
-    rules: {
-      'react-refresh/only-export-components': 'off',
-    },
-  },
 )

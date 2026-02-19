@@ -27,6 +27,7 @@ export function Filmstrip() {
 
   const isCollapsed = (data?.value as boolean) || false
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     horizontal: true,
     count: files.length,
