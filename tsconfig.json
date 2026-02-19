@@ -12,12 +12,6 @@
     "isolatedModules": true,
     "skipLibCheck": true
   },
-  "include": [
-    "*.ts",
-    "*.mts"
-  ],
-  "exclude": [
-    "node_modules",
-    "apps"
-  ]
+  "include": ["*.ts", "*.mts"],
+  "exclude": ["node_modules", "apps"]
 }
