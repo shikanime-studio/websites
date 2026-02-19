@@ -19,7 +19,7 @@ export default antfu(
     typescript: true,
   },
   {
-    files: ['**/routeTree.gen.ts', '**/README.md'],
+    files: ['**/routeTree.gen.ts'],
     rules: {
       'eslint-comments/no-unlimited-disable': 'off',
     },
