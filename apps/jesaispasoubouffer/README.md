@@ -11,7 +11,7 @@ Find a place to eat, fast.
 
 ## Environment
 
-- `VITE_GOOGLE_MAPS_API_KEY` for the recommendation API
+- `GOOGLE_MAPS_API_KEY` for the recommendation API
 - Optional auth via Better Auth
 
 ## Tech

@@ -13,6 +13,14 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  optimizeDeps: {
+    include: ['better-auth/react', 'better-auth/tanstack-start'],
+  },
+  ssr: {
+    optimizeDeps: {
+      include: ['better-auth/react', 'better-auth/tanstack-start'],
+    },
+  },
 })
 
 export default config
