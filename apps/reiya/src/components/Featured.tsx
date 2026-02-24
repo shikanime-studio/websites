@@ -1,3 +1,4 @@
+import type { FC } from 'react'
 import type { CardData } from '../lib/api-client'
 import { Image } from '@unpic/react'
 import { FaArrowRight } from 'react-icons/fa6'
@@ -8,7 +9,7 @@ interface FeaturedCarouselItemProps {
   item: CardData
 }
 
-function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
+const FeaturedCarouselItem: FC<FeaturedCarouselItemProps> = ({ item }) => {
   return (
     <div className="carousel-item w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
       <Card>
@@ -45,12 +46,12 @@ interface FeaturedProps {
   viewAllLink?: string
 }
 
-export function Featured({
+export const Featured: FC<FeaturedProps> = ({
   title,
   items,
   className = '',
   viewAllLink,
-}: FeaturedProps) {
+}) => {
   return (
     <div className={`flex w-full flex-col gap-6 ${className}`}>
       {(title ?? viewAllLink) && (

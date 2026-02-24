@@ -41,7 +41,7 @@ export const recommendFn = createServerFn({ method: 'POST' })
     const client = new Client({})
     const res = await client.placesNearby({
       params: {
-        key: config.VITE_GOOGLE_MAPS_API_KEY,
+        key: config.GOOGLE_MAPS_API_KEY,
         location: { lat: latitude, lng: longitude },
         radius,
         type: 'restaurant',

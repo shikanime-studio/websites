@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useTimeout } from 'usehooks-ts'
@@ -10,12 +10,12 @@ export interface ToastProps {
   onClose?: () => void
 }
 
-export function Toast({
+export const Toast: FC<ToastProps> = ({
   children,
   className = '',
   duration,
   onClose,
-}: ToastProps) {
+}) => {
   const [isHovered, setIsHovered] = useState(false)
 
   useTimeout(

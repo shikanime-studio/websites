@@ -49,7 +49,7 @@ export function useVoiceInput() {
             setIsTranscribing(true)
             setTranscript('')
 
-            const adapter = fetchServerSentEvents(voiceFn.url, {
+            const adapter = fetchServerSentEvents('/api/voice', {
               body: {
                 audio: base64,
                 format: 'webm',

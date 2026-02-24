@@ -17,28 +17,25 @@ export function useRecommendation() {
     setData(null)
 
     try {
-      const response = await fetch(recommendFn.url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const response = await recommendFn({
+        data: {
           latitude: coords.latitude,
           longitude: coords.longitude,
           query,
           recentIds: getRecentIds(10),
           nowHour: new Date().getHours(),
-        }),
+        },
       })
 
-      const json = (await response.json()) as RecommendResponse
-      if ('error' in json) {
-        setError(json.error)
+      if ('error' in response) {
+        setError(response.error)
       }
       else {
-        setData(json)
-        if ('restaurant' in json) {
+        setData(response)
+        if ('restaurant' in response) {
           addHistory({
-            id: json.restaurant.id,
-            name: json.restaurant.name,
+            id: response.restaurant.id,
+            name: response.restaurant.name,
             timestamp: Date.now(),
             latitude: coords.latitude,
             longitude: coords.longitude,

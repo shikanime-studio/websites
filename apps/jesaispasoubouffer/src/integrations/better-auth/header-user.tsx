@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router'
 import { authClient } from '../../lib/auth-client'
 
 export default function BetterAuthHeader() {
@@ -15,10 +14,10 @@ export default function BetterAuthHeader() {
       <div className="flex items-center gap-2">
         {session.user.image
           ? (
-              <img src={session.user.image} alt="" className="h-8 w-8" />
+              <img src={session.user.image} alt="" className="h-8 w-8 rounded-full" />
             )
           : (
-              <div className="flex h-8 w-8 items-center justify-center bg-neutral-100 dark:bg-neutral-800">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-neutral-100 dark:bg-neutral-800">
                 <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400">
                   {session.user.name?.charAt(0).toUpperCase() || 'U'}
                 </span>
@@ -28,7 +27,7 @@ export default function BetterAuthHeader() {
           onClick={() => {
             void authClient.signOut()
           }}
-          className="h-9 flex-1 border border-neutral-300 bg-white px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50 dark:hover:bg-neutral-800"
+          className="btn btn-sm btn-ghost"
         >
           Sign out
         </button>
@@ -37,11 +36,13 @@ export default function BetterAuthHeader() {
   }
 
   return (
-    <Link
-      to="/demo/better-auth"
-      className="inline-flex h-9 items-center border border-neutral-300 bg-white px-4 text-sm font-medium text-neutral-900 transition-colors hover:bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50 dark:hover:bg-neutral-800"
+    <button
+      onClick={() => {
+        void authClient.signIn.social({ provider: 'google' })
+      }}
+      className="btn btn-sm btn-neutral"
     >
       Sign in
-    </Link>
+    </button>
   )
 }

@@ -14,11 +14,11 @@ const config = defineConfig({
     viteReact(),
   ],
   optimizeDeps: {
-    include: ['better-auth', 'better-auth/react', 'better-auth/tanstack-start'],
+    include: ['better-auth/react', 'better-auth/tanstack-start'],
   },
   ssr: {
     optimizeDeps: {
-      include: ['better-auth', 'better-auth/react', 'better-auth/tanstack-start'],
+      include: ['better-auth/react', 'better-auth/tanstack-start'],
     },
   },
 })
