@@ -1,0 +1,203 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Vite: Launch Fade",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/fade",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "console": "internalConsole",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Vite: Launch Links",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/links",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "console": "internalConsole",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Vite: Launch Reiya",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/reiya",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "console": "internalConsole",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Vite: Launch Www",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/www",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "console": "internalConsole",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Chrome: Launch Fade",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/apps/fade/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Firefox: Launch Fade",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/apps/fade/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Chrome: Launch Links",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/links/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Firefox: Launch Links",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/links/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Chrome: Launch Reiya",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/reiya/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Firefox: Launch Reiya",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/reiya/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Chrome: Launch Www",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/www/src",
+      "presentation": {
+        "hidden": true
+      }
+    },
+    {
+      "name": "Firefox: Launch Www",
+      "type": "firefox",
+      "request": "launch",
+      "url": "http://localhost:4321",
+      "webRoot": "${workspaceFolder}/apps/www/src",
+      "presentation": {
+        "hidden": true
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch: Fade (Chrome)",
+      "configurations": [
+        "Vite: Launch Fade",
+        "Chrome: Launch Fade"
+      ]
+    },
+    {
+      "name": "Launch: Fade (Firefox)",
+      "configurations": [
+        "Vite: Launch Fade",
+        "Firefox: Launch Fade"
+      ]
+    },
+    {
+      "name": "Launch: Links (Chrome)",
+      "configurations": [
+        "Vite: Launch Links",
+        "Chrome: Launch Links"
+      ]
+    },
+    {
+      "name": "Launch: Links (Firefox)",
+      "configurations": [
+        "Vite: Launch Links",
+        "Firefox: Launch Links"
+      ]
+    },
+    {
+      "name": "Launch: Reiya (Chrome)",
+      "configurations": [
+        "Vite: Launch Reiya",
+        "Chrome: Launch Reiya"
+      ]
+    },
+    {
+      "name": "Launch: Reiya (Firefox)",
+      "configurations": [
+        "Vite: Launch Reiya",
+        "Firefox: Launch Reiya"
+      ]
+    },
+    {
+      "name": "Launch: Www (Chrome)",
+      "configurations": [
+        "Vite: Launch Www",
+        "Chrome: Launch Www"
+      ]
+    },
+    {
+      "name": "Launch: Www (Firefox)",
+      "configurations": [
+        "Vite: Launch Www",
+        "Firefox: Launch Www"
+      ]
+    }
+  ]
+}
