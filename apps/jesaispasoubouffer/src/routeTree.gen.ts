@@ -10,7 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApiRecommendRouteImport } from './routes/api/recommend'
+import { Route as ApiVoiceRouteImport } from './routes/api/voice'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -18,9 +18,9 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiRecommendRoute = ApiRecommendRouteImport.update({
-  id: '/api/recommend',
-  path: '/api/recommend',
+const ApiVoiceRoute = ApiVoiceRouteImport.update({
+  id: '/api/voice',
+  path: '/api/voice',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
@@ -31,31 +31,31 @@ const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/recommend': typeof ApiRecommendRoute
+  '/api/voice': typeof ApiVoiceRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/recommend': typeof ApiRecommendRoute
+  '/api/voice': typeof ApiVoiceRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/recommend': typeof ApiRecommendRoute
+  '/api/voice': typeof ApiVoiceRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/recommend' | '/api/auth/$'
+  fullPaths: '/' | '/api/voice' | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/recommend' | '/api/auth/$'
-  id: '__root__' | '/' | '/api/recommend' | '/api/auth/$'
+  to: '/' | '/api/voice' | '/api/auth/$'
+  id: '__root__' | '/' | '/api/voice' | '/api/auth/$'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiRecommendRoute: typeof ApiRecommendRoute
+  ApiVoiceRoute: typeof ApiVoiceRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
 
@@ -68,11 +68,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/recommend': {
-      id: '/api/recommend'
-      path: '/api/recommend'
-      fullPath: '/api/recommend'
-      preLoaderRoute: typeof ApiRecommendRouteImport
+    '/api/voice': {
+      id: '/api/voice'
+      path: '/api/voice'
+      fullPath: '/api/voice'
+      preLoaderRoute: typeof ApiVoiceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/auth/$': {
@@ -87,7 +87,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiRecommendRoute: ApiRecommendRoute,
+  ApiVoiceRoute: ApiVoiceRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }
 export const routeTree = rootRouteImport
