@@ -1,4 +1,6 @@
-export function SkeletonCard() {
+import type { FC } from 'react'
+
+export const SkeletonCard: FC = () => {
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="skeleton aspect-4/3 w-full rounded-2xl"></div>

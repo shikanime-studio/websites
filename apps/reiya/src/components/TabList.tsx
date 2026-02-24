@@ -1,5 +1,5 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
-import { Activity, createContext, use, useState } from 'react'
+import type { FC, InputHTMLAttributes, ReactNode } from 'react'
+import { Activity, createContext, useState } from 'react'
 
 interface TabContextType {
   activeTab: string
@@ -14,11 +14,11 @@ interface TabListProps {
   defaultTab: string
 }
 
-export function TabList({
+export const TabList: FC<TabListProps> = ({
   children,
   className = '',
   defaultTab,
-}: TabListProps) {
+}) => {
   const [activeTab, setActiveTab] = useState(defaultTab)
 
   return (
@@ -40,12 +40,12 @@ interface TabProps
   value: string
 }
 
-export function Tab({
+export const Tab: FC<TabProps> = ({
   children,
   className = '',
   value,
   ...props
-}: TabProps) {
+}) => {
   const context = use(TabContext)
 
   const handleChange = () => {
@@ -72,11 +72,11 @@ interface TabContentProps {
   value: string
 }
 
-export function TabContent({
+export const TabContent: FC<TabContentProps> = ({
   children,
   className = '',
   value,
-}: TabContentProps) {
+}) => {
   const context = use(TabContext)
   return (
     <div role="tabpanel" className={`tab-content ${className}`}>

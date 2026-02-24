@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { FC, ReactNode } from 'react'
 import type { CardData } from '../lib/api-client'
 import { useQuery } from '@tanstack/react-query'
 import { Image } from '@unpic/react'
@@ -19,7 +19,7 @@ interface GalleryProps {
   children?: ReactNode
 }
 
-export function Gallery({ children }: GalleryProps) {
+export const Gallery: FC<GalleryProps> = ({ children }) => {
   return (
     <div className="columns-1 gap-3 sm:columns-2 lg:columns-4">{children}</div>
   )
@@ -29,7 +29,7 @@ interface GalleryItemProps {
   children: ReactNode
 }
 
-export function GalleryItem({ children }: GalleryItemProps) {
+export const GalleryItem: FC<GalleryItemProps> = ({ children }) => {
   return <div className="mb-4 break-inside-avoid">{children}</div>
 }
 
@@ -40,12 +40,12 @@ interface GalleryContentProps {
   variant?: 'default' | 'showcase'
 }
 
-export function GalleryContent({
+export const GalleryContent: FC<GalleryContentProps> = ({
   queryKey,
   queryFn,
   staleTime = 1000 * 60 * 5,
   variant = 'default',
-}: GalleryContentProps) {
+}) => {
   const { data: items = [], isLoading } = useQuery({
     queryKey,
     queryFn,
@@ -123,11 +123,9 @@ export function GalleryContent({
   )
 }
 
-export function ShowcaseGalleryContent({
-  queryKey,
-  queryFn,
-  staleTime = 1000 * 60 * 5,
-}: Omit<GalleryContentProps, 'variant'>) {
+export const ShowcaseGalleryContent: FC<
+  Omit<GalleryContentProps, 'variant'>
+> = ({ queryKey, queryFn, staleTime = 1000 * 60 * 5 }) => {
   const { data: items = [], isLoading } = useQuery({
     queryKey,
     queryFn,

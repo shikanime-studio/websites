@@ -1,15 +1,25 @@
-import type { CardData } from '../lib/api-client'
+import type { FC } from 'react'
+import type { CardData } from './Card'
 import { Image } from '@unpic/react'
-import { ArrowUp, Bookmark, Check, CheckCircle, Ellipsis, Heart, Share, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import {
+  FaArrowUp,
+  FaBookmark,
+  FaCheck,
+  FaCircleCheck,
+  FaEllipsis,
+  FaHeart,
+  FaShare,
+  FaXmark,
+} from 'react-icons/fa6'
 
 interface CardModalProps {
   card: CardData
   onClose: () => void
 }
 
-export function CardModal({ card, onClose }: CardModalProps) {
+export const CardModal: FC<CardModalProps> = ({ card, onClose }) => {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const imageContainerRef = useRef<HTMLDivElement>(null)
 
@@ -50,7 +60,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
           onClick={onClose}
           className="absolute top-4 left-4 z-20 rounded-full bg-white/80 p-2 shadow-sm backdrop-blur transition-colors hover:bg-white"
         >
-          <X className="h-5 w-5" />
+          <FaXmark className="h-5 w-5" />
         </button>
 
         <div className="absolute top-4 right-4 z-20 flex gap-2 md:hidden">
@@ -58,13 +68,13 @@ export function CardModal({ card, onClose }: CardModalProps) {
             type="button"
             className="rounded-full bg-white/80 p-2 shadow-sm backdrop-blur transition-colors hover:bg-white"
           >
-            <Bookmark className="h-4 w-4" />
+            <FaBookmark className="h-4 w-4" />
           </button>
           <button
             type="button"
             className="rounded-full bg-white/80 p-2 shadow-sm backdrop-blur transition-colors hover:bg-white"
           >
-            <Ellipsis className="h-4 w-4" />
+            <FaEllipsis className="h-4 w-4" />
           </button>
         </div>
 
@@ -100,7 +110,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 : 'pointer-events-none translate-y-10 opacity-0'
             }`}
           >
-            <ArrowUp className="h-5 w-5" />
+            <FaArrowUp className="h-5 w-5" />
           </button>
         </div>
 
@@ -139,17 +149,17 @@ export function CardModal({ card, onClose }: CardModalProps) {
 
             <div className="flex flex-col gap-2 text-sm text-gray-600">
               <div className="flex items-center gap-2">
-                <Check className="text-gray-900" />
+                <FaCheck className="text-gray-900" />
                 {' '}
                 Personal
               </div>
               <div className="flex items-center gap-2 text-gray-400">
-                <X className="text-gray-400" />
+                <FaXmark className="text-gray-400" />
                 {' '}
                 Monetized content
               </div>
               <div className="flex items-center gap-2 text-gray-400">
-                <X className="text-gray-400" />
+                <FaXmark className="text-gray-400" />
                 {' '}
                 Commercial merchandising
               </div>
@@ -168,7 +178,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 <div className="flex items-center gap-1 font-bold text-gray-900">
                   <span className="truncate">{card.artist.name}</span>
                   {card.artist.verified && (
-                    <CheckCircle className="text-primary h-3 w-3 shrink-0" />
+                    <FaCircleCheck className="text-primary h-3 w-3 shrink-0" />
                   )}
                 </div>
                 <div className="truncate text-sm text-gray-500">
@@ -230,13 +240,13 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 type="button"
                 className="btn btn-circle btn-ghost border border-gray-200 hover:bg-gray-50"
               >
-                <Heart className="h-5 w-5 text-gray-400" />
+                <FaHeart className="h-5 w-5 text-gray-400" />
               </button>
               <button
                 type="button"
                 className="btn btn-circle btn-ghost border border-gray-200 hover:bg-gray-50"
               >
-                <Share className="h-5 w-5 text-gray-400" />
+                <FaShare className="h-5 w-5 text-gray-400" />
               </button>
             </div>
           </div>

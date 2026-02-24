@@ -23,7 +23,7 @@ jobs:
       - env: {}
         run: nix flake check --accept-flake-config --no-pure-eval
 name: Integration
-'on':
+on:
   pull_request:
     branches:
       - main

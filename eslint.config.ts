@@ -1,6 +1,4 @@
 import antfu from '@antfu/eslint-config'
-import pluginQuery from '@tanstack/eslint-plugin-query'
-import pluginRouter from '@tanstack/eslint-plugin-router'
 
 export default antfu(
   {
@@ -19,7 +17,6 @@ export default antfu(
     regexp: true,
     stylistic: true,
     typescript: true,
-    yaml: false
   },
   {
     files: ['**/routeTree.gen.ts'],
@@ -27,6 +24,4 @@ export default antfu(
       'eslint-comments/no-unlimited-disable': 'off',
     },
   },
-  ...pluginQuery.configs['flat/recommended'],
-  ...pluginRouter.configs['flat/recommended'],
 )

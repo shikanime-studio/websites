@@ -1,6 +1,7 @@
 ---
 import { Image } from '@unpic/react'
-// icons removed to simplify UI and drop react-icons
+import { BsFillPersonVcardFill, BsThreeDotsVertical } from 'react-icons/bs'
+import { FaMagnifyingGlass } from 'react-icons/fa6'
 import Logo from '../assets/logo.png'
 import LoginButton from './LoginButton'
 import LogoutButton from './LogoutButton'
@@ -37,7 +38,7 @@ const { session } = Astro.props;
         Reiya
       </a>
 
-        <div class="hidden items-center gap-1 md:flex">
+      <div class="hidden items-center gap-1 md:flex">
         {
           session && (
             <a
@@ -58,12 +59,16 @@ const { session } = Astro.props;
         <div class="dropdown dropdown-bottom">
           <button
             type="button"
-            class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content hover:bg-base-200"
+            class="btn btn-ghost btn-circle btn-sm text-base-content/70 hover:text-base-content hover:bg-base-200"
           >
-            More
+            <BsThreeDotsVertical />
           </button>
-          <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow">
-            <li><a href="/privacy-notices">Privacy Notices</a></li>
+          <ul
+            class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow"
+          >
+            <li>
+              <a href="/privacy-notices">Privacy Notices</a>
+            </li>
           </ul>
         </div>
       </div>
@@ -78,8 +83,10 @@ const { session } = Astro.props;
         placeholder="Search for a character, license, artist, or convention"
         class="input input-sm bg-base-200 focus:ring-primary/20 h-10 w-full rounded-full border-none pr-4 pl-10 transition-all focus:ring-2 focus:outline-none"
       />
-      <div class="text-base-content/50 absolute top-1/2 left-3.5 -translate-y-1/2">
-        <span class="text-xs">🔎</span>
+      <div
+        class="text-base-content/50 absolute top-1/2 left-3.5 -translate-y-1/2"
+      >
+        <FaMagnifyingGlass className="h-3.5 w-3.5" />
       </div>
     </div>
   </div>
@@ -161,7 +168,10 @@ const { session } = Astro.props;
             </button>
             <ul class="menu dropdown-content rounded-box bg-base-100 z-1 w-52 p-2 shadow">
               <li>
-                <a href="/user">User</a>
+                <a href="/user">
+                  <BsFillPersonVcardFill />
+                  User
+                </a>
               </li>
               <div class="divider my-0" />
               <li>
