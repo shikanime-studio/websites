@@ -1,5 +1,5 @@
 import type { FileItem } from '../lib/fs'
-import { createContext } from 'react'
+import { createContext, use } from 'react'
 
 export interface GalleryState {
   files: Array<FileItem>
