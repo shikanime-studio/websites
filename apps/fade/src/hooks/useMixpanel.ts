@@ -1,6 +1,6 @@
 import type { Config, Mixpanel } from 'mixpanel-browser'
 import mixpanel from 'mixpanel-browser'
-import { createContext, useMemo } from 'react'
+import { createContext, useContext, useMemo } from 'react'
 
 export interface MixpanelContextValue {
   instance?: Mixpanel
@@ -9,7 +9,7 @@ export interface MixpanelContextValue {
 export const MixpanelContext = createContext<MixpanelContextValue | null>(null)
 
 export function useMixpanel() {
-  const context = use(MixpanelContext)
+  const context = useContext(MixpanelContext)
   if (!context?.instance) {
     return mixpanel
   }

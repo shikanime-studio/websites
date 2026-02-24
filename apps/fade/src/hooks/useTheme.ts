@@ -1,5 +1,5 @@
 import type { Theme } from '../lib/db'
-import { createContext } from 'react'
+import { createContext, use } from 'react'
 
 export interface ThemeContextValue {
   theme?: Theme
