@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BsGoogle } from 'react-icons/bs'
+import { siGoogle } from 'simple-icons'
 import { authClient } from '../lib/auth-client'
 import { AlertError } from './AlertError'
 import { Toast } from './Toast'
@@ -43,7 +43,11 @@ export default function LoginButton() {
             )
           : (
               <>
-                <BsGoogle />
+                <img
+                  src={siGoogle.svg}
+                  alt="Google"
+                  className="h-4 w-4"
+                />
                 SIGN IN
               </>
             )}

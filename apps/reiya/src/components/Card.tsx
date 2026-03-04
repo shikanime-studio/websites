@@ -1,14 +1,14 @@
 import type { MouseEvent, ReactNode } from 'react'
 import type { CardData } from '../lib/api-client'
 import { Image } from '@unpic/react'
-import { useRef, useState } from 'react'
 import {
-  FaBookmark,
-  FaChevronLeft,
-  FaChevronRight,
-  FaCircleCheck,
-  FaRegClone,
-} from 'react-icons/fa6'
+  Bookmark,
+  ChevronLeft,
+  ChevronRight,
+  CircleCheck,
+  Files,
+} from 'lucide-react'
+import { useRef, useState } from 'react'
 
 export interface CardProps {
   children?: ReactNode
@@ -61,7 +61,7 @@ export function CardInfo({
             {artist.name}
           </span>
           {artist.verified && (
-            <FaCircleCheck className="text-primary h-3.5 w-3.5" />
+            <CircleCheck className="text-primary h-3.5 w-3.5" />
           )}
           {artist.level && (
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-purple-100 text-[10px] font-bold text-purple-600">
@@ -150,14 +150,14 @@ export function CardNavigation({
         onClick={onNextClick}
         className="absolute top-1/2 right-2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-black/70"
       >
-        <FaChevronRight className="h-4 w-4" />
+        <ChevronRight className="h-4 w-4" />
       </button>
       <button
         type="button"
         onClick={onPrevClick}
         className="absolute top-1/2 left-2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-black/70"
       >
-        <FaChevronLeft className="h-4 w-4" />
+        <ChevronLeft className="h-4 w-4" />
       </button>
     </>
   )
@@ -189,7 +189,7 @@ export function CardBookmark({ onClick }: CardBookmarkProps) {
       onClick={onClick}
       className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-sm transition hover:bg-white"
     >
-      <FaBookmark className="h-4 w-4" />
+      <Bookmark className="h-4 w-4" />
     </button>
   )
 }
@@ -332,7 +332,7 @@ export function CardCarousel({
 export function CardCarouselCount({ count }: { count: number }) {
   return (
     <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-md bg-black/60 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
-      <FaRegClone className="h-3 w-3" />
+      <Files className="h-3 w-3" />
       <span>{count}</span>
     </div>
   )

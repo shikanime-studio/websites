@@ -1,5 +1,5 @@
+import { LogOut } from 'lucide-react'
 import { useState } from 'react'
-import { BsBoxArrowRight } from 'react-icons/bs'
 import { authClient } from '../lib/auth-client'
 import { AlertError } from './AlertError'
 import { Toast } from './Toast'
@@ -36,7 +36,7 @@ export default function LogoutButton() {
         className="btn btn-ghost"
         disabled={isLoading}
       >
-        <BsBoxArrowRight />
+        <LogOut />
         Logout
       </button>
       {error && (
