@@ -200,6 +200,12 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 
+###-----------------------------------------------------------------------###
+###  Repo: shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore  ###
+###-----------------------------------------------------------------------###
+
+.wrangler/
+
 ###-------------------------###
 ###  TopTal: jetbrains+all  ###
 ###-------------------------###
