@@ -1,6 +1,6 @@
 import type { CardData } from '../lib/api-client'
 import { Image } from '@unpic/react'
-import { FaArrowRight } from 'react-icons/fa6'
+import { ArrowRight } from 'lucide-react'
 import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from './Card'
 import { EmptyState } from './EmptyState'
 
@@ -64,7 +64,7 @@ export function Featured({
               className="flex items-center gap-1 text-sm font-bold text-gray-500 transition-colors hover:text-gray-900"
             >
               View all
-              <FaArrowRight className="h-3 w-3" />
+              <ArrowRight className="h-3 w-3" />
             </a>
           )}
         </div>
