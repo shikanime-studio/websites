@@ -79,6 +79,9 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
+          gitignore.templates = [
+            "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
+          ];
           treefmt.config = {
             programs = {
               sqlfluff = {
