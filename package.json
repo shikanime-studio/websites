@@ -23,7 +23,6 @@
   },
   "workspaces": [
     "apps/fade",
-    "apps/jesaispasoubouffer",
     "apps/links",
     "apps/reiya",
     "apps/www"
