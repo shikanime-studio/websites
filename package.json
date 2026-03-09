@@ -1,7 +1,12 @@
 {
   "name": "@shikanime/websites",
+  "version": "0.0.0",
   "type": "module",
-  "packageManager": "npm@11.7.0+sha512.c22099a6fff8d5b2286c2a09df5352b4858a7c0c716320f58989d60ad8b29ecf2ce6fdfe97ccb41c23ffb1272e1fa079f868487dd6b81d02a2a9e199c095a117",
+  "packageManager": "pnpm@10.31.0+sha512.e3927388bfaa8078ceb79b748ffc1e8274e84d75163e67bc22e06c0d3aed43dd153151cbf11d7f8301ff4acb98c68bdc5cadf6989532801ffafe3b3e4a63c268",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "lint": "eslint . --fix"
   },
@@ -20,11 +25,5 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.0",
     "typescript": "^5.9.3"
-  },
-  "workspaces": [
-    "apps/fade",
-    "apps/links",
-    "apps/reiya",
-    "apps/www"
-  ]
+  }
 }

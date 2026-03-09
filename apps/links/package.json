@@ -1,7 +1,12 @@
 {
   "name": "@shikanime/links",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

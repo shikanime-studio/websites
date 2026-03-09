@@ -1,0 +1,14 @@
+engineStrict: true
+
+onlyBuiltDependencies:
+  - better-sqlite3
+  - esbuild
+  - lightningcss
+  - sharp
+  - wrangler
+
+packages:
+  - apps/fade
+  - apps/links
+  - apps/reiya
+  - apps/www

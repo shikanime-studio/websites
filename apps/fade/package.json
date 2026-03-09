@@ -1,7 +1,12 @@
 {
   "name": "fade",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "dev": "vite dev --port 3000",
     "build": "vite build",
