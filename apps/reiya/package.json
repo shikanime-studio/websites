@@ -1,7 +1,12 @@
 {
   "name": "@shikanime/reiya",
+  "version": "0.0.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "dev": "UV_THREADPOOL_SIZE=64 NODE_OPTIONS='--dns-result-order=ipv4first' astro dev",
     "start": "astro dev",
