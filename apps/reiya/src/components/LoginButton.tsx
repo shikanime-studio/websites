@@ -43,11 +43,9 @@ export default function LoginButton() {
             )
           : (
               <>
-                <img
-                  src={siGoogle.svg}
-                  alt="Google"
-                  className="h-4 w-4"
-                />
+                <svg className="h-4 w-4" viewBox="0 0 24 24">
+                  <path d={siGoogle.path} />
+                </svg>
                 SIGN IN
               </>
             )}
