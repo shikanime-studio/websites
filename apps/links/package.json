@@ -1,5 +1,5 @@
 {
-  "name": "@shikanime/links",
+  "name": "@shikanime-studio/links",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -25,6 +25,7 @@
     "daisyui": "^5.5.14",
     "lightningcss": "^1.30.2",
     "mixpanel-browser": "^2.73.0",
+    "sharp": "^0.34.5",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
