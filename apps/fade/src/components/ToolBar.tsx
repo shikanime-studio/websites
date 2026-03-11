@@ -92,11 +92,9 @@ function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
         className="btn btn-sm btn-square btn-ghost"
         aria-label="GitHub Repository"
       >
-        <img
-          src={siGithub.svg}
-          alt="GitHub"
-          className="h-4.5 w-4.5 fill-current"
-        />
+        <svg className="h-4.5 w-4.5 fill-current" viewBox="0 0 24 24">
+          <path d={siGithub.path} />
+        </svg>
       </a>
       <button
         className="btn btn-sm btn-square btn-ghost"
