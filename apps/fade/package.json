@@ -1,5 +1,5 @@
 {
-  "name": "fade",
+  "name": "@shikanime-studio/fade",
   "version": "0.0.0",
   "type": "module",
   "private": true,
@@ -37,7 +37,8 @@
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "simple-icons": "^16.4.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.12.8",
