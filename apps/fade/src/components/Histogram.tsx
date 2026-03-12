@@ -1,8 +1,14 @@
-import { Suspense } from 'react'
+import type { HistogramBins } from '../lib/db'
+import type { FileItem } from '../lib/fs'
+import { eq, useLiveQuery } from '@tanstack/react-db'
+import { Suspense, useEffect } from 'react'
 import { useHistogram } from '../hooks/useHistogram'
-import { useImageInfo } from '../hooks/useImageInfo'
+import { useObjectUrl } from '../hooks/useObjectUrl'
+import { usePreview } from '../hooks/usePreview'
+import { projectsCollection } from '../lib/db'
 
 interface HistogramProps {
+  fileItem: FileItem
   className?: string
 }
 
@@ -18,13 +24,8 @@ function HistogramSkeleton({ className }: { className?: string }) {
 
 function HistogramContent({
   className,
-  image,
-}: HistogramProps & { image: HTMLImageElement }) {
-  const data = useHistogram(image)
-
-  if (!data)
-    return null
-
+  data,
+}: HistogramProps & { data: HistogramBins }) {
   return (
     <div
       className={`relative h-32 w-full overflow-hidden rounded-md bg-black ${className ?? ''}`}
@@ -65,15 +66,80 @@ function HistogramContent({
   )
 }
 
-export function Histogram({ className }: HistogramProps) {
-  const { image } = useImageInfo()
+function HistogramCompute({
+  fileItem,
+  className,
+}: HistogramProps) {
+  const fileName = fileItem.handle.name
+  const { blob } = usePreview(fileItem)
+  const { url } = useObjectUrl(blob ?? null)
+  const computed = useHistogram(url ?? null)
 
-  if (!image)
+  useEffect(() => {
+    if (!computed)
+      return
+
+    const histogram: HistogramBins = {
+      r: computed.r,
+      g: computed.g,
+      b: computed.b,
+    }
+
+    try {
+      projectsCollection.update(fileName, (draft) => {
+        const nextInfo = draft.imageInfo ?? {
+          width: computed.width,
+          height: computed.height,
+        }
+        nextInfo.width = nextInfo.width ?? computed.width
+        nextInfo.height = nextInfo.height ?? computed.height
+        nextInfo.histogram = histogram
+        draft.imageInfo = nextInfo
+      })
+    }
+    catch {
+      projectsCollection.insert({
+        id: fileName,
+        imageInfo: {
+          width: computed.width,
+          height: computed.height,
+          histogram,
+        },
+      })
+    }
+  }, [computed, fileName])
+
+  if (!computed)
     return null
 
   return (
+    <HistogramContent
+      fileItem={fileItem}
+      className={className}
+      data={{ r: computed.r, g: computed.g, b: computed.b }}
+    />
+  )
+}
+
+export function Histogram({ className, fileItem }: HistogramProps) {
+  const fileName = fileItem.handle.name
+
+  const { data: project } = useLiveQuery(q =>
+    q
+      .from({ projects: projectsCollection })
+      .where(({ projects }) => eq(projects.id, fileName))
+      .findOne(),
+  )
+
+  const stored = project?.imageInfo?.histogram
+
+  if (stored) {
+    return <HistogramContent fileItem={fileItem} className={className} data={stored} />
+  }
+
+  return (
     <Suspense fallback={<HistogramSkeleton className={className} />}>
-      <HistogramContent className={className} image={image} />
+      <HistogramCompute fileItem={fileItem} className={className} />
     </Suspense>
   )
 }

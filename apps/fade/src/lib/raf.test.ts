@@ -1,18 +1,19 @@
 import type { ExifTagEntry } from './exif'
 import type { FileItem } from './fs'
 import { describe, expect, it } from 'vitest'
+import { getRafRasterFromPayload } from '../hooks/useRafImageRender'
 import { MakeTagId } from './exif'
 import {
   CfaHeaderLength,
   CfaHeaderOffset,
   CfaLength,
   CfaOffset,
+  createRafDataView,
   JpegImageLength,
   JpegImageOffset,
   QualityTagId,
   SharpnessTagId,
 } from './raf'
-import { createRawImageDataView } from './raw'
 
 // Mock FileItem creator
 function createFileItem(file: File): FileItem {
@@ -140,7 +141,135 @@ function createFujiBlock() {
   return block
 }
 
-describe('createRawImageDataView', () => {
+function createTiffCfaU16LE(width: number, height: number, pixels: Uint16Array) {
+  const entryCount = 7
+  const ifdOffset = 8
+  const ifdSize = 2 + entryCount * 12 + 4
+  const imageDataOffset = ifdOffset + ifdSize
+
+  const totalSize = imageDataOffset + pixels.byteLength
+  const buffer = new ArrayBuffer(totalSize)
+  const view = new DataView(buffer)
+
+  view.setUint8(0, 0x49)
+  view.setUint8(1, 0x49)
+  view.setUint16(2, 42, true)
+  view.setUint32(4, ifdOffset, true)
+
+  let offset = ifdOffset
+  view.setUint16(offset, entryCount, true)
+  offset += 2
+
+  const TypeShort = 3
+  const TypeLong = 4
+
+  const writeEntry = (
+    tag: number,
+    type: number,
+    count: number,
+    valueOrOffset: number,
+  ) => {
+    view.setUint16(offset, tag, true)
+    view.setUint16(offset + 2, type, true)
+    view.setUint32(offset + 4, count, true)
+    view.setUint32(offset + 8, valueOrOffset, true)
+    offset += 12
+  }
+
+  writeEntry(256, TypeLong, 1, width)
+  writeEntry(257, TypeLong, 1, height)
+  writeEntry(258, TypeShort, 1, 16)
+  writeEntry(259, TypeShort, 1, 1)
+  writeEntry(273, TypeLong, 1, imageDataOffset)
+  writeEntry(278, TypeLong, 1, height)
+  writeEntry(279, TypeLong, 1, pixels.byteLength)
+
+  view.setUint32(offset, 0, true)
+
+  new Uint8Array(buffer, imageDataOffset, pixels.byteLength).set(
+    new Uint8Array(pixels.buffer, pixels.byteOffset, pixels.byteLength),
+  )
+
+  return new Uint8Array(buffer)
+}
+
+function packBitsMsb(values: Array<number>, bitsPerSample: number) {
+  let acc = 0
+  let accBits = 0
+  const out: Array<number> = []
+  const mask = (1 << bitsPerSample) - 1
+
+  for (const v0 of values) {
+    const v = v0 & mask
+    acc = (acc << bitsPerSample) | v
+    accBits += bitsPerSample
+    while (accBits >= 8) {
+      accBits -= 8
+      out.push((acc >> accBits) & 0xFF)
+    }
+  }
+
+  if (accBits > 0) {
+    out.push((acc << (8 - accBits)) & 0xFF)
+  }
+
+  return new Uint8Array(out)
+}
+
+function createTiffCfaPacked14LE(
+  width: number,
+  height: number,
+  packed: Uint8Array,
+) {
+  const entryCount = 7
+  const ifdOffset = 8
+  const ifdSize = 2 + entryCount * 12 + 4
+  const imageDataOffset = ifdOffset + ifdSize
+
+  const totalSize = imageDataOffset + packed.byteLength
+  const buffer = new ArrayBuffer(totalSize)
+  const view = new DataView(buffer)
+
+  view.setUint8(0, 0x49)
+  view.setUint8(1, 0x49)
+  view.setUint16(2, 42, true)
+  view.setUint32(4, ifdOffset, true)
+
+  let offset = ifdOffset
+  view.setUint16(offset, entryCount, true)
+  offset += 2
+
+  const TypeShort = 3
+  const TypeLong = 4
+
+  const writeEntry = (
+    tag: number,
+    type: number,
+    count: number,
+    valueOrOffset: number,
+  ) => {
+    view.setUint16(offset, tag, true)
+    view.setUint16(offset + 2, type, true)
+    view.setUint32(offset + 4, count, true)
+    view.setUint32(offset + 8, valueOrOffset, true)
+    offset += 12
+  }
+
+  writeEntry(256, TypeLong, 1, width)
+  writeEntry(257, TypeLong, 1, height)
+  writeEntry(258, TypeShort, 1, 14)
+  writeEntry(259, TypeShort, 1, 1)
+  writeEntry(273, TypeLong, 1, imageDataOffset)
+  writeEntry(278, TypeLong, 1, height)
+  writeEntry(279, TypeLong, 1, packed.byteLength)
+
+  view.setUint32(offset, 0, true)
+
+  new Uint8Array(buffer, imageDataOffset, packed.byteLength).set(packed)
+  return new Uint8Array(buffer)
+}
+
+describe('createRafDataView', () => {
   it('should extract EXIF tags from RAF (Fujifilm)', async () => {
     // Create a valid JPEG with EXIF
     const exifData = createExifBlock('Fujifilm XT-5')
@@ -191,8 +320,9 @@ describe('createRawImageDataView', () => {
       type: 'image/x-fujifilm-raf',
     })
     const item = createFileItem(file)
-    const view = await createRawImageDataView(item)
-    const tags = view?.getJpegImage()?.getExif()?.getTagEntries()
+    const view = await createRafDataView(item)
+    const exifView = view?.getJpegImage()?.getExif()
+    const tags = exifView ? exifView.getTagEntries() : null
 
     expect(tags).toBeDefined()
     const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)
@@ -222,8 +352,8 @@ describe('createRawImageDataView', () => {
       type: 'image/x-fujifilm-raf',
     })
     const item = createFileItem(file)
-    const view = await createRawImageDataView(item)
-    const tags = view?.getCfaHeader()?.getTagEntries()
+    const view = await createRafDataView(item)
+    const tags = view?.getCfa().getHeader()?.getTagEntries()
 
     expect(tags).toBeDefined()
     const qualityTag = tags?.find(t => t.tagId === (QualityTagId as number))
@@ -257,9 +387,9 @@ describe('createRawImageDataView', () => {
       type: 'image/x-fujifilm-raf',
     })
     const item = createFileItem(file)
-    const view = await createRawImageDataView(item)
+    const view = await createRafDataView(item)
 
-    const cfa = view?.getCfa()
+    const cfa = view?.getCfa().getPayload()
     expect(cfa).toBeDefined()
     if (!cfa)
       throw new Error('CFA data not found')
@@ -269,5 +399,97 @@ describe('createRawImageDataView', () => {
       cfa.byteLength / 2,
     )
     expect(cfaArray).toEqual(cfaData)
+  })
+
+  it('should extract raster from TIFF CFA (16-bit, little-endian)', async () => {
+    const headerSize = 120
+    const rafHeader = new Uint8Array(headerSize)
+    const headerView = new DataView(rafHeader.buffer)
+
+    const width = 2
+    const height = 2
+    const pixels = new Uint16Array([1, 2, 3, 4])
+    const cfaTiff = createTiffCfaU16LE(width, height, pixels)
+
+    const cfaOffset = headerSize
+    headerView.setUint32(CfaOffset, cfaOffset, false)
+    headerView.setUint32(CfaLength, cfaTiff.byteLength, false)
+
+    const rafData = new Uint8Array(cfaOffset + cfaTiff.byteLength)
+    rafData.set(rafHeader, 0)
+    rafData.set(cfaTiff, cfaOffset)
+
+    const file = new File([rafData], 'test_cfa_tiff.raf', {
+      type: 'image/x-fujifilm-raf',
+    })
+    const item = createFileItem(file)
+    const view = await createRafDataView(item)
+
+    const payloadView = view?.getCfa().getPayload()
+    expect(payloadView).toBeDefined()
+    if (!payloadView)
+      throw new Error('CFA payload not found')
+
+    const payload = new Uint8Array(
+      payloadView.buffer as ArrayBuffer,
+      payloadView.byteOffset,
+      payloadView.byteLength,
+    )
+
+    const raster = getRafRasterFromPayload(new Uint8Array(payload), width, height)
+    expect(raster).toBeDefined()
+    if (!raster)
+      throw new Error('Raster not found')
+
+    expect(raster.bitsPerSample).toBe(16)
+    expect(raster.swapEndian).toBe(false)
+    const out = new Uint16Array(raster.data.buffer, raster.data.byteOffset, 4)
+    expect([...out]).toEqual([...pixels])
+  })
+
+  it('should extract packed 14-bit TIFF CFA bytes', async () => {
+    const headerSize = 120
+    const rafHeader = new Uint8Array(headerSize)
+    const headerView = new DataView(rafHeader.buffer)
+
+    const width = 2
+    const height = 2
+    const values = [0, 1, 2, 16383]
+    const packed = packBitsMsb(values, 14)
+    const cfaTiff = createTiffCfaPacked14LE(width, height, packed)
+
+    const cfaOffset = headerSize
+    headerView.setUint32(CfaOffset, cfaOffset, false)
+    headerView.setUint32(CfaLength, cfaTiff.byteLength, false)
+
+    const rafData = new Uint8Array(cfaOffset + cfaTiff.byteLength)
+    rafData.set(rafHeader, 0)
+    rafData.set(cfaTiff, cfaOffset)
+
+    const file = new File([rafData], 'test_cfa_tiff_packed.raf', {
+      type: 'image/x-fujifilm-raf',
+    })
+    const item = createFileItem(file)
+    const view = await createRafDataView(item)
+
+    const payloadView = view?.getCfa().getPayload()
+    expect(payloadView).toBeDefined()
+    if (!payloadView)
+      throw new Error('CFA payload not found')
+
+    const payload = new Uint8Array(
+      payloadView.buffer as ArrayBuffer,
+      payloadView.byteOffset,
+      payloadView.byteLength,
+    )
+
+    const raster = getRafRasterFromPayload(new Uint8Array(payload), width, height)
+    expect(raster).toBeDefined()
+    if (!raster)
+      throw new Error('Raster not found')
+
+    expect(raster.bitsPerSample).toBe(14)
+    expect(raster.swapEndian).toBe(false)
+    expect([...raster.data]).toEqual([...packed])
   })
 })
