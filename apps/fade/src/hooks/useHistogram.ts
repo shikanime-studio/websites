@@ -4,8 +4,6 @@ import histogramShader from '../shaders/histogram.wgsl?raw'
 import { useGPU } from './useGPU'
 
 export interface Bins {
-  width: number
-  height: number
   r: Array<number>
   g: Array<number>
   b: Array<number>
@@ -53,7 +51,7 @@ function useHistogramNormalizePipeline() {
   }, [device])
 }
 
-export function useHistogram(src: string | null) {
+export function useHistogram(image: HTMLImageElement | null) {
   const { device } = useGPU()
   const computePipeline = useHistogramComputePipeline()
   const normalizePipeline = useHistogramNormalizePipeline()
@@ -61,33 +59,28 @@ export function useHistogram(src: string | null) {
   const { data } = useSuspenseQuery({
     queryKey: [
       'histogram',
-      src,
-      device,
-      computePipeline,
-      normalizePipeline,
+      image?.src,
+      image?.naturalWidth,
+      image?.naturalHeight,
+      !!device,
+      !!computePipeline,
+      !!normalizePipeline,
     ],
     queryFn: async () => {
-      if (!device || !computePipeline || !normalizePipeline || !src)
+      if (!device || !computePipeline || !normalizePipeline || !image)
+        return null
+      const width = image.naturalWidth
+      const height = image.naturalHeight
+
+      if (width === 0 || height === 0)
         return null
 
       let texture: GPUTexture | null = null
       let storageBuffer: GPUBuffer | null = null
       let normalizedBuffer: GPUBuffer | null = null
       let readBuffer: GPUBuffer | null = null
-      let bitmap: ImageBitmap | null = null
 
       try {
-        const res = await fetch(src)
-        if (!res.ok)
-          return null
-        const blob = await res.blob()
-        bitmap = await createImageBitmap(blob)
-
-        const width = bitmap.width
-        const height = bitmap.height
-        if (width === 0 || height === 0)
-          return null
-
         texture = device.createTexture({
           size: [width, height],
           format: 'rgba8unorm',
@@ -98,7 +91,7 @@ export function useHistogram(src: string | null) {
         })
 
         device.queue.copyExternalImageToTexture(
-          { source: bitmap },
+          { source: image },
           { texture },
           [width, height],
         )
@@ -165,16 +158,15 @@ export function useHistogram(src: string | null) {
         const arrayBuffer = readBuffer.getMappedRange()
         const result = new Float32Array(arrayBuffer)
 
-        const r = [...result.slice(0, 256)]
-        const g = [...result.slice(256, 512)]
-        const b = [...result.slice(512, 768)]
+        const r = Array.from(result.slice(0, 256))
+        const g = Array.from(result.slice(256, 512))
+        const b = Array.from(result.slice(512, 768))
 
         readBuffer.unmap()
 
-        return { width, height, r, g, b }
+        return { r, g, b }
       }
       finally {
-        bitmap?.close?.()
         if (storageBuffer)
           storageBuffer.destroy()
         if (normalizedBuffer)
