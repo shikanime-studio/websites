@@ -58,14 +58,14 @@ export function useThumbnail(
       device,
       pipeline,
       blob,
-      mimeType,
+      fileItem?.mimeType,
     ],
     queryFn: async () => {
       if (
         !device
         || !pipeline
         || !blob
-        || (!blob.type.startsWith('image/') && mimeType !== 'image/x-fujifilm-raf')
+        || (!blob.type.startsWith('image/') && fileItem?.mimeType !== 'image/x-fujifilm-raf')
       ) {
         return null
       }
