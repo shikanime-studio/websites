@@ -17,7 +17,7 @@
         "pattern": "Local:.*(http://localhost:[0-9]+)",
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}/apps/fade/src"
-      },
+      }
     },
     {
       "name": "Launch: Links",
@@ -35,7 +35,7 @@
         "pattern": "Local:.*(http://localhost:[0-9]+)",
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}/apps/links/src"
-      },
+      }
     },
     {
       "name": "Launch: Reiya",
@@ -53,7 +53,7 @@
         "pattern": "Local:.*(http://localhost:[0-9]+)",
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}/apps/reiya/src"
-      },
+      }
     },
     {
       "name": "Launch: Www",
@@ -71,7 +71,7 @@
         "pattern": "Local:.*(http://localhost:[0-9]+)",
         "uriFormat": "%s",
         "webRoot": "${workspaceFolder}/apps/www/src"
-      },
-    },
+      }
+    }
   ]
 }
