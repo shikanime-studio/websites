@@ -6,28 +6,6 @@ export interface FileItem {
   mimeType?: string
 }
 
-export function basenameWithoutExtension(name: string) {
-  const lastDotIndex = name.lastIndexOf('.')
-  return lastDotIndex === -1 ? name : name.substring(0, lastDotIndex)
-}
-
-export async function ensureHandlePermission(
-  handle: FileSystemHandle,
-  mode: 'read' | 'readwrite' = 'readwrite',
-) {
-  if (!('queryPermission' in handle) || !('requestPermission' in handle)) {
-    return true
-  }
-
-  const opts = { mode } as FileSystemHandlePermissionDescriptor
-  const current = await handle.queryPermission(opts)
-  if (current === 'granted')
-    return true
-
-  const next = await handle.requestPermission(opts)
-  return next === 'granted'
-}
-
 export async function scanDirectory(
   directoryHandle: FileSystemDirectoryHandle,
 ): Promise<Array<FileItem>> {
@@ -55,7 +33,9 @@ export async function scanDirectory(
 
   for (const item of items) {
     const name = item.handle.name
-    const basename = basenameWithoutExtension(name)
+    const lastDotIndex = name.lastIndexOf('.')
+    const basename
+      = lastDotIndex === -1 ? name : name.substring(0, lastDotIndex)
 
     let group = groups.get(basename)
     if (!group) {

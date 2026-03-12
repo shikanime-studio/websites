@@ -6,14 +6,14 @@ import { ThemeContext } from '../hooks/useTheme'
 import { settingsCollection } from '../lib/db'
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const { data: currentSettings } = useLiveQuery(q =>
+  const { data: theme } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'ui'))
+      .where(({ settings }) => eq(settings.id, 'theme'))
       .findOne(),
   )
 
-  const themeValue = currentSettings?.theme as Theme | undefined
+  const themeValue = theme?.value as Theme | undefined
 
   useEffect(() => {
     const root = document.documentElement
@@ -27,20 +27,24 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, [themeValue])
 
   const setTheme = (newTheme?: Theme) => {
-    if (currentSettings) {
-      settingsCollection.update('ui', (draft) => {
-        draft.theme = newTheme
-      })
+    if (!newTheme) {
+      if (theme) {
+        settingsCollection.delete('theme')
+      }
       return
     }
 
-    if (!newTheme)
-      return
-
-    settingsCollection.insert({
-      id: 'ui',
-      theme: newTheme,
-    })
+    if (theme) {
+      settingsCollection.update('theme', (draft) => {
+        draft.value = newTheme
+      })
+    }
+    else {
+      settingsCollection.insert({
+        id: 'theme',
+        value: newTheme,
+      })
+    }
   }
 
   return (

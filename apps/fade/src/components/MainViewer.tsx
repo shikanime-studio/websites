@@ -3,17 +3,15 @@ import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
 import { Activity, Suspense } from 'react'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
-import { useObjectUrl } from '../hooks/useObjectUrl'
-import { FileIcon } from './FileIcon'
 import { ImageViewer } from './ImageViewer'
-import { RafImageViewer } from './RafImageViewer'
+import { RawImageViewer } from './RawImageViewer'
 
-export function MediaViewer() {
+export function MainViewer() {
   const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious }
     = useGallery()
 
   if (files.length === 0) {
-    return <EmptyMediaViewer />
+    return <EmptyMainViewer />
   }
 
   const canGoPrevious = selectedIndex > 0
@@ -54,7 +52,7 @@ export function MediaViewer() {
   )
 }
 
-function EmptyMediaViewer() {
+function EmptyMainViewer() {
   return (
     <div className="bg-base-200/50 relative flex min-w-0 flex-1 flex-col items-center justify-center">
       <div className="flex flex-col items-center gap-4 opacity-50">
@@ -68,64 +66,16 @@ function EmptyMediaViewer() {
   )
 }
 
-interface MediaViewerContentProps {
+interface MainViewerContentProps {
   fileItem?: FileItem
 }
 
-function MainViewerContent({ fileItem }: MediaViewerContentProps) {
-  if (fileItem?.mimeType === 'image/x-fujifilm-raf') {
-    return <RafImageViewer fileItem={fileItem ?? undefined} />
+function MainViewerContent({ fileItem }: MainViewerContentProps) {
+  const { mimeType } = useFile(fileItem ?? null)
+
+  if (mimeType === 'image/x-fujifilm-raf') {
+    return <RawImageViewer fileItem={fileItem ?? undefined} />
   }
 
-  if (fileItem?.mimeType?.startsWith('image/')) {
-    return <ImageViewer fileItem={fileItem ?? undefined} />
-  }
-
-  return <ObjectURLViewer fileItem={fileItem ?? undefined} />
-}
-
-function ObjectURLViewer({ fileItem }: MediaViewerContentProps) {
-  const { file } = useFile(fileItem ?? null)
-  const { url } = useObjectUrl(file ?? null)
-
-  if (!file || !url)
-    return <EmptyMediaViewer />
-
-  if (fileItem?.mimeType?.startsWith('video/')) {
-    return <VideoViewer url={url} />
-  }
-
-  return <ObjectViewer url={url} mimeType={fileItem?.mimeType} />
-}
-
-function VideoViewer({ url }: { url: string }) {
-  return (
-    <video
-      key={url}
-      src={url}
-      className="animate-fade-in max-h-full max-w-full rounded-lg shadow-2xl"
-      controls
-      autoPlay
-      loop
-    >
-      <track kind="captions" />
-    </video>
-  )
-}
-
-function ObjectViewer({ url, mimeType }: { url: string, mimeType?: string }) {
-  return (
-    <object
-      data={url}
-      type={mimeType}
-      className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
-    >
-      <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
-        <FileIcon type={mimeType} className="h-32 w-32 opacity-30" />
-        <p className="m-0 text-xl font-medium">
-          Preview not available for this file type
-        </p>
-      </div>
-    </object>
-  )
+  return <ImageViewer fileItem={fileItem ?? undefined} />
 }
