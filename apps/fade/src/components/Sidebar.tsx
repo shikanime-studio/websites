@@ -22,7 +22,7 @@ import {
   LensModelTagId,
   MakeTagId,
   ModelTagId,
-} from '../lib/exif'
+} from '@shikanime-studio/medialab/exif'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'

@@ -12,7 +12,7 @@ import {
   ShortExifType,
   TiffDataView,
   TiffMagicNumber,
-} from '../lib/tiff'
+} from '@shikanime-studio/medialab/tiff'
 import { useDebouncedCallback } from './useDebouncedCallback'
 import { useDirectory } from './useDirectory'
 

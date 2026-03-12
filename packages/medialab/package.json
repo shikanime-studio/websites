@@ -1,0 +1,22 @@
+{
+  "name": "@shikanime-studio/medialab",
+  "type": "module",
+  "version": "0.0.0",
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
+  "exports": {
+    "./raf": "./src/raf.ts",
+    "./exif": "./src/exif.ts",
+    "./tiff": "./src/tiff.ts",
+    "./webp": "./src/webp.ts",
+    "./png": "./src/png.ts",
+    "./jpeg": "./src/jpeg.ts",
+    "./img": "./src/img.ts"
+  },
+  "devDependencies": {
+    "vitest": "^3.2.4"
+  }
+}

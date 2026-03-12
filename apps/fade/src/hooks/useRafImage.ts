@@ -1,6 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { createRafDataView, DimensionsTagId } from '../lib/raf'
+import { createRafDataView, DimensionsTagId } from '@shikanime-studio/medialab/raf'
 
 export function useRafImage(fileItem: FileItem | null) {
   return useSuspenseQuery({
