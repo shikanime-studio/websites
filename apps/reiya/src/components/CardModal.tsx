@@ -4,6 +4,8 @@ import { ArrowUp, Bookmark, Check, CheckCircle, Ellipsis, Heart, Share, X } from
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+const whitespaceRegex = /\s/g
+
 interface CardModalProps {
   card: CardData
   onClose: () => void
@@ -173,7 +175,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 </div>
                 <div className="truncate text-sm text-gray-500">
                   @
-                  {card.artist.name.replace(/\s/g, '').toLowerCase()}
+                  {card.artist.name.replace(whitespaceRegex, '').toLowerCase()}
                 </div>
               </div>
             </div>
