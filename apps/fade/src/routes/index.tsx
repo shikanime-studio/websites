@@ -5,7 +5,9 @@ import { DirectoryProvider } from '../components/DirectoryProvider'
 import { Filmstrip } from '../components/Filmstrip'
 import { GalleryProvider } from '../components/GalleryProvider'
 import { GPUProvider } from '../components/GPUProvider'
-import { MediaViewer } from '../components/MediaViewer'
+import { ImageInfoProvider } from '../components/ImageInfoProvider'
+import { LightingProvider } from '../components/LightingProvider'
+import { MainViewer } from '../components/MainViewer'
 import { ModalProvider } from '../components/ModalProvider'
 import { Sidebar } from '../components/Sidebar'
 import { ToolBar } from '../components/ToolBar'
@@ -27,8 +29,12 @@ function GalleryContainer() {
       <div className="bg-base-100 text-base-content selection:bg-warning selection:text-warning-content flex h-screen flex-col">
         <ToolBar />
         <div className="flex min-h-0 flex-1 overflow-hidden">
-          <MediaViewer />
-          <Sidebar />
+          <ImageInfoProvider>
+            <LightingProvider>
+              <MainViewer />
+              <Sidebar />
+            </LightingProvider>
+          </ImageInfoProvider>
         </div>
         <Filmstrip />
       </div>

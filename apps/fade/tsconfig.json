@@ -29,5 +29,5 @@
     "**/*.ts",
     "**/*.tsx",
     "vite.config.ts"
-, "../../packages/medialab/src/webp.ts", "../../packages/medialab/src/tiff.ts", "../../packages/medialab/src/raf.ts", "../../packages/medialab/src/raf.test.ts", "../../packages/medialab/src/png.ts", "../../packages/medialab/src/jpeg.ts", "../../packages/medialab/src/img.ts", "../../packages/medialab/src/exif.ts", "../../packages/medialab/src/exif.test.ts"  ]
+  ]
 }
