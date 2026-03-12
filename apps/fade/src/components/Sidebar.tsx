@@ -1,4 +1,4 @@
-import type { LightingEdits, Settings } from '../lib/db'
+import type { Setting } from '../lib/db'
 import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
@@ -13,7 +13,9 @@ import { Activity, Suspense } from 'react'
 import { useExif } from '../hooks/useExif'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
-import { lightingDefaults, projectsCollection, settingsCollection } from '../lib/db'
+import { useImageInfo } from '../hooks/useImageInfo'
+import { useLighting } from '../hooks/useLighting'
+import { settingsCollection } from '../lib/db'
 import {
   ExposureTimeTagId,
   FNumberTagId,
@@ -22,21 +24,21 @@ import {
   LensModelTagId,
   MakeTagId,
   ModelTagId,
-} from '@shikanime-studio/medialab/exif'
+} from '../lib/exif'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
 
 export function Sidebar() {
   const { selectedFile } = useGallery()
-  const { data: currentSettings } = useLiveQuery(q =>
+  const { data } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'ui'))
+      .where(({ settings }) => eq(settings.id, 'sidebarCollapsed'))
       .findOne(),
   )
 
-  const isCollapsed = currentSettings?.sidebarCollapsed ?? false
+  const isCollapsed = (data?.value as boolean) || false
 
   return (
     <aside
@@ -47,17 +49,17 @@ export function Sidebar() {
       <button
         className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
         onClick={() => {
-          if (currentSettings) {
-            settingsCollection.update('ui', (draft) => {
-              draft.sidebarCollapsed = !isCollapsed
+          if (data) {
+            settingsCollection.update('sidebarCollapsed', (draft) => {
+              draft.value = !isCollapsed
             })
-            return
           }
-
-          settingsCollection.insert({
-            id: 'ui',
-            sidebarCollapsed: !isCollapsed,
-          })
+          else {
+            settingsCollection.insert({
+              id: 'sidebarCollapsed',
+              value: !isCollapsed,
+            })
+          }
         }}
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
@@ -111,169 +113,41 @@ function SidebarContent({ fileItem }: { fileItem: FileItem }) {
 }
 
 function LightingSection() {
-  const { selectedFile } = useGallery()
-  const photoId = selectedFile?.handle.name ?? ''
-
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, photoId))
-      .findOne(),
-  )
-
-  const lighting = project?.lighting ?? lightingDefaults
-
-  const upsert = (mutate: (draft: LightingEdits) => void) => {
-    if (!photoId)
-      return
-
-    const next: LightingEdits = { ...lighting }
-    mutate(next)
-
-    try {
-      projectsCollection.update(photoId, (draft) => {
-        draft.lighting = next
-      })
-    }
-    catch {
-      projectsCollection.insert({
-        id: photoId,
-        lighting: next,
-      })
-    }
-  }
-
-  const exposure = lighting.exposure
-  const setExposure = (value: number) => {
-    upsert((draft) => {
-      draft.exposure = value
-    })
-  }
-  const resetExposure = () => {
-    upsert((draft) => {
-      draft.exposure = lightingDefaults.exposure
-    })
-  }
-
-  const contrast = lighting.contrast
-  const setContrast = (value: number) => {
-    upsert((draft) => {
-      draft.contrast = value
-    })
-  }
-  const resetContrast = () => {
-    upsert((draft) => {
-      draft.contrast = lightingDefaults.contrast
-    })
-  }
-
-  const saturation = lighting.saturation
-  const setSaturation = (value: number) => {
-    upsert((draft) => {
-      draft.saturation = value
-    })
-  }
-  const resetSaturation = () => {
-    upsert((draft) => {
-      draft.saturation = lightingDefaults.saturation
-    })
-  }
-
-  const highlights = lighting.highlights
-  const setHighlights = (value: number) => {
-    upsert((draft) => {
-      draft.highlights = value
-    })
-  }
-  const resetHighlights = () => {
-    upsert((draft) => {
-      draft.highlights = lightingDefaults.highlights
-    })
-  }
-
-  const shadows = lighting.shadows
-  const setShadows = (value: number) => {
-    upsert((draft) => {
-      draft.shadows = value
-    })
-  }
-  const resetShadows = () => {
-    upsert((draft) => {
-      draft.shadows = lightingDefaults.shadows
-    })
-  }
-
-  const whites = lighting.whites
-  const setWhites = (value: number) => {
-    upsert((draft) => {
-      draft.whites = value
-    })
-  }
-  const resetWhites = () => {
-    upsert((draft) => {
-      draft.whites = lightingDefaults.whites
-    })
-  }
-
-  const blacks = lighting.blacks
-  const setBlacks = (value: number) => {
-    upsert((draft) => {
-      draft.blacks = value
-    })
-  }
-  const resetBlacks = () => {
-    upsert((draft) => {
-      draft.blacks = lightingDefaults.blacks
-    })
-  }
-
-  const tint = lighting.tint
-  const setTint = (value: number) => {
-    upsert((draft) => {
-      draft.tint = value
-    })
-  }
-  const resetTint = () => {
-    upsert((draft) => {
-      draft.tint = lightingDefaults.tint
-    })
-  }
-
-  const temperature = lighting.temperature
-  const setTemperature = (value: number) => {
-    upsert((draft) => {
-      draft.temperature = value
-    })
-  }
-  const resetTemperature = () => {
-    upsert((draft) => {
-      draft.temperature = lightingDefaults.temperature
-    })
-  }
-
-  const vibrance = lighting.vibrance
-  const setVibrance = (value: number) => {
-    upsert((draft) => {
-      draft.vibrance = value
-    })
-  }
-  const resetVibrance = () => {
-    upsert((draft) => {
-      draft.vibrance = lightingDefaults.vibrance
-    })
-  }
-
-  const hue = lighting.hue
-  const setHue = (value: number) => {
-    upsert((draft) => {
-      draft.hue = value
-    })
-  }
-  const resetHue = () => {
-    upsert((draft) => {
-      draft.hue = lightingDefaults.hue
-    })
-  }
+  const {
+    exposure,
+    setExposure,
+    resetExposure,
+    contrast,
+    setContrast,
+    resetContrast,
+    saturation,
+    setSaturation,
+    resetSaturation,
+    highlights,
+    setHighlights,
+    resetHighlights,
+    shadows,
+    setShadows,
+    resetShadows,
+    whites,
+    setWhites,
+    resetWhites,
+    blacks,
+    setBlacks,
+    resetBlacks,
+    tint,
+    setTint,
+    resetTint,
+    temperature,
+    setTemperature,
+    resetTemperature,
+    vibrance,
+    setVibrance,
+    resetVibrance,
+    hue,
+    setHue,
+    resetHue,
+  } = useLighting()
 
   return (
     <CollapsibleSection
@@ -433,14 +307,7 @@ function Slider({
 function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem
   const { file } = useFile(fileItem)
-  const fileName = fileItem.handle.name
-
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName))
-      .findOne(),
-  )
+  const { image } = useImageInfo()
 
   if (!file)
     return null
@@ -454,7 +321,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
         {fileItem.mimeType?.startsWith('image/')
           ? (
-              <Histogram fileItem={fileItem} />
+              <Histogram />
             )
           : (
               <div className="flex h-full w-full items-center justify-center">
@@ -473,17 +340,16 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {project?.imageInfo && (
+        {image && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {project.imageInfo.width}
+              {image.naturalWidth}
               {' '}
               ×
-              {' '}
-              {project.imageInfo.height}
+              {image.naturalHeight}
             </dd>
           </div>
         )}
@@ -636,32 +502,31 @@ function CollapsibleSection({
   children: React.ReactNode
   className?: string
 }) {
-  const { data: currentSettings } = useLiveQuery(q =>
+  const { data } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'ui'))
+      .where(({ settings }) => eq(settings.id, id))
       .findOne(),
   )
 
-  const key = id as keyof Settings
-  const isCollapsed = (currentSettings?.[key] as boolean | undefined) ?? false
+  const isCollapsed = (data?.value as boolean) || false
   const isOpen = !isCollapsed
 
   return (
     <div className={className}>
       <button
         onClick={() => {
-          if (currentSettings) {
-            settingsCollection.update('ui', (draft) => {
-              ;(draft[key] as boolean | undefined) = !isCollapsed
+          if (data) {
+            settingsCollection.update(id, (draft) => {
+              draft.value = !isCollapsed
             })
-            return
           }
-
-          settingsCollection.insert({
-            id: 'ui',
-            [id]: !isCollapsed,
-          } as unknown as Settings)
+          else {
+            settingsCollection.insert({
+              id,
+              value: !isCollapsed,
+            } as Setting)
+          }
         }}
         className="border-base-300 text-base-content/70 mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
       >

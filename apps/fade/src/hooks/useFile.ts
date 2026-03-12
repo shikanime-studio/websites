@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function useFile(fileItem: FileItem | null) {
   const { data: file } = useSuspenseQuery({
-    queryKey: ['file', fileItem, fileItem?.handle.name],
+    queryKey: ['file', fileItem?.handle.name],
     queryFn: async () => {
       if (!fileItem)
         return null
@@ -12,5 +12,8 @@ export function useFile(fileItem: FileItem | null) {
     staleTime: Infinity,
   })
 
-  return {file  }
+  return {
+    file,
+    mimeType: fileItem?.mimeType,
+  }
 }

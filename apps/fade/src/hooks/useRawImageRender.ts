@@ -1,6 +1,6 @@
 import type { RefObject } from 'react'
 import { useEffect, useMemo } from 'react'
-import imageShader from '../shaders/image.wgsl?raw'
+import rafShader from '../shaders/raf.wgsl?raw'
 import { useGPU } from './useGPU'
 
 interface LightingParams {
@@ -17,7 +17,7 @@ interface LightingParams {
   hue: number
 }
 
-function useImagePipeline() {
+function useRawImagePipeline() {
   const { device, format } = useGPU()
 
   return useMemo(() => {
@@ -25,7 +25,7 @@ function useImagePipeline() {
       return null
 
     const shaderModule = device.createShaderModule({
-      code: imageShader,
+      code: rafShader,
     })
 
     return device.createRenderPipeline({
@@ -40,18 +40,6 @@ function useImagePipeline() {
         targets: [
           {
             format,
-            blend: {
-              color: {
-                srcFactor: 'src-alpha',
-                dstFactor: 'one-minus-src-alpha',
-                operation: 'add',
-              },
-              alpha: {
-                srcFactor: 'one',
-                dstFactor: 'one-minus-src-alpha',
-                operation: 'add',
-              },
-            },
           },
         ],
       },
@@ -62,9 +50,11 @@ function useImagePipeline() {
   }, [device, format])
 }
 
-export function useImageRender(
+export function useRawImageRender(
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  image: HTMLImageElement | null,
+  width: number,
+  height: number,
+  data: ArrayBufferLike,
   lighting: LightingParams = {
     exposure: 0,
     contrast: 1,
@@ -80,36 +70,34 @@ export function useImageRender(
   },
 ) {
   const { device, format } = useGPU()
-  const pipeline = useImagePipeline()
-
+  const pipeline = useRawImagePipeline()
   const texture = useMemo(() => {
-    if (!device || !image || !image.complete || image.naturalWidth === 0) {
+    if (!device || width <= 0 || height <= 0)
       return null
-    }
 
     try {
+      // Create texture for raw data
       const tex = device.createTexture({
-        size: [image.naturalWidth, image.naturalHeight],
-        format: 'rgba8unorm',
-        usage:
-          GPUTextureUsage.TEXTURE_BINDING
-          | GPUTextureUsage.COPY_DST
-          | GPUTextureUsage.RENDER_ATTACHMENT,
+        size: [width, height],
+        format: 'r16uint',
+        usage: GPUTextureUsage.TEXTURE_BINDING | GPUTextureUsage.COPY_DST,
       })
 
-      device.queue.copyExternalImageToTexture(
-        { source: image },
+      // Upload data
+      device.queue.writeTexture(
         { texture: tex },
-        { width: image.naturalWidth, height: image.naturalHeight },
+        data,
+        { bytesPerRow: width * 2 },
+        { width, height },
       )
 
       return tex
     }
     catch (e) {
-      console.error('Failed to create texture from image:', e)
+      console.error('Failed to create/upload texture:', e)
       return null
     }
-  }, [device, image])
+  }, [device, width, height, data])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -123,12 +111,7 @@ export function useImageRender(
       return
     }
 
-    context.configure({
-      device,
-      format,
-      alphaMode: 'premultiplied',
-    })
-
+    // Create uniform buffer
     const uniformBuffer = device.createBuffer({
       size: 48, // 12 floats * 4 bytes
       usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
@@ -158,39 +141,35 @@ export function useImageRender(
       entries: [
         {
           binding: 0,
-          resource: {
-            buffer: uniformBuffer,
-          },
+          resource: texture.createView(),
         },
         {
           binding: 1,
-          resource: device.createSampler({
-            magFilter: 'linear',
-            minFilter: 'linear',
-          }),
-        },
-        {
-          binding: 2,
-          resource: texture.createView(),
+          resource: { buffer: uniformBuffer },
         },
       ],
+    })
+
+    context.configure({
+      device,
+      format,
+      alphaMode: 'premultiplied',
     })
 
     const commandEncoder = device.createCommandEncoder()
     const textureView = context.getCurrentTexture().createView()
 
-    const renderPassDescriptor: GPURenderPassDescriptor = {
+    const passEncoder = commandEncoder.beginRenderPass({
       colorAttachments: [
         {
           view: textureView,
-          clearValue: { r: 0.0, g: 0.0, b: 0.0, a: 0.0 },
+          clearValue: [0, 0, 0, 1],
           loadOp: 'clear',
           storeOp: 'store',
         },
       ],
-    }
+    })
 
-    const passEncoder = commandEncoder.beginRenderPass(renderPassDescriptor)
     passEncoder.setPipeline(pipeline)
     passEncoder.setBindGroup(0, bindGroup)
     passEncoder.draw(4)

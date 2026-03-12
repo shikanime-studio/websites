@@ -1,85 +1,44 @@
-import type { ExifTagEntry } from '@shikanime-studio/medialab/exif'
+import type { ExifDataView, ExifTagEntry } from '../lib/exif'
 import type { FileItem } from '../lib/fs'
-import { eq, useLiveQuery } from '@tanstack/react-db'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { projectsCollection } from '../lib/db'
-import { createImageDataView } from '@shikanime-studio/medialab/img'
-import { createRafDataView } from '@shikanime-studio/medialab/raf'
-
-function persistExif(
-  fileName: string,
-  tags: Array<ExifTagEntry>,
-) {
-  const exifTags = tags
-    .filter((t) => {
-      const v = t.value
-      return typeof v === 'string' || typeof v === 'number'
-    })
-    .map(t => ({
-      tagId: t.tagId,
-      value: t.value as string | number,
-    }))
-
-  try {
-    projectsCollection.update(fileName, (draft) => {
-      draft.exifTags = exifTags
-    })
-  }
-  catch {
-    projectsCollection.insert({
-      id: fileName,
-      exifTags,
-    })
-  }
-}
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { createImageDataView } from '../lib/img'
+import { RafDataView } from '../lib/raf'
 
 export function useExif(fileItem: FileItem | null) {
-  const fileName = fileItem?.handle.name ?? null
-  const mimeType = fileItem?.mimeType ?? null
-  const projectId = fileName ?? ''
-
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, projectId))
-      .findOne(),
-  )
-
-  const stored = project?.exifTags ?? null
-
-  const needsParse = Boolean(fileItem && fileName && !stored)
-
-  const { data } = useQuery<Array<ExifTagEntry> | null>({
-    queryKey: ['exif', mimeType, fileName, fileItem],
-    enabled: needsParse,
-    queryFn: async () => {
-      if (!fileItem || !mimeType || mimeType === 'video/mp4')
+  const { data } = useSuspenseQuery({
+    queryKey: ['exif', fileItem?.handle.name],
+    queryFn: async (): Promise<Array<ExifTagEntry> | null> => {
+      if (!fileItem)
         return null
 
-      if (mimeType === 'image/x-fujifilm-raf') {
-        const raf = await createRafDataView(fileItem)
-        const jpeg = raf?.getJpegImage()
-        const exifView = jpeg?.getExif()
-        if (!exifView)
+      try {
+        const view = await createImageDataView(fileItem)
+        if (!view)
           return null
-        return exifView.getTagEntries()
-      }
 
-      const image = await createImageDataView(fileItem)
-      const exifView = image?.getExif()
-      if (!exifView)
+        let exifView: ExifDataView<ArrayBufferLike> | null = null
+        if (view instanceof RafDataView) {
+          const jpeg = view.getJpegImage()
+          if (jpeg) {
+            exifView = jpeg.getExif()
+          }
+        }
+        else {
+          exifView = view.getExif()
+        }
+
+        return exifView ? exifView.getTagEntries() : null
+      }
+      catch (error) {
+        console.error(
+          'Failed to read the camera data (EXIF) for this image.',
+          error,
+        )
         return null
-      return exifView.getTagEntries()
+      }
     },
     staleTime: Infinity,
   })
 
-  useEffect(() => {
-    if (!fileName || !data)
-      return
-    persistExif(fileName, data)
-  }, [data, fileName])
-
-  return stored
+  return data
 }

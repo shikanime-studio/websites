@@ -1,10 +1,10 @@
 {
   "name": "@shikanime-studio/fade",
-  "type": "module",
   "version": "0.0.0",
+  "type": "module",
   "private": true,
   "engines": {
-    "node": ">=24",
+    "node": ">=22",
     "pnpm": ">=10"
   },
   "scripts": {
@@ -17,7 +17,6 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "^1.13.8",
-    "@shikanime-studio/medialab": "workspace:*",
     "@tailwindcss/vite": "^4.0.6",
     "@tanstack/react-db": "^0.1.62",
     "@tanstack/react-devtools": "^0.7.0",
