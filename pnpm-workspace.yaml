@@ -10,3 +10,4 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - packages/medialab

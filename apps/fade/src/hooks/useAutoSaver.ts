@@ -7,7 +7,12 @@ import {
   ShortExifType,
   TiffDataView,
   TiffMagicNumber,
-} from '../lib/tiff'
+} from '@shikanime-studio/medialab/tiff'
+import { eq, useLiveQuery } from '@tanstack/react-db'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef } from 'react'
+import { projectsCollection } from '../lib/db'
+import { basenameWithoutExtension, ensureHandlePermission } from '../lib/fs'
 import { useDebouncedCallback } from './useDebouncedCallback'
 import { useDirectory } from './useDirectory'
 
