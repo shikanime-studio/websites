@@ -45,7 +45,7 @@ export function useThumbnail(
   quality = 1.0,
 ) {
   const { device } = useGPU()
-  const { blob, mimeType } = usePreview(fileItem)
+  const { blob } = usePreview(fileItem)
   const pipeline = useThumbnailPipeline()
 
   const { data: url } = useSuspenseQuery({
