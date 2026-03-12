@@ -1,0 +1,19 @@
+{
+  "name": "@shikanime-studio/medialab",
+  "version": "0.0.0",
+  "author": {
+    "name": "Shikanime Studio",
+    "email": "contact@shikanime.studio",
+    "url": "https://shikanime.studio"
+  },
+  "license": "Apache-2.0",
+  "exports": {
+    "exif": "./exif.js",
+    "img": "./img.js",
+    "jpeg": "./jpeg.js",
+    "png": "./png.js",
+    "raf": "./raf.js",
+    "tiff": "./tiff.js",
+    "webp": "./webp.js"
+  }
+}
