@@ -1,10 +1,5 @@
 import type { Project } from '../lib/db'
 import type { FileItem } from '../lib/fs'
-import { eq, useLiveQuery } from '@tanstack/react-db'
-import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useMemo, useRef } from 'react'
-import { projectsCollection } from '../lib/db'
-import { basenameWithoutExtension, ensureHandlePermission } from '../lib/fs'
 import {
   AsciiExifType,
   LittleEndianness,

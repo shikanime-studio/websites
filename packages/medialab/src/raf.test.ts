@@ -1,5 +1,5 @@
-import type { ExifTagEntry } from './exif'
 import type { FileItem } from '../../../apps/fade/src/lib/fs'
+import type { ExifTagEntry } from './exif'
 import { describe, expect, it } from 'vitest'
 import { getRafRasterFromPayload } from '../../../apps/fade/src/hooks/useRafImageRender'
 import { MakeTagId } from './exif'

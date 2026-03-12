@@ -1,5 +1,5 @@
-import type { ExifTagEntry } from './exif'
 import type { FileItem } from '../../../apps/fade/src/lib/fs'
+import type { ExifTagEntry } from './exif'
 import { describe, expect, it } from 'vitest'
 import { MakeTagId } from './exif'
 import { createImageDataView } from './img'

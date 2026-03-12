@@ -4,8 +4,6 @@ import { eq, useLiveQuery } from '@tanstack/react-db'
 import { useQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { projectsCollection } from '../lib/db'
-import { createImageDataView } from '@shikanime-studio/medialab/img'
-import { createRafDataView } from '@shikanime-studio/medialab/raf'
 
 function persistExif(
   fileName: string,
