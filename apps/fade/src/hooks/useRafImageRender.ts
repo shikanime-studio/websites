@@ -1,5 +1,6 @@
 import type { RefObject } from 'react'
 import { isContainer, sizeOf, TiffMagicNumber } from '@shikanime-studio/medialab/tiff'
+import { useEffect, useMemo } from 'react'
 import rafShader from '../shaders/raf.wgsl?raw'
 import { useGPU } from './useGPU'
 

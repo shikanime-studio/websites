@@ -8,12 +8,12 @@
   },
   "license": "Apache-2.0",
   "exports": {
-    "./exif": "./exif.ts",
-    "./img": "./img.ts",
-    "./jpeg": "./jpeg.ts",
-    "./png": "./png.ts",
-    "./raf": "./raf.ts",
-    "./tiff": "./tiff.ts",
-    "./webp": "./webp.ts"
+    "./exif": "./src/exif.ts",
+    "./img": "./src/img.ts",
+    "./jpeg": "./src/jpeg.ts",
+    "./png": "./src/png.ts",
+    "./raf": "./src/raf.ts",
+    "./tiff": "./src/tiff.ts",
+    "./webp": "./src/webp.ts"
   }
 }
