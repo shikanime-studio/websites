@@ -1,6 +1,5 @@
 import type { ExifTagEntry } from './exif'
-import type { FileItem } from './fs'
-import type { ImageDataView } from './img'
+import type { FileItem } from '../../../apps/fade/src/lib/fs'
 import { describe, expect, it } from 'vitest'
 import { MakeTagId } from './exif'
 import { createImageDataView } from './img'
@@ -109,8 +108,9 @@ describe('getTagEntries', () => {
 
     const file = new File([jpegData], 'test.jpg', { type: 'image/jpeg' })
     const item = createFileItem(file)
-    const view = (await createImageDataView(item)) as ImageDataView
-    const tags = view.getExif()?.getTagEntries()
+    const image = await createImageDataView(item)
+    const exifView = image?.getExif()
+    const tags = exifView ? exifView.getTagEntries() : null
 
     expect(tags).toBeDefined()
     const makeTag = tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)
@@ -159,10 +159,9 @@ describe('getTagEntries', () => {
     pngData.set(crc, offset)
 
     const file = new File([pngData], 'test.png', { type: 'image/png' })
-    const view = (await createImageDataView(
-      createFileItem(file),
-    )) as ImageDataView
-    const tags = view.getExif()?.getTagEntries()
+    const image = await createImageDataView(createFileItem(file))
+    const exifView = image?.getExif()
+    const tags = exifView ? exifView.getTagEntries() : null
     expect(tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value).toBe(
       'PNG',
     )
@@ -210,10 +209,9 @@ describe('getTagEntries', () => {
     // Padding if needed (though our createExifBlock returns even length usually, check make string)
 
     const file = new File([webpData], 'test.webp', { type: 'image/webp' })
-    const view = (await createImageDataView(
-      createFileItem(file),
-    )) as ImageDataView
-    const tags = view.getExif()?.getTagEntries()
+    const image = await createImageDataView(createFileItem(file))
+    const exifView = image?.getExif()
+    const tags = exifView ? exifView.getTagEntries() : null
     expect(
       tags?.find((t: ExifTagEntry) => t.tagId === (MakeTagId as number))?.value,
     ).toBe('WebP')
@@ -222,10 +220,9 @@ describe('getTagEntries', () => {
   it('should extract EXIF tags from TIFF', async () => {
     const exifData = createExifBlock('TIFF')
     const file = new File([exifData], 'test.tiff', { type: 'image/tiff' })
-    const view = (await createImageDataView(
-      createFileItem(file),
-    )) as ImageDataView
-    const tags = view.getExif()?.getTagEntries()
+    const image = await createImageDataView(createFileItem(file))
+    const exifView = image?.getExif()
+    const tags = exifView ? exifView.getTagEntries() : null
     expect(tags?.find((t: ExifTagEntry) => t.tagId === MakeTagId)?.value).toBe(
       'TIFF',
     )

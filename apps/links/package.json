@@ -1,10 +1,10 @@
 {
   "name": "@shikanime-studio/links",
-  "version": "0.0.0",
   "type": "module",
+  "version": "0.0.0",
   "private": true,
   "engines": {
-    "node": ">=22",
+    "node": ">=24",
     "pnpm": ">=10"
   },
   "scripts": {

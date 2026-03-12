@@ -8,6 +8,8 @@ import { drizzle } from 'drizzle-orm/better-sqlite3'
 import { seed } from 'drizzle-seed'
 import * as schema from './schema'
 
+const singleQuoteRegex = /'/g
+
 async function main() {
   console.error('🌱 Generating seed data...')
 
@@ -312,7 +314,7 @@ async function main() {
           if (v === null)
             return 'NULL'
           if (typeof v === 'string')
-            return `'${v.replace(/'/g, '\'\'')}'`
+            return `'${v.replace(singleQuoteRegex, '\'\'')}'`
           if (typeof v === 'number')
             return v
           if (typeof v === 'boolean')
@@ -320,7 +322,7 @@ async function main() {
           if (v instanceof Date)
             return `'${v.toISOString()}'`
           if (typeof v === 'object')
-            return `'${JSON.stringify(v).replace(/'/g, '\'\'')}'`
+            return `'${JSON.stringify(v).replace(singleQuoteRegex, '\'\'')}'`
           return v
         })
 
