@@ -5,7 +5,6 @@ import { Image } from '@unpic/react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Activity, Suspense, useEffect, useRef } from 'react'
 import { useElementSize } from '../hooks/useElementSize'
-import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { useThumbnail } from '../hooks/useThumbnail'
 import { settingsCollection } from '../lib/db'
@@ -18,14 +17,14 @@ export function Filmstrip() {
   const ref = useRef<HTMLDivElement>(null)
   const { width } = useElementSize(ref)
 
-  const { data } = useLiveQuery(q =>
+  const { data: currentSettings } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'filmstripCollapsed'))
+      .where(({ settings }) => eq(settings.id, 'ui'))
       .findOne(),
   )
 
-  const isCollapsed = (data?.value as boolean) || false
+  const isCollapsed = currentSettings?.filmstripCollapsed ?? false
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -57,17 +56,17 @@ export function Filmstrip() {
       <button
         className="btn btn-sm btn-square absolute -top-3 left-1/2 z-5 h-6 min-h-0 w-8 -translate-x-1/2 rounded-none rounded-t-md border-b-0"
         onClick={() => {
-          if (data) {
-            settingsCollection.update('filmstripCollapsed', (draft) => {
-              draft.value = !isCollapsed
+          if (currentSettings) {
+            settingsCollection.update('ui', (draft) => {
+              draft.filmstripCollapsed = !isCollapsed
             })
+            return
           }
-          else {
-            settingsCollection.insert({
-              id: 'filmstripCollapsed',
-              value: !isCollapsed,
-            })
-          }
+
+          settingsCollection.insert({
+            id: 'ui',
+            filmstripCollapsed: !isCollapsed,
+          })
         }}
         aria-label={isCollapsed ? 'Expand filmstrip' : 'Collapse filmstrip'}
       >
@@ -205,7 +204,6 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
-  const { mimeType } = useFile(fileItem)
   const { url } = useThumbnail(fileItem, 80, 80)
 
   return (
@@ -220,7 +218,7 @@ function FilmstripItemContent({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
     >
-      {url && mimeType?.startsWith('image/')
+      {url && fileItem?.mimeType?.startsWith('image/')
         ? (
             <Image
               src={url}
@@ -234,7 +232,7 @@ function FilmstripItemContent({
           )
         : (
             <div className="flex h-full w-full items-center justify-center">
-              <FileIcon type={mimeType} className="h-8 w-8 opacity-50" />
+              <FileIcon type={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
             </div>
           )}
       <div
