@@ -1,5 +1,14 @@
 import type { LightingEdits, Settings } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from '@shikanime-studio/medialab/exif'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
@@ -14,15 +23,6 @@ import { useExif } from '../hooks/useExif'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { lightingDefaults, projectsCollection, settingsCollection } from '../lib/db'
-import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from '../lib/exif'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
