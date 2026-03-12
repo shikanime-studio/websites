@@ -12,5 +12,5 @@ export function useFile(fileItem: FileItem | null) {
     staleTime: Infinity,
   })
 
-  return {file  }
+  return { file }
 }

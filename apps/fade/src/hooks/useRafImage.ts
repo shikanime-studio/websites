@@ -1,5 +1,4 @@
 import type { FileItem } from '../lib/fs'
-import { useSuspenseQuery } from '@tanstack/react-query'
 import { createRafDataView, DimensionsTagId } from '../lib/raf'
 
 export function useRafImage(fileItem: FileItem | null) {

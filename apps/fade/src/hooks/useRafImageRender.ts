@@ -1,5 +1,4 @@
 import type { RefObject } from 'react'
-import { useEffect, useMemo } from 'react'
 import { isContainer, sizeOf, TiffMagicNumber } from '../lib/tiff'
 import rafShader from '../shaders/raf.wgsl?raw'
 import { useGPU } from './useGPU'
