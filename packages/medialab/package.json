@@ -8,12 +8,12 @@
   },
   "license": "Apache-2.0",
   "exports": {
-    "exif": "./exif.js",
-    "img": "./img.js",
-    "jpeg": "./jpeg.js",
-    "png": "./png.js",
-    "raf": "./raf.js",
-    "tiff": "./tiff.js",
-    "webp": "./webp.js"
+    "./exif": "./exif.js",
+    "./img": "./img.js",
+    "./jpeg": "./jpeg.js",
+    "./png": "./png.js",
+    "./raf": "./raf.js",
+    "./tiff": "./tiff.js",
+    "./webp": "./webp.js"
   }
 }
