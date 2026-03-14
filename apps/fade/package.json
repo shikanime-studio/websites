@@ -13,7 +13,9 @@
     "deploy": "wrangler deploy",
     "upload": "wrangler versions upload",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:workers": "vitest run --project workers",
+    "test:chromium": "vitest run --project chromium --browser.headless"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:",
@@ -47,7 +49,9 @@
     "@types/react-dom": "catalog:conflicts_@types/react-dom_h19_2_0",
     "@types/wicg-file-system-access": "catalog:",
     "@vitejs/plugin-react": "catalog:",
+    "@vitest/browser-playwright": "catalog:",
     "@webgpu/types": "catalog:",
+    "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
