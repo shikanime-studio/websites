@@ -12,8 +12,5 @@ export function useFile(fileItem: FileItem | null) {
     staleTime: Infinity,
   })
 
-  return {
-    file,
-    mimeType: fileItem?.mimeType,
-  }
+  return { file }
 }

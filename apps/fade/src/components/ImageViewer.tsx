@@ -14,7 +14,7 @@ interface ImageViewerProps {
 }
 
 export function ImageViewer({ fileItem }: ImageViewerProps) {
-  const { file, mimeType } = useFile(fileItem ?? null)
+  const { file } = useFile(fileItem ?? null)
   const { url } = useObjectUrl(file ?? null)
   const { setImage } = useImageInfo()
   const { modal, setModal } = useModal()
@@ -27,17 +27,17 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
   }
 
   useEffect(() => {
-    if (!file || !url || !mimeType?.startsWith('image/')) {
+    if (!file || !url || !(fileItem?.mimeType?.startsWith('image/') ?? false)) {
       setImage(null)
     }
-  }, [file, url, mimeType, setImage])
+  }, [file, url, fileItem?.mimeType, setImage])
 
   if (!file || !url)
     return null
 
   return (
     <>
-      {mimeType?.startsWith('image/')
+      {fileItem?.mimeType?.startsWith('image/')
         ? (
             <>
               <img
@@ -84,7 +84,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
               </FullscreenModal>
             </>
           )
-        : mimeType?.startsWith('video/')
+        : fileItem?.mimeType?.startsWith('video/')
           ? (
               <video
                 key={url}
@@ -100,11 +100,11 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
           : (
               <object
                 data={url}
-                type={mimeType}
+                type={fileItem?.mimeType}
                 className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
               >
                 <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
-                  <FileIcon type={mimeType} className="h-32 w-32 opacity-30" />
+                  <FileIcon type={fileItem?.mimeType} className="h-32 w-32 opacity-30" />
                   <p className="m-0 text-xl font-medium">
                     Preview not available for this file type
                   </p>

@@ -5,7 +5,6 @@ import { Image } from '@unpic/react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Activity, Suspense, useEffect, useRef } from 'react'
 import { useElementSize } from '../hooks/useElementSize'
-import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { useThumbnail } from '../hooks/useThumbnail'
 import { settingsCollection } from '../lib/db'
@@ -205,7 +204,6 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
-  const { mimeType } = useFile(fileItem)
   const { url } = useThumbnail(fileItem, 80, 80)
 
   return (
@@ -220,7 +218,7 @@ function FilmstripItemContent({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
     >
-      {url && mimeType?.startsWith('image/')
+      {url && fileItem?.mimeType?.startsWith('image/')
         ? (
             <Image
               src={url}
@@ -234,7 +232,7 @@ function FilmstripItemContent({
           )
         : (
             <div className="flex h-full w-full items-center justify-center">
-              <FileIcon type={mimeType} className="h-8 w-8 opacity-50" />
+              <FileIcon type={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
             </div>
           )}
       <div

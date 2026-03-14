@@ -71,9 +71,7 @@ interface MainViewerContentProps {
 }
 
 function MainViewerContent({ fileItem }: MainViewerContentProps) {
-  const { mimeType } = useFile(fileItem ?? null)
-
-  if (mimeType === 'image/x-fujifilm-raf') {
+  if (fileItem?.mimeType === 'image/x-fujifilm-raf') {
     return <RawImageViewer fileItem={fileItem ?? undefined} />
   }
 

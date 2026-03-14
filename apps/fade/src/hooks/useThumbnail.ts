@@ -45,14 +45,14 @@ export function useThumbnail(
   quality = 1.0,
 ) {
   const { device } = useGPU()
-  const { blob, mimeType } = usePreview(fileItem)
+  const { blob } = usePreview(fileItem)
   const pipeline = useThumbnailPipeline()
 
   const { data: url } = useSuspenseQuery({
     queryKey: [
       'thumbnail',
+      fileItem,
       blob,
-      mimeType,
       width,
       height,
       quality,
@@ -64,7 +64,7 @@ export function useThumbnail(
         !device
         || !pipeline
         || !blob
-        || (!blob.type.startsWith('image/') && mimeType !== 'image/x-fujifilm-raf')
+        || (!blob.type.startsWith('image/') && fileItem?.mimeType !== 'image/x-fujifilm-raf')
       ) {
         return null
       }
