@@ -56,22 +56,31 @@ export function useHistogram(image: HTMLImageElement | null) {
   const computePipeline = useHistogramComputePipeline()
   const normalizePipeline = useHistogramNormalizePipeline()
 
+  const imageKey = image
+    ? {
+        src: image.currentSrc || image.src,
+        width: image.naturalWidth,
+        height: image.naturalHeight,
+      }
+    : null
+
   const { data } = useSuspenseQuery({
     queryKey: [
       'histogram',
-      image,
+      imageKey,
       !!device,
       !!computePipeline,
       !!normalizePipeline,
     ],
     queryFn: async () => {
-      if (!device || !computePipeline || !normalizePipeline || !image)
+      if (!device || !computePipeline || !normalizePipeline || !imageKey)
         return null
-      const width = image.naturalWidth
-      const height = image.naturalHeight
+      const response = await fetch(imageKey.src)
+      const blob = await response.blob()
+      const imageBitmap = await createImageBitmap(blob)
 
-      if (width === 0 || height === 0)
-        return null
+      const width = imageBitmap.width
+      const height = imageBitmap.height
 
       let texture: GPUTexture | null = null
       let storageBuffer: GPUBuffer | null = null
@@ -89,7 +98,7 @@ export function useHistogram(image: HTMLImageElement | null) {
         })
 
         device.queue.copyExternalImageToTexture(
-          { source: image },
+          { source: imageBitmap },
           { texture },
           [width, height],
         )
@@ -165,6 +174,7 @@ export function useHistogram(image: HTMLImageElement | null) {
         return { r, g, b }
       }
       finally {
+        imageBitmap.close()
         if (storageBuffer)
           storageBuffer.destroy()
         if (normalizedBuffer)
