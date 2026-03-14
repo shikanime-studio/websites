@@ -3,7 +3,7 @@ import FluidLayout from '../layouts/FluidLayout.astro'
 import { createD1Database } from '../lib/db'
 import { categories as categoriesTable } from '../schema'
 
-const db = createD1Database(Astro.locals)
+const db = createD1Database()
 const categories = await db.select().from(categoriesTable)
 const featuredCategories = categories.slice(0, 8);
 ---
