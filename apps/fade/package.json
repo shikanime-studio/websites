@@ -13,7 +13,9 @@
     "deploy": "wrangler deploy",
     "upload": "wrangler versions upload",
     "preview": "vite preview",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:",
@@ -40,6 +42,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@playwright/test": "catalog:",
     "@tanstack/devtools-vite": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:conflicts_@types/react_h19_2_0",
@@ -47,6 +50,7 @@
     "@types/wicg-file-system-access": "catalog:",
     "@vitejs/plugin-react": "catalog:",
     "@webgpu/types": "catalog:",
+    "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
     "vitest": "catalog:",
