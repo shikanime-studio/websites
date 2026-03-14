@@ -1,7 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
 import { Activity, Suspense } from 'react'
-import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { ImageViewer } from './ImageViewer'
 import { RawImageViewer } from './RawImageViewer'
