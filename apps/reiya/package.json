@@ -9,13 +9,13 @@
   },
   "scripts": {
     "build": "astro build",
+    "check": "astro check",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "wrangler d1 migrations apply reiya",
     "db:seed": "SEED_FILE=$(tsx src/seed.ts) && wrangler d1 execute reiya --file=$SEED_FILE --yes && rm $SEED_FILE",
     "db:studio": "drizzle-kit studio",
     "deploy": "wrangler deploy",
     "dev": "UV_THREADPOOL_SIZE=64 NODE_OPTIONS='--dns-result-order=ipv4first' astro dev",
-    "lint": "astro check",
     "preview": "astro preview",
     "start": "astro dev",
     "upload": "wrangler versions upload"
