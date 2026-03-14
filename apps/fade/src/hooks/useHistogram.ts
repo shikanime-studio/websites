@@ -60,9 +60,6 @@ export function useHistogram(image: HTMLImageElement | null) {
     queryKey: [
       'histogram',
       image,
-      image?.src,
-      image?.naturalWidth,
-      image?.naturalHeight,
       !!device,
       !!computePipeline,
       !!normalizePipeline,
