@@ -1,19 +1,43 @@
-## Repo notes
+## Website
 
-### apps/fade
+### Quick start
+
+- Install: `pnpm install`
+- Run an app: `pnpm -C apps/<app> dev`
+- Run unit tests: `pnpm test` (currently runs Fade’s Vitest suite)
+
+### Apps
+
+#### fade
 
 - Dev server: `pnpm -C apps/fade dev` (Vite, port 3000)
-- Mixpanel env: `VITE_MIXPANEL_TOKEN` and `VITE_MIXPANEL_API_HOST` are required at runtime (see \[\_\_root.tsx\](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/fade/src/routes/\_\_root.tsx))
+- URL: `https://fade.shikanime.studio`
+- Mixpanel env: `VITE_MIXPANEL_TOKEN`, `VITE_MIXPANEL_API_HOST` (see \[\_\_root.tsx\](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/fade/src/routes/\_\_root.tsx))
 - E2E (Playwright): `pnpm -C apps/fade test:e2e`
 - Browsers install (one-time on a machine): `pnpm -C apps/fade exec playwright install`
+
+#### links
+
+- URL: `https://links.shikanime.studio`
+- Dev server: `pnpm -C apps/links dev`
+
+#### reiya
+
+- URL: `https://reiya.shikanime.studio`
+- Dev server: `pnpm -C apps/reiya dev`
+
+#### www
+
+- URL: `https://shikanime.studio`
+- Dev server: `pnpm -C apps/www dev`
 
 ### Non-technical knowledge
 
 - This repo hosts multiple Shikanime Studio web properties (public sites + apps).
-- www: Public-facing studio website at `https://shikanime.studio`.
-- links: Link hub / landing page at `https://links.shikanime.studio`.
-- fade: Local image viewer (WebGPU) at `https://fade.shikanime.studio`.
-- reiya: Merch/community site at `https://reiya.shikanime.studio`.
+- www: public-facing studio website.
+- links: link hub / landing page.
+- fade: local image viewer (WebGPU).
+- reiya: merch/community site.
 
 ### Technical knowledge
 
