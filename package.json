@@ -8,8 +8,9 @@
     "pnpm": ">=10"
   },
   "scripts": {
+    "check": "eslint .",
     "lint": "eslint . --fix",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^7.4.3",
