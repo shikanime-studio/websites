@@ -3,7 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 
 export function useFile(fileItem: FileItem | null) {
   const { data: file } = useSuspenseQuery({
-    queryKey: ['file', fileItem?.handle.name],
+    queryKey: ['file', fileItem, fileItem?.handle.name],
     queryFn: async () => {
       if (!fileItem)
         return null

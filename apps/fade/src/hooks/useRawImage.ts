@@ -5,7 +5,7 @@ import { createRawImageDataView } from '../lib/raw'
 
 export function useRawImage(fileItem: FileItem | null) {
   return useSuspenseQuery({
-    queryKey: ['raw-image', fileItem?.handle.name],
+    queryKey: ['raw-image', fileItem],
     queryFn: async () => {
       if (!fileItem)
         return null

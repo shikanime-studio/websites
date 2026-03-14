@@ -6,7 +6,7 @@ import { RafDataView } from '../lib/raf'
 
 export function useExif(fileItem: FileItem | null) {
   const { data } = useSuspenseQuery({
-    queryKey: ['exif', fileItem?.handle.name],
+    queryKey: ['exif', fileItem, fileItem?.handle.name],
     queryFn: async (): Promise<Array<ExifTagEntry> | null> => {
       if (!fileItem)
         return null
