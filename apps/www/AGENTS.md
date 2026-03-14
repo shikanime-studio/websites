@@ -1,5 +1,10 @@
 ## Repo notes
 
+### Non-technical knowledge
+
+- This is the public-facing website for Shikanime Studio (see [README.md](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/www/README.md)).
+- Primary content: studio story, projects, and links to channels/apps.
+
 ### Run
 
 - Dev server: `pnpm dev` (Astro)
@@ -14,3 +19,9 @@
 ### Env
 
 - Mixpanel: `PUBLIC_MIXPANEL_TOKEN`, `PUBLIC_MIXPANEL_API_HOST` (used in \[BaseLayout.astro\](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/www/src/layouts/BaseLayout.astro))
+
+### Technical knowledge
+
+- Stack: Astro app deployed to Cloudflare Workers (Wrangler deploy).
+- SEO: uses `@astrojs/sitemap` and a custom robots route (see [robots.txt.ts](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/www/src/pages/robots.txt.ts)).
+- Analytics: Mixpanel is initialized client-side in [BaseLayout.astro](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/www/src/layouts/BaseLayout.astro).
