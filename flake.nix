@@ -79,10 +79,17 @@
             devlib.devenvModules.shell
             devlib.devenvModules.shikanime-studio
           ];
-          gitignore.templates = [
-            "repo:shikanime-studio/gitignore/refs/heads/main/Astro.gitignore"
-            "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
-          ];
+          gitignore = {
+            content = [
+              "apps/fade/.tanstack"
+              "apps/fade/playwright-report"
+              "apps/fade/test-results"
+            ];
+            templates = [
+              "repo:shikanime-studio/gitignore/refs/heads/main/Astro.gitignore"
+              "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
+            ];
+          };
           treefmt.config = {
             programs = {
               sqlfluff = {
