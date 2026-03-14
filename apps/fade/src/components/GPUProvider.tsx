@@ -8,7 +8,7 @@ export function GPUProvider({ children }: { children: ReactNode }) {
   const isSupported = useGPUSupport()
 
   const { data: adapter } = useSuspenseQuery({
-    queryKey: ['gpu', 'adapter'],
+    queryKey: ['gpu', 'adapter', isSupported],
     queryFn: async () => {
       if (!isSupported) {
         console.warn('GPU not supported')
@@ -23,7 +23,7 @@ export function GPUProvider({ children }: { children: ReactNode }) {
   })
 
   const { data: device } = useSuspenseQuery({
-    queryKey: ['gpu', 'device', adapter?.info.device],
+    queryKey: ['gpu', 'device', adapter, adapter?.info.device],
     queryFn: async () => {
       if (!adapter)
         return null
@@ -36,7 +36,7 @@ export function GPUProvider({ children }: { children: ReactNode }) {
   })
 
   const { data: format } = useSuspenseQuery({
-    queryKey: ['gpu', 'format'],
+    queryKey: ['gpu', 'format', device],
     queryFn: () => {
       if (!device)
         return null

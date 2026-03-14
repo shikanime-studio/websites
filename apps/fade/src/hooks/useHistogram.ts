@@ -59,9 +59,7 @@ export function useHistogram(image: HTMLImageElement | null) {
   const { data } = useSuspenseQuery({
     queryKey: [
       'histogram',
-      image?.src,
-      image?.naturalWidth,
-      image?.naturalHeight,
+      image,
       !!device,
       !!computePipeline,
       !!normalizePipeline,
@@ -158,9 +156,9 @@ export function useHistogram(image: HTMLImageElement | null) {
         const arrayBuffer = readBuffer.getMappedRange()
         const result = new Float32Array(arrayBuffer)
 
-        const r = Array.from(result.slice(0, 256))
-        const g = Array.from(result.slice(256, 512))
-        const b = Array.from(result.slice(512, 768))
+        const r = [...result.slice(0, 256)]
+        const g = [...result.slice(256, 512)]
+        const b = [...result.slice(512, 768)]
 
         readBuffer.unmap()
 
