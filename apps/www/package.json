@@ -9,9 +9,9 @@
   },
   "scripts": {
     "build": "astro build",
+    "check": "astro check",
     "deploy": "wrangler deploy",
     "dev": "astro dev",
-    "lint": "astro check",
     "preview": "astro preview",
     "start": "astro dev",
     "upload": "wrangler versions upload"
