@@ -9,6 +9,7 @@ export default defineConfig({
   output: 'server',
   adapter: cloudflare({
     imageService: 'compile',
+    inspectorPort: false,
   }),
   site: 'https://links.shikanime.studio',
   vite: {
