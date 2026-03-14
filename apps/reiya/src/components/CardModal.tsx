@@ -9,6 +9,8 @@ interface CardModalProps {
   onClose: () => void
 }
 
+const RE_WHITESPACE = /\s/g
+
 export function CardModal({ card, onClose }: CardModalProps) {
   const [showScrollTop, setShowScrollTop] = useState(false)
   const imageContainerRef = useRef<HTMLDivElement>(null)
@@ -173,7 +175,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 </div>
                 <div className="truncate text-sm text-gray-500">
                   @
-                  {card.artist.name.replace(/\s/g, '').toLowerCase()}
+                  {card.artist.name.replace(RE_WHITESPACE, '').toLowerCase()}
                 </div>
               </div>
             </div>
