@@ -12,7 +12,6 @@ catalog:
   '@astrojs/sitemap': ^3.7.1
   '@better-auth/passkey': ^1.5.5
   '@cloudflare/vite-plugin': ^1.28.0
-  '@cloudflare/vitest-pool-workers': ^0.13.0
   '@eslint-react/eslint-plugin': ^2.13.0
   '@faker-js/faker': ^10.3.0
   '@fontsource-variable/bricolage-grotesque': ^5.2.10
