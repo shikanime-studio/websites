@@ -84,11 +84,9 @@ catalogs:
     '@types/react': ^19.2.7
 engineStrict: true
 onlyBuiltDependencies:
-  - '@prisma/engines'
   - better-sqlite3
   - esbuild
   - lightningcss
-  - prisma
   - sharp
   - workerd
   - wrangler
