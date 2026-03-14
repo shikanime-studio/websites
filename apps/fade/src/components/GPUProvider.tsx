@@ -55,7 +55,7 @@ export function GPUProvider({ children }: { children: ReactNode }) {
     const onLost = (info: GPUDeviceLostInfo) => {
       console.error(`GPU device lost: ${info.reason}`)
       return queryClient.invalidateQueries({
-        queryKey: ['gpu', 'device', adapter?.info.device],
+        queryKey: ['gpu', 'device', adapter],
       })
     }
 
