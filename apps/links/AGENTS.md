@@ -21,7 +21,7 @@
 
 ### Configuration
 
-- Mixpanel: `PUBLIC_MIXPANEL_TOKEN`, `PUBLIC_MIXPANEL_API_HOST` (used in [BaseLayout.astro](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/links/src/layouts/BaseLayout.astro))
+- Mixpanel: `PUBLIC_MIXPANEL_TOKEN`, `PUBLIC_MIXPANEL_API_HOST` (used in \[BaseLayout.astro\](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/links/src/layouts/BaseLayout.astro))
 
 ### Technical notes
 

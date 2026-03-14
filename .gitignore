@@ -471,3 +471,6 @@ $RECYCLE.BIN/
 ###-------------------###
 
 .pre-commit-config.yaml
+apps/fade/.tanstack
+apps/fade/playwright-report
+apps/fade/test-results
