@@ -110,13 +110,13 @@ export function CardModal({ card, onClose }: CardModalProps) {
               type="button"
               className="rounded-full p-2 transition-colors hover:bg-gray-100"
             >
-              <FaBookmark className="h-5 w-5 text-gray-600" />
+              <Bookmark className="h-5 w-5 text-gray-600" />
             </button>
             <button
               type="button"
               className="rounded-full p-2 transition-colors hover:bg-gray-100"
             >
-              <FaEllipsis className="h-5 w-5 text-gray-600" />
+              <Ellipsis className="h-5 w-5 text-gray-600" />
             </button>
           </div>
 
