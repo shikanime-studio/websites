@@ -1,5 +1,16 @@
+import type { ExifTagEntry } from '@shikanime-studio/medialab/exif'
 import type { Setting } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from '@shikanime-studio/medialab/exif'
+import { useExif } from '@shikanime-studio/medialab/hooks/exif'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
@@ -10,21 +21,11 @@ import {
   Sun,
 } from 'lucide-react'
 import { Activity, Suspense } from 'react'
-import { useExif } from '../hooks/useExif'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { useImageInfo } from '../hooks/useImageInfo'
 import { useLighting } from '../hooks/useLighting'
 import { settingsCollection } from '../lib/db'
-import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from '../lib/exif'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
@@ -372,7 +373,7 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
   if (!exifData || exifData.length === 0)
     return null
 
-  const tags = Object.fromEntries(exifData.map(e => [e.tagId, e.value]))
+  const tags = Object.fromEntries((exifData as Array<ExifTagEntry>).map(e => [e.tagId, e.value]))
 
   const make = tags[MakeTagId] as string | undefined
   const model = tags[ModelTagId] as string | undefined

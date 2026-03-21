@@ -3,6 +3,7 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - packages/medialab
 catalog:
   '@antfu/eslint-config': ^7.7.2
   '@astrojs/check': ^0.9.7

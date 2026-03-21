@@ -1,5 +1,6 @@
+import { useImageRender } from '@shikanime-studio/medialab/hooks/image'
 import { useRef } from 'react'
-import { useImageRender } from '../hooks/useImageRender'
+import { useGPU } from '../hooks/useGPU'
 import { useLighting } from '../hooks/useLighting'
 
 interface ImageRenderProps {
@@ -15,8 +16,9 @@ export function ImageRender({
 }: ImageRenderProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const lighting = useLighting()
+  const { device, format } = useGPU()
 
-  useImageRender(canvasRef, image, lighting)
+  useImageRender(canvasRef, device, format, image, { lighting })
 
   return (
     <canvas
