@@ -1,17 +1,17 @@
-import type { ExifTagEntry } from '../lib/exif'
+import type { ExifTagEntry } from '@shikanime-studio/medialab/exif'
+import type { ExifTagRecord } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import { createImageDataView } from '@shikanime-studio/medialab/img'
+import { createRafDataView } from '@shikanime-studio/medialab/raf'
 import { eq, useLiveQuery } from '@tanstack/react-db'
-import { useQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { projectsCollection } from '../lib/db'
-import { createImageDataView } from '../lib/image'
-import { createRafDataView } from '../lib/raf'
+import { use } from 'react'
+import { projectExifCollection, projectsCollection } from '../lib/db'
 
-function persistExif(
-  fileName: string,
-  tags: Array<ExifTagEntry>,
-) {
-  const exifTags = tags
+const exifInFlight = new Set<string>()
+const exifPromises = new Map<string, Promise<void>>()
+
+function normalizeExifTags(tags: Array<ExifTagEntry>) {
+  return tags
     .filter((t) => {
       const v = t.value
       return typeof v === 'string' || typeof v === 'number'
@@ -20,66 +20,122 @@ function persistExif(
       tagId: t.tagId,
       value: t.value as string | number,
     }))
-
-  try {
-    projectsCollection.update(fileName, (draft) => {
-      draft.exifTags = exifTags
-    })
-  }
-  catch {
-    projectsCollection.insert({
-      id: fileName,
-      exifTags,
-    })
-  }
 }
 
-export function useExif(fileItem: FileItem | null) {
-  const fileName = fileItem?.handle.name ?? null
-  const mimeType = fileItem?.mimeType ?? null
-  const projectId = fileName ?? ''
+async function extractExifTags(fileItem: FileItem): Promise<Array<ExifTagRecord> | null> {
+  const mimeType = fileItem.mimeType
+  if (!mimeType || mimeType === 'video/mp4')
+    return null
 
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, projectId))
-      .findOne(),
-  )
+  if (mimeType === 'image/x-fujifilm-raf') {
+    const raf = await createRafDataView(fileItem)
+    const jpeg = raf?.getJpegImage()
+    const exifView = jpeg?.getExif()
+    if (!exifView)
+      return []
+    return normalizeExifTags(exifView.getTagEntries())
+  }
 
-  const stored = project?.exifTags ?? null
+  if (!mimeType.startsWith('image/'))
+    return null
 
-  const needsParse = Boolean(fileItem && fileName && !stored)
+  const image = await createImageDataView(fileItem)
+  const exifView = image?.getExif()
+  if (!exifView)
+    return []
+  return normalizeExifTags(exifView.getTagEntries())
+}
 
-  const { data } = useQuery<Array<ExifTagEntry> | null>({
-    queryKey: ['exif', mimeType, fileName, fileItem],
-    enabled: needsParse,
-    queryFn: async () => {
-      if (!fileItem || !mimeType || mimeType === 'video/mp4')
-        return null
+export function ensureExifInDb(fileItem: FileItem | null): Promise<void> {
+  if (!fileItem)
+    return Promise.resolve()
+  if (typeof window === 'undefined')
+    return Promise.resolve()
 
-      if (mimeType === 'image/x-fujifilm-raf') {
-        const raf = await createRafDataView(fileItem)
-        const jpeg = raf?.getJpegImage()
-        const exifView = jpeg?.getExif()
-        if (!exifView)
-          return null
-        return exifView.getTagEntries()
+  const fileName = fileItem.handle.name
+  if (!fileName)
+    return Promise.resolve()
+
+  const mimeType = fileItem.mimeType
+  if (!mimeType || mimeType === 'video/mp4')
+    return Promise.resolve()
+
+  if (mimeType !== 'image/x-fujifilm-raf' && !mimeType.startsWith('image/'))
+    return Promise.resolve()
+
+  const existing = exifPromises.get(fileName)
+  if (existing)
+    return existing
+
+  const p = (async () => {
+    if (exifInFlight.has(fileName))
+      return
+
+    try {
+      try {
+        projectExifCollection.update(fileName, (draft) => {
+          void draft.exifTags
+        })
+        return
+      }
+      catch {
       }
 
-      const image = await createImageDataView(fileItem)
-      const exifView = image?.getExif()
-      if (!exifView)
-        return null
-      return exifView.getTagEntries()
-    },
-    staleTime: Infinity,
-  })
+      exifInFlight.add(fileName)
+      const exifTags = await extractExifTags(fileItem)
+      if (!exifTags)
+        return
 
-  useEffect(() => {
-    if (!fileName || !data)
-      return
-    persistExif(fileName, data)
-  }, [data, fileName])
+      try {
+        projectsCollection.update(fileName, (draft) => {
+          draft.path = draft.path ?? fileName
+        })
+      }
+      catch {
+        projectsCollection.insert({
+          id: fileName,
+          path: fileName,
+        })
+      }
+      try {
+        projectExifCollection.update(fileName, (draft) => {
+          draft.exifTags = exifTags
+        })
+      }
+      catch {
+        projectExifCollection.insert({
+          id: fileName,
+          exifTags,
+        })
+      }
+    }
+    finally {
+      exifInFlight.delete(fileName)
+      exifPromises.delete(fileName)
+    }
+  })()
 
-  return stored
+  exifPromises.set(fileName, p)
+  return p
+}
+
+export function useExif(fileItem: FileItem | null, enabled = true) {
+  const fileName = fileItem?.handle.name ?? ''
+
+  const { data: exifRow } = useLiveQuery(
+    q =>
+      q
+        .from({ exif: projectExifCollection })
+        .where(({ exif }) => eq(exif.id, fileName))
+        .findOne(),
+    [fileName],
+  )
+
+  const hasExif = Boolean(exifRow?.exifTags)
+  const shouldParse = Boolean(enabled && fileItem && fileName && !hasExif)
+
+  if (shouldParse)
+    use(ensureExifInDb(fileItem))
+
+  return { exifTags: exifRow?.exifTags ?? null }
 }

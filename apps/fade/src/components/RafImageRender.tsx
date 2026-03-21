@@ -4,7 +4,7 @@ import type { FileItem } from '../lib/fs'
 import { useEffect, useRef } from 'react'
 import { useRafImage } from '../hooks/useRafImage'
 import { useRafImageRender } from '../hooks/useRafImageRender'
-import { projectsCollection } from '../lib/db'
+import { projectImageInfoCollection, projectsCollection } from '../lib/db'
 
 interface RafImageRenderProps {
   fileItem?: FileItem | undefined
@@ -38,20 +38,26 @@ export function RafImageRender({
 
     try {
       projectsCollection.update(fileName, (draft) => {
-        draft.imageInfo = {
-          ...draft.imageInfo,
-          width,
-          height,
-        }
+        draft.path = draft.path ?? fileName
       })
     }
     catch {
       projectsCollection.insert({
         id: fileName,
-        imageInfo: {
-          width,
-          height,
-        },
+        path: fileName,
+      })
+    }
+    try {
+      projectImageInfoCollection.update(fileName, (draft) => {
+        draft.width = width
+        draft.height = height
+      })
+    }
+    catch {
+      projectImageInfoCollection.insert({
+        id: fileName,
+        width,
+        height,
       })
     }
   }, [fileItem, height, width])

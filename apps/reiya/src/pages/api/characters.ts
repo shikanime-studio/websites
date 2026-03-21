@@ -2,8 +2,8 @@ import type { APIRoute } from 'astro'
 import { createD1Database } from '../../lib/db'
 import { getAllCharacters } from '../../lib/items'
 
-export const GET: APIRoute = async ({ locals }) => {
-  const db = createD1Database(locals)
+export const GET: APIRoute = async () => {
+  const db = createD1Database()
   const characters = await getAllCharacters(db)
 
   const characterItems = characters.map(char => ({

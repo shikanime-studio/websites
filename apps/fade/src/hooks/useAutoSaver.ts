@@ -1,4 +1,4 @@
-import type { Project } from '../lib/db'
+import type { ProjectSnapshot } from '../lib/db'
 import type { FileItem } from '../lib/fs'
 import {
   AsciiExifType,
@@ -7,7 +7,18 @@ import {
   ShortExifType,
   TiffDataView,
   TiffMagicNumber,
-} from '../lib/tiff'
+} from '@shikanime-studio/medialab/tiff'
+import { eq, useLiveQuery } from '@tanstack/react-db'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect, useMemo, useRef } from 'react'
+import {
+  lightingDefaults,
+  projectExifCollection,
+  projectImageInfoCollection,
+  projectLightingCollection,
+  projectsCollection,
+} from '../lib/db'
+import { basenameWithoutExtension, ensureHandlePermission } from '../lib/fs'
 import { useDebouncedCallback } from './useDebouncedCallback'
 import { useDirectory } from './useDirectory'
 
@@ -28,7 +39,7 @@ function encodeRgba16Tiff({
   width: number
   height: number
   rgba16: Uint16Array
-  project: Project | undefined
+  project: ProjectSnapshot | undefined
   signature: string
   sourceFileName: string
 }) {
@@ -156,12 +167,65 @@ export function useAutoSaver({
 
   const fileName = fileItem?.handle.name ?? null
 
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName ?? ''))
-      .findOne(),
+  const { data: joined } = useLiveQuery(
+    q =>
+      q
+        .from({ project: projectsCollection })
+        .where(({ project }) => eq(project.id, fileName ?? ''))
+        .join({ lighting: projectLightingCollection }, ({ project, lighting }) => eq(project.id, lighting.id))
+        .join({ exif: projectExifCollection }, ({ project, exif }) => eq(project.id, exif.id))
+        .join({ imageInfo: projectImageInfoCollection }, ({ project, imageInfo }) => eq(project.id, imageInfo.id))
+        .select(({ project, lighting, exif, imageInfo }) => ({ project, lighting, exif, imageInfo }))
+        .findOne(),
+    [fileName],
   )
+
+  const imageInfoWidth = joined?.imageInfo?.width
+  const imageInfoHeight = joined?.imageInfo?.height
+
+  const project: ProjectSnapshot | undefined = joined
+    ? {
+        id: joined.project.id,
+        lighting: joined.lighting
+          ? {
+              exposure: joined.lighting.exposure ?? lightingDefaults.exposure,
+              contrast: joined.lighting.contrast ?? lightingDefaults.contrast,
+              saturation: joined.lighting.saturation ?? lightingDefaults.saturation,
+              highlights: joined.lighting.highlights ?? lightingDefaults.highlights,
+              shadows: joined.lighting.shadows ?? lightingDefaults.shadows,
+              whites: joined.lighting.whites ?? lightingDefaults.whites,
+              blacks: joined.lighting.blacks ?? lightingDefaults.blacks,
+              tint: joined.lighting.tint ?? lightingDefaults.tint,
+              temperature: joined.lighting.temperature ?? lightingDefaults.temperature,
+              vibrance: joined.lighting.vibrance ?? lightingDefaults.vibrance,
+              hue: joined.lighting.hue ?? lightingDefaults.hue,
+            }
+          : undefined,
+        exifTags: joined.exif?.exifTags ?? undefined,
+        imageInfo: (
+          typeof imageInfoWidth === 'number' && typeof imageInfoHeight === 'number'
+            ? {
+                width: imageInfoWidth,
+                height: imageInfoHeight,
+                histogram: joined.imageInfo?.histogram,
+              }
+            : undefined
+        ),
+      }
+    : undefined
+
+  useEffect(() => {
+    if (!fileName)
+      return
+    if (lastFileNameRef.current !== fileName)
+      return
+    if (lastSavedSignatureRef.current)
+      return
+
+    const savedSignature = joined?.project.autoSavedSignature
+    if (savedSignature)
+      lastSavedSignatureRef.current = savedSignature
+  }, [fileName, joined?.project.autoSavedSignature])
 
   const sidecarName = useMemo(() => {
     if (!fileName)
@@ -180,6 +244,7 @@ export function useAutoSaver({
         saveQueuedRef.current = true
         return
       }
+      const sourceFileName = fileItem.handle.name
 
       if (!(await ensureHandlePermission(directoryHandle, 'readwrite')))
         return
@@ -201,7 +266,7 @@ export function useAutoSaver({
           rgba16: output.rgba16,
           project,
           signature,
-          sourceFileName: fileName ?? fileItem.handle.name,
+          sourceFileName,
         })
         const blob = new Blob([tiffBytes], { type: 'image/tiff' })
 
@@ -212,13 +277,65 @@ export function useAutoSaver({
         await writable.write(blob)
         await writable.close()
 
-        lastSavedSignatureRef.current = signature
-        lastFileNameRef.current = fileName
-        outputNullRetryCountRef.current = 0
+        const savedAt = new Date().toISOString()
+        const sourcePath = directoryHandle
+          ? `${directoryHandle.name}/${sourceFileName}`
+          : sourceFileName
+        try {
+          projectsCollection.update(sourceFileName, (draft) => {
+            draft.path = sourcePath
+            draft.createdAt = savedAt
+            draft.updatedAt = savedAt
+            draft.autoSavedAt = savedAt
+            draft.autoSavedSignature = signature
+            draft.autoSavedSidecarName = sidecarName
+          })
+        }
+        catch {
+          projectsCollection.insert({
+            id: sourceFileName,
+            path: sourcePath,
+            createdAt: savedAt,
+            updatedAt: savedAt,
+            autoSavedAt: savedAt,
+            autoSavedSignature: signature,
+            autoSavedSidecarName: sidecarName,
+          })
+        }
 
-        void queryClient.invalidateQueries({
-          queryKey: ['gallery', directoryHandle.name],
-        })
+        queryClient.setQueryData<Array<FileItem>>(
+          ['gallery', directoryHandle, directoryHandle.name],
+          (prev) => {
+            if (!prev)
+              return prev
+            const primaryIndex = prev.findIndex(f => f.handle.name === sourceFileName)
+            if (primaryIndex === -1)
+              return prev
+
+            const primary = prev[primaryIndex]
+            if (primary.sidecars.some(s => s.handle.name === sidecarName))
+              return prev
+
+            const nextSidecar: FileItem = {
+              handle: outHandle,
+              sidecars: [],
+              mimeType: 'image/tiff',
+            }
+
+            const nextPrimary: FileItem = {
+              ...primary,
+              sidecars: [...primary.sidecars, nextSidecar].sort((a, b) => a.handle.name.localeCompare(b.handle.name)),
+            }
+
+            const next = [...prev]
+            next[primaryIndex] = nextPrimary
+            return next
+          },
+        )
+
+        lastSavedSignatureRef.current = signature
+        lastFileNameRef.current = sourceFileName
+        outputNullRetryCountRef.current = 0
       }
       finally {
         saveInFlightRef.current = false

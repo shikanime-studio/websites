@@ -1,5 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { useExif } from './useExif'
 
 export function useFile(fileItem: FileItem | null) {
   const { data: file } = useSuspenseQuery({
@@ -11,6 +12,8 @@ export function useFile(fileItem: FileItem | null) {
     },
     staleTime: Infinity,
   })
+
+  useExif(fileItem, Boolean(file))
 
   return { file }
 }

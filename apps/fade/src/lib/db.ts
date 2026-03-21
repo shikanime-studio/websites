@@ -4,7 +4,7 @@ import {
 } from '@tanstack/react-db'
 import { z } from 'zod'
 
-export const settings = z.object({
+export const settingsSchema = z.object({
   id: z.literal('ui'),
   theme: z.enum(['dark', 'light']).optional(),
   sidebarCollapsed: z.boolean().optional(),
@@ -15,10 +15,10 @@ export const settings = z.object({
   sidebarSectionCollapsedGroupedFiles: z.boolean().optional(),
 })
 
-export type Settings = z.infer<typeof settings>
+export type Settings = z.infer<typeof settingsSchema>
 export type Theme = NonNullable<Settings['theme']>
 
-export const keymap = z.discriminatedUnion('command', [
+export const keymapSchema = z.discriminatedUnion('command', [
   z.object({
     command: z.literal('navigateNext'),
     key: z.string().default('ArrowRight'),
@@ -37,76 +37,95 @@ export const keymap = z.discriminatedUnion('command', [
   }),
 ])
 
-export type Keymap = z.infer<typeof keymap>
+export type Keymap = z.infer<typeof keymapSchema>
 export type Command = Keymap['command']
 
-export const lightingDefaults = {
-  exposure: 0,
-  contrast: 1,
-  saturation: 1,
-  highlights: 0,
-  shadows: 0,
-  whites: 0,
-  blacks: 0,
-  tint: 0,
-  temperature: 0,
-  vibrance: 0,
-  hue: 0,
-}
-
-export const lightingEdits = z.object({
-  exposure: z.number().default(lightingDefaults.exposure),
-  contrast: z.number().default(lightingDefaults.contrast),
-  saturation: z.number().default(lightingDefaults.saturation),
-  highlights: z.number().default(lightingDefaults.highlights),
-  shadows: z.number().default(lightingDefaults.shadows),
-  whites: z.number().default(lightingDefaults.whites),
-  blacks: z.number().default(lightingDefaults.blacks),
-  tint: z.number().default(lightingDefaults.tint),
-  temperature: z.number().default(lightingDefaults.temperature),
-  vibrance: z.number().default(lightingDefaults.vibrance),
-  hue: z.number().default(lightingDefaults.hue),
+export const lightingEditsSchema = z.object({
+  exposure: z.number().default(0),
+  contrast: z.number().default(1),
+  saturation: z.number().default(1),
+  highlights: z.number().default(0),
+  shadows: z.number().default(0),
+  whites: z.number().default(0),
+  blacks: z.number().default(0),
+  tint: z.number().default(0),
+  temperature: z.number().default(0),
+  vibrance: z.number().default(0),
+  hue: z.number().default(0),
 })
 
-export type LightingEdits = z.infer<typeof lightingEdits>
+export const lightingDefaults = lightingEditsSchema.parse({})
 
-export const exifTagRecord = z.object({
+export type LightingEdits = z.infer<typeof lightingEditsSchema>
+
+export const exifTagRecordSchema = z.object({
   tagId: z.number(),
   value: z.union([z.string(), z.number()]),
 })
 
-export type ExifTagRecord = z.infer<typeof exifTagRecord>
+export type ExifTagRecord = z.infer<typeof exifTagRecordSchema>
 
-export const histogramBins = z.object({
+export const histogramBinsSchema = z.object({
   r: z.array(z.number()),
   g: z.array(z.number()),
   b: z.array(z.number()),
 })
 
-export type HistogramBins = z.infer<typeof histogramBins>
+export type HistogramBins = z.infer<typeof histogramBinsSchema>
 
-export const imageInfo = z.object({
+export const imageInfoSchema = z.object({
   width: z.number(),
   height: z.number(),
-  histogram: histogramBins.optional(),
+  histogram: histogramBinsSchema.optional(),
 })
 
-export type ImageInfo = z.infer<typeof imageInfo>
+export type ImageInfo = z.infer<typeof imageInfoSchema>
 
-export const project = z.object({
-  id: z.string(),
-  lighting: lightingEdits.default(lightingDefaults),
-  exifTags: z.array(exifTagRecord).optional(),
-  imageInfo: imageInfo.optional(),
+export const projectBaseSchema = z
+  .object({
+    id: z.string().min(1),
+    path: z.string().optional(),
+    createdAt: z.iso.datetime().default(() => new Date().toISOString()),
+    updatedAt: z.iso.datetime().default(() => new Date().toISOString()),
+    autoSavedAt: z.iso.datetime().optional(),
+    autoSavedSignature: z.string().optional(),
+    autoSavedSidecarName: z.string().optional(),
+  })
+  .transform(v => ({ ...v, path: v.path ?? v.id }))
+
+export type ProjectBase = z.infer<typeof projectBaseSchema>
+
+export const projectLightingSchema = z
+  .object({ id: z.string().min(1) })
+  .extend(lightingEditsSchema.shape)
+
+export type ProjectLighting = z.infer<typeof projectLightingSchema>
+
+export const projectExifSchema = z.object({
+  id: z.string().min(1),
+  exifTags: z.array(exifTagRecordSchema).default([]),
 })
 
-export type Project = z.infer<typeof project>
+export type ProjectExif = z.infer<typeof projectExifSchema>
+
+export const projectImageInfoSchema = z
+  .object({ id: z.string().min(1) })
+  .extend(imageInfoSchema.shape)
+
+export type ProjectImageInfo = z.infer<typeof projectImageInfoSchema>
+
+export interface ProjectSnapshot {
+  id: string
+  lighting?: LightingEdits
+  exifTags?: Array<ExifTagRecord>
+  imageInfo?: ImageInfo
+}
 
 export const keymapsCollection = createCollection(
   localStorageCollectionOptions({
     getKey: item => item.command,
     id: 'fade-keymaps',
-    schema: keymap,
+    schema: keymapSchema,
     storageKey: 'fade-keymaps',
   }),
 )
@@ -115,7 +134,7 @@ export const settingsCollection = createCollection(
   localStorageCollectionOptions({
     getKey: item => item.id,
     id: 'fade-settings',
-    schema: settings,
+    schema: settingsSchema,
     storageKey: 'fade-settings',
   }),
 )
@@ -124,7 +143,34 @@ export const projectsCollection = createCollection(
   localStorageCollectionOptions({
     getKey: item => item.id,
     id: 'fade-projects',
-    schema: project,
-    storageKey: 'fade-projects',
+    schema: projectBaseSchema,
+    storageKey: 'fade-projects-v2',
+  }),
+)
+
+export const projectLightingCollection = createCollection(
+  localStorageCollectionOptions({
+    getKey: item => item.id,
+    id: 'fade-project-lighting',
+    schema: projectLightingSchema,
+    storageKey: 'fade-project-lighting-v1',
+  }),
+)
+
+export const projectExifCollection = createCollection(
+  localStorageCollectionOptions({
+    getKey: item => item.id,
+    id: 'fade-project-exif',
+    schema: projectExifSchema,
+    storageKey: 'fade-project-exif-v1',
+  }),
+)
+
+export const projectImageInfoCollection = createCollection(
+  localStorageCollectionOptions({
+    getKey: item => item.id,
+    id: 'fade-project-image-info',
+    schema: projectImageInfoSchema,
+    storageKey: 'fade-project-image-info-v1',
   }),
 )

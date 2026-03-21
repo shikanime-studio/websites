@@ -5,7 +5,7 @@ import { useAutoSaver } from '../hooks/useAutoSaver'
 import { useModal } from '../hooks/useModal'
 import { useObjectUrl } from '../hooks/useObjectUrl'
 import { usePreview } from '../hooks/usePreview'
-import { lightingDefaults, projectsCollection } from '../lib/db'
+import { lightingDefaults, projectLightingCollection, projectsCollection } from '../lib/db'
 import { FullscreenModal } from './FullscreenModal'
 import { FullscreenNavigation } from './FullscreenNavigation'
 import { RafImageRender } from './RafImageRender'
@@ -56,46 +56,44 @@ export function RafImageViewer({ fileItem }: RafImageViewerProps) {
 
   const fileName = fileItem?.handle.name ?? ''
 
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName))
-      .findOne(),
+  const { data: lightingRow } = useLiveQuery(
+    q =>
+      q
+        .from({ lighting: projectLightingCollection })
+        .where(({ lighting }) => eq(lighting.id, fileName))
+        .findOne(),
+    [fileName],
   )
 
-  const lighting = project?.lighting ?? lightingDefaults
+  const lighting = {
+    exposure: lightingRow?.exposure ?? lightingDefaults.exposure,
+    contrast: lightingRow?.contrast ?? lightingDefaults.contrast,
+    saturation: lightingRow?.saturation ?? lightingDefaults.saturation,
+    highlights: lightingRow?.highlights ?? lightingDefaults.highlights,
+    shadows: lightingRow?.shadows ?? lightingDefaults.shadows,
+    whites: lightingRow?.whites ?? lightingDefaults.whites,
+    blacks: lightingRow?.blacks ?? lightingDefaults.blacks,
+    tint: lightingRow?.tint ?? lightingDefaults.tint,
+    temperature: lightingRow?.temperature ?? lightingDefaults.temperature,
+    vibrance: lightingRow?.vibrance ?? lightingDefaults.vibrance,
+    hue: lightingRow?.hue ?? lightingDefaults.hue,
+  }
 
-  const shouldSave = useMemo(() => {
-    return (
-      !!fileItem
-      && (
-        lighting.exposure !== 0
-        || lighting.contrast !== 1
-        || lighting.saturation !== 1
-        || lighting.highlights !== 0
-        || lighting.shadows !== 0
-        || lighting.whites !== 0
-        || lighting.blacks !== 0
-        || lighting.tint !== 0
-        || lighting.temperature !== 0
-        || lighting.vibrance !== 0
-        || lighting.hue !== 0
-      )
-    )
-  }, [
-    fileItem,
-    lighting.exposure,
-    lighting.contrast,
-    lighting.saturation,
-    lighting.highlights,
-    lighting.shadows,
-    lighting.whites,
-    lighting.blacks,
-    lighting.tint,
-    lighting.temperature,
-    lighting.vibrance,
-    lighting.hue,
-  ])
+  const { data: project } = useLiveQuery(
+    q =>
+      q
+        .from({ project: projectsCollection })
+        .where(({ project }) => eq(project.id, fileName))
+        .findOne(),
+    [fileName],
+  )
+
+  const shouldSave = Boolean(
+    fileItem
+    && project?.createdAt
+    && project?.updatedAt
+    && project.updatedAt !== project.createdAt,
+  )
 
   const signature = useMemo(() => {
     return [

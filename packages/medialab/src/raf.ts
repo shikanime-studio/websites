@@ -1,4 +1,4 @@
-import type { FileItem } from './fs'
+import type { FileItem } from '../../../apps/fade/src/lib/fs'
 import { JpegDataView } from './jpeg'
 import { isContainer, sizeOf, TiffDataView } from './tiff'
 

@@ -1,9 +1,95 @@
 import type { ReactNode } from 'react'
+import type { FileItem } from '../lib/fs'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { fileTypeFromBlob } from 'file-type'
 import { useCallback, useState } from 'react'
 import { GalleryContext } from '../hooks/useGallery'
 import { useKeymap } from '../hooks/useKeymap'
-import { scanDirectory } from '../lib/fs'
+import { projectsCollection } from '../lib/db'
+import { basenameWithoutExtension } from '../lib/fs'
+
+async function scanAndIndexDirectory(
+  directoryHandle: FileSystemDirectoryHandle,
+): Promise<Array<FileItem>> {
+  const items: Array<FileItem> = []
+
+  for await (const handle of directoryHandle.values()) {
+    if (handle.kind !== 'file')
+      continue
+    const fileHandle = handle as FileSystemFileHandle
+    const file = await fileHandle.getFile()
+    const type = await fileTypeFromBlob(file)
+    items.push({
+      handle: fileHandle,
+      sidecars: [],
+      mimeType: type?.mime,
+    })
+  }
+
+  const groups = new Map<string, Array<FileItem>>()
+  for (const item of items) {
+    const name = item.handle.name
+    const basename = basenameWithoutExtension(name)
+
+    let group = groups.get(basename)
+    if (!group) {
+      group = []
+      groups.set(basename, group)
+    }
+    group.push(item)
+  }
+
+  const result: Array<FileItem> = []
+
+  for (const groupItems of groups.values()) {
+    let primaryItem = groupItems[0]
+    let bestScore = -1
+
+    for (const item of groupItems) {
+      let score = 0
+      if (item.mimeType?.startsWith('image/')) {
+        score = 2
+      }
+      else if (item.mimeType?.startsWith('video/')) {
+        score = 2
+      }
+      else {
+        score = 1
+      }
+
+      if (score > bestScore) {
+        bestScore = score
+        primaryItem = item
+      }
+    }
+
+    const sidecars = groupItems.filter(i => i !== primaryItem)
+    sidecars.sort((a, b) => a.handle.name.localeCompare(b.handle.name))
+
+    primaryItem.sidecars = sidecars
+    result.push(primaryItem)
+  }
+
+  result.sort((a, b) => a.handle.name.localeCompare(b.handle.name))
+
+  for (const item of result) {
+    const name = item.handle.name
+    const fullPath = `${directoryHandle.name}/${name}`
+    try {
+      projectsCollection.update(name, (draft) => {
+        draft.path = fullPath
+      })
+    }
+    catch {
+      projectsCollection.insert({
+        id: name,
+        path: fullPath,
+      })
+    }
+  }
+
+  return result
+}
 
 export function GalleryProvider({
   children,
@@ -19,7 +105,7 @@ export function GalleryProvider({
     queryFn: async () => {
       if (!handle)
         return []
-      return scanDirectory(handle)
+      return scanAndIndexDirectory(handle)
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,

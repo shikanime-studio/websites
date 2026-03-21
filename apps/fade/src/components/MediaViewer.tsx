@@ -1,9 +1,13 @@
+import type { ReactNode } from 'react'
 import type { FileItem } from '../lib/fs'
+import { eq, useLiveQuery } from '@tanstack/react-db'
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
-import { Activity, Suspense } from 'react'
+import { Activity, Suspense, use } from 'react'
+import { ensureExifInDb } from '../hooks/useExif'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { useObjectUrl } from '../hooks/useObjectUrl'
+import { projectExifCollection } from '../lib/db'
 import { FileIcon } from './FileIcon'
 import { ImageViewer } from './ImageViewer'
 import { RafImageViewer } from './RafImageViewer'
@@ -37,7 +41,9 @@ export function MediaViewer() {
           }
         >
           <Activity mode={selectedFile ? 'visible' : 'hidden'}>
-            <MainViewerContent fileItem={selectedFile ?? undefined} />
+            <ExifHydrator fileItem={selectedFile ?? undefined}>
+              <MainViewerContent fileItem={selectedFile ?? undefined} />
+            </ExifHydrator>
           </Activity>
         </Suspense>
       </div>
@@ -52,6 +58,32 @@ export function MediaViewer() {
       </button>
     </div>
   )
+}
+
+function ExifHydrator({
+  fileItem,
+  children,
+}: {
+  fileItem?: FileItem
+  children: ReactNode
+}) {
+  const fileName = fileItem?.handle.name ?? ''
+
+  const { data: exifRow } = useLiveQuery(
+    q =>
+      q
+        .from({ exif: projectExifCollection })
+        .where(({ exif }) => eq(exif.id, fileName))
+        .findOne(),
+    [fileName],
+  )
+
+  const hasExif = Boolean(exifRow?.exifTags)
+  const shouldHydrate = Boolean(fileItem && fileName && !hasExif)
+  if (shouldHydrate)
+    use(ensureExifInDb(fileItem ?? null))
+
+  return children
 }
 
 function EmptyMediaViewer() {

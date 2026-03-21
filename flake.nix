@@ -69,35 +69,46 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem = _: {
-        devenv.shells.default = {
-          imports = [
-            devlib.devenvModules.git
-            devlib.devenvModules.javascript
-            devlib.devenvModules.nix
-            devlib.devenvModules.opentofu
-            devlib.devenvModules.shell
-            devlib.devenvModules.shikanime-studio
-          ];
-          gitignore.templates = [
-            "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
-          ];
-          treefmt.config = {
-            programs = {
-              sqlfluff = {
-                enable = true;
-                dialect = "sqlite";
-              };
-              wgslfmt.enable = true;
-            };
-            settings.global.excludes = [
-              "*.gen.ts"
-              "apps/*/node_modules/*"
-              "packages/*/node_modules/*"
+      perSystem =
+        { pkgs, ... }:
+        {
+          devenv.shells.default = {
+            imports = [
+              devlib.devenvModules.git
+              devlib.devenvModules.javascript
+              devlib.devenvModules.nix
+              devlib.devenvModules.opentofu
+              devlib.devenvModules.shell
+              devlib.devenvModules.shikanime-studio
             ];
+            gitignore = {
+              content = [
+                "apps/fade/.tanstack"
+                "apps/fade/playwright-report"
+                "apps/fade/test-results"
+              ];
+              templates = [
+                "repo:shikanime-studio/gitignore/refs/heads/main/Astro.gitignore"
+                "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
+              ];
+            };
+            packages = with pkgs; [ imagemagick ];
+            treefmt.config = {
+              programs = {
+                sqlfluff = {
+                  enable = true;
+                  dialect = "sqlite";
+                };
+                wgslfmt.enable = true;
+              };
+              settings.global.excludes = [
+                "*.gen.ts"
+                "apps/*/node_modules/*"
+                "packages/*/node_modules/*"
+              ];
+            };
           };
         };
-      };
       systems = [
         "x86_64-linux"
         "aarch64-linux"

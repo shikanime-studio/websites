@@ -61,6 +61,9 @@ export function useHistogram(src: string | null) {
   const { data } = useSuspenseQuery({
     queryKey: [
       'histogram',
+      !!device,
+      !!computePipeline,
+      !!normalizePipeline,
       src,
       device,
       computePipeline,

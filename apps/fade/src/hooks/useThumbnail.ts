@@ -51,7 +51,8 @@ export function useThumbnail(
   const { data: url } = useSuspenseQuery({
     queryKey: [
       'thumbnail',
-      fileItem?.handle.name,
+      fileItem,
+      blob,
       width,
       height,
       quality,

@@ -1,5 +1,14 @@
-import type { LightingEdits, Settings } from '../lib/db'
+import type { ExifTagRecord, ImageInfo, LightingEdits, Settings } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from '@shikanime-studio/medialab/exif'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
@@ -9,20 +18,18 @@ import {
   Info,
   Sun,
 } from 'lucide-react'
-import { Activity, Suspense } from 'react'
-import { useExif } from '../hooks/useExif'
+import { Activity, Suspense, useEffect } from 'react'
+import { useDirectory } from '../hooks/useDirectory'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
-import { lightingDefaults, projectsCollection, settingsCollection } from '../lib/db'
 import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from '../lib/exif'
+  lightingDefaults,
+  projectExifCollection,
+  projectImageInfoCollection,
+  projectLightingCollection,
+  projectsCollection,
+  settingsCollection,
+} from '../lib/db'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
@@ -100,179 +107,118 @@ function EmptySidebar() {
 }
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
-  return (
-    <>
-      <GeneralSection fileItem={fileItem} />
-      <LightingSection />
-      <CameraSection fileItem={fileItem} />
-      <GroupedFilesSection fileItem={fileItem} />
-    </>
-  )
-}
+  const { handle: directoryHandle } = useDirectory()
+  const photoId = fileItem.handle.name
 
-function LightingSection() {
-  const { selectedFile } = useGallery()
-  const photoId = selectedFile?.handle.name ?? ''
-
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, photoId))
-      .findOne(),
-  )
-
-  const lighting = project?.lighting ?? lightingDefaults
-
-  const upsert = (mutate: (draft: LightingEdits) => void) => {
+  useEffect(() => {
     if (!photoId)
       return
-
-    const next: LightingEdits = { ...lighting }
-    mutate(next)
-
+    const fullPath = directoryHandle ? `${directoryHandle.name}/${photoId}` : photoId
     try {
       projectsCollection.update(photoId, (draft) => {
-        draft.lighting = next
+        draft.path = fullPath
       })
     }
     catch {
       projectsCollection.insert({
         id: photoId,
-        lighting: next,
+        path: fullPath,
       })
     }
+  }, [directoryHandle, photoId])
+
+  const { data: snapshot } = useLiveQuery(
+    q =>
+      q
+        .from({ project: projectsCollection })
+        .where(({ project }) => eq(project.id, photoId))
+        .join({ lighting: projectLightingCollection }, ({ project, lighting }) => eq(project.id, lighting.id))
+        .join({ exif: projectExifCollection }, ({ project, exif }) => eq(project.id, exif.id))
+        .join({ imageInfo: projectImageInfoCollection }, ({ project, imageInfo }) => eq(project.id, imageInfo.id))
+        .select(({ project, lighting, exif, imageInfo }) => ({ project, lighting, exif, imageInfo }))
+        .findOne(),
+    [photoId],
+  )
+
+  const lighting: LightingEdits = {
+    exposure: snapshot?.lighting?.exposure ?? lightingDefaults.exposure,
+    contrast: snapshot?.lighting?.contrast ?? lightingDefaults.contrast,
+    saturation: snapshot?.lighting?.saturation ?? lightingDefaults.saturation,
+    highlights: snapshot?.lighting?.highlights ?? lightingDefaults.highlights,
+    shadows: snapshot?.lighting?.shadows ?? lightingDefaults.shadows,
+    whites: snapshot?.lighting?.whites ?? lightingDefaults.whites,
+    blacks: snapshot?.lighting?.blacks ?? lightingDefaults.blacks,
+    tint: snapshot?.lighting?.tint ?? lightingDefaults.tint,
+    temperature: snapshot?.lighting?.temperature ?? lightingDefaults.temperature,
+    vibrance: snapshot?.lighting?.vibrance ?? lightingDefaults.vibrance,
+    hue: snapshot?.lighting?.hue ?? lightingDefaults.hue,
   }
 
-  const exposure = lighting.exposure
-  const setExposure = (value: number) => {
-    upsert((draft) => {
-      draft.exposure = value
-    })
-  }
-  const resetExposure = () => {
-    upsert((draft) => {
-      draft.exposure = lightingDefaults.exposure
-    })
-  }
+  const imageInfoWidth = snapshot?.imageInfo?.width
+  const imageInfoHeight = snapshot?.imageInfo?.height
 
-  const contrast = lighting.contrast
-  const setContrast = (value: number) => {
-    upsert((draft) => {
-      draft.contrast = value
-    })
-  }
-  const resetContrast = () => {
-    upsert((draft) => {
-      draft.contrast = lightingDefaults.contrast
-    })
-  }
+  const imageInfo: ImageInfo | undefined = (
+    typeof imageInfoWidth === 'number' && typeof imageInfoHeight === 'number'
+      ? {
+          width: imageInfoWidth,
+          height: imageInfoHeight,
+          histogram: snapshot?.imageInfo?.histogram,
+        }
+      : undefined
+  )
 
-  const saturation = lighting.saturation
-  const setSaturation = (value: number) => {
-    upsert((draft) => {
-      draft.saturation = value
-    })
-  }
-  const resetSaturation = () => {
-    upsert((draft) => {
-      draft.saturation = lightingDefaults.saturation
-    })
-  }
+  return (
+    <>
+      <GeneralSection fileItem={fileItem} imageInfo={imageInfo} />
+      <LightingSection photoId={photoId} lighting={lighting} />
+      <CameraSection exifTags={snapshot?.exif?.exifTags} />
+      <GroupedFilesSection fileItem={fileItem} />
+    </>
+  )
+}
 
-  const highlights = lighting.highlights
-  const setHighlights = (value: number) => {
-    upsert((draft) => {
-      draft.highlights = value
-    })
-  }
-  const resetHighlights = () => {
-    upsert((draft) => {
-      draft.highlights = lightingDefaults.highlights
-    })
-  }
+function LightingSection({
+  lighting,
+  photoId,
+}: {
+  lighting: LightingEdits
+  photoId: string
+}) {
+  const updateLighting = (patch: Partial<LightingEdits>) => {
+    if (!photoId)
+      return
 
-  const shadows = lighting.shadows
-  const setShadows = (value: number) => {
-    upsert((draft) => {
-      draft.shadows = value
-    })
-  }
-  const resetShadows = () => {
-    upsert((draft) => {
-      draft.shadows = lightingDefaults.shadows
-    })
-  }
+    const next: LightingEdits = {
+      ...lighting,
+      ...patch,
+    }
 
-  const whites = lighting.whites
-  const setWhites = (value: number) => {
-    upsert((draft) => {
-      draft.whites = value
-    })
-  }
-  const resetWhites = () => {
-    upsert((draft) => {
-      draft.whites = lightingDefaults.whites
-    })
-  }
+    try {
+      projectLightingCollection.update(photoId, (draft) => {
+        Object.assign(draft, next)
+      })
+    }
+    catch {
+      projectLightingCollection.insert({
+        id: photoId,
+        ...next,
+      })
+    }
 
-  const blacks = lighting.blacks
-  const setBlacks = (value: number) => {
-    upsert((draft) => {
-      draft.blacks = value
-    })
-  }
-  const resetBlacks = () => {
-    upsert((draft) => {
-      draft.blacks = lightingDefaults.blacks
-    })
-  }
-
-  const tint = lighting.tint
-  const setTint = (value: number) => {
-    upsert((draft) => {
-      draft.tint = value
-    })
-  }
-  const resetTint = () => {
-    upsert((draft) => {
-      draft.tint = lightingDefaults.tint
-    })
-  }
-
-  const temperature = lighting.temperature
-  const setTemperature = (value: number) => {
-    upsert((draft) => {
-      draft.temperature = value
-    })
-  }
-  const resetTemperature = () => {
-    upsert((draft) => {
-      draft.temperature = lightingDefaults.temperature
-    })
-  }
-
-  const vibrance = lighting.vibrance
-  const setVibrance = (value: number) => {
-    upsert((draft) => {
-      draft.vibrance = value
-    })
-  }
-  const resetVibrance = () => {
-    upsert((draft) => {
-      draft.vibrance = lightingDefaults.vibrance
-    })
-  }
-
-  const hue = lighting.hue
-  const setHue = (value: number) => {
-    upsert((draft) => {
-      draft.hue = value
-    })
-  }
-  const resetHue = () => {
-    upsert((draft) => {
-      draft.hue = lightingDefaults.hue
-    })
+    const now = new Date().toISOString()
+    try {
+      projectsCollection.update(photoId, (draft) => {
+        draft.updatedAt = now
+      })
+    }
+    catch {
+      projectsCollection.insert({
+        id: photoId,
+        path: photoId,
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
   }
 
   return (
@@ -285,102 +231,146 @@ function LightingSection() {
       <div className="flex flex-col gap-4">
         <Slider
           label="Exposure"
-          value={exposure}
+          value={lighting.exposure}
           min={-5}
           max={5}
           step={0.05}
-          onChange={setExposure}
-          onDoubleClick={resetExposure}
+          onChange={(value) => {
+            updateLighting({ exposure: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ exposure: lightingDefaults.exposure })
+          }}
         />
         <Slider
           label="Contrast"
-          value={contrast}
+          value={lighting.contrast}
           min={0}
           max={2}
           step={0.01}
-          onChange={setContrast}
-          onDoubleClick={resetContrast}
+          onChange={(value) => {
+            updateLighting({ contrast: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ contrast: lightingDefaults.contrast })
+          }}
         />
         <Slider
           label="Saturation"
-          value={saturation}
+          value={lighting.saturation}
           min={0}
           max={2}
           step={0.01}
-          onChange={setSaturation}
-          onDoubleClick={resetSaturation}
+          onChange={(value) => {
+            updateLighting({ saturation: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ saturation: lightingDefaults.saturation })
+          }}
         />
         <Slider
           label="Highlights"
-          value={highlights}
+          value={lighting.highlights}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setHighlights}
-          onDoubleClick={resetHighlights}
+          onChange={(value) => {
+            updateLighting({ highlights: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ highlights: lightingDefaults.highlights })
+          }}
         />
         <Slider
           label="Shadows"
-          value={shadows}
+          value={lighting.shadows}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setShadows}
-          onDoubleClick={resetShadows}
+          onChange={(value) => {
+            updateLighting({ shadows: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ shadows: lightingDefaults.shadows })
+          }}
         />
         <Slider
           label="Whites"
-          value={whites}
+          value={lighting.whites}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setWhites}
-          onDoubleClick={resetWhites}
+          onChange={(value) => {
+            updateLighting({ whites: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ whites: lightingDefaults.whites })
+          }}
         />
         <Slider
           label="Blacks"
-          value={blacks}
+          value={lighting.blacks}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setBlacks}
-          onDoubleClick={resetBlacks}
+          onChange={(value) => {
+            updateLighting({ blacks: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ blacks: lightingDefaults.blacks })
+          }}
         />
         <Slider
           label="Tint"
-          value={tint}
+          value={lighting.tint}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setTint}
-          onDoubleClick={resetTint}
+          onChange={(value) => {
+            updateLighting({ tint: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ tint: lightingDefaults.tint })
+          }}
         />
         <Slider
           label="Temperature"
-          value={temperature}
+          value={lighting.temperature}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setTemperature}
-          onDoubleClick={resetTemperature}
+          onChange={(value) => {
+            updateLighting({ temperature: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ temperature: lightingDefaults.temperature })
+          }}
         />
         <Slider
           label="Vibrance"
-          value={vibrance}
+          value={lighting.vibrance}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setVibrance}
-          onDoubleClick={resetVibrance}
+          onChange={(value) => {
+            updateLighting({ vibrance: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ vibrance: lightingDefaults.vibrance })
+          }}
         />
         <Slider
           label="Hue"
-          value={hue}
+          value={lighting.hue}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setHue}
-          onDoubleClick={resetHue}
+          onChange={(value) => {
+            updateLighting({ hue: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ hue: lightingDefaults.hue })
+          }}
         />
       </div>
     </CollapsibleSection>
@@ -412,6 +402,7 @@ function Slider({
       </div>
       <input
         type="range"
+        aria-label={label}
         min={min}
         max={max}
         step={step}
@@ -430,17 +421,15 @@ function Slider({
   )
 }
 
-function GeneralSection({ fileItem }: { fileItem: FileItem }) {
+function GeneralSection({
+  fileItem,
+  imageInfo,
+}: {
+  fileItem: FileItem
+  imageInfo?: ImageInfo
+}) {
   const { handle } = fileItem
   const { file } = useFile(fileItem)
-  const fileName = fileItem.handle.name
-
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName))
-      .findOne(),
-  )
 
   if (!file)
     return null
@@ -473,17 +462,17 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {project?.imageInfo && (
+        {imageInfo && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {project.imageInfo.width}
+              {imageInfo.width}
               {' '}
               ×
               {' '}
-              {project.imageInfo.height}
+              {imageInfo.height}
             </dd>
           </div>
         )}
@@ -499,8 +488,8 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   )
 }
 
-function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem)
+function CameraSection({ exifTags }: { exifTags?: Array<ExifTagRecord> }) {
+  const exifData = exifTags
 
   if (!exifData || exifData.length === 0)
     return null

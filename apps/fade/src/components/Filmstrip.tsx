@@ -43,10 +43,6 @@ export function Filmstrip() {
     })
   }, [selectedIndex, virtualizer])
 
-  const modes = new Map(
-    virtualizer.getVirtualItems().map(v => [v.index, 'visible' as const]),
-  )
-
   return (
     <div
       className={`bg-base-200 border-base-300 relative border-t transition-all duration-250 ${
@@ -97,7 +93,7 @@ export function Filmstrip() {
                 >
                   <FilmstripContent
                     files={files}
-                    modes={modes}
+                    virtualItems={virtualizer.getVirtualItems()}
                     selectedIndex={selectedIndex}
                     onSelect={selectFile}
                   />
@@ -119,37 +115,34 @@ function EmptyFilmstrip() {
 
 interface FilmstripContentProps {
   files: Array<FileItem>
-  modes: Map<number, 'visible' | 'hidden'>
+  virtualItems: Array<{ index: number, start: number }>
   selectedIndex: number
   onSelect: (index: number) => void
 }
 
 function FilmstripContent({
   files,
-  modes,
+  virtualItems,
   selectedIndex,
   onSelect,
 }: FilmstripContentProps) {
   return (
     <>
-      {files.map((fileItem, index) => {
-        const mode = modes.get(index) ?? 'hidden'
-        const start = index * ITEM_SIZE
-
+      {virtualItems.map((v) => {
+        const fileItem = files[v.index]
         return (
-          <Activity mode={mode} key={fileItem.handle.name}>
-            <FilmstripItem
-              fileItem={fileItem}
-              isSelected={index === selectedIndex}
-              onClick={() => {
-                onSelect(index)
-              }}
-              style={{
-                transform: `translateX(${start.toString()}px)`,
-                width: '80px',
-              }}
-            />
-          </Activity>
+          <FilmstripItem
+            key={fileItem.handle.name}
+            fileItem={fileItem}
+            isSelected={v.index === selectedIndex}
+            onClick={() => {
+              onSelect(v.index)
+            }}
+            style={{
+              transform: `translateX(${v.start.toString()}px)`,
+              width: '80px',
+            }}
+          />
         )
       })}
     </>

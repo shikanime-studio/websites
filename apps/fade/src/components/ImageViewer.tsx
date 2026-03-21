@@ -2,10 +2,12 @@ import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import { useMemo, useRef, useState } from 'react'
 import { useAutoSaver } from '../hooks/useAutoSaver'
+import { useDirectory } from '../hooks/useDirectory'
 import { useFile } from '../hooks/useFile'
 import { useModal } from '../hooks/useModal'
 import { useObjectUrl } from '../hooks/useObjectUrl'
-import { lightingDefaults, projectsCollection } from '../lib/db'
+import { lightingDefaults, projectImageInfoCollection, projectLightingCollection, projectsCollection } from '../lib/db'
+import { FileIcon } from './FileIcon'
 import { FullscreenModal } from './FullscreenModal'
 import { FullscreenNavigation } from './FullscreenNavigation'
 import { ImageRender } from './ImageRender'
@@ -15,61 +17,64 @@ interface ImageViewerProps {
 }
 
 export function ImageViewer({ fileItem }: ImageViewerProps) {
+  const { handle: directoryHandle } = useDirectory()
   const { file } = useFile(fileItem ?? null)
   const { url } = useObjectUrl(file ?? null)
   const { modal, setModal } = useModal()
+
   const canvasRef = useRef<HTMLCanvasElement>(null)
-  const getOutputRef = useRef<(() => Promise<{ width: number, height: number, rgba16: Uint16Array } | null>) | null>(null)
-  const [loadedImageState, setLoadedImageState] = useState<{ url: string, image: HTMLImageElement } | null>(null)
+  const getOutputRef = useRef<
+    (() => Promise<{ width: number, height: number, rgba16: Uint16Array } | null>) | null
+  >(null)
 
   const urlString = url ?? ''
-  const loadedImage = loadedImageState?.url === urlString ? loadedImageState.image : null
+  const [loadedImageState, setLoadedImageState] = useState<{
+    url: string
+    image: HTMLImageElement
+  } | null>(null)
 
+  const loadedImage = loadedImageState?.url === urlString ? loadedImageState.image : null
   const fileName = fileItem?.handle.name ?? ''
 
-  const { data: project } = useLiveQuery(q =>
-    q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName))
-      .findOne(),
+  const { data: lightingRow } = useLiveQuery(
+    q =>
+      q
+        .from({ lighting: projectLightingCollection })
+        .where(({ lighting }) => eq(lighting.id, fileName))
+        .findOne(),
+    [fileName],
   )
 
-  const lighting = project?.lighting ?? lightingDefaults
-  const isRenderableImage = !!file && !!url && !!fileItem?.mimeType?.startsWith('image/')
+  const lighting = {
+    exposure: lightingRow?.exposure ?? lightingDefaults.exposure,
+    contrast: lightingRow?.contrast ?? lightingDefaults.contrast,
+    saturation: lightingRow?.saturation ?? lightingDefaults.saturation,
+    highlights: lightingRow?.highlights ?? lightingDefaults.highlights,
+    shadows: lightingRow?.shadows ?? lightingDefaults.shadows,
+    whites: lightingRow?.whites ?? lightingDefaults.whites,
+    blacks: lightingRow?.blacks ?? lightingDefaults.blacks,
+    tint: lightingRow?.tint ?? lightingDefaults.tint,
+    temperature: lightingRow?.temperature ?? lightingDefaults.temperature,
+    vibrance: lightingRow?.vibrance ?? lightingDefaults.vibrance,
+    hue: lightingRow?.hue ?? lightingDefaults.hue,
+  }
 
-  const shouldSave = useMemo(() => {
-    return (
-      isRenderableImage
-      && !!fileItem
-      && (
-        lighting.exposure !== 0
-        || lighting.contrast !== 1
-        || lighting.saturation !== 1
-        || lighting.highlights !== 0
-        || lighting.shadows !== 0
-        || lighting.whites !== 0
-        || lighting.blacks !== 0
-        || lighting.tint !== 0
-        || lighting.temperature !== 0
-        || lighting.vibrance !== 0
-        || lighting.hue !== 0
-      )
-    )
-  }, [
-    isRenderableImage,
-    fileItem,
-    lighting.exposure,
-    lighting.contrast,
-    lighting.saturation,
-    lighting.highlights,
-    lighting.shadows,
-    lighting.whites,
-    lighting.blacks,
-    lighting.tint,
-    lighting.temperature,
-    lighting.vibrance,
-    lighting.hue,
-  ])
+  const { data: project } = useLiveQuery(
+    q =>
+      q
+        .from({ project: projectsCollection })
+        .where(({ project }) => eq(project.id, fileName))
+        .findOne(),
+    [fileName],
+  )
+
+  const shouldSave = Boolean(
+    fileItem?.mimeType?.startsWith('image/')
+    && urlString
+    && project?.createdAt
+    && project?.updatedAt
+    && project.updatedAt !== project.createdAt,
+  )
 
   const signature = useMemo(() => {
     return [
@@ -110,8 +115,22 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
     },
   })
 
-  if (!isRenderableImage)
-    return null
+  if (!fileItem || !fileItem.mimeType?.startsWith('image/')) {
+    return (
+      <div className="flex h-full w-full flex-col items-center justify-center gap-4 opacity-50">
+        <FileIcon type={fileItem?.mimeType} className="h-16 w-16 opacity-30" />
+        <p className="m-0 text-xl font-medium">Preview not available</p>
+      </div>
+    )
+  }
+
+  if (!file || !urlString) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -119,7 +138,11 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
         key={urlString}
         url={urlString}
         fileItem={fileItem}
-        className={shouldSave ? 'hidden' : 'animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl'}
+        className={
+          shouldSave
+            ? 'hidden'
+            : 'animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl'
+        }
         onDoubleClick={() => {
           setModal('fullscreen')
         }}
@@ -151,6 +174,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
               )}
         </div>
       )}
+
       <FullscreenModal
         open={modal === 'fullscreen'}
         onClose={() => {
@@ -214,18 +238,29 @@ function ImagePreview({
           height: img.naturalHeight,
         }
 
+        const fullPath = directoryHandle ? `${directoryHandle.name}/${fileName}` : fileName
         try {
           projectsCollection.update(fileName, (draft) => {
-            draft.imageInfo = {
-              ...draft.imageInfo,
-              ...info,
-            }
+            draft.path = fullPath
           })
         }
         catch {
           projectsCollection.insert({
             id: fileName,
-            imageInfo: info,
+            path: fullPath,
+          })
+        }
+        try {
+          projectImageInfoCollection.update(fileName, (draft) => {
+            draft.width = info.width
+            draft.height = info.height
+          })
+        }
+        catch {
+          projectImageInfoCollection.insert({
+            id: fileName,
+            width: info.width,
+            height: info.height,
           })
         }
       }}

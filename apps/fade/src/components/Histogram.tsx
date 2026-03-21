@@ -5,7 +5,7 @@ import { Suspense, useEffect } from 'react'
 import { useHistogram } from '../hooks/useHistogram'
 import { useObjectUrl } from '../hooks/useObjectUrl'
 import { usePreview } from '../hooks/usePreview'
-import { projectsCollection } from '../lib/db'
+import { projectImageInfoCollection, projectsCollection } from '../lib/db'
 
 interface HistogramProps {
   fileItem: FileItem
@@ -87,24 +87,28 @@ function HistogramCompute({
 
     try {
       projectsCollection.update(fileName, (draft) => {
-        const nextInfo = draft.imageInfo ?? {
-          width: computed.width,
-          height: computed.height,
-        }
-        nextInfo.width = nextInfo.width ?? computed.width
-        nextInfo.height = nextInfo.height ?? computed.height
-        nextInfo.histogram = histogram
-        draft.imageInfo = nextInfo
+        draft.path = draft.path ?? fileName
       })
     }
     catch {
       projectsCollection.insert({
         id: fileName,
-        imageInfo: {
-          width: computed.width,
-          height: computed.height,
-          histogram,
-        },
+        path: fileName,
+      })
+    }
+    try {
+      projectImageInfoCollection.update(fileName, (draft) => {
+        draft.width = draft.width ?? computed.width
+        draft.height = draft.height ?? computed.height
+        draft.histogram = histogram
+      })
+    }
+    catch {
+      projectImageInfoCollection.insert({
+        id: fileName,
+        width: computed.width,
+        height: computed.height,
+        histogram,
       })
     }
   }, [computed, fileName])
@@ -124,14 +128,14 @@ function HistogramCompute({
 export function Histogram({ className, fileItem }: HistogramProps) {
   const fileName = fileItem.handle.name
 
-  const { data: project } = useLiveQuery(q =>
+  const { data: imageInfo } = useLiveQuery(q =>
     q
-      .from({ projects: projectsCollection })
-      .where(({ projects }) => eq(projects.id, fileName))
+      .from({ imageInfo: projectImageInfoCollection })
+      .where(({ imageInfo }) => eq(imageInfo.id, fileName))
       .findOne(),
   )
 
-  const stored = project?.imageInfo?.histogram
+  const stored = imageInfo?.histogram
 
   if (stored) {
     return <HistogramContent fileItem={fileItem} className={className} data={stored} />
