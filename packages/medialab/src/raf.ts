@@ -1,4 +1,5 @@
-import { JpegDataView } from './image'
+import { JpegDataView } from './jpeg'
+import { isContainerFieldType, sizeOfFieldType, TiffDataView } from './tiff'
 
 export const JpegImageOffset = 84
 export const JpegImageLength = 88
@@ -335,7 +336,7 @@ export type FujiTagEntry
     | { tagId: typeof DimensionsTagId, value: [number, number] }
     | { tagId: number, value: unknown }
 
-export class RafCfaHeaderDataView<
+export class CfaHeaderDataView<
   T extends ArrayBufferLike,
 > extends DataView<T> {
   getString(offset: number, length: number): string {
@@ -529,55 +530,312 @@ export class RafCfaHeaderDataView<
   }
 }
 
+export class CfaPayloadDataView<T extends ArrayBufferLike> extends TiffDataView<T> {
+  getImageWidth(ifdOffset: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, 256, littleEndian)
+    return typeof v === 'number' ? v : null
+  }
+
+  getImageLength(ifdOffset: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, 257, littleEndian)
+    return typeof v === 'number' ? v : null
+  }
+
+  getBitsPerSample(ifdOffset: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, 258, littleEndian)
+    if (typeof v === 'number')
+      return v
+    if (Array.isArray(v) && typeof v[0] === 'number')
+      return v[0]
+    return null
+  }
+
+  getCompression(ifdOffset: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, 259, littleEndian)
+    return typeof v === 'number' ? v : null
+  }
+
+  getStripOffsets(ifdOffset: number, littleEndian: boolean) {
+    return this.getNumberArrayTag(ifdOffset, 273, littleEndian)
+  }
+
+  getRowsPerStrip(ifdOffset: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, 278, littleEndian)
+    return typeof v === 'number' ? v : null
+  }
+
+  getStripByteCounts(ifdOffset: number, littleEndian: boolean) {
+    return this.getNumberArrayTag(ifdOffset, 279, littleEndian)
+  }
+
+  getFirstIfdOffset(littleEndian: boolean) {
+    const ifdOffset = this.getUint32(4, littleEndian)
+    if (ifdOffset < 8 || ifdOffset + 2 > this.byteLength)
+      return null
+    return ifdOffset
+  }
+
+  getNumberArrayTag(ifdOffset: number, tagId: number, littleEndian: boolean) {
+    const v = this.getTagValues(ifdOffset, tagId, littleEndian)
+    if (typeof v === 'number')
+      return [v]
+    if (Array.isArray(v) && v.every(x => typeof x === 'number'))
+      return v
+    return null
+  }
+
+  getTagValues(ifdOffset: number, tagId: number, littleEndian: boolean) {
+    const entryCount = this.getUint16(ifdOffset, littleEndian)
+    const ifdEntriesOffset = ifdOffset + 2
+    const ifdByteLength = 2 + entryCount * 12 + 4
+    if (ifdOffset + ifdByteLength > this.byteLength)
+      return null
+
+    for (let i = 0; i < entryCount; i++) {
+      const entryOffset = ifdEntriesOffset + i * 12
+      const header = this.getTagHeader(entryOffset, littleEndian)
+      if (header.tagId !== tagId)
+        continue
+
+      const typeSize = sizeOfFieldType(header.type)
+      if (typeSize <= 0 || header.count <= 0)
+        return null
+
+      const byteLen = typeSize * header.count
+      const valueOffset
+        = byteLen <= 4 ? entryOffset + 8 : this.getUint32(entryOffset + 8, littleEndian)
+
+      if (valueOffset + byteLen > this.byteLength)
+        return null
+
+      if (isContainerFieldType(header.type)) {
+        return this.getContainer(valueOffset, header.type, header.count)
+      }
+
+      if (header.count === 1) {
+        return this.getValue(valueOffset, header.type, littleEndian)
+      }
+
+      const values: Array<number> = []
+      for (let j = 0; j < header.count; j++) {
+        const v = this.getValue(
+          valueOffset + j * typeSize,
+          header.type,
+          littleEndian,
+        )
+        if (typeof v !== 'number')
+          return null
+        values.push(v)
+      }
+      return values
+    }
+
+    return null
+  }
+
+  joinStrips(
+    stripOffsets: Array<number>,
+    stripByteCounts: Array<number>,
+  ) {
+    if (stripOffsets.length !== stripByteCounts.length)
+      return null
+
+    const totalBytes = stripByteCounts.reduce((sum, n) => sum + n, 0)
+    if (totalBytes <= 0)
+      return null
+
+    const joined = new Uint8Array(totalBytes)
+    let joinedOffset = 0
+    for (let i = 0; i < stripOffsets.length; i++) {
+      const offset = stripOffsets[i]
+      const len = stripByteCounts[i]
+      if (offset + len > this.byteLength)
+        return null
+      joined.set(
+        new Uint8Array(this.buffer as ArrayBuffer, this.byteOffset + offset, len),
+        joinedOffset,
+      )
+      joinedOffset += len
+    }
+
+    return joined
+  }
+}
+
+export class CfaDataView<T extends ArrayBufferLike> {
+  constructor(
+    private readonly raf: DataView<T>,
+  ) {}
+
+  getHeader(): CfaHeaderDataView<T> | null {
+    const cfaHeaderOffset = this.raf.getUint32(CfaHeaderOffset, false)
+    const cfaHeaderLength = this.raf.getUint32(CfaHeaderLength, false)
+    if (cfaHeaderOffset <= 0 || cfaHeaderLength <= 0)
+      return null
+
+    const byteOffset = this.raf.byteOffset + cfaHeaderOffset
+    if (byteOffset + cfaHeaderLength > this.raf.buffer.byteLength)
+      return null
+
+    return new CfaHeaderDataView(this.raf.buffer, byteOffset, cfaHeaderLength)
+  }
+
+  getPayload(): CfaPayloadDataView<T> | null {
+    const cfaOffset = this.raf.getUint32(CfaOffset, false)
+    const cfaLength = this.raf.getUint32(CfaLength, false)
+    if (cfaOffset <= 0 || cfaLength <= 0)
+      return null
+
+    const byteOffset = this.raf.byteOffset + cfaOffset
+    if (byteOffset + cfaLength > this.raf.buffer.byteLength)
+      return null
+
+    return new CfaPayloadDataView(this.raf.buffer, byteOffset, cfaLength)
+  }
+}
+
 export class RafDataView<T extends ArrayBufferLike> extends DataView<T> {
   getJpegImage(): JpegDataView<T> | null {
     const jpegOffset = this.getUint32(JpegImageOffset, false)
     const jpegLength = this.getUint32(JpegImageLength, false)
+    if (jpegOffset <= 0 || jpegLength <= 0)
+      return null
 
-    if (
-      jpegOffset > 0
-      && jpegLength > 0
-      && this.byteOffset + jpegOffset + jpegLength <= this.buffer.byteLength
-    ) {
-      return new JpegDataView(
-        this.buffer,
-        this.byteOffset + jpegOffset,
-        jpegLength,
-      )
-    }
-    return null
+    const byteOffset = this.byteOffset + jpegOffset
+    if (byteOffset + jpegLength > this.buffer.byteLength)
+      return null
+
+    return new JpegDataView(this.buffer, byteOffset, jpegLength)
   }
 
-  getCfaHeader(): RafCfaHeaderDataView<T> | null {
-    const cfaHeaderOffset = this.getUint32(CfaHeaderOffset, false)
-    const cfaHeaderLength = this.getUint32(CfaHeaderLength, false)
+  getCfa() {
+    return new CfaDataView(this)
+  }
+}
 
-    if (
-      cfaHeaderOffset > 0
-      && cfaHeaderLength > 0
-      && this.byteOffset + cfaHeaderOffset + cfaHeaderLength
-      <= this.buffer.byteLength
-    ) {
-      return new RafCfaHeaderDataView(
-        this.buffer,
-        this.byteOffset + cfaHeaderOffset,
-        cfaHeaderLength,
-      )
+export interface FileItem {
+  handle: { getFile: () => Promise<File> }
+  sidecars: Array<FileItem>
+  mimeType?: string
+}
+
+export async function createRafDataView(
+  source: FileItem,
+): Promise<RafDataView<ArrayBuffer> | null> {
+  const file = await source.handle.getFile()
+  switch (source.mimeType) {
+    case 'image/x-fujifilm-raf':
+      return new RafDataView(await file.arrayBuffer())
+    default:
+      return null
+  }
+}
+
+export interface RafRaster {
+  bitsPerSample: number
+  swapEndian: boolean
+  data: Uint8Array
+}
+
+function unpackMsbToU16(
+  packed: Uint8Array,
+  bitsPerSample: number,
+  pixelCount: number,
+) {
+  const out = new Uint16Array(pixelCount)
+  let bitIndex = 0
+
+  for (let i = 0; i < pixelCount; i++) {
+    let value = 0
+    for (let b = 0; b < bitsPerSample; b++) {
+      const absoluteBit = bitIndex + b
+      const byteIndex = absoluteBit >> 3
+      const bitInByte = 7 - (absoluteBit & 7)
+      const bit = (packed[byteIndex] >> bitInByte) & 1
+      value = (value << 1) | bit
     }
-    return null
+    out[i] = value
+    bitIndex += bitsPerSample
   }
 
-  getCfa(): DataView<T> | null {
-    const cfaOffset = this.getUint32(CfaOffset, false)
-    const cfaLength = this.getUint32(CfaLength, false)
+  return out
+}
 
-    if (
-      cfaOffset > 0
-      && cfaLength > 0
-      && this.byteOffset + cfaOffset + cfaLength <= this.buffer.byteLength
-    ) {
-      return new DataView(this.buffer, this.byteOffset + cfaOffset, cfaLength)
-    }
+export function getRafRasterFromPayload(
+  payload: Uint8Array,
+  expectedWidth?: number,
+  expectedHeight?: number,
+): RafRaster | null {
+  if (payload.byteLength < 8)
     return null
+
+  const view = new CfaPayloadDataView(payload.buffer, payload.byteOffset, payload.byteLength)
+  const littleEndian = view.getLittleEndian()
+  const firstIfdOffset = view.getFirstIfdOffset(littleEndian)
+  if (!firstIfdOffset)
+    return null
+
+  const width = view.getImageWidth(firstIfdOffset, littleEndian)
+  const height = view.getImageLength(firstIfdOffset, littleEndian)
+  if (!width || !height)
+    return null
+
+  if (expectedWidth !== undefined && expectedWidth !== width)
+    return null
+  if (expectedHeight !== undefined && expectedHeight !== height)
+    return null
+
+  const bitsPerSample = view.getBitsPerSample(firstIfdOffset, littleEndian)
+  if (!bitsPerSample)
+    return null
+
+  const compression = view.getCompression(firstIfdOffset, littleEndian)
+  if (compression !== 1)
+    return null
+
+  const stripOffsets = view.getStripOffsets(firstIfdOffset, littleEndian)
+  const stripByteCounts = view.getStripByteCounts(firstIfdOffset, littleEndian)
+  if (!stripOffsets || !stripByteCounts)
+    return null
+
+  const data = view.joinStrips(stripOffsets, stripByteCounts)
+  if (!data)
+    return null
+
+  const swapEndian = !littleEndian && bitsPerSample === 16
+
+  return {
+    bitsPerSample,
+    swapEndian,
+    data,
   }
+}
+
+export function decodeRafRasterToU16(
+  raster: RafRaster,
+  width: number,
+  height: number,
+) {
+  const pixelCount = width * height
+
+  if (raster.bitsPerSample === 16) {
+    const bytes = raster.data
+    if (bytes.byteLength < pixelCount * 2)
+      return null
+
+    const out = new Uint16Array(pixelCount)
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength)
+    for (let i = 0; i < pixelCount; i++) {
+      const v = dv.getUint16(i * 2, true)
+      out[i] = raster.swapEndian ? ((v & 0xFF) << 8) | ((v & 0xFF00) >> 8) : v
+    }
+    return out
+  }
+
+  if (raster.bitsPerSample > 0 && raster.bitsPerSample < 16) {
+    const values = unpackMsbToU16(raster.data, raster.bitsPerSample, pixelCount)
+    return values
+  }
+
+  return null
 }

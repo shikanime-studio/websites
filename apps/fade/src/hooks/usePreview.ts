@@ -1,6 +1,6 @@
 import type { FileItem } from '../lib/fs'
+import { RafDataView } from '@shikanime-studio/medialab/raf'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { RafDataView } from '../lib/raf'
 import { useFile } from './useFile'
 
 export function usePreview(fileItem: FileItem | null) {

@@ -1,0 +1,37 @@
+{
+  "name": "@shikanime-studio/medialab",
+  "version": "0.0.0",
+  "author": {
+    "name": "Shikanime Studio",
+    "email": "contact@shikanime.studio",
+    "url": "https://shikanime.studio"
+  },
+  "license": "Apache-2.0",
+  "exports": {
+    "./exif": "./src/exif.ts",
+    "./hooks/exif": "./src/hooks/exif.ts",
+    "./hooks/image": "./src/hooks/image.ts",
+    "./hooks/raf": "./src/hooks/raf.ts",
+    "./image": "./src/image.ts",
+    "./jpeg": "./src/jpeg.ts",
+    "./png": "./src/png.ts",
+    "./raf": "./src/raf.ts",
+    "./tiff": "./src/tiff.ts",
+    "./webp": "./src/webp.ts"
+  },
+  "scripts": {
+    "build": "vite build",
+    "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@webgpu/types": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}
