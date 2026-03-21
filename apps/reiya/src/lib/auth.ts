@@ -2,11 +2,11 @@ import type { DrizzleD1Database } from 'drizzle-orm/d1'
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { oneTap } from 'better-auth/plugins'
+import { env } from 'cloudflare:workers'
 import * as schema from '../schema'
 
 export function createAuth(
   db: DrizzleD1Database<typeof schema>,
-  locals: App.Locals,
 ) {
   return betterAuth({
     database: drizzleAdapter(db, {
@@ -18,15 +18,15 @@ export function createAuth(
       usePlural: true,
     }),
     plugins: [oneTap()],
-    secret: locals.runtime.env.BETTER_AUTH_SECRET,
+    secret: env.BETTER_AUTH_SECRET,
     baseURL: import.meta.env.SITE,
     socialProviders: {
       ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID
-        && locals.runtime.env.GOOGLE_CLIENT_SECRET
+        && env.GOOGLE_CLIENT_SECRET
         ? {
             google: {
               clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
-              clientSecret: locals.runtime.env.GOOGLE_CLIENT_SECRET,
+              clientSecret: env.GOOGLE_CLIENT_SECRET,
             },
           }
         : {}),

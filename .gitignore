@@ -200,6 +200,12 @@ dist
 
 # End of https://www.toptal.com/developers/gitignore/api/node
 
+###--------------------------------------------------------------------###
+###  Repo: shikanime-studio/gitignore/refs/heads/main/Astro.gitignore  ###
+###--------------------------------------------------------------------###
+
+.astro
+
 ###-----------------------------------------------------------------------###
 ###  Repo: shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore  ###
 ###-----------------------------------------------------------------------###
@@ -465,3 +471,6 @@ $RECYCLE.BIN/
 ###-------------------###
 
 .pre-commit-config.yaml
+apps/fade/.tanstack
+apps/fade/playwright-report
+apps/fade/test-results

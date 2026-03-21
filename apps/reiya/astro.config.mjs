@@ -26,7 +26,9 @@ export default defineConfig({
   ],
   output: 'server',
   adapter: cloudflare({
+    viteEnvironment: { name: 'ssr' },
     imageService: 'compile',
+    inspectorPort: false,
     platformProxy: {
       enabled: true,
     },
