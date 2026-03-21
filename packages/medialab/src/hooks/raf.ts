@@ -2,50 +2,46 @@ import type { RefObject } from 'react'
 import type { CfaDataView, FileItem } from '../raf'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
+import { z } from 'zod'
 import { createRafDataView, decodeRafRasterToU16, getRafRasterFromPayload } from '../raf'
 import rafShader from '../shaders/raf.wgsl?raw'
 import { retryDelay } from './utils'
 
-export interface LightingParams {
-  exposure: number
-  contrast: number
-  saturation: number
-  highlights: number
-  shadows: number
-  whites: number
-  blacks: number
-  tint: number
-  temperature: number
-  vibrance: number
-  hue: number
-}
+const LightingParamsSchema = z.object({
+  exposure: z.number().default(0),
+  contrast: z.number().default(1),
+  saturation: z.number().default(1),
+  vibrance: z.number().default(0),
+  highlights: z.number().default(1),
+  shadows: z.number().default(1),
+  whites: z.number().default(1),
+  blacks: z.number().default(1),
+  tint: z.number().default(0),
+  temperature: z.number().default(0),
+  hue: z.number().default(0),
+})
+
+export type LightingParams = z.infer<typeof LightingParamsSchema>
 
 export type CfaPattern = 'RGGB' | 'BGGR' | 'GRBG' | 'GBRG'
 
+const CfaPatternSchema = z.enum(['RGGB', 'BGGR', 'GRBG', 'GBRG']).default('RGGB')
+
 export interface RafRendererOptions {
-  lighting?: LightingParams
+  lighting?: Partial<LightingParams>
   pattern?: CfaPattern
 }
+
+const RafRendererOptionsSchema = z.object({
+  lighting: LightingParamsSchema.optional(),
+  pattern: CfaPatternSchema.optional(),
+}).default({})
 
 export interface RafDecodedRaster {
   width: number
   height: number
   bitsPerSample: number
   data: Uint16Array<ArrayBuffer>
-}
-
-const DefaultLighting: LightingParams = {
-  exposure: 0,
-  contrast: 1,
-  saturation: 1,
-  highlights: 1,
-  shadows: 1,
-  whites: 1,
-  blacks: 1,
-  tint: 0,
-  temperature: 0,
-  vibrance: 0,
-  hue: 0,
 }
 
 function patternToId(pattern: CfaPattern) {
@@ -162,16 +158,17 @@ export function useRafImage(fileItem: FileItem | null) {
 
 export function useRafRender(
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  cfa: CfaDataView<ArrayBufferLike> | null,
   device: GPUDevice | null,
   format: GPUTextureFormat | null,
+  cfa: CfaDataView<ArrayBufferLike> | null,
   options: RafRendererOptions = {},
 ) {
   const { data: resources } = useRafPipeline(device, format)
   const { data: raster } = useRafDecodedRaster(cfa)
 
-  const lighting = options.lighting ?? DefaultLighting
-  const pattern = options.pattern ?? 'RGGB'
+  const resolvedOptions = RafRendererOptionsSchema.parse(options)
+  const lighting = LightingParamsSchema.parse(resolvedOptions.lighting ?? {}) as LightingParams
+  const pattern = CfaPatternSchema.parse(resolvedOptions.pattern) as CfaPattern
 
   useEffect(() => {
     const canvas = canvasRef.current

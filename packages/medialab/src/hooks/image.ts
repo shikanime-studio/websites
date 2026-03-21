@@ -1,21 +1,32 @@
 import type { RefObject } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { z } from 'zod'
 import imageShader from '../shaders/image.wgsl?raw'
 import { retryDelay } from './utils'
 
-export interface LightingParams {
-  exposure: number
-  contrast: number
-  saturation: number
-  highlights: number
-  shadows: number
-  whites: number
-  blacks: number
-  tint: number
-  temperature: number
-  vibrance: number
-  hue: number
+const LightingParamsSchema = z.object({
+  exposure: z.number().default(0),
+  contrast: z.number().default(1),
+  saturation: z.number().default(1),
+  vibrance: z.number().default(0),
+  highlights: z.number().default(0),
+  shadows: z.number().default(0),
+  whites: z.number().default(0),
+  blacks: z.number().default(0),
+  tint: z.number().default(0),
+  temperature: z.number().default(0),
+  hue: z.number().default(0),
+})
+
+export type LightingParams = z.infer<typeof LightingParamsSchema>
+
+export interface RendererOptions {
+  lighting?: Partial<LightingParams>
 }
+
+const RendererOptionsSchema = z.object({
+  lighting: LightingParamsSchema.optional(),
+}).default({})
 
 function useImagePipeline(device: GPUDevice | null, format: GPUTextureFormat | null) {
   return useSuspenseQuery({
@@ -99,37 +110,45 @@ function useImageTexture(device: GPUDevice | null, image: HTMLImageElement | nul
 
 export function useImageRender(
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  image: HTMLImageElement | null,
   device: GPUDevice | null,
   format: GPUTextureFormat | null,
-  lighting: LightingParams = {
-    exposure: 0,
-    contrast: 1,
-    saturation: 1,
-    highlights: 0,
-    shadows: 0,
-    whites: 0,
-    blacks: 0,
-    tint: 0,
-    temperature: 0,
-    vibrance: 0,
-    hue: 0,
-  },
+  image: HTMLImageElement | null,
+  options?: RendererOptions,
 ) {
   const { data: pipeline } = useImagePipeline(device, format)
   const { data: texture } = useImageTexture(device, image)
+  const resolvedOptions = RendererOptionsSchema.parse(options)
+  const lighting = LightingParamsSchema.parse(resolvedOptions.lighting ?? {}) as LightingParams
 
   return useSuspenseQuery({
-    queryKey: ['image-render', canvasRef, image, device, format, lighting, pipeline, texture],
+    queryKey: [
+      'image-render',
+      canvasRef,
+      image,
+      device,
+      format,
+      lighting.exposure,
+      lighting.contrast,
+      lighting.saturation,
+      lighting.vibrance,
+      lighting.highlights,
+      lighting.shadows,
+      lighting.whites,
+      lighting.blacks,
+      lighting.tint,
+      lighting.temperature,
+      lighting.hue,
+      pipeline,
+      texture,
+    ],
     queryFn: () => {
       const canvas = canvasRef.current
       if (!device || !canvas || !format || !pipeline || !texture) {
         return
       }
 
-      const context = canvas.getContext('webgpu')
+      const context = canvas.getContext('webgpu') as GPUCanvasContext | null
       if (!context) {
-        console.error('Could not get GPU context')
         return
       }
 

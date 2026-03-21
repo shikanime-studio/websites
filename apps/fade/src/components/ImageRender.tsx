@@ -18,7 +18,7 @@ export function ImageRender({
   const lighting = useLighting()
   const { device, format } = useGPU()
 
-  useImageRender(canvasRef, image, device, format, lighting)
+  useImageRender(canvasRef, device, format, image, { lighting })
 
   return (
     <canvas

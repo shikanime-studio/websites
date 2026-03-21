@@ -22,9 +22,9 @@ export function RawImageRender({
 
   useRafRender(
     canvasRef,
-    cfa,
     device,
     format,
+    cfa,
     { lighting },
   )
 
