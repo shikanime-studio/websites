@@ -23,7 +23,7 @@ export function GPUProvider({ children }: { children: ReactNode }) {
   })
 
   const { data: device } = useSuspenseQuery({
-    queryKey: ['gpu', 'device', adapter],
+    queryKey: ['gpu', 'device', adapter, adapter?.info.device],
     queryFn: async () => {
       if (!adapter)
         return null
@@ -55,14 +55,14 @@ export function GPUProvider({ children }: { children: ReactNode }) {
     const onLost = (info: GPUDeviceLostInfo) => {
       console.error(`GPU device lost: ${info.reason}`)
       return queryClient.invalidateQueries({
-        queryKey: ['gpu', 'device', adapter],
+        queryKey: ['gpu', 'device', adapter, adapter?.info.device],
       })
     }
 
     device.lost.then(onLost).catch(() => {
       console.error('GPU device lost unexpectedly')
     })
-  }, [device, queryClient, adapter])
+  }, [device, queryClient, adapter, adapter?.info.device])
 
   return (
     <GPUContext

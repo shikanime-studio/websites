@@ -56,8 +56,10 @@ export function useThumbnail(
       width,
       height,
       quality,
-      !!device,
-      !!pipeline,
+      device,
+      pipeline,
+      blob,
+      fileItem?.mimeType,
     ],
     queryFn: async () => {
       if (
