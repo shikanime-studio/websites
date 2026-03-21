@@ -1,5 +1,14 @@
-import type { Setting } from '../lib/db'
+import type { ExifTagRecord, ImageInfo, LightingEdits, Settings } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from '@shikanime-studio/medialab/exif'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
@@ -9,36 +18,32 @@ import {
   Info,
   Sun,
 } from 'lucide-react'
-import { Activity, Suspense } from 'react'
-import { useExif } from '../hooks/useExif'
+import { Activity, Suspense, useEffect } from 'react'
+import { useDirectory } from '../hooks/useDirectory'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
-import { useImageInfo } from '../hooks/useImageInfo'
-import { useLighting } from '../hooks/useLighting'
-import { settingsCollection } from '../lib/db'
 import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from '../lib/exif'
+  lightingDefaults,
+  projectExifCollection,
+  projectImageInfoCollection,
+  projectLightingCollection,
+  projectsCollection,
+  settingsCollection,
+} from '../lib/db'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
 
 export function Sidebar() {
   const { selectedFile } = useGallery()
-  const { data } = useLiveQuery(q =>
+  const { data: currentSettings } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'sidebarCollapsed'))
+      .where(({ settings }) => eq(settings.id, 'ui'))
       .findOne(),
   )
 
-  const isCollapsed = (data?.value as boolean) || false
+  const isCollapsed = currentSettings?.sidebarCollapsed ?? false
 
   return (
     <aside
@@ -49,17 +54,17 @@ export function Sidebar() {
       <button
         className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
         onClick={() => {
-          if (data) {
-            settingsCollection.update('sidebarCollapsed', (draft) => {
-              draft.value = !isCollapsed
+          if (currentSettings) {
+            settingsCollection.update('ui', (draft) => {
+              draft.sidebarCollapsed = !isCollapsed
             })
+            return
           }
-          else {
-            settingsCollection.insert({
-              id: 'sidebarCollapsed',
-              value: !isCollapsed,
-            })
-          }
+
+          settingsCollection.insert({
+            id: 'ui',
+            sidebarCollapsed: !isCollapsed,
+          })
         }}
         aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
       >
@@ -102,52 +107,119 @@ function EmptySidebar() {
 }
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
+  const { handle: directoryHandle } = useDirectory()
+  const photoId = fileItem.handle.name
+
+  useEffect(() => {
+    if (!photoId)
+      return
+    const fullPath = directoryHandle ? `${directoryHandle.name}/${photoId}` : photoId
+    try {
+      projectsCollection.update(photoId, (draft) => {
+        draft.path = fullPath
+      })
+    }
+    catch {
+      projectsCollection.insert({
+        id: photoId,
+        path: fullPath,
+      })
+    }
+  }, [directoryHandle, photoId])
+
+  const { data: snapshot } = useLiveQuery(
+    q =>
+      q
+        .from({ project: projectsCollection })
+        .where(({ project }) => eq(project.id, photoId))
+        .join({ lighting: projectLightingCollection }, ({ project, lighting }) => eq(project.id, lighting.id))
+        .join({ exif: projectExifCollection }, ({ project, exif }) => eq(project.id, exif.id))
+        .join({ imageInfo: projectImageInfoCollection }, ({ project, imageInfo }) => eq(project.id, imageInfo.id))
+        .select(({ project, lighting, exif, imageInfo }) => ({ project, lighting, exif, imageInfo }))
+        .findOne(),
+    [photoId],
+  )
+
+  const lighting: LightingEdits = {
+    exposure: snapshot?.lighting?.exposure ?? lightingDefaults.exposure,
+    contrast: snapshot?.lighting?.contrast ?? lightingDefaults.contrast,
+    saturation: snapshot?.lighting?.saturation ?? lightingDefaults.saturation,
+    highlights: snapshot?.lighting?.highlights ?? lightingDefaults.highlights,
+    shadows: snapshot?.lighting?.shadows ?? lightingDefaults.shadows,
+    whites: snapshot?.lighting?.whites ?? lightingDefaults.whites,
+    blacks: snapshot?.lighting?.blacks ?? lightingDefaults.blacks,
+    tint: snapshot?.lighting?.tint ?? lightingDefaults.tint,
+    temperature: snapshot?.lighting?.temperature ?? lightingDefaults.temperature,
+    vibrance: snapshot?.lighting?.vibrance ?? lightingDefaults.vibrance,
+    hue: snapshot?.lighting?.hue ?? lightingDefaults.hue,
+  }
+
+  const imageInfoWidth = snapshot?.imageInfo?.width
+  const imageInfoHeight = snapshot?.imageInfo?.height
+
+  const imageInfo: ImageInfo | undefined = (
+    typeof imageInfoWidth === 'number' && typeof imageInfoHeight === 'number'
+      ? {
+          width: imageInfoWidth,
+          height: imageInfoHeight,
+          histogram: snapshot?.imageInfo?.histogram,
+        }
+      : undefined
+  )
+
   return (
     <>
-      <GeneralSection fileItem={fileItem} />
-      <LightingSection />
-      <CameraSection fileItem={fileItem} />
+      <GeneralSection fileItem={fileItem} imageInfo={imageInfo} />
+      <LightingSection photoId={photoId} lighting={lighting} />
+      <CameraSection exifTags={snapshot?.exif?.exifTags} />
       <GroupedFilesSection fileItem={fileItem} />
     </>
   )
 }
 
-function LightingSection() {
-  const {
-    exposure,
-    setExposure,
-    resetExposure,
-    contrast,
-    setContrast,
-    resetContrast,
-    saturation,
-    setSaturation,
-    resetSaturation,
-    highlights,
-    setHighlights,
-    resetHighlights,
-    shadows,
-    setShadows,
-    resetShadows,
-    whites,
-    setWhites,
-    resetWhites,
-    blacks,
-    setBlacks,
-    resetBlacks,
-    tint,
-    setTint,
-    resetTint,
-    temperature,
-    setTemperature,
-    resetTemperature,
-    vibrance,
-    setVibrance,
-    resetVibrance,
-    hue,
-    setHue,
-    resetHue,
-  } = useLighting()
+function LightingSection({
+  lighting,
+  photoId,
+}: {
+  lighting: LightingEdits
+  photoId: string
+}) {
+  const updateLighting = (patch: Partial<LightingEdits>) => {
+    if (!photoId)
+      return
+
+    const next: LightingEdits = {
+      ...lighting,
+      ...patch,
+    }
+
+    try {
+      projectLightingCollection.update(photoId, (draft) => {
+        Object.assign(draft, next)
+      })
+    }
+    catch {
+      projectLightingCollection.insert({
+        id: photoId,
+        ...next,
+      })
+    }
+
+    const now = new Date().toISOString()
+    try {
+      projectsCollection.update(photoId, (draft) => {
+        draft.updatedAt = now
+      })
+    }
+    catch {
+      projectsCollection.insert({
+        id: photoId,
+        path: photoId,
+        createdAt: now,
+        updatedAt: now,
+      })
+    }
+  }
 
   return (
     <CollapsibleSection
@@ -159,102 +231,146 @@ function LightingSection() {
       <div className="flex flex-col gap-4">
         <Slider
           label="Exposure"
-          value={exposure}
+          value={lighting.exposure}
           min={-5}
           max={5}
           step={0.05}
-          onChange={setExposure}
-          onDoubleClick={resetExposure}
+          onChange={(value) => {
+            updateLighting({ exposure: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ exposure: lightingDefaults.exposure })
+          }}
         />
         <Slider
           label="Contrast"
-          value={contrast}
+          value={lighting.contrast}
           min={0}
           max={2}
           step={0.01}
-          onChange={setContrast}
-          onDoubleClick={resetContrast}
+          onChange={(value) => {
+            updateLighting({ contrast: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ contrast: lightingDefaults.contrast })
+          }}
         />
         <Slider
           label="Saturation"
-          value={saturation}
+          value={lighting.saturation}
           min={0}
           max={2}
           step={0.01}
-          onChange={setSaturation}
-          onDoubleClick={resetSaturation}
+          onChange={(value) => {
+            updateLighting({ saturation: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ saturation: lightingDefaults.saturation })
+          }}
         />
         <Slider
           label="Highlights"
-          value={highlights}
+          value={lighting.highlights}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setHighlights}
-          onDoubleClick={resetHighlights}
+          onChange={(value) => {
+            updateLighting({ highlights: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ highlights: lightingDefaults.highlights })
+          }}
         />
         <Slider
           label="Shadows"
-          value={shadows}
+          value={lighting.shadows}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setShadows}
-          onDoubleClick={resetShadows}
+          onChange={(value) => {
+            updateLighting({ shadows: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ shadows: lightingDefaults.shadows })
+          }}
         />
         <Slider
           label="Whites"
-          value={whites}
+          value={lighting.whites}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setWhites}
-          onDoubleClick={resetWhites}
+          onChange={(value) => {
+            updateLighting({ whites: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ whites: lightingDefaults.whites })
+          }}
         />
         <Slider
           label="Blacks"
-          value={blacks}
+          value={lighting.blacks}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setBlacks}
-          onDoubleClick={resetBlacks}
+          onChange={(value) => {
+            updateLighting({ blacks: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ blacks: lightingDefaults.blacks })
+          }}
         />
         <Slider
           label="Tint"
-          value={tint}
+          value={lighting.tint}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setTint}
-          onDoubleClick={resetTint}
+          onChange={(value) => {
+            updateLighting({ tint: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ tint: lightingDefaults.tint })
+          }}
         />
         <Slider
           label="Temperature"
-          value={temperature}
+          value={lighting.temperature}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setTemperature}
-          onDoubleClick={resetTemperature}
+          onChange={(value) => {
+            updateLighting({ temperature: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ temperature: lightingDefaults.temperature })
+          }}
         />
         <Slider
           label="Vibrance"
-          value={vibrance}
+          value={lighting.vibrance}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setVibrance}
-          onDoubleClick={resetVibrance}
+          onChange={(value) => {
+            updateLighting({ vibrance: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ vibrance: lightingDefaults.vibrance })
+          }}
         />
         <Slider
           label="Hue"
-          value={hue}
+          value={lighting.hue}
           min={-1}
           max={1}
           step={0.01}
-          onChange={setHue}
-          onDoubleClick={resetHue}
+          onChange={(value) => {
+            updateLighting({ hue: value })
+          }}
+          onDoubleClick={() => {
+            updateLighting({ hue: lightingDefaults.hue })
+          }}
         />
       </div>
     </CollapsibleSection>
@@ -305,10 +421,15 @@ function Slider({
   )
 }
 
-function GeneralSection({ fileItem }: { fileItem: FileItem }) {
+function GeneralSection({
+  fileItem,
+  imageInfo,
+}: {
+  fileItem: FileItem
+  imageInfo?: ImageInfo
+}) {
   const { handle } = fileItem
   const { file } = useFile(fileItem)
-  const { image } = useImageInfo()
 
   if (!file)
     return null
@@ -322,7 +443,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
         {fileItem.mimeType?.startsWith('image/')
           ? (
-              <Histogram />
+              <Histogram fileItem={fileItem} />
             )
           : (
               <div className="flex h-full w-full items-center justify-center">
@@ -341,16 +462,17 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {image && (
+        {imageInfo && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {image.naturalWidth}
+              {imageInfo.width}
               {' '}
               ×
-              {image.naturalHeight}
+              {' '}
+              {imageInfo.height}
             </dd>
           </div>
         )}
@@ -366,8 +488,8 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   )
 }
 
-function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem)
+function CameraSection({ exifTags }: { exifTags?: Array<ExifTagRecord> }) {
+  const exifData = exifTags
 
   if (!exifData || exifData.length === 0)
     return null
@@ -503,31 +625,32 @@ function CollapsibleSection({
   children: React.ReactNode
   className?: string
 }) {
-  const { data } = useLiveQuery(q =>
+  const { data: currentSettings } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, id))
+      .where(({ settings }) => eq(settings.id, 'ui'))
       .findOne(),
   )
 
-  const isCollapsed = (data?.value as boolean) || false
+  const key = id as keyof Settings
+  const isCollapsed = (currentSettings?.[key] as boolean | undefined) ?? false
   const isOpen = !isCollapsed
 
   return (
     <div className={className}>
       <button
         onClick={() => {
-          if (data) {
-            settingsCollection.update(id, (draft) => {
-              draft.value = !isCollapsed
+          if (currentSettings) {
+            settingsCollection.update('ui', (draft) => {
+              ;(draft[key] as boolean | undefined) = !isCollapsed
             })
+            return
           }
-          else {
-            settingsCollection.insert({
-              id,
-              value: !isCollapsed,
-            } as Setting)
-          }
+
+          settingsCollection.insert({
+            id: 'ui',
+            [id]: !isCollapsed,
+          } as unknown as Settings)
         }}
         className="border-base-300 text-base-content/70 mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
       >

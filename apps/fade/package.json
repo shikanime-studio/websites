@@ -13,12 +13,12 @@
     "deploy": "wrangler deploy",
     "upload": "wrangler versions upload",
     "preview": "vite preview",
-    "test": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:",
+    "@shikanime-studio/medialab": "workspace:",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-db": "catalog:",
     "@tanstack/react-devtools": "catalog:",
@@ -53,7 +53,6 @@
     "playwright": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",
-    "vitest": "catalog:",
     "web-vitals": "catalog:",
     "wrangler": "catalog:"
   }

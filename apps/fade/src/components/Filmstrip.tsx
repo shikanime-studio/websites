@@ -17,14 +17,14 @@ export function Filmstrip() {
   const ref = useRef<HTMLDivElement>(null)
   const { width } = useElementSize(ref)
 
-  const { data } = useLiveQuery(q =>
+  const { data: currentSettings } = useLiveQuery(q =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, 'filmstripCollapsed'))
+      .where(({ settings }) => eq(settings.id, 'ui'))
       .findOne(),
   )
 
-  const isCollapsed = (data?.value as boolean) || false
+  const isCollapsed = currentSettings?.filmstripCollapsed ?? false
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -43,10 +43,6 @@ export function Filmstrip() {
     })
   }, [selectedIndex, virtualizer])
 
-  const modes = new Map(
-    virtualizer.getVirtualItems().map(v => [v.index, 'visible' as const]),
-  )
-
   return (
     <div
       className={`bg-base-200 border-base-300 relative border-t transition-all duration-250 ${
@@ -56,17 +52,17 @@ export function Filmstrip() {
       <button
         className="btn btn-sm btn-square absolute -top-3 left-1/2 z-5 h-6 min-h-0 w-8 -translate-x-1/2 rounded-none rounded-t-md border-b-0"
         onClick={() => {
-          if (data) {
-            settingsCollection.update('filmstripCollapsed', (draft) => {
-              draft.value = !isCollapsed
+          if (currentSettings) {
+            settingsCollection.update('ui', (draft) => {
+              draft.filmstripCollapsed = !isCollapsed
             })
+            return
           }
-          else {
-            settingsCollection.insert({
-              id: 'filmstripCollapsed',
-              value: !isCollapsed,
-            })
-          }
+
+          settingsCollection.insert({
+            id: 'ui',
+            filmstripCollapsed: !isCollapsed,
+          })
         }}
         aria-label={isCollapsed ? 'Expand filmstrip' : 'Collapse filmstrip'}
       >
@@ -97,7 +93,7 @@ export function Filmstrip() {
                 >
                   <FilmstripContent
                     files={files}
-                    modes={modes}
+                    virtualItems={virtualizer.getVirtualItems()}
                     selectedIndex={selectedIndex}
                     onSelect={selectFile}
                   />
@@ -119,37 +115,34 @@ function EmptyFilmstrip() {
 
 interface FilmstripContentProps {
   files: Array<FileItem>
-  modes: Map<number, 'visible' | 'hidden'>
+  virtualItems: Array<{ index: number, start: number }>
   selectedIndex: number
   onSelect: (index: number) => void
 }
 
 function FilmstripContent({
   files,
-  modes,
+  virtualItems,
   selectedIndex,
   onSelect,
 }: FilmstripContentProps) {
   return (
     <>
-      {files.map((fileItem, index) => {
-        const mode = modes.get(index) ?? 'hidden'
-        const start = index * ITEM_SIZE
-
+      {virtualItems.map((v) => {
+        const fileItem = files[v.index]
         return (
-          <Activity mode={mode} key={fileItem.handle.name}>
-            <FilmstripItem
-              fileItem={fileItem}
-              isSelected={index === selectedIndex}
-              onClick={() => {
-                onSelect(index)
-              }}
-              style={{
-                transform: `translateX(${start.toString()}px)`,
-                width: '80px',
-              }}
-            />
-          </Activity>
+          <FilmstripItem
+            key={fileItem.handle.name}
+            fileItem={fileItem}
+            isSelected={v.index === selectedIndex}
+            onClick={() => {
+              onSelect(v.index)
+            }}
+            style={{
+              transform: `translateX(${v.start.toString()}px)`,
+              width: '80px',
+            }}
+          />
         )
       })}
     </>
