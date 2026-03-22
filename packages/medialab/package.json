@@ -1,0 +1,42 @@
+{
+  "name": "@shikanime-studio/medialab",
+  "version": "0.0.0",
+  "author": {
+    "name": "Shikanime Studio",
+    "email": "contact@shikanime.studio",
+    "url": "https://shikanime.studio"
+  },
+  "license": "Apache-2.0",
+  "exports": {
+    "./exif": "./src/exif.ts",
+    "./hooks/exif": "./src/hooks/exif.ts",
+    "./hooks/gpu": "./src/hooks/gpu.ts",
+    "./hooks/image": "./src/hooks/image.ts",
+    "./hooks/raf": "./src/hooks/raf.ts",
+    "./image": "./src/image.ts",
+    "./jpeg": "./src/jpeg.ts",
+    "./png": "./src/png.ts",
+    "./providers/GpuAdapterProvider": "./src/providers/GpuAdapterProvider.tsx",
+    "./providers/GpuDeviceProvider": "./src/providers/GpuDeviceProvider.tsx",
+    "./raf": "./src/raf.ts",
+    "./tiff": "./src/tiff.ts",
+    "./utils": "./src/utils.ts",
+    "./webp": "./src/webp.ts"
+  },
+  "scripts": {
+    "build": "vite build",
+    "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "catalog:",
+    "react": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@webgpu/types": "catalog:",
+    "typescript": "catalog:",
+    "vite": "catalog:"
+  }
+}

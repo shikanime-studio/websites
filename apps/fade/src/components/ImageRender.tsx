@@ -1,28 +1,46 @@
-import { useRef } from 'react'
-import { useImageRender } from '../hooks/useImageRender'
+import { useImageRender } from '@shikanime-studio/medialab/hooks/image'
+import { useId } from 'react'
+import { useImageBitmap } from '../hooks/useImageBitmap'
 import { useLighting } from '../hooks/useLighting'
 
 interface ImageRenderProps {
-  image: HTMLImageElement
+  file: File
   className?: string
   onDoubleClick?: () => void
 }
 
 export function ImageRender({
-  image,
+  file,
   className,
   onDoubleClick,
 }: ImageRenderProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const bitmap = useImageBitmap(file)
+  const canvasId = useId()
   const lighting = useLighting()
 
-  useImageRender(canvasRef, image, lighting)
+  useImageRender(canvasId, bitmap ?? undefined, { lighting })
+
+  if (bitmap === null) {
+    return (
+      <div className="flex h-full w-full items-center justify-center opacity-50">
+        Preview not available for this image
+      </div>
+    )
+  }
+
+  if (!bitmap || bitmap.width <= 0 || bitmap.height <= 0) {
+    return (
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+      </div>
+    )
+  }
 
   return (
     <canvas
-      ref={canvasRef}
-      width={image.naturalWidth}
-      height={image.naturalHeight}
+      id={canvasId}
+      width={bitmap.width}
+      height={bitmap.height}
       className={className}
       onDoubleClick={onDoubleClick}
     />

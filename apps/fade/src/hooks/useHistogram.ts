@@ -1,7 +1,7 @@
+import { useGpuDevice } from '@shikanime-studio/medialab/hooks/gpu'
+import { retryDelay } from '@shikanime-studio/medialab/utils'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
 import histogramShader from '../shaders/histogram.wgsl?raw'
-import { useGPU } from './useGPU'
 
 export interface Bins {
   r: Array<number>
@@ -10,86 +10,102 @@ export interface Bins {
 }
 
 function useHistogramComputePipeline() {
-  const { device } = useGPU()
+  const device = useGpuDevice()
 
-  return useMemo(() => {
-    if (!device)
-      return null
+  return useSuspenseQuery({
+    queryKey: ['histogram-compute-pipeline', device],
+    queryFn: () => {
+      if (!device)
+        return null
 
-    const shaderModule = device.createShaderModule({
-      code: histogramShader,
-    })
+      const shaderModule = device.createShaderModule({
+        code: histogramShader,
+      })
 
-    return device.createComputePipeline({
-      layout: 'auto',
-      compute: {
-        module: shaderModule,
-        entryPoint: 'cs_main',
-      },
-    })
-  }, [device])
+      return device.createComputePipeline({
+        layout: 'auto',
+        compute: {
+          module: shaderModule,
+          entryPoint: 'cs_main',
+        },
+      })
+    },
+    retry: 3,
+    retryDelay,
+    staleTime: Infinity,
+  })
 }
 
 function useHistogramNormalizePipeline() {
-  const { device } = useGPU()
+  const device = useGpuDevice()
 
-  return useMemo(() => {
-    if (!device)
-      return null
+  return useSuspenseQuery({
+    queryKey: ['histogram-normalize-pipeline', device],
+    queryFn: () => {
+      if (!device)
+        return null
 
-    const shaderModule = device.createShaderModule({
-      code: histogramShader,
-    })
+      const shaderModule = device.createShaderModule({
+        code: histogramShader,
+      })
 
-    return device.createComputePipeline({
-      layout: 'auto',
-      compute: {
-        module: shaderModule,
-        entryPoint: 'cs_normalize',
-      },
-    })
-  }, [device])
+      return device.createComputePipeline({
+        layout: 'auto',
+        compute: {
+          module: shaderModule,
+          entryPoint: 'cs_normalize',
+        },
+      })
+    },
+    retry: 3,
+    retryDelay,
+    staleTime: Infinity,
+  })
 }
 
-export function useHistogram(image: HTMLImageElement | null) {
-  const { device } = useGPU()
+export function useHistogram(file?: File) {
+  const device = useGpuDevice()
   const computePipeline = useHistogramComputePipeline()
   const normalizePipeline = useHistogramNormalizePipeline()
+  const fileKey = file
+    ? `${file.name}:${file.size.toString()}:${file.lastModified.toString()}:${file.type}`
+    : undefined
 
-  const imageKey = image
-    ? {
-        src: image.currentSrc || image.src,
-        width: image.naturalWidth,
-        height: image.naturalHeight,
-      }
-    : null
-
-  const { data } = useSuspenseQuery({
+  return useSuspenseQuery({
     queryKey: [
       'histogram',
-      imageKey,
-      !!device,
-      !!computePipeline,
-      !!normalizePipeline,
+      device,
+      fileKey,
+      file,
+      computePipeline.data,
+      normalizePipeline.data,
     ],
-    queryFn: async () => {
-      if (!device || !computePipeline || !normalizePipeline || !imageKey)
+    queryFn: async (): Promise<Bins | null> => {
+      if (!device || !file)
         return null
-      const response = await fetch(imageKey.src)
-      const blob = await response.blob()
-      const imageBitmap = await createImageBitmap(blob)
+      if (!computePipeline.data || !normalizePipeline.data)
+        return null
 
-      const width = imageBitmap.width
-      const height = imageBitmap.height
+      let bitmap: ImageBitmap | undefined
+      let texture: GPUTexture | undefined
+      let storageBuffer: GPUBuffer | undefined
+      let normalizedBuffer: GPUBuffer | undefined
+      let readBuffer: GPUBuffer | undefined
 
-      let texture: GPUTexture | null = null
-      let storageBuffer: GPUBuffer | null = null
-      let normalizedBuffer: GPUBuffer | null = null
-      let readBuffer: GPUBuffer | null = null
+      const bufferSize = 256 * 3 * 4
 
       try {
+        try {
+          bitmap = await createImageBitmap(file)
+        }
+        catch {
+          return null
+        }
+        if (bitmap.width <= 0 || bitmap.height <= 0)
+          return null
+
         texture = device.createTexture({
-          size: [width, height],
+          size: [bitmap.width, bitmap.height],
           format: 'rgba8unorm',
           usage:
             GPUTextureUsage.TEXTURE_BINDING
@@ -98,12 +114,10 @@ export function useHistogram(image: HTMLImageElement | null) {
         })
 
         device.queue.copyExternalImageToTexture(
-          { source: imageBitmap },
+          { source: bitmap },
           { texture },
-          [width, height],
+          [bitmap.width, bitmap.height],
         )
-
-        const bufferSize = 256 * 3 * 4
 
         storageBuffer = device.createBuffer({
           size: bufferSize,
@@ -121,7 +135,7 @@ export function useHistogram(image: HTMLImageElement | null) {
         })
 
         const bindGroupCompute = device.createBindGroup({
-          layout: computePipeline.getBindGroupLayout(0),
+          layout: computePipeline.data.getBindGroupLayout(0),
           entries: [
             { binding: 0, resource: texture.createView() },
             { binding: 1, resource: { buffer: storageBuffer } },
@@ -129,7 +143,7 @@ export function useHistogram(image: HTMLImageElement | null) {
         })
 
         const bindGroupNormalize = device.createBindGroup({
-          layout: normalizePipeline.getBindGroupLayout(0),
+          layout: normalizePipeline.data.getBindGroupLayout(0),
           entries: [
             { binding: 1, resource: { buffer: storageBuffer } },
             { binding: 2, resource: { buffer: normalizedBuffer } },
@@ -139,13 +153,16 @@ export function useHistogram(image: HTMLImageElement | null) {
         const commandEncoder = device.createCommandEncoder()
 
         const pass1 = commandEncoder.beginComputePass()
-        pass1.setPipeline(computePipeline)
+        pass1.setPipeline(computePipeline.data)
         pass1.setBindGroup(0, bindGroupCompute)
-        pass1.dispatchWorkgroups(Math.ceil(width / 16), Math.ceil(height / 16))
+        pass1.dispatchWorkgroups(
+          Math.ceil(bitmap.width / 16),
+          Math.ceil(bitmap.height / 16),
+        )
         pass1.end()
 
         const pass2 = commandEncoder.beginComputePass()
-        pass2.setPipeline(normalizePipeline)
+        pass2.setPipeline(normalizePipeline.data)
         pass2.setBindGroup(0, bindGroupNormalize)
         pass2.dispatchWorkgroups(1)
         pass2.end()
@@ -174,19 +191,15 @@ export function useHistogram(image: HTMLImageElement | null) {
         return { r, g, b }
       }
       finally {
-        imageBitmap.close()
-        if (storageBuffer)
-          storageBuffer.destroy()
-        if (normalizedBuffer)
-          normalizedBuffer.destroy()
-        if (readBuffer)
-          readBuffer.destroy()
-        if (texture)
-          texture.destroy()
+        bitmap?.close()
+        storageBuffer?.destroy()
+        normalizedBuffer?.destroy()
+        readBuffer?.destroy()
+        texture?.destroy()
       }
     },
+    retry: 3,
+    retryDelay,
     staleTime: Infinity,
   })
-
-  return data
 }

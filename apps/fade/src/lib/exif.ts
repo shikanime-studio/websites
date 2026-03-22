@@ -22,6 +22,8 @@ export type ExifType
 
 export const MakeTagId = 0x010F
 export const ModelTagId = 0x0110
+export const ImageWidthTagId = 0x0100
+export const ImageHeightTagId = 0x0101
 export const ExifOffsetTagId = 0x8769
 export const ExposureTimeTagId = 0x829A
 export const FNumberTagId = 0x829D
@@ -33,6 +35,8 @@ export const LensModelTagId = 0xA433
 export type ExifTagEntry
   = | { tagId: typeof MakeTagId, value: string }
     | { tagId: typeof ModelTagId, value: string }
+    | { tagId: typeof ImageWidthTagId, value: number }
+    | { tagId: typeof ImageHeightTagId, value: number }
     | { tagId: typeof ExifOffsetTagId, value: number }
     | { tagId: typeof ExposureTimeTagId, value: number }
     | { tagId: typeof FNumberTagId, value: number }

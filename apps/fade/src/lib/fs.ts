@@ -13,6 +13,8 @@ export async function scanDirectory(
 
   for await (const handle of directoryHandle.values()) {
     if (handle.kind === 'file') {
+      if (handle.name === '.DS_Store' || handle.name === '.localized')
+        continue
       handles.push(handle)
     }
   }

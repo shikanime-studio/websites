@@ -1,8 +1,10 @@
+import type { FileItem } from '../lib/fs'
 import { Suspense } from 'react'
+import { useFile } from '../hooks/useFile'
 import { useHistogram } from '../hooks/useHistogram'
-import { useImageInfo } from '../hooks/useImageInfo'
 
 interface HistogramProps {
+  fileItem: FileItem
   className?: string
 }
 
@@ -16,11 +18,9 @@ function HistogramSkeleton({ className }: { className?: string }) {
   )
 }
 
-function HistogramContent({
-  className,
-  image,
-}: HistogramProps & { image: HTMLImageElement }) {
-  const data = useHistogram(image)
+function HistogramContent({ className, fileItem }: HistogramProps) {
+  const file = useFile(fileItem)
+  const { data } = useHistogram(file)
 
   if (!data)
     return null
@@ -65,15 +65,10 @@ function HistogramContent({
   )
 }
 
-export function Histogram({ className }: HistogramProps) {
-  const { image } = useImageInfo()
-
-  if (!image)
-    return null
-
+export function Histogram({ className, fileItem }: HistogramProps) {
   return (
     <Suspense fallback={<HistogramSkeleton className={className} />}>
-      <HistogramContent className={className} image={image} />
+      <HistogramContent fileItem={fileItem} className={className} />
     </Suspense>
   )
 }

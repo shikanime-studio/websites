@@ -1,7 +1,6 @@
 import type { FileItem } from '../lib/fs'
-import { useEffect, useState } from 'react'
+import { Suspense } from 'react'
 import { useFile } from '../hooks/useFile'
-import { useImageInfo } from '../hooks/useImageInfo'
 import { useModal } from '../hooks/useModal'
 import { useObjectUrl } from '../hooks/useObjectUrl'
 import { FileIcon } from './FileIcon'
@@ -14,23 +13,9 @@ interface ImageViewerProps {
 }
 
 export function ImageViewer({ fileItem }: ImageViewerProps) {
-  const { file } = useFile(fileItem ?? null)
-  const { url } = useObjectUrl(file ?? null)
-  const { setImage } = useImageInfo()
+  const file = useFile(fileItem)
+  const url = useObjectUrl(file)
   const { modal, setModal } = useModal()
-  const [loadedImage, setLoadedImage] = useState<HTMLImageElement | null>(null)
-  const [prevUrl, setPrevUrl] = useState<string | null>(null)
-
-  if (url !== prevUrl) {
-    setPrevUrl(url ?? null)
-    setLoadedImage(null)
-  }
-
-  useEffect(() => {
-    if (!file || !url || !(fileItem?.mimeType?.startsWith('image/') ?? false)) {
-      setImage(null)
-    }
-  }, [file, url, fileItem?.mimeType, setImage])
 
   if (!file || !url)
     return null
@@ -40,32 +25,22 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
       {fileItem?.mimeType?.startsWith('image/')
         ? (
             <>
-              <img
-                src={url}
-                alt={fileItem?.handle.name}
-                className="hidden"
-                onLoad={(e) => {
-                  const img = e.currentTarget
-                  setLoadedImage(img)
-                  setImage(img)
-                }}
-              />
               <div className="contents">
-                {loadedImage
-                  ? (
-                      <ImageRender
-                        image={loadedImage}
-                        className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-                        onDoubleClick={() => {
-                          setModal('fullscreen')
-                        }}
-                      />
-                    )
-                  : (
-                      <div className="flex h-full w-full items-center justify-center">
-                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
-                      </div>
-                    )}
+                <Suspense
+                  fallback={(
+                    <div className="flex h-full w-full items-center justify-center">
+                      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+                    </div>
+                  )}
+                >
+                  <ImageRender
+                    file={file}
+                    className="animate-fade-in max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                    onDoubleClick={() => {
+                      setModal('fullscreen')
+                    }}
+                  />
+                </Suspense>
               </div>
               <FullscreenModal
                 open={modal === 'fullscreen'}
@@ -74,12 +49,18 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
                 }}
               >
                 <FullscreenNavigation>
-                  {loadedImage && (
+                  <Suspense
+                    fallback={(
+                      <div className="flex h-full w-full items-center justify-center">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+                      </div>
+                    )}
+                  >
                     <ImageRender
-                      image={loadedImage}
+                      file={file}
                       className="max-h-full max-w-full object-contain"
                     />
-                  )}
+                  </Suspense>
                 </FullscreenNavigation>
               </FullscreenModal>
             </>

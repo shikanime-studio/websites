@@ -1,4 +1,4 @@
-import type { Setting } from '../lib/db'
+import type { ExifCameraInfo, Setting } from '../lib/db'
 import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
@@ -9,23 +9,25 @@ import {
   Info,
   Sun,
 } from 'lucide-react'
-import { Activity, Suspense } from 'react'
-import { useExif } from '../hooks/useExif'
+import { Activity, Suspense, useEffect } from 'react'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
-import { useImageInfo } from '../hooks/useImageInfo'
 import { useLighting } from '../hooks/useLighting'
-import { settingsCollection } from '../lib/db'
+import { exifCollection, settingsCollection } from '../lib/db'
 import {
   ExposureTimeTagId,
   FNumberTagId,
   FocalLengthTagId,
+  ImageHeightTagId,
+  ImageWidthTagId,
   ISOTagId,
   LensModelTagId,
   MakeTagId,
   ModelTagId,
 } from '../lib/exif'
+import { createImageDataView } from '../lib/image'
 import { formatBytes } from '../lib/intl'
+import { RafDataView } from '../lib/raf'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
 
@@ -102,14 +104,125 @@ function EmptySidebar() {
 }
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
+  const { exif } = useExifCameraInfo(fileItem)
+
   return (
     <>
-      <GeneralSection fileItem={fileItem} />
+      <GeneralSection fileItem={fileItem} exif={exif} />
       <LightingSection />
-      <CameraSection fileItem={fileItem} />
+      <CameraSection exif={exif} />
       <GroupedFilesSection fileItem={fileItem} />
     </>
   )
+}
+
+function getExifId(fileItem: FileItem, file?: File) {
+  return file
+    ? `${fileItem.handle.name}:${file.size.toString()}:${file.lastModified.toString()}`
+    : fileItem.handle.name
+}
+
+function useExifCameraInfo(fileItem: FileItem) {
+  const file = useFile(fileItem)
+
+  const exifId = getExifId(fileItem, file)
+
+  const { data: exif } = useLiveQuery(q =>
+    q
+      .from({ exif: exifCollection })
+      .where(({ exif }) => eq(exif.id, exifId))
+      .findOne(),
+  )
+
+  useEffect(() => {
+    let cancelled = false
+
+    const run = async () => {
+      if (!file)
+        return
+
+      const mimeType = fileItem.mimeType ?? null
+      if (!mimeType)
+        return
+      if (!mimeType.startsWith('image/') && mimeType !== 'image/x-fujifilm-raf')
+        return
+
+      const view = await createImageDataView(fileItem)
+      if (!view)
+        return
+
+      const tagEntries = view instanceof RafDataView
+        ? view.getJpegImage()?.getExif()?.getTagEntries()
+        : view.getExif()?.getTagEntries()
+
+      const tags = Object.fromEntries((tagEntries ?? []).map(e => [e.tagId, e.value]))
+
+      const next: Omit<ExifCameraInfo, 'id' | 'updatedAt'> = {
+        fileName: fileItem.handle.name,
+        mimeType: fileItem.mimeType ?? null,
+        make: (tags[MakeTagId] as string | undefined) ?? null,
+        model: (tags[ModelTagId] as string | undefined) ?? null,
+        lensModel: (tags[LensModelTagId] as string | undefined) ?? null,
+        fNumber: (tags[FNumberTagId] as number | undefined) ?? null,
+        exposureTime: (tags[ExposureTimeTagId] as number | undefined) ?? null,
+        iso: (tags[ISOTagId] as number | undefined) ?? null,
+        focalLength: (tags[FocalLengthTagId] as number | undefined) ?? null,
+        width: (tags[ImageWidthTagId] as number | undefined) ?? null,
+        height: (tags[ImageHeightTagId] as number | undefined) ?? null,
+      }
+
+      if (cancelled)
+        return
+
+      if (!exif) {
+        exifCollection.insert({
+          id: exifId,
+          ...next,
+          updatedAt: Date.now(),
+        })
+        return
+      }
+
+      const changed
+        = exif.fileName !== next.fileName
+          || exif.mimeType !== next.mimeType
+          || exif.make !== next.make
+          || exif.model !== next.model
+          || exif.lensModel !== next.lensModel
+          || exif.fNumber !== next.fNumber
+          || exif.exposureTime !== next.exposureTime
+          || exif.iso !== next.iso
+          || exif.focalLength !== next.focalLength
+          || exif.width !== next.width
+          || exif.height !== next.height
+
+      if (!changed)
+        return
+
+      exifCollection.update(exifId, (draft) => {
+        draft.fileName = next.fileName
+        draft.mimeType = next.mimeType
+        draft.make = next.make
+        draft.model = next.model
+        draft.lensModel = next.lensModel
+        draft.fNumber = next.fNumber
+        draft.exposureTime = next.exposureTime
+        draft.iso = next.iso
+        draft.focalLength = next.focalLength
+        draft.width = next.width
+        draft.height = next.height
+        draft.updatedAt = Date.now()
+      })
+    }
+
+    void run()
+
+    return () => {
+      cancelled = true
+    }
+  }, [exif, exifId, file, fileItem])
+
+  return { exif, exifId }
 }
 
 function LightingSection() {
@@ -305,10 +418,9 @@ function Slider({
   )
 }
 
-function GeneralSection({ fileItem }: { fileItem: FileItem }) {
+function GeneralSection({ fileItem, exif }: { fileItem: FileItem, exif: ExifCameraInfo | undefined }) {
   const { handle } = fileItem
-  const { file } = useFile(fileItem)
-  const { image } = useImageInfo()
+  const file = useFile(fileItem)
 
   if (!file)
     return null
@@ -322,7 +434,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
       <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
         {fileItem.mimeType?.startsWith('image/')
           ? (
-              <Histogram />
+              <Histogram fileItem={fileItem} />
             )
           : (
               <div className="flex h-full w-full items-center justify-center">
@@ -341,16 +453,16 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
           </dd>
         </div>
 
-        {image && (
+        {exif?.width && exif?.height && exif.width > 0 && exif.height > 0 && (
           <div className="flex flex-col gap-1">
             <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
               Dimensions
             </dt>
             <dd className="m-0 text-sm font-medium">
-              {image.naturalWidth}
+              {exif.width}
               {' '}
               ×
-              {image.naturalHeight}
+              {exif.height}
             </dd>
           </div>
         )}
@@ -366,21 +478,17 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   )
 }
 
-function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem)
-
-  if (!exifData || exifData.length === 0)
+function CameraSection({ exif }: { exif: ExifCameraInfo | undefined }) {
+  if (!exif)
     return null
 
-  const tags = Object.fromEntries(exifData.map(e => [e.tagId, e.value]))
-
-  const make = tags[MakeTagId] as string | undefined
-  const model = tags[ModelTagId] as string | undefined
-  const lensModel = tags[LensModelTagId] as string | undefined
-  const fNumber = tags[FNumberTagId] as number | undefined
-  const exposureTime = tags[ExposureTimeTagId] as number | undefined
-  const iso = tags[ISOTagId] as number | undefined
-  const focalLength = tags[FocalLengthTagId] as number | undefined
+  const make = exif.make ?? undefined
+  const model = exif.model ?? undefined
+  const lensModel = exif.lensModel ?? undefined
+  const fNumber = exif.fNumber ?? undefined
+  const exposureTime = exif.exposureTime ?? undefined
+  const iso = exif.iso ?? undefined
+  const focalLength = exif.focalLength ?? undefined
 
   return (
     <CollapsibleSection

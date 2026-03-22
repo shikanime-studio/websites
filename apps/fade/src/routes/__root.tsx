@@ -1,3 +1,4 @@
+import type { ErrorComponentProps } from '@tanstack/react-router'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtoolsPanel } from '@tanstack/react-query-devtools'
@@ -37,6 +38,7 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  errorComponent: RootErrorComponent,
   shellComponent: RootDocument,
 })
 
@@ -76,6 +78,35 @@ function RootComponent() {
         </ClientOnly>
       </MixpanelProvider>
     </QueryClientProvider>
+  )
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+function RootErrorComponent({ error }: ErrorComponentProps) {
+  const message = error instanceof Error ? error.message : String(error)
+
+  return (
+    <div className="bg-base-200 text-base-content flex min-h-screen items-center justify-center p-6">
+      <div className="bg-base-100 border-base-300 w-full max-w-lg rounded-box border p-6 shadow">
+        <h1 className="m-0 text-xl font-semibold">Something went wrong</h1>
+        <p className="mt-2 mb-0 opacity-70">
+          An unexpected error occurred while rendering this page.
+        </p>
+        <pre className="bg-base-200 mt-4 overflow-auto rounded-md p-3 text-sm opacity-80">
+          {message}
+        </pre>
+        <div className="mt-4 flex justify-end">
+          <button
+            className="btn btn-warning"
+            onClick={() => {
+              window.location.reload()
+            }}
+          >
+            Reload
+          </button>
+        </div>
+      </div>
+    </div>
   )
 }
 

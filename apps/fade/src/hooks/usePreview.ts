@@ -1,10 +1,10 @@
 import type { FileItem } from '../lib/fs'
+import { RafDataView } from '@shikanime-studio/medialab/raf'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { RafDataView } from '../lib/raf'
 import { useFile } from './useFile'
 
-export function usePreview(fileItem: FileItem | null) {
-  const { file } = useFile(fileItem)
+export function usePreview(fileItem?: FileItem) {
+  const file = useFile(fileItem)
 
   const { data: blob } = useSuspenseQuery({
     queryKey: ['preview', fileItem, file],
@@ -28,5 +28,5 @@ export function usePreview(fileItem: FileItem | null) {
     staleTime: Infinity,
   })
 
-  return { blob }
+  return { blob: blob ?? undefined }
 }

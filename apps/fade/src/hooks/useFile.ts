@@ -1,7 +1,7 @@
 import type { FileItem } from '../lib/fs'
 import { useSuspenseQuery } from '@tanstack/react-query'
 
-export function useFile(fileItem: FileItem | null) {
+export function useFile(fileItem?: FileItem) {
   const { data: file } = useSuspenseQuery({
     queryKey: ['file', fileItem],
     queryFn: async () => {
@@ -12,5 +12,5 @@ export function useFile(fileItem: FileItem | null) {
     staleTime: Infinity,
   })
 
-  return { file }
+  return file ?? undefined
 }

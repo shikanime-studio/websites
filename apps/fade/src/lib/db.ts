@@ -60,6 +60,24 @@ export const keymap = z.discriminatedUnion('command', [
 export type Keymap = z.infer<typeof keymap>
 export type Command = Keymap['command']
 
+export const exifCameraInfo = z.object({
+  id: z.string(),
+  fileName: z.string(),
+  mimeType: z.string().nullable(),
+  make: z.string().nullable(),
+  model: z.string().nullable(),
+  lensModel: z.string().nullable(),
+  fNumber: z.number().nullable(),
+  exposureTime: z.number().nullable(),
+  iso: z.number().nullable(),
+  focalLength: z.number().nullable(),
+  width: z.number().nullable(),
+  height: z.number().nullable(),
+  updatedAt: z.number(),
+})
+
+export type ExifCameraInfo = z.infer<typeof exifCameraInfo>
+
 export const keymapsCollection = createCollection(
   localStorageCollectionOptions({
     getKey: item => item.command,
@@ -75,5 +93,14 @@ export const settingsCollection = createCollection(
     id: 'fade-settings',
     schema: setting,
     storageKey: 'fade-settings',
+  }),
+)
+
+export const exifCollection = createCollection(
+  localStorageCollectionOptions({
+    getKey: item => item.id,
+    id: 'fade-exif',
+    schema: exifCameraInfo,
+    storageKey: 'fade-exif',
   }),
 )

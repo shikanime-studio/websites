@@ -1,7 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import { useVirtualizer } from '@tanstack/react-virtual'
-import { Image } from '@unpic/react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Activity, Suspense, useEffect, useRef } from 'react'
 import { useElementSize } from '../hooks/useElementSize'
@@ -204,7 +203,7 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
-  const { url } = useThumbnail(fileItem, 80, 80)
+  const { data: url } = useThumbnail(fileItem, 80, 80)
 
   return (
     <button
@@ -218,16 +217,16 @@ function FilmstripItemContent({
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
     >
-      {url && fileItem?.mimeType?.startsWith('image/')
+      {url
         ? (
-            <Image
+            <img
               src={url}
               alt={handle.name}
               className="h-full w-full object-cover"
-              layout="constrained"
               width={80}
               height={80}
-              background="auto"
+              loading="lazy"
+              decoding="async"
             />
           )
         : (

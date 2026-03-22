@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:",
+    "@shikanime-studio/medialab": "workspace:*",
     "@tailwindcss/vite": "catalog:",
     "@tanstack/react-db": "catalog:",
     "@tanstack/react-devtools": "catalog:",
