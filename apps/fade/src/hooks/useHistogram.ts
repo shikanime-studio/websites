@@ -1,7 +1,6 @@
 import { useGpuDevice } from '@shikanime-studio/medialab/hooks/gpu'
 import { retryDelay } from '@shikanime-studio/medialab/utils'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
 import histogramShader from '../shaders/histogram.wgsl?raw'
 
 export interface Bins {
@@ -60,116 +59,6 @@ function useHistogramNormalizePipeline(device: GPUDevice | null) {
   })
 }
 
-function useHistogramBitmap(src: string | null, width: number, height: number) {
-  const result = useSuspenseQuery({
-    queryKey: ['histogram-bitmap', src, width, height],
-    queryFn: async () => {
-      if (!src || width <= 0 || height <= 0)
-        return null
-
-      const response = await fetch(src)
-      const blob = await response.blob()
-      return await createImageBitmap(blob)
-    },
-    retry: 3,
-    retryDelay,
-    staleTime: Infinity,
-  })
-
-  useEffect(() => {
-    return () => {
-      result.data?.close()
-    }
-  }, [result.data])
-
-  return result
-}
-
-function useHistogramTexture(device: GPUDevice | null, bitmap: ImageBitmap | null) {
-  const result = useSuspenseQuery({
-    queryKey: ['histogram-texture', device, bitmap],
-    queryFn: () => {
-      if (!device || !bitmap)
-        return null
-
-      const texture = device.createTexture({
-        size: [bitmap.width, bitmap.height],
-        format: 'rgba8unorm',
-        usage:
-          GPUTextureUsage.TEXTURE_BINDING
-          | GPUTextureUsage.COPY_DST
-          | GPUTextureUsage.RENDER_ATTACHMENT,
-      })
-
-      device.queue.copyExternalImageToTexture(
-        { source: bitmap },
-        { texture },
-        [bitmap.width, bitmap.height],
-      )
-
-      return texture
-    },
-    retry: 3,
-    retryDelay,
-    staleTime: Infinity,
-  })
-
-  useEffect(() => {
-    return () => {
-      result.data?.destroy()
-    }
-  }, [result.data])
-
-  return result
-}
-
-function useHistogramBuffers(device: GPUDevice | null) {
-  const bufferSize = 256 * 3 * 4
-
-  const result = useSuspenseQuery({
-    queryKey: ['histogram-buffers', device, bufferSize],
-    queryFn: () => {
-      if (!device)
-        return null
-
-      const storageBuffer = device.createBuffer({
-        size: bufferSize,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
-      })
-
-      const normalizedBuffer = device.createBuffer({
-        size: bufferSize,
-        usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
-      })
-
-      const readBuffer = device.createBuffer({
-        size: bufferSize,
-        usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-      })
-
-      return {
-        bufferSize,
-        storageBuffer,
-        normalizedBuffer,
-        readBuffer,
-      }
-    },
-    retry: 3,
-    retryDelay,
-    staleTime: Infinity,
-  })
-
-  useEffect(() => {
-    return () => {
-      result.data?.storageBuffer.destroy()
-      result.data?.normalizedBuffer.destroy()
-      result.data?.readBuffer.destroy()
-    }
-  }, [result.data])
-
-  return result
-}
-
 export function useHistogram(image: HTMLImageElement | null) {
   const { device } = useGpuDevice()
   const computePipeline = useHistogramComputePipeline(device)
@@ -178,9 +67,6 @@ export function useHistogram(image: HTMLImageElement | null) {
   const src = image ? (image.currentSrc || image.src) : null
   const width = image?.naturalWidth ?? 0
   const height = image?.naturalHeight ?? 0
-  const bitmap = useHistogramBitmap(src, width, height)
-  const texture = useHistogramTexture(device, bitmap.data)
-  const buffers = useHistogramBuffers(device)
 
   return useSuspenseQuery({
     queryKey: [
@@ -191,79 +77,126 @@ export function useHistogram(image: HTMLImageElement | null) {
       height,
       computePipeline.data,
       normalizePipeline.data,
-      bitmap.data,
-      bitmap.data?.width,
-      bitmap.data?.height,
-      texture.data,
-      buffers.data,
-      buffers.data?.bufferSize,
-      buffers.data?.storageBuffer,
-      buffers.data?.normalizedBuffer,
-      buffers.data?.readBuffer,
     ],
     queryFn: async () => {
       if (!device || !src || width <= 0 || height <= 0)
         return null
       if (!computePipeline.data || !normalizePipeline.data)
         return null
-      if (!bitmap.data || !texture.data || !buffers.data)
-        return null
 
-      const bindGroupCompute = device.createBindGroup({
-        layout: computePipeline.data.getBindGroupLayout(0),
-        entries: [
-          { binding: 0, resource: texture.data.createView() },
-          { binding: 1, resource: { buffer: buffers.data.storageBuffer } },
-        ],
-      })
+      let bitmap: ImageBitmap | null = null
+      let texture: GPUTexture | null = null
+      let storageBuffer: GPUBuffer | null = null
+      let normalizedBuffer: GPUBuffer | null = null
+      let readBuffer: GPUBuffer | null = null
 
-      const bindGroupNormalize = device.createBindGroup({
-        layout: normalizePipeline.data.getBindGroupLayout(0),
-        entries: [
-          { binding: 1, resource: { buffer: buffers.data.storageBuffer } },
-          { binding: 2, resource: { buffer: buffers.data.normalizedBuffer } },
-        ],
-      })
+      const bufferSize = 256 * 3 * 4
 
-      const commandEncoder = device.createCommandEncoder()
+      try {
+        const response = await fetch(src)
+        const blob = await response.blob()
+        try {
+          bitmap = await createImageBitmap(blob)
+        }
+        catch {
+          return null
+        }
+        if (bitmap.width <= 0 || bitmap.height <= 0)
+          return null
 
-      const pass1 = commandEncoder.beginComputePass()
-      pass1.setPipeline(computePipeline.data)
-      pass1.setBindGroup(0, bindGroupCompute)
-      pass1.dispatchWorkgroups(
-        Math.ceil(bitmap.data.width / 16),
-        Math.ceil(bitmap.data.height / 16),
-      )
-      pass1.end()
+        texture = device.createTexture({
+          size: [bitmap.width, bitmap.height],
+          format: 'rgba8unorm',
+          usage:
+            GPUTextureUsage.TEXTURE_BINDING
+            | GPUTextureUsage.COPY_DST
+            | GPUTextureUsage.RENDER_ATTACHMENT,
+        })
 
-      const pass2 = commandEncoder.beginComputePass()
-      pass2.setPipeline(normalizePipeline.data)
-      pass2.setBindGroup(0, bindGroupNormalize)
-      pass2.dispatchWorkgroups(1)
-      pass2.end()
+        device.queue.copyExternalImageToTexture(
+          { source: bitmap },
+          { texture },
+          [bitmap.width, bitmap.height],
+        )
 
-      commandEncoder.copyBufferToBuffer(
-        buffers.data.normalizedBuffer,
-        0,
-        buffers.data.readBuffer,
-        0,
-        buffers.data.bufferSize,
-      )
+        storageBuffer = device.createBuffer({
+          size: bufferSize,
+          usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        })
 
-      device.queue.submit([commandEncoder.finish()])
+        normalizedBuffer = device.createBuffer({
+          size: bufferSize,
+          usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
+        })
 
-      await buffers.data.readBuffer.mapAsync(GPUMapMode.READ)
+        readBuffer = device.createBuffer({
+          size: bufferSize,
+          usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        })
 
-      const arrayBuffer = buffers.data.readBuffer.getMappedRange()
-      const result = new Float32Array(arrayBuffer)
+        const bindGroupCompute = device.createBindGroup({
+          layout: computePipeline.data.getBindGroupLayout(0),
+          entries: [
+            { binding: 0, resource: texture.createView() },
+            { binding: 1, resource: { buffer: storageBuffer } },
+          ],
+        })
 
-      const r = [...result.slice(0, 256)]
-      const g = [...result.slice(256, 512)]
-      const b = [...result.slice(512, 768)]
+        const bindGroupNormalize = device.createBindGroup({
+          layout: normalizePipeline.data.getBindGroupLayout(0),
+          entries: [
+            { binding: 1, resource: { buffer: storageBuffer } },
+            { binding: 2, resource: { buffer: normalizedBuffer } },
+          ],
+        })
 
-      buffers.data.readBuffer.unmap()
+        const commandEncoder = device.createCommandEncoder()
 
-      return { r, g, b }
+        const pass1 = commandEncoder.beginComputePass()
+        pass1.setPipeline(computePipeline.data)
+        pass1.setBindGroup(0, bindGroupCompute)
+        pass1.dispatchWorkgroups(
+          Math.ceil(bitmap.width / 16),
+          Math.ceil(bitmap.height / 16),
+        )
+        pass1.end()
+
+        const pass2 = commandEncoder.beginComputePass()
+        pass2.setPipeline(normalizePipeline.data)
+        pass2.setBindGroup(0, bindGroupNormalize)
+        pass2.dispatchWorkgroups(1)
+        pass2.end()
+
+        commandEncoder.copyBufferToBuffer(
+          normalizedBuffer,
+          0,
+          readBuffer,
+          0,
+          bufferSize,
+        )
+
+        device.queue.submit([commandEncoder.finish()])
+
+        await readBuffer.mapAsync(GPUMapMode.READ)
+
+        const arrayBuffer = readBuffer.getMappedRange()
+        const result = new Float32Array(arrayBuffer)
+
+        const r = [...result.slice(0, 256)]
+        const g = [...result.slice(256, 512)]
+        const b = [...result.slice(512, 768)]
+
+        readBuffer.unmap()
+
+        return { r, g, b }
+      }
+      finally {
+        bitmap?.close()
+        storageBuffer?.destroy()
+        normalizedBuffer?.destroy()
+        readBuffer?.destroy()
+        texture?.destroy()
+      }
     },
     retry: 3,
     retryDelay,
