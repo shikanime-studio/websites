@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { createRafDataView, decodeRafRasterToU16, getRafRasterFromPayload } from '../raf'
 import rafShader from '../shaders/raf.wgsl?raw'
+import { useGpuDevice, useGpuFormat } from './gpu'
 import { retryDelay } from './utils'
 
 const LightingParamsSchema = z.object({
@@ -158,11 +159,11 @@ export function useRafImage(fileItem: FileItem | null) {
 
 export function useRafRender(
   canvasRef: RefObject<HTMLCanvasElement | null>,
-  device: GPUDevice | null,
-  format: GPUTextureFormat | null,
   cfa: CfaDataView<ArrayBufferLike> | null,
   options: RafRendererOptions = {},
 ) {
+  const { device } = useGpuDevice()
+  const format = useGpuFormat()
   const { data: resources } = useRafPipeline(device, format)
   const { data: raster } = useRafDecodedRaster(cfa)
 

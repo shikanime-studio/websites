@@ -204,7 +204,7 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
-  const { url } = useThumbnail(fileItem, 80, 80)
+  const { data: url } = useThumbnail(fileItem, 80, 80)
 
   return (
     <button

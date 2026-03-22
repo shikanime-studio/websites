@@ -20,7 +20,7 @@ function HistogramContent({
   className,
   image,
 }: HistogramProps & { image: HTMLImageElement }) {
-  const data = useHistogram(image)
+  const { data } = useHistogram(image)
 
   if (!data)
     return null

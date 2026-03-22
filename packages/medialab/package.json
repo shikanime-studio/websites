@@ -10,13 +10,17 @@
   "exports": {
     "./exif": "./src/exif.ts",
     "./hooks/exif": "./src/hooks/exif.ts",
+    "./hooks/gpu": "./src/hooks/gpu.ts",
     "./hooks/image": "./src/hooks/image.ts",
     "./hooks/raf": "./src/hooks/raf.ts",
     "./image": "./src/image.ts",
     "./jpeg": "./src/jpeg.ts",
     "./png": "./src/png.ts",
+    "./providers/GpuAdapterProvider": "./src/providers/GpuAdapterProvider.tsx",
+    "./providers/GpuDeviceProvider": "./src/providers/GpuDeviceProvider.tsx",
     "./raf": "./src/raf.ts",
     "./tiff": "./src/tiff.ts",
+    "./utils": "./src/utils.ts",
     "./webp": "./src/webp.ts"
   },
   "scripts": {

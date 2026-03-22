@@ -1,7 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { useRafImage, useRafRender } from '@shikanime-studio/medialab/hooks/raf'
 import { useRef } from 'react'
-import { useGPU } from '../hooks/useGPU'
 import { useLighting } from '../hooks/useLighting'
 
 interface RawImageRenderProps {
@@ -18,12 +17,9 @@ export function RawImageRender({
   const { data: cfa } = useRafImage(fileItem ?? null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const lighting = useLighting()
-  const { device, format } = useGPU()
 
   useRafRender(
     canvasRef,
-    device,
-    format,
     cfa,
     { lighting },
   )

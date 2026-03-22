@@ -368,12 +368,12 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
 }
 
 function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem)
+  const { data: exif } = useExif(fileItem)
 
-  if (!exifData || exifData.length === 0)
+  if (!exif || exif.length === 0)
     return null
 
-  const tags = Object.fromEntries((exifData as Array<ExifTagEntry>).map(e => [e.tagId, e.value]))
+  const tags = Object.fromEntries((exif as Array<ExifTagEntry>).map(e => [e.tagId, e.value]))
 
   const make = tags[MakeTagId] as string | undefined
   const model = tags[ModelTagId] as string | undefined
