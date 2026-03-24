@@ -52,10 +52,15 @@ function createRemoteConfig() {
   } satisfies Config
 }
 
+const envFlags = z.object({
+  LOCAL: z.string().optional(),
+  REMOTE: z.string().optional(),
+}).parse(process.env)
+
 export default defineConfig(
-  process.env.LOCAL !== 'true'
+  envFlags.LOCAL !== 'true'
     ? createLocalConfig()
-    : process.env.REMOTE !== 'true'
+    : envFlags.REMOTE !== 'true'
       ? createRemoteConfig()
       : createLocalConfig(),
 )

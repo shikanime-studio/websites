@@ -10,7 +10,7 @@ interface Props {
 const {
   title = 'Shikanime Studio',
   description = 'Where ideas collide and imagination soars, we are proud dreamers on the mission to make them a reality',
-} = Astro.props;
+} = Astro.props
 ---
 
 <html lang="en">
@@ -32,15 +32,13 @@ const {
       <slot />
     </div>
     <script>
-  import mixpanel from 'mixpanel-browser'
+      import mixpanel from 'mixpanel-browser'
 
-  mixpanel.init(import.meta.env.PUBLIC_MIXPANEL_TOKEN, {
-    autocapture: true,
-    record_sessions_percent: 100,
-    api_host:
-          import.meta.env.PUBLIC_MIXPANEL_API_HOST
-            || 'https://api-eu.mixpanel.com',
-  })
-  </script>
+      mixpanel.init(import.meta.env.PUBLIC_MIXPANEL_TOKEN, {
+        autocapture: true,
+        record_sessions_percent: 100,
+        api_host: import.meta.env.PUBLIC_MIXPANEL_API_HOST || 'https://api-eu.mixpanel.com',
+      })
+    </script>
   </body>
 </html>

@@ -21,15 +21,10 @@ export function createAuth(
     secret: env.BETTER_AUTH_SECRET,
     baseURL: import.meta.env.SITE,
     socialProviders: {
-      ...(import.meta.env.PUBLIC_GOOGLE_CLIENT_ID
-        && env.GOOGLE_CLIENT_SECRET
-        ? {
-            google: {
-              clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
-              clientSecret: env.GOOGLE_CLIENT_SECRET,
-            },
-          }
-        : {}),
+      google: {
+        clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      },
     },
     advanced: {
       ipAddress: {
