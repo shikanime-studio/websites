@@ -9,9 +9,9 @@ interface Props {
   session?: {
     user: {
       name: string
-      image?: string
+      image?: string | null | undefined
     }
-  }
+  } | null
 }
 
 const { session } = Astro.props
