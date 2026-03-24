@@ -1,6 +1,6 @@
 import type { FileItem } from '../lib/fs'
 import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
-import { Activity, Suspense } from 'react'
+import { Suspense } from 'react'
 import { useGallery } from '../hooks/useGallery'
 import { ImageViewer } from './ImageViewer'
 import { RawImageViewer } from './RawImageViewer'
@@ -33,9 +33,7 @@ export function MainViewer() {
             <span className="loading loading-spinner loading-lg"></span>
           }
         >
-          <Activity mode={selectedFile ? 'visible' : 'hidden'}>
-            <MainViewerContent fileItem={selectedFile ?? undefined} />
-          </Activity>
+          {selectedFile ? <MainViewerContent fileItem={selectedFile} /> : null}
         </Suspense>
       </div>
 
@@ -66,13 +64,13 @@ function EmptyMainViewer() {
 }
 
 interface MainViewerContentProps {
-  fileItem?: FileItem
+  fileItem: FileItem
 }
 
 function MainViewerContent({ fileItem }: MainViewerContentProps) {
   if (fileItem?.mimeType === 'image/x-fujifilm-raf') {
-    return <RawImageViewer fileItem={fileItem ?? undefined} />
+    return <RawImageViewer fileItem={fileItem} />
   }
 
-  return <ImageViewer fileItem={fileItem ?? undefined} />
+  return <ImageViewer fileItem={fileItem} />
 }

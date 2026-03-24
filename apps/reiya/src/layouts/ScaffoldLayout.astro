@@ -9,7 +9,7 @@ const auth = createAuth(db)
 
 const session = await auth.api.getSession({
   headers: Astro.request.headers,
-});
+})
 ---
 
 <div class="flex min-h-screen flex-col">

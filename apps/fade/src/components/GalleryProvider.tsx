@@ -64,7 +64,7 @@ export function GalleryProvider({
     selectFile(files.length - 1)
   })
 
-  const selectedFile = files.length > 0 ? files[selectedIndex] : null
+  const selectedFile = files[selectedIndex] ?? null
 
   return (
     <GalleryContext

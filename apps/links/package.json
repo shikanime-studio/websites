@@ -10,9 +10,11 @@
   "scripts": {
     "build": "astro build",
     "check": "astro check",
+    "check:fix": "astro check --fix",
     "deploy": "wrangler deploy",
     "dev": "astro dev",
-    "lint": "astro check --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "astro preview",
     "start": "astro dev",
     "types": "wrangler types src/worker-configuration.d.ts",
@@ -32,6 +34,18 @@
     "tailwindcss": "catalog:"
   },
   "devDependencies": {
+    "@antfu/eslint-config": "catalog:",
+    "@e18e/eslint-plugin": "catalog:",
+    "@tsconfig/node-lts": "catalog:",
+    "@tsconfig/node-ts": "catalog:",
+    "@tsconfig/strictest": "catalog:",
+    "@typescript-eslint/eslint-plugin": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-astro": "catalog:",
+    "eslint-plugin-format": "catalog:",
+    "eslint-plugin-import-lite": "catalog:",
+    "prettier-plugin-astro": "catalog:",
+    "typescript": "catalog:",
     "wrangler": "catalog:"
   }
 }

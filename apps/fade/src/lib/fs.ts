@@ -49,6 +49,10 @@ export async function scanDirectory(
 
   for (const groupItems of groups.values()) {
     let primaryItem = groupItems[0]
+    if (!primaryItem) {
+      continue
+    }
+
     let bestScore = -1
 
     for (const item of groupItems) {

@@ -4,7 +4,6 @@ import pluginRouter from '@tanstack/eslint-plugin-router'
 
 export default antfu(
   {
-    astro: true,
     autoRenamePlugins: true,
     formatters: true,
     gitignore: true,
@@ -22,9 +21,24 @@ export default antfu(
     yaml: false,
   },
   {
+    ignores: [
+      'dist/**',
+      '.wrangler/**',
+      '.tanstack/**',
+      'playwright-report/**',
+      'test-results/**',
+    ],
+  },
+  {
     files: ['**/routeTree.gen.ts'],
     rules: {
       'eslint-comments/no-unlimited-disable': 'off',
+    },
+  },
+  {
+    files: ['**/routes/**/*.{ts,tsx}'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
     },
   },
   ...pluginQuery.configs['flat/recommended'],

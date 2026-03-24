@@ -7,11 +7,11 @@ declare namespace Cloudflare {
   }
 }
 
-declare global {
-  interface ImportMeta {
-    readonly env: {
-      readonly PUBLIC_GOOGLE_CLIENT_ID: string
-      readonly SITE: string
-    }
-  }
+interface ImportMetaEnv {
+  readonly PUBLIC_GOOGLE_CLIENT_ID: string
+  readonly SITE: string
+}
+
+interface ImportMeta {
+  readonly env: ImportMetaEnv
 }
