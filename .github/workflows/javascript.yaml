@@ -1,8 +1,6 @@
 jobs:
   build:
     name: Build
-    needs:
-      - check
     runs-on: ubuntu-latest
     steps:
       - continue-on-error: true
@@ -47,8 +45,6 @@ jobs:
       - run: corepack pnpm --recursive check
   lint:
     name: Lint
-    needs:
-      - check
     runs-on: ubuntu-latest
     steps:
       - continue-on-error: true
