@@ -70,7 +70,7 @@
         treefmt-nix.flakeModule
       ];
       perSystem =
-        { pkgs, ... }:
+        { lib, pkgs, ... }:
         {
           devenv.shells.default = {
             imports = [
@@ -110,6 +110,144 @@
                 "packages/*/node_modules/*"
               ];
             };
+          };
+          packages = {
+            fade = pkgs.stdenv.mkDerivation (finalAttrs: {
+              pname = "fade";
+              version = "0.0.0";
+              src = lib.cleanSource ./.;
+              pnpmRoot = ".";
+              pnpmWorkspaces = [ "@shikanime-studio/fade" ];
+              nativeBuildInputs = with pkgs; [
+                nodejs
+                pnpmConfigHook
+                pnpm_10
+              ];
+              buildPhase = ''
+                runHook preBuild
+                pnpm --filter=@shikanime-studio/fade build
+                runHook postBuild
+              '';
+              installPhase = ''
+                runHook preInstall
+                mkdir -p $out
+                cp -r apps/fade/dist/* $out
+                runHook postInstall
+              '';
+              pnpmDeps = pkgs.fetchPnpmDeps {
+                inherit (finalAttrs)
+                  pname
+                  pnpmWorkspaces
+                  src
+                  version
+                  ;
+                pnpm = pkgs.pnpm_10;
+                fetcherVersion = 3;
+                hash = "sha256-rPK6+LPNWBbHUGGJVSVSNjCfr5ab+OsFuYYVJ7J7WPI=";
+              };
+            });
+            links = pkgs.stdenv.mkDerivation (finalAttrs: {
+              pname = "links";
+              version = "0.0.0";
+              src = lib.cleanSource ./.;
+              pnpmRoot = ".";
+              pnpmWorkspaces = [ "@shikanime-studio/links" ];
+              nativeBuildInputs = with pkgs; [
+                nodejs
+                pnpmConfigHook
+                pnpm_10
+              ];
+              buildPhase = ''
+                runHook preBuild
+                pnpm --filter=@shikanime-studio/links build
+                runHook postBuild
+              '';
+              installPhase = ''
+                runHook preInstall
+                mkdir -p $out
+                cp -r apps/links/dist/* $out
+                runHook postInstall
+              '';
+              pnpmDeps = pkgs.fetchPnpmDeps {
+                inherit (finalAttrs)
+                  pname
+                  pnpmWorkspaces
+                  src
+                  version
+                  ;
+                pnpm = pkgs.pnpm_10;
+                fetcherVersion = 3;
+                hash = "sha256-IdXihpzI5YqFSteIn8ehvDnlc4/yxguYoWG0qvaR0ks=";
+              };
+            });
+            reiya = pkgs.stdenv.mkDerivation (finalAttrs: {
+              pname = "reiya";
+              version = "0.0.0";
+              src = lib.cleanSource ./.;
+              pnpmRoot = ".";
+              pnpmWorkspaces = [ "@shikanime-studio/reiya" ];
+              nativeBuildInputs = with pkgs; [
+                nodejs
+                pnpmConfigHook
+                pnpm_10
+              ];
+              buildPhase = ''
+                runHook preBuild
+                pnpm --filter=@shikanime-studio/reiya build
+                runHook postBuild
+              '';
+              installPhase = ''
+                runHook preInstall
+                mkdir -p $out
+                cp -r apps/reiya/dist/* $out
+                runHook postInstall
+              '';
+              pnpmDeps = pkgs.fetchPnpmDeps {
+                inherit (finalAttrs)
+                  pname
+                  pnpmWorkspaces
+                  src
+                  version
+                  ;
+                pnpm = pkgs.pnpm_10;
+                fetcherVersion = 3;
+                hash = "sha256-NZ92q6DjLMNY1jOnvAkysOFtpz7MP3DvMoqqEPNWGjg=";
+              };
+            });
+            www = pkgs.stdenv.mkDerivation (finalAttrs: {
+              pname = "www";
+              version = "0.0.0";
+              src = lib.cleanSource ./.;
+              pnpmRoot = ".";
+              pnpmWorkspaces = [ "@shikanime-studio/www" ];
+              nativeBuildInputs = with pkgs; [
+                nodejs
+                pnpmConfigHook
+                pnpm_10
+              ];
+              buildPhase = ''
+                runHook preBuild
+                pnpm --filter=@shikanime-studio/www build
+                runHook postBuild
+              '';
+              installPhase = ''
+                runHook preInstall
+                mkdir -p $out
+                cp -r apps/www/dist/* $out
+                runHook postInstall
+              '';
+              pnpmDeps = pkgs.fetchPnpmDeps {
+                inherit (finalAttrs)
+                  pname
+                  version
+                  src
+                  pnpmWorkspaces
+                  ;
+                pnpm = pkgs.pnpm_10;
+                fetcherVersion = 3;
+                hash = "sha256-IdXihpzI5YqFSteIn8ehvDnlc4/yxguYoWG0qvaR0ks=";
+              };
+            });
           };
         };
       systems = [
