@@ -4,21 +4,13 @@ import pluginRouter from '@tanstack/eslint-plugin-router'
 
 export default antfu(
   {
-    autoRenamePlugins: true,
     formatters: true,
-    gitignore: true,
-    jsdoc: true,
-    jsonc: true,
     jsx: {
       a11y: true,
     },
     react: {
       reactCompiler: true,
     },
-    regexp: true,
-    stylistic: true,
-    typescript: true,
-    yaml: false,
   },
   {
     ignores: [
