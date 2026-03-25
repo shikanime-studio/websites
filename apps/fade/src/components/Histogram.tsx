@@ -6,10 +6,10 @@ interface HistogramProps {
   className?: string
 }
 
-function HistogramSkeleton({ className }: { className?: string }) {
+function HistogramSkeleton({ className = '' }: { className?: string }) {
   return (
     <div
-      className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md bg-zinc-800/50 ${className ?? ''}`}
+      className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md bg-zinc-800/50 ${className}`}
     >
       <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-500 border-t-transparent" />
     </div>
@@ -17,7 +17,7 @@ function HistogramSkeleton({ className }: { className?: string }) {
 }
 
 function HistogramContent({
-  className,
+  className = '',
   image,
 }: HistogramProps & { image: HTMLImageElement }) {
   const data = useHistogram(image)
@@ -27,7 +27,7 @@ function HistogramContent({
 
   return (
     <div
-      className={`relative h-32 w-full overflow-hidden rounded-md bg-black ${className ?? ''}`}
+      className={`relative h-32 w-full overflow-hidden rounded-md bg-black ${className}`}
     >
       <svg
         viewBox="0 0 256 100"
@@ -65,7 +65,7 @@ function HistogramContent({
   )
 }
 
-export function Histogram({ className }: HistogramProps) {
+export function Histogram({ className = '' }: HistogramProps) {
   const { image } = useImageInfo()
 
   if (!image)

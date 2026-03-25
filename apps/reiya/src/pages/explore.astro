@@ -15,7 +15,7 @@ import { createD1Database } from '../lib/db'
 import { categories as categoriesTable } from '../schema'
 
 const db = createD1Database()
-const categories = await db.select().from(categoriesTable);
+const categories = await db.select().from(categoriesTable)
 ---
 
 <FluidLayout>
@@ -24,7 +24,7 @@ const categories = await db.select().from(categoriesTable);
 
     <div class="carousel carousel-center scrollbar-hide w-full gap-3">
       {
-        categories.map(cat => (
+        categories.map((cat) => (
           <div class="carousel-item">
             <button class="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-700 shadow-sm transition hover:bg-gray-50">
               <span class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs text-gray-600">
@@ -47,27 +47,21 @@ const categories = await db.select().from(categoriesTable);
     <ExploreFeatured client:load>
       <ExploreSectionHead>
         <ExploreSectionTitle>Discover Trending Merch</ExploreSectionTitle>
-        <ExploreSectionExpend href="/explore?type=merchs">
-          View all
-        </ExploreSectionExpend>
+        <ExploreSectionExpend href="/explore?type=merchs"> View all </ExploreSectionExpend>
       </ExploreSectionHead>
     </ExploreFeatured>
 
     <ExploreArtists client:load>
       <ExploreSectionHead>
         <ExploreSectionTitle>Featured Artists & Circles</ExploreSectionTitle>
-        <ExploreSectionExpend href="/explore?type=artists">
-          View all
-        </ExploreSectionExpend>
+        <ExploreSectionExpend href="/explore?type=artists"> View all </ExploreSectionExpend>
       </ExploreSectionHead>
     </ExploreArtists>
 
     <ExploreCharacters client:load>
       <ExploreSectionHead>
         <ExploreSectionTitle>Popular Characters</ExploreSectionTitle>
-        <ExploreSectionExpend href="/explore?type=characters">
-          View all
-        </ExploreSectionExpend>
+        <ExploreSectionExpend href="/explore?type=characters"> View all </ExploreSectionExpend>
       </ExploreSectionHead>
     </ExploreCharacters>
 

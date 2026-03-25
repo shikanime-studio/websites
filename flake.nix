@@ -92,7 +92,10 @@
                 "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
               ];
             };
-            packages = with pkgs; [ imagemagick ];
+            packages = with pkgs; [
+              imagemagick
+              taze
+            ];
             treefmt.config = {
               programs = {
                 sqlfluff = {

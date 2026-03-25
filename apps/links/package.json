@@ -10,28 +10,42 @@
   "scripts": {
     "build": "astro build",
     "check": "astro check",
+    "check:fix": "astro check --fix",
     "deploy": "wrangler deploy",
     "dev": "astro dev",
-    "lint": "astro check --fix",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "astro preview",
     "start": "astro dev",
     "types": "wrangler types src/worker-configuration.d.ts",
     "upload": "wrangler versions upload"
   },
   "dependencies": {
-    "@astrojs/check": "catalog:",
-    "@astrojs/cloudflare": "catalog:",
-    "@astrojs/sitemap": "catalog:",
-    "@fontsource-variable/inter": "catalog:",
-    "@tailwindcss/vite": "catalog:",
-    "astro": "catalog:",
-    "daisyui": "catalog:",
-    "lightningcss": "catalog:",
-    "mixpanel-browser": "catalog:",
-    "sharp": "catalog:",
-    "tailwindcss": "catalog:"
+    "@astrojs/check": "catalog:types",
+    "@astrojs/cloudflare": "catalog:build",
+    "@astrojs/sitemap": "catalog:runtime",
+    "@fontsource-variable/inter": "catalog:runtime",
+    "@tailwindcss/vite": "catalog:build",
+    "astro": "catalog:build",
+    "daisyui": "catalog:runtime",
+    "lightningcss": "catalog:build",
+    "mixpanel-browser": "catalog:runtime",
+    "sharp": "catalog:build",
+    "tailwindcss": "catalog:runtime"
   },
   "devDependencies": {
-    "wrangler": "catalog:"
+    "@antfu/eslint-config": "catalog:lint",
+    "@e18e/eslint-plugin": "catalog:lint",
+    "@tsconfig/node-lts": "catalog:types",
+    "@tsconfig/node-ts": "catalog:types",
+    "@tsconfig/strictest": "catalog:types",
+    "@typescript-eslint/eslint-plugin": "catalog:lint",
+    "eslint": "catalog:lint",
+    "eslint-plugin-astro": "catalog:lint",
+    "eslint-plugin-format": "catalog:lint",
+    "eslint-plugin-import-lite": "catalog:lint",
+    "prettier-plugin-astro": "catalog:format",
+    "typescript": "catalog:types",
+    "wrangler": "catalog:infra"
   }
 }
