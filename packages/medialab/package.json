@@ -25,7 +25,8 @@
   },
   "scripts": {
     "build": "vite build",
-    "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist"
+    "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist",
+    "test": "vitest"
   },
   "dependencies": {
     "@tanstack/react-query": "catalog:runtime",
@@ -38,6 +39,6 @@
     "@webgpu/types": "catalog:types",
     "typescript": "catalog:types",
     "vite": "catalog:build",
-    "vitest": "^4.1.1"
+    "vitest": "catalog:test"
   }
 }
