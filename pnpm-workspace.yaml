@@ -100,3 +100,5 @@ packages:
   - apps/www
 shellEmulator: true
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - 'chokidar@4.0.3'
