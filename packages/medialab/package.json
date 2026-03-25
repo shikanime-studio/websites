@@ -26,7 +26,8 @@
   "scripts": {
     "build": "vite build",
     "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:dev": "vitest"
   },
   "dependencies": {
     "@tanstack/react-query": "catalog:runtime",
