@@ -102,6 +102,7 @@
                   enable = true;
                   dialect = "sqlite";
                 };
+                sqlfluff-lint.enable = true;
                 wgslfmt.enable = true;
               };
               settings.global.excludes = [
