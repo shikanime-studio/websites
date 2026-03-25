@@ -28,9 +28,9 @@
     "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist"
   },
   "dependencies": {
-    "@tanstack/react-query": "catalog:",
-    "react": "catalog:",
-    "zod": "catalog:"
+    "@tanstack/react-query": "catalog:runtime",
+    "react": "catalog:runtime",
+    "zod": "catalog:runtime"
   },
   "devDependencies": {
     "@types/node": "catalog:types",

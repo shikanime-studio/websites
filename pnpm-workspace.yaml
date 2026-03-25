@@ -20,7 +20,7 @@ catalogs:
     '@eslint-react/eslint-plugin': ^2.13.0
     '@tanstack/eslint-plugin-query': ^5.95.2
     '@tanstack/eslint-plugin-router': ^1.161.6
-    '@typescript-eslint/eslint-plugin': ^8.57.0
+    '@typescript-eslint/eslint-plugin': ^8.57.2
     eslint: ^9.39.4
     eslint-plugin-astro: ^1.6.0
     eslint-plugin-format: ^2.0.1
@@ -98,5 +98,8 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - packages/medialab
 shellEmulator: true
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  - 'chokidar@4.0.3'

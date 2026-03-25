@@ -56,7 +56,7 @@ catalogs:
       specifier: ^1.161.6
       version: 1.161.6
     '@typescript-eslint/eslint-plugin':
-      specifier: ^8.57.0
+      specifier: ^8.57.2
       version: 8.57.2
     eslint:
       specifier: ^9.39.4
@@ -245,6 +245,9 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: catalog:build
         version: 1.30.1(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20260317.1)(wrangler@4.77.0)
+      '@shikanime-studio/medialab':
+        specifier: workspace:*
+        version: link:../../packages/medialab
       '@tailwindcss/vite':
         specifier: catalog:build
         version: 4.2.2(vite@7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))
@@ -702,6 +705,33 @@ importers:
       wrangler:
         specifier: catalog:infra
         version: 4.77.0
+  packages/medialab:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: catalog:runtime
+        version: 5.95.2(react@19.2.4)
+      react:
+        specifier: catalog:runtime
+        version: 19.2.4
+      zod:
+        specifier: catalog:runtime
+        version: 4.3.6
+    devDependencies:
+      '@types/node':
+        specifier: catalog:types
+        version: 22.19.15
+      '@types/react':
+        specifier: catalog:types
+        version: 19.2.14
+      '@webgpu/types':
+        specifier: catalog:types
+        version: 0.1.69
+      typescript:
+        specifier: catalog:types
+        version: 5.9.3
+      vite:
+        specifier: ^7.3.1
+        version: 7.3.1(@types/node@22.19.15)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2)
 packages:
   '@acemir/cssom@0.9.31':
     resolution: {integrity: sha512-ZnR3GSaH+/vJ0YlHau21FjfLYjMpYVIzTD8M8vIEQvIGxeOXyXdzCI140rrCY862p/C/BbzWsjc1dgnM9mkoTA==}
