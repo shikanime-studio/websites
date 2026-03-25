@@ -103,7 +103,7 @@ export function ExploreFeatured({
 }: ExploreSectionProps) {
   return (
     <QueryProvider>
-      <ExploreSection className={className}>
+      <ExploreSection className={className ?? ''}>
         {children}
         <ExploreFeaturedContent />
       </ExploreSection>
@@ -138,7 +138,7 @@ export function ExploreArtists({
 }: ExploreSectionProps) {
   return (
     <QueryProvider>
-      <ExploreSection className={className}>
+      <ExploreSection className={className ?? ''}>
         {children}
         <ExploreArtistsContent />
       </ExploreSection>
@@ -173,7 +173,7 @@ export function ExploreCharacters({
 }: ExploreSectionProps) {
   return (
     <QueryProvider>
-      <ExploreSection className={className}>
+      <ExploreSection className={className ?? ''}>
         {children}
         <ExploreCharactersContent />
       </ExploreSection>
@@ -225,36 +225,44 @@ function ExploreConventionsContent() {
         {events.length > 0
           ? (
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                {events.map(event => (
-                  <a
-                    href={event.href}
-                    className="group flex cursor-pointer flex-col gap-1"
-                    key={event.id}
-                  >
-                    <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
-                      <Image
-                        src={event.images[0]?.src}
-                        width={event.images[0]?.width}
-                        height={event.images[0]?.height}
-                        layout="constrained"
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                        alt={event.title}
-                      />
-                      <div className="absolute top-2 left-2 rounded-full bg-white/90 p-1 shadow-sm">
-                        <div className="h-4 w-4 rounded-full bg-red-500"></div>
+                {events.map((event) => {
+                  const image = event.images[0]
+
+                  return (
+                    <a
+                      href={event.href}
+                      className="group flex cursor-pointer flex-col gap-1"
+                      key={event.id}
+                    >
+                      {image
+                        ? (
+                            <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
+                              <Image
+                                src={image.src}
+                                width={image.width}
+                                height={image.height}
+                                layout="constrained"
+                                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                                alt={event.title}
+                              />
+                              <div className="absolute top-2 left-2 rounded-full bg-white/90 p-1 shadow-sm">
+                                <div className="h-4 w-4 rounded-full bg-red-500"></div>
+                              </div>
+                            </div>
+                          )
+                        : null}
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500">{event.price}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-xs text-gray-500">{event.price}</span>
-                    </div>
-                    <h4 className="truncate text-sm font-bold text-gray-900">
-                      {event.title}
-                    </h4>
-                    <div className="text-xs font-bold text-gray-900">
-                      {event.artist.name}
-                    </div>
-                  </a>
-                ))}
+                      <h4 className="truncate text-sm font-bold text-gray-900">
+                        {event.title}
+                      </h4>
+                      <div className="text-xs font-bold text-gray-900">
+                        {event.artist.name}
+                      </div>
+                    </a>
+                  )
+                })}
               </div>
             )
           : (

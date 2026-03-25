@@ -2,7 +2,7 @@ import type { Theme } from '../lib/db'
 import { createContext, use } from 'react'
 
 export interface ThemeContextValue {
-  theme?: Theme
+  theme: Theme | undefined
   setTheme: (theme?: Theme) => void
 }
 

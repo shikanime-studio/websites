@@ -239,7 +239,7 @@ async function main() {
   if (seededUsers.length > 0 && seededMakers.length > 0) {
     for (const user of seededUsers) {
       const maker
-        = seededMakers[Math.floor(Math.random() * seededMakers.length)]
+        = seededMakers[Math.floor(Math.random() * seededMakers.length)]!
       await insertSafe(schema.usersToMakers, {
         userId: user.id,
         makerId: maker.id,
@@ -250,7 +250,7 @@ async function main() {
   if (seededEvents.length > 0 && seededMakers.length > 0) {
     for (const event of seededEvents) {
       const maker
-        = seededMakers[Math.floor(Math.random() * seededMakers.length)]
+        = seededMakers[Math.floor(Math.random() * seededMakers.length)]!
       await insertSafe(schema.eventsToMakers, {
         eventId: event.id,
         makerId: maker.id,
@@ -261,7 +261,7 @@ async function main() {
   if (seededUsers.length > 0 && seededLicenses.length > 0) {
     for (const user of seededUsers) {
       const license
-        = seededLicenses[Math.floor(Math.random() * seededLicenses.length)]
+        = seededLicenses[Math.floor(Math.random() * seededLicenses.length)]!
       await insertSafe(schema.usersToLicenses, {
         userId: user.id,
         licenseId: license.id,
@@ -272,7 +272,7 @@ async function main() {
   if (seededUsers.length > 0 && seededCharacters.length > 0) {
     for (const user of seededUsers) {
       const character
-        = seededCharacters[Math.floor(Math.random() * seededCharacters.length)]
+        = seededCharacters[Math.floor(Math.random() * seededCharacters.length)]!
       await insertSafe(schema.usersToCharacters, {
         userId: user.id,
         characterId: character.id,

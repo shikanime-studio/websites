@@ -1,5 +1,16 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": [
+    "@tsconfig/node-lts/tsconfig.json",
+    "@tsconfig/node-ts/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json",
+    "astro/tsconfigs/strict"
+  ],
+  "compilerOptions": {
+    "types": [
+      "astro/client",
+      "node"
+    ]
+  },
   "include": [
     ".astro/types.d.ts",
     "**/*"

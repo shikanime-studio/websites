@@ -21,7 +21,6 @@ export const Route = createFileRoute('/')({
   }),
 })
 
-// eslint-disable-next-line react-refresh/only-export-components
 function GalleryContainer() {
   const { handle } = useDirectory()
 
@@ -43,7 +42,6 @@ function GalleryContainer() {
   )
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
 function App() {
   const navigate = Route.useNavigate()
   const search = Route.useSearch()

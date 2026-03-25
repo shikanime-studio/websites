@@ -9,17 +9,15 @@ interface Props {
   session?: {
     user: {
       name: string
-      image?: string | null
+      image?: string | null | undefined
     }
   } | null
 }
 
-const { session } = Astro.props;
+const { session } = Astro.props
 ---
 
-<nav
-  class="navbar bg-base-100 fixed top-0 z-50 w-full justify-between px-4 lg:px-6"
->
+<nav class="navbar bg-base-100 fixed top-0 z-50 w-full justify-between px-4 lg:px-6">
   <!-- Navbar Start -->
   <div class="flex items-center">
     <div class="flex items-center gap-6">
@@ -27,17 +25,11 @@ const { session } = Astro.props;
         href="/"
         class="text-base-content flex items-center gap-2 text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
       >
-        <img
-          src={Logo.src}
-          class="h-8 w-auto"
-          alt="Reiya Logo"
-          width="32"
-          height="32"
-        />
+        <img src={Logo.src} class="h-8 w-auto" alt="Reiya Logo" width="32" height="32" />
         Reiya
       </a>
 
-        <div class="hidden items-center gap-1 md:flex">
+      <div class="hidden items-center gap-1 md:flex">
         {
           session && (
             <a
@@ -141,16 +133,12 @@ const { session } = Astro.props;
     <!-- User Menu / Login -->
     <div class="flex items-center pl-1">
       {
-        session
-? (
+        session ? (
           <div class="dropdown dropdown-end">
             <button type="button" class="avatar btn btn-circle btn-ghost">
               <div class="w-10 rounded-full">
                 <Image
-                  src={
-                    session.user.image
-                    || `https://ui-avatars.com/api/?name=${session.user.name}`
-                  }
+                  src={session.user.image || `https://ui-avatars.com/api/?name=${session.user.name}`}
                   alt={`${session.user.name} Avatar`}
                   width={40}
                   height={40}
@@ -169,8 +157,7 @@ const { session } = Astro.props;
               </li>
             </ul>
           </div>
-        )
-: (
+        ) : (
           <LoginButton client:load />
         )
       }
