@@ -98,3 +98,5 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+shellEmulator: true
+trustPolicy: no-downgrade
