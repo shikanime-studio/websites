@@ -16,11 +16,14 @@
     "upload": "wrangler versions upload",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:dev": "vitest",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:build",
+    "@shikanime-studio/medialab": "workspace:*",
+    "@shikanime-studio/vfs": "workspace:*",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-devtools": "catalog:runtime",

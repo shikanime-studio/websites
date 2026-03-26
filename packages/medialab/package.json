@@ -1,0 +1,44 @@
+{
+  "name": "@shikanime-studio/medialab",
+  "version": "0.0.0",
+  "author": {
+    "name": "Shikanime Studio",
+    "email": "contact@shikanime.studio",
+    "url": "https://shikanime.studio"
+  },
+  "license": "Apache-2.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./hooks": "./src/hooks/index.ts",
+    "./providers": "./src/providers/index.ts",
+    "./utils": "./src/utils.ts"
+  },
+  "scripts": {
+    "build": "vite build",
+    "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:dev": "vitest"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "catalog:runtime",
+    "react": "catalog:runtime",
+    "zod": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@tanstack/eslint-plugin-query": "catalog:lint",
+    "@tsconfig/node-lts": "catalog:types",
+    "@tsconfig/node-ts": "catalog:types",
+    "@tsconfig/strictest": "catalog:types",
+    "@tsconfig/vite-react": "catalog:types",
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@webgpu/types": "catalog:types",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types",
+    "vite": "catalog:build",
+    "vitest": "catalog:test"
+  }
+}

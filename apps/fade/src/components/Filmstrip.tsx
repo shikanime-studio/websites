@@ -10,10 +10,15 @@ import { useThumbnail } from '../hooks/useThumbnail'
 import { settingsCollection } from '../lib/db'
 import { FileIcon } from './FileIcon'
 
-const ITEM_SIZE = 88
-
 export function Filmstrip() {
-  const { files, selectedIndex, selectFile } = useGallery()
+  const {
+    files,
+    selectedIndex,
+    selectFile,
+    fetchMore,
+    hasMore,
+    isFetchingMore,
+  } = useGallery()
   const ref = useRef<HTMLDivElement>(null)
   const { width } = useElementSize(ref)
 
@@ -31,21 +36,31 @@ export function Filmstrip() {
     horizontal: true,
     count: files.length,
     getScrollElement: () => ref.current,
-    estimateSize: () => ITEM_SIZE,
-    overscan: width > 0 ? Math.ceil(width / ITEM_SIZE) : 5,
+    estimateSize: () => 88,
+    overscan: width > 0 ? Math.ceil(width / 88) : 5,
   })
 
-  // Scroll selected thumbnail into view
   useEffect(() => {
+    const items = virtualizer.getVirtualItems()
+    const last = items.at(-1)
+    if (!last)
+      return
+
+    if (hasMore && !isFetchingMore && last.index >= files.length - 10) {
+      fetchMore()
+    }
+  }, [fetchMore, files.length, hasMore, isFetchingMore, virtualizer])
+
+  useEffect(() => {
+    if (isCollapsed)
+      return
     virtualizer.scrollToIndex(selectedIndex, {
       align: 'center',
       behavior: 'smooth',
     })
-  }, [selectedIndex, virtualizer])
+  }, [isCollapsed, selectedIndex, virtualizer])
 
-  const modes = new Map(
-    virtualizer.getVirtualItems().map(v => [v.index, 'visible' as const]),
-  )
+  const virtualItems = virtualizer.getVirtualItems()
 
   return (
     <div
@@ -90,14 +105,14 @@ export function Filmstrip() {
               )
             : (
                 <div
-                  className="relative h-full w-full"
+                  className="relative h-full w-full px-4 py-4"
                   style={{
                     width: `${virtualizer.getTotalSize().toString()}px`,
                   }}
                 >
                   <FilmstripContent
                     files={files}
-                    modes={modes}
+                    virtualItems={virtualItems}
                     selectedIndex={selectedIndex}
                     onSelect={selectFile}
                   />
@@ -119,37 +134,38 @@ function EmptyFilmstrip() {
 
 interface FilmstripContentProps {
   files: Array<FileItem>
-  modes: Map<number, 'visible' | 'hidden'>
+  virtualItems: ReturnType<ReturnType<typeof useVirtualizer>['getVirtualItems']>
   selectedIndex: number
   onSelect: (index: number) => void
 }
 
 function FilmstripContent({
   files,
-  modes,
+  virtualItems,
   selectedIndex,
   onSelect,
 }: FilmstripContentProps) {
   return (
     <>
-      {files.map((fileItem, index) => {
-        const mode = modes.get(index) ?? 'hidden'
-        const start = index * ITEM_SIZE
+      {virtualItems.map((virtualItem) => {
+        const index = virtualItem.index
+        const fileItem = files[index]
+        if (!fileItem)
+          return null
 
         return (
-          <Activity mode={mode} key={fileItem.handle.name}>
-            <FilmstripItem
-              fileItem={fileItem}
-              isSelected={index === selectedIndex}
-              onClick={() => {
-                onSelect(index)
-              }}
-              style={{
-                transform: `translateX(${start.toString()}px)`,
-                width: '80px',
-              }}
-            />
-          </Activity>
+          <FilmstripItem
+            key={fileItem.handle.name}
+            fileItem={fileItem}
+            isSelected={index === selectedIndex}
+            onClick={() => {
+              onSelect(index)
+            }}
+            style={{
+              transform: `translateX(${virtualItem.start.toString()}px)`,
+              width: '80px',
+            }}
+          />
         )
       })}
     </>
@@ -204,7 +220,7 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
-  const { url } = useThumbnail(fileItem, 80, 80)
+  const { data: url } = useThumbnail(fileItem, 80, 80)
 
   return (
     <button
@@ -232,7 +248,7 @@ function FilmstripItemContent({
           )
         : (
             <div className="flex h-full w-full items-center justify-center">
-              <FileIcon type={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
+              <FileIcon mimeType={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
             </div>
           )}
       <div

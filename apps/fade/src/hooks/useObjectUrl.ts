@@ -1,17 +1,25 @@
-import { useCallback, useMemo } from 'react'
+import { useSuspenseQuery } from '@tanstack/react-query'
+import { useEffect } from 'react'
 
 export function useObjectUrl(blob: Blob | MediaSource | null) {
-  const url = useMemo(() => {
-    if (!blob)
-      return undefined
-    return URL.createObjectURL(blob)
-  }, [blob])
+  const result = useSuspenseQuery({
+    queryKey: ['objectUrl', blob],
+    queryFn: () => {
+      if (!blob)
+        return undefined
+      return URL.createObjectURL(blob)
+    },
+    staleTime: 0,
+    gcTime: 0,
+  })
 
-  const revoke = useCallback(() => {
-    if (url) {
-      URL.revokeObjectURL(url)
+  useEffect(() => {
+    return () => {
+      if (result.data) {
+        URL.revokeObjectURL(result.data)
+      }
     }
-  }, [url])
+  }, [result.data])
 
-  return { url, revoke }
+  return result
 }
