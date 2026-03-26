@@ -11,6 +11,9 @@ export interface GalleryContextValue extends GalleryState {
   navigateNext: () => void
   navigatePrevious: () => void
   selectedFile: FileItem | null
+  fetchMore: () => void
+  hasMore: boolean
+  isFetchingMore: boolean
 }
 
 export const GalleryContext = createContext<GalleryContextValue | null>(null)

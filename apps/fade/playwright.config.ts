@@ -12,7 +12,7 @@ export default defineConfig({
     baseURL: 'http://localhost:3000',
   },
   webServer: {
-    command: 'pnpm dev',
+    command: 'corepack pnpm dev',
     url: 'http://localhost:3000',
     reuseExistingServer: env.CI,
     env: {

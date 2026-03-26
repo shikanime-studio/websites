@@ -1,41 +1,47 @@
 import type { FileItem } from '../lib/fs'
+import { RafDataView } from '@shikanime-studio/medialab'
+import { useGpuDevice } from '@shikanime-studio/medialab/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useMemo } from 'react'
+import { fileTypeFromBlob } from 'file-type'
+import { fileHandleKey } from '../lib/queryKey'
 import thumbnailShader from '../shaders/thumbnail.wgsl?raw'
-import { useGPU } from './useGPU'
-import { usePreview } from './usePreview'
 
-function useThumbnailPipeline() {
-  const { device } = useGPU()
+function useThumbnailPipeline(device: GPUDevice | null) {
+  return useSuspenseQuery({
+    queryKey: ['thumbnail-pipeline', device],
+    queryFn: () => {
+      if (!device)
+        return null
 
-  return useMemo(() => {
-    if (!device)
-      return null
+      const shaderModule = device.createShaderModule({
+        code: thumbnailShader,
+      })
 
-    const shaderModule = device.createShaderModule({
-      code: thumbnailShader,
-    })
-
-    return device.createRenderPipeline({
-      layout: 'auto',
-      vertex: {
-        module: shaderModule,
-        entryPoint: 'vs_main',
-      },
-      fragment: {
-        module: shaderModule,
-        entryPoint: 'fs_main',
-        targets: [
-          {
-            format: 'rgba8unorm',
-          },
-        ],
-      },
-      primitive: {
-        topology: 'triangle-strip',
-      },
-    })
-  }, [device])
+      return device.createRenderPipeline({
+        layout: 'auto',
+        vertex: {
+          module: shaderModule,
+          entryPoint: 'vs_main',
+        },
+        fragment: {
+          module: shaderModule,
+          entryPoint: 'fs_main',
+          targets: [
+            {
+              format: 'rgba8unorm',
+            },
+          ],
+        },
+        primitive: {
+          topology: 'triangle-strip',
+        },
+      })
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
+  })
 }
 
 export function useThumbnail(
@@ -44,44 +50,72 @@ export function useThumbnail(
   height = 256,
   quality = 1.0,
 ) {
-  const { device } = useGPU()
-  const { blob } = usePreview(fileItem)
-  const pipeline = useThumbnailPipeline()
+  const { data: device } = useGpuDevice()
+  const pipeline = useThumbnailPipeline(device)
+  const handle = fileItem?.handle ?? null
+  const mimeType = fileItem?.mimeType ?? null
 
-  const { data: url } = useSuspenseQuery({
+  return useSuspenseQuery({
     queryKey: [
       'thumbnail',
-      fileItem,
-      blob,
+      fileHandleKey(handle),
+      mimeType,
       width,
       height,
       quality,
-      !!device,
-      !!pipeline,
+      device,
+      pipeline.data,
     ],
     queryFn: async () => {
-      if (
-        !device
-        || !pipeline
-        || !blob
-        || (!blob.type.startsWith('image/') && fileItem?.mimeType !== 'image/x-fujifilm-raf')
-      ) {
+      if (!device || !pipeline.data || !handle)
         return null
+
+      const file = await handle.getFile()
+
+      let blob: Blob = file
+      const detected = !mimeType ? await fileTypeFromBlob(file) : null
+      const effectiveType = mimeType ?? detected?.mime ?? file.type ?? ''
+
+      if (effectiveType === 'image/x-fujifilm-raf') {
+        const buffer = await file.arrayBuffer()
+        const view = new RafDataView(buffer)
+        const jpgView = view.getJpegImage()
+        if (!jpgView)
+          return null
+        blob = new Blob([jpgView as unknown as BlobPart], { type: 'image/jpeg' })
+      }
+      else {
+        if (!effectiveType.startsWith('image/'))
+          return null
+        if (!file.type && effectiveType) {
+          blob = file.slice(0, file.size, effectiveType)
+        }
       }
 
+      let bitmap: ImageBitmap | null = null
       let srcTexture: GPUTexture | null = null
       let dstTexture: GPUTexture | null = null
-      let readBuffer: GPUBuffer | null = null
       let uniformBuffer: GPUBuffer | null = null
+      let readBuffer: GPUBuffer | null = null
+
+      const bytesPerPixel = 4
+      const unpaddedBytesPerRow = width * bytesPerPixel
+      const align = 256
+      const paddedBytesPerRow = Math.ceil(unpaddedBytesPerRow / align) * align
+      const bufferSize = paddedBytesPerRow * height
 
       try {
-        const bitmap = await createImageBitmap(blob)
-
-        const srcWidth = bitmap.width
-        const srcHeight = bitmap.height
+        try {
+          bitmap = await createImageBitmap(blob)
+        }
+        catch {
+          return null
+        }
+        if (bitmap.width <= 0 || bitmap.height <= 0)
+          return null
 
         srcTexture = device.createTexture({
-          size: [srcWidth, srcHeight],
+          size: [bitmap.width, bitmap.height],
           format: 'rgba8unorm',
           usage:
             GPUTextureUsage.TEXTURE_BINDING
@@ -92,7 +126,7 @@ export function useThumbnail(
         device.queue.copyExternalImageToTexture(
           { source: bitmap },
           { texture: srcTexture },
-          [srcWidth, srcHeight],
+          [bitmap.width, bitmap.height],
         )
 
         dstTexture = device.createTexture({
@@ -101,21 +135,8 @@ export function useThumbnail(
           usage: GPUTextureUsage.RENDER_ATTACHMENT | GPUTextureUsage.COPY_SRC,
         })
 
-        const bytesPerPixel = 4
-        const unpaddedBytesPerRow = width * bytesPerPixel
-        const align = 256
-        const paddedBytesPerRow
-          = Math.ceil(unpaddedBytesPerRow / align) * align
-        const bufferSize = paddedBytesPerRow * height
-
-        readBuffer = device.createBuffer({
-          size: bufferSize,
-          usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-        })
-
-        // Calculate Scale and Offset for "Cover"
-        const ratioW = width / srcWidth
-        const ratioH = height / srcHeight
+        const ratioW = width / bitmap.width
+        const ratioH = height / bitmap.height
         const scale = Math.max(ratioW, ratioH)
 
         const uvScaleX = ratioW / scale
@@ -137,8 +158,13 @@ export function useThumbnail(
 
         device.queue.writeBuffer(uniformBuffer, 0, uniformData)
 
+        readBuffer = device.createBuffer({
+          size: bufferSize,
+          usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+        })
+
         const bindGroup = device.createBindGroup({
-          layout: pipeline.getBindGroupLayout(0),
+          layout: pipeline.data.getBindGroupLayout(0),
           entries: [
             {
               binding: 0,
@@ -165,7 +191,7 @@ export function useThumbnail(
           ],
         })
 
-        pass.setPipeline(pipeline)
+        pass.setPipeline(pipeline.data)
         pass.setBindGroup(0, bindGroup)
         pass.draw(4)
         pass.end()
@@ -183,7 +209,6 @@ export function useThumbnail(
         const mappedRange = readBuffer.getMappedRange()
         const mappedData = new Uint8Array(mappedRange)
 
-        // Convert to ImageData
         const imageData = new ImageData(width, height)
         for (let y = 0; y < height; y++) {
           const row = mappedData.subarray(
@@ -195,7 +220,6 @@ export function useThumbnail(
 
         readBuffer.unmap()
 
-        // Convert to Blob/DataURL using Canvas
         const canvas = document.createElement('canvas')
         canvas.width = width
         canvas.height = height
@@ -207,14 +231,16 @@ export function useThumbnail(
         return canvas.toDataURL('image/webp', quality)
       }
       finally {
+        bitmap?.close()
         srcTexture?.destroy()
         dstTexture?.destroy()
-        readBuffer?.destroy()
         uniformBuffer?.destroy()
+        readBuffer?.destroy()
       }
     },
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
-
-  return { url }
 }

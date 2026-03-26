@@ -1,5 +1,5 @@
-import { useRef } from 'react'
-import { useImageRender } from '../hooks/useImageRender'
+import { useImageRender } from '@shikanime-studio/medialab/hooks'
+import { useId } from 'react'
 import { useLighting } from '../hooks/useLighting'
 
 interface ImageRenderProps {
@@ -13,14 +13,14 @@ export function ImageRender({
   className,
   onDoubleClick,
 }: ImageRenderProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null)
+  const canvasId = useId()
   const lighting = useLighting()
 
-  useImageRender(canvasRef, image, lighting)
+  useImageRender(canvasId, image, { lighting })
 
   return (
     <canvas
-      ref={canvasRef}
+      id={canvasId}
       width={image.naturalWidth}
       height={image.naturalHeight}
       className={className}

@@ -1,5 +1,16 @@
+import type { ExifTagEntry } from '@shikanime-studio/medialab'
 import type { Setting } from '../lib/db'
 import type { FileItem } from '../lib/fs'
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from '@shikanime-studio/medialab'
+import { useExif } from '@shikanime-studio/medialab/hooks'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
@@ -10,21 +21,11 @@ import {
   Sun,
 } from 'lucide-react'
 import { Activity, Suspense } from 'react'
-import { useExif } from '../hooks/useExif'
 import { useFile } from '../hooks/useFile'
 import { useGallery } from '../hooks/useGallery'
 import { useImageInfo } from '../hooks/useImageInfo'
 import { useLighting } from '../hooks/useLighting'
 import { settingsCollection } from '../lib/db'
-import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from '../lib/exif'
 import { formatBytes } from '../lib/intl'
 import { FileIcon } from './FileIcon'
 import { Histogram } from './Histogram'
@@ -326,7 +327,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
             )
           : (
               <div className="flex h-full w-full items-center justify-center">
-                <FileIcon type={fileItem.mimeType} className="h-8 w-8 opacity-50" />
+                <FileIcon mimeType={fileItem.mimeType} className="h-8 w-8 opacity-50" />
               </div>
             )}
       </div>
@@ -367,12 +368,12 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
 }
 
 function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem)
+  const { data: exif } = useExif(fileItem)
 
-  if (!exifData || exifData.length === 0)
+  if (!exif || exif.length === 0)
     return null
 
-  const tags = Object.fromEntries(exifData.map(e => [e.tagId, e.value]))
+  const tags = Object.fromEntries((exif as Array<ExifTagEntry>).map(e => [e.tagId, e.value]))
 
   const make = tags[MakeTagId] as string | undefined
   const model = tags[ModelTagId] as string | undefined
@@ -481,7 +482,7 @@ function GroupedFilesSection({ fileItem }: { fileItem: FileItem }) {
             key={sidecarItem.handle.name}
             className="flex items-center gap-2 text-sm opacity-70"
           >
-            <FileIcon type={sidecarItem.mimeType} className="h-4 w-4" />
+            <FileIcon mimeType={sidecarItem.mimeType} className="h-4 w-4" />
             <span className="truncate">{sidecarItem.handle.name}</span>
           </div>
         ))}
