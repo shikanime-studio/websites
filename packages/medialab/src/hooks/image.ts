@@ -1,8 +1,8 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import imageShader from '../shaders/image.wgsl?raw'
+import { retryDelay } from '../utils'
 import { useGpuDevice, useGpuFormat } from './gpu'
-import { retryDelay } from './utils'
 
 export interface LightingParams {
   exposure: number
@@ -65,9 +65,10 @@ function useImagePipeline(device: GPUDevice | null, format: GPUTextureFormat | n
         },
       })
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -104,9 +105,10 @@ function useImageTexture(device: GPUDevice | null, image: HTMLImageElement | nul
 
       return tex
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -122,9 +124,10 @@ function useImageUniformBuffer(device: GPUDevice | null) {
         usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
       })
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 
   useEffect(() => {
@@ -141,11 +144,11 @@ export function useImageRender(
   image: HTMLImageElement | null,
   options?: RendererOptions,
 ) {
-  const { device } = useGpuDevice()
+  const { data: device } = useGpuDevice()
   const format = useGpuFormat()
-  const pipeline = useImagePipeline(device, format)
-  const texture = useImageTexture(device, image)
-  const uniformBuffer = useImageUniformBuffer(device)
+  const { data: pipeline } = useImagePipeline(device, format)
+  const { data: texture } = useImageTexture(device, image)
+  const { data: uniformBuffer } = useImageUniformBuffer(device)
 
   return useSuspenseQuery({
     queryKey: [
@@ -153,9 +156,9 @@ export function useImageRender(
       canvasId,
       device,
       format,
-      pipeline.data,
-      texture.data,
-      uniformBuffer.data,
+      pipeline,
+      texture,
+      uniformBuffer,
       options?.lighting?.exposure,
       options?.lighting?.contrast,
       options?.lighting?.saturation,
@@ -173,7 +176,7 @@ export function useImageRender(
         return null
 
       const canvas = document.getElementById(canvasId) as HTMLCanvasElement | null
-      if (!device || !canvas || !format || !pipeline.data || !texture.data || !uniformBuffer.data) {
+      if (!device || !canvas || !format || !pipeline || !texture || !uniformBuffer) {
         return null
       }
 
@@ -203,7 +206,7 @@ export function useImageRender(
       }
 
       device.queue.writeBuffer(
-        uniformBuffer.data,
+        uniformBuffer,
         0,
         new Float32Array([
           lighting.exposure,
@@ -222,12 +225,12 @@ export function useImageRender(
       )
 
       const bindGroup = device.createBindGroup({
-        layout: pipeline.data.getBindGroupLayout(0),
+        layout: pipeline.getBindGroupLayout(0),
         entries: [
           {
             binding: 0,
             resource: {
-              buffer: uniformBuffer.data,
+              buffer: uniformBuffer,
             },
           },
           {
@@ -239,7 +242,7 @@ export function useImageRender(
           },
           {
             binding: 2,
-            resource: texture.data.createView(),
+            resource: texture.createView(),
           },
         ],
       })
@@ -258,7 +261,7 @@ export function useImageRender(
         ],
       })
 
-      passEncoder.setPipeline(pipeline.data)
+      passEncoder.setPipeline(pipeline)
       passEncoder.setBindGroup(0, bindGroup)
       passEncoder.draw(4)
       passEncoder.end()
@@ -267,8 +270,9 @@ export function useImageRender(
 
       return true
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }

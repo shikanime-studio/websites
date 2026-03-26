@@ -1,17 +1,18 @@
 {
+  "extends": [
+    "@tsconfig/node-lts/tsconfig.json",
+    "@tsconfig/node-ts/tsconfig.json",
+    "@tsconfig/vite-react/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
+  ],
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
     "types": [
-      "@webgpu/types"
+      "@webgpu/types",
+      "react"
     ],
-    "strict": true,
     "declaration": true,
     "emitDeclarationOnly": true,
-    "outDir": "dist",
-    "skipLibCheck": true
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",

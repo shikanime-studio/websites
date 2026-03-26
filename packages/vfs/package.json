@@ -1,5 +1,5 @@
 {
-  "name": "@shikanime-studio/medialab",
+  "name": "@shikanime-studio/vfs",
   "version": "0.0.0",
   "author": {
     "name": "Shikanime Studio",
@@ -10,21 +10,17 @@
   "exports": {
     ".": "./src/index.ts",
     "./hooks": "./src/hooks/index.ts",
-    "./providers": "./src/providers/index.ts",
-    "./utils": "./src/utils.ts"
+    "./providers": "./src/providers/index.ts"
   },
   "scripts": {
     "build": "vite build",
     "check": "tsc -p tsconfig.build.json --emitDeclarationOnly --declaration --declarationMap false --outDir dist",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
-    "test": "vitest run",
-    "test:dev": "vitest"
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@tanstack/react-query": "catalog:runtime",
-    "react": "catalog:runtime",
-    "zod": "catalog:runtime"
+    "react": "catalog:runtime"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
@@ -35,10 +31,9 @@
     "@tsconfig/vite-react": "catalog:types",
     "@types/node": "catalog:types",
     "@types/react": "catalog:types",
-    "@webgpu/types": "catalog:types",
+    "@types/wicg-file-system-access": "catalog:types",
     "eslint": "catalog:lint",
     "typescript": "catalog:types",
-    "vite": "catalog:build",
-    "vitest": "catalog:test"
+    "vite": "catalog:build"
   }
 }

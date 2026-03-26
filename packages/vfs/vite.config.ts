@@ -12,14 +12,12 @@ export default defineConfig({
         index: path.resolve(__dirname, 'src/index.ts'),
         hooks: path.resolve(__dirname, 'src/hooks/index.ts'),
         providers: path.resolve(__dirname, 'src/providers/index.ts'),
-        utils: path.resolve(__dirname, 'src/utils.ts'),
       },
       formats: ['es'],
       fileName: (_format: string, entryName: string) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [
-        '@tanstack/react-query',
         'react',
       ],
       output: {

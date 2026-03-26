@@ -7,15 +7,16 @@
   ],
   "compilerOptions": {
     "types": [
-      "@webgpu/types",
-      "react"
+      "react",
+      "wicg-file-system-access"
     ],
-    "noEmit": true
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "dist"
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/**/*.d.ts",
-    "vite.config.ts"
+    "src/**/*.d.ts"
   ]
 }

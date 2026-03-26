@@ -1,5 +1,4 @@
-import { useGpuDevice } from '@shikanime-studio/medialab/hooks/gpu'
-import { retryDelay } from '@shikanime-studio/medialab/utils'
+import { useGpuDevice } from '@shikanime-studio/medialab/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import histogramShader from '../shaders/histogram.wgsl?raw'
 
@@ -28,9 +27,10 @@ function useHistogramComputePipeline(device: GPUDevice | null) {
         },
       })
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -53,14 +53,15 @@ function useHistogramNormalizePipeline(device: GPUDevice | null) {
         },
       })
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
 export function useHistogram(image: HTMLImageElement | null) {
-  const { device } = useGpuDevice()
+  const { data: device } = useGpuDevice()
   const computePipeline = useHistogramComputePipeline(device)
   const normalizePipeline = useHistogramNormalizePipeline(device)
 
@@ -84,11 +85,11 @@ export function useHistogram(image: HTMLImageElement | null) {
       if (!computePipeline.data || !normalizePipeline.data)
         return null
 
-      let bitmap: ImageBitmap | null = null
-      let texture: GPUTexture | null = null
-      let storageBuffer: GPUBuffer | null = null
-      let normalizedBuffer: GPUBuffer | null = null
-      let readBuffer: GPUBuffer | null = null
+      let bitmap: ImageBitmap | undefined
+      let texture: GPUTexture | undefined
+      let storageBuffer: GPUBuffer | undefined
+      let normalizedBuffer: GPUBuffer | undefined
+      let readBuffer: GPUBuffer | undefined
 
       const bufferSize = 256 * 3 * 4
 
@@ -112,6 +113,8 @@ export function useHistogram(image: HTMLImageElement | null) {
             | GPUTextureUsage.COPY_DST
             | GPUTextureUsage.RENDER_ATTACHMENT,
         })
+        if (!texture)
+          return null
 
         device.queue.copyExternalImageToTexture(
           { source: bitmap },
@@ -123,16 +126,22 @@ export function useHistogram(image: HTMLImageElement | null) {
           size: bufferSize,
           usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
         })
+        if (!storageBuffer)
+          return null
 
         normalizedBuffer = device.createBuffer({
           size: bufferSize,
           usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_SRC,
         })
+        if (!normalizedBuffer)
+          return null
 
         readBuffer = device.createBuffer({
           size: bufferSize,
           usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
         })
+        if (!readBuffer)
+          return null
 
         const bindGroupCompute = device.createBindGroup({
           layout: computePipeline.data.getBindGroupLayout(0),
@@ -198,8 +207,9 @@ export function useHistogram(image: HTMLImageElement | null) {
         texture?.destroy()
       }
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }

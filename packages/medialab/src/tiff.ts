@@ -242,7 +242,10 @@ export class TiffDataView<T extends ArrayBufferLike> extends DataView<T> {
 
   setShortArray(offset: number, values: Array<number>, littleEndian?: boolean) {
     for (let i = 0; i < values.length; i++) {
-      this.setUint16(offset + i * 2, values[i], littleEndian)
+      const value = values[i]
+      if (value === undefined)
+        continue
+      this.setUint16(offset + i * 2, value, littleEndian)
     }
   }
 

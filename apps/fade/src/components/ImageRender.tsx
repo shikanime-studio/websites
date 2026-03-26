@@ -1,4 +1,4 @@
-import { useImageRender } from '@shikanime-studio/medialab/hooks/image'
+import { useImageRender } from '@shikanime-studio/medialab/hooks'
 import { useId } from 'react'
 import { useLighting } from '../hooks/useLighting'
 

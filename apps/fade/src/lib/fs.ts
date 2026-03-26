@@ -11,9 +11,18 @@ export async function scanDirectory(
 ): Promise<Array<FileItem>> {
   const handles: Array<FileSystemFileHandle> = []
 
-  for await (const handle of directoryHandle.values()) {
-    if (handle.kind === 'file') {
-      handles.push(handle)
+  if ('values' in directoryHandle) {
+    for await (const handle of (directoryHandle as unknown as { values: () => AsyncIterableIterator<FileSystemHandle> }).values()) {
+      if (handle.kind === 'file') {
+        handles.push(handle as FileSystemFileHandle)
+      }
+    }
+  }
+  else {
+    for await (const [, handle] of (directoryHandle as unknown as { entries: () => AsyncIterableIterator<[string, FileSystemHandle]> }).entries()) {
+      if (handle.kind === 'file') {
+        handles.push(handle as FileSystemFileHandle)
+      }
     }
   }
 

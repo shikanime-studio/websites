@@ -5,8 +5,8 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { createRafDataView, decodeRafRasterToU16, getRafRasterFromPayload } from '../raf'
 import rafShader from '../shaders/raf.wgsl?raw'
+import { retryDelay } from '../utils'
 import { useGpuDevice, useGpuFormat } from './gpu'
-import { retryDelay } from './utils'
 
 const LightingParamsSchema = z.object({
   exposure: z.number().default(0),
@@ -22,14 +22,14 @@ const LightingParamsSchema = z.object({
   hue: z.number().default(0),
 })
 
-export type LightingParams = z.infer<typeof LightingParamsSchema>
+export type RafLightingParams = z.infer<typeof LightingParamsSchema>
 
 export type CfaPattern = 'RGGB' | 'BGGR' | 'GRBG' | 'GBRG'
 
 const CfaPatternSchema = z.enum(['RGGB', 'BGGR', 'GRBG', 'GBRG']).default('RGGB')
 
 export interface RafRendererOptions {
-  lighting?: Partial<LightingParams>
+  lighting?: Partial<RafLightingParams>
   pattern?: CfaPattern
 }
 
@@ -62,10 +62,7 @@ function useRafDecodedRaster(cfa: CfaDataView<ArrayBufferLike> | null) {
   return useSuspenseQuery({
     queryKey: ['raf-decoded-raster', cfa],
     queryFn: async (): Promise<RafDecodedRaster | null> => {
-      if (!cfa)
-        return null
-
-      const payload = cfa.getPayload()
+      const payload = cfa?.getPayload()
       if (!payload)
         return null
 
@@ -90,15 +87,16 @@ function useRafDecodedRaster(cfa: CfaDataView<ArrayBufferLike> | null) {
       if (!raster)
         return null
 
-      const decoded = decodeRafRasterToU16(raster, width, height)
-      if (!decoded)
+      const data = decodeRafRasterToU16(raster, width, height)
+      if (!data)
         return null
 
-      return { width, height, bitsPerSample, data: decoded as Uint16Array<ArrayBuffer> }
+      return { width, height, bitsPerSample, data }
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -134,9 +132,10 @@ function useRafPipeline(device: GPUDevice | null, format: GPUTextureFormat | nul
 
       return { bindGroupLayout, pipeline, uniformBuffer }
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -151,9 +150,10 @@ export function useRafImage(fileItem: FileItem | null) {
         return null
       return view.getCfa() as CfaDataView<ArrayBufferLike>
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -162,13 +162,13 @@ export function useRafRender(
   cfa: CfaDataView<ArrayBufferLike> | null,
   options: RafRendererOptions = {},
 ) {
-  const { device } = useGpuDevice()
+  const { data: device } = useGpuDevice()
   const format = useGpuFormat()
   const { data: resources } = useRafPipeline(device, format)
   const { data: raster } = useRafDecodedRaster(cfa)
 
   const resolvedOptions = RafRendererOptionsSchema.parse(options)
-  const lighting = LightingParamsSchema.parse(resolvedOptions.lighting ?? {}) as LightingParams
+  const lighting = LightingParamsSchema.parse(resolvedOptions.lighting ?? {}) as RafLightingParams
   const pattern = CfaPatternSchema.parse(resolvedOptions.pattern) as CfaPattern
 
   useEffect(() => {

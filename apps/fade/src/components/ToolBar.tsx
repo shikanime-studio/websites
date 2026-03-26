@@ -1,6 +1,6 @@
-import { AlertTriangle, FolderOpen, Image, Settings } from 'lucide-react'
+import { useFileSystemPicker } from '@shikanime-studio/vfs/hooks'
+import { FolderOpen, Image, Settings } from 'lucide-react'
 import { siGithub } from 'simple-icons'
-import { useDirectory } from '../hooks/useDirectory'
 import { useGallery } from '../hooks/useGallery'
 import { useModal } from '../hooks/useModal'
 import { SettingsModal } from './SettingsModal'
@@ -59,27 +59,14 @@ function ToolBarStatus() {
 }
 
 function ToolBarActions({ onSettingsClick }: { onSettingsClick: () => void }) {
-  const { select, isSupported } = useDirectory()
+  const picker = useFileSystemPicker()
 
   return (
     <div className="navbar-end gap-2">
-      {!isSupported && (
-        <div
-          className="tooltip tooltip-bottom tooltip-warning"
-          data-tip="Browser support is limited"
-        >
-          <button
-            className="btn btn-sm btn-ghost btn-square text-warning"
-            aria-label="Warning"
-          >
-            <AlertTriangle className="h-5 w-5" />
-          </button>
-        </div>
-      )}
       <button
         className="btn btn-sm btn-outline btn-warning gap-2 font-medium"
         onClick={() => {
-          void select()
+          void picker.mutateAsync()
         }}
       >
         <FolderOpen className="h-4 w-4" />

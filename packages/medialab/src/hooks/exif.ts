@@ -2,12 +2,13 @@ import type { ExifDataView, ExifTagEntry } from '../exif'
 import type { FileItem } from '../raf'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { createImageDataView } from '../image'
+import { fileItemKey } from '../queryKey'
 import { RafDataView } from '../raf'
-import { retryDelay } from './utils'
+import { retryDelay } from '../utils'
 
 export function useExif(fileItem: FileItem | null) {
   return useSuspenseQuery({
-    queryKey: ['exif', fileItem],
+    queryKey: ['exif', fileItemKey(fileItem)],
     queryFn: async (): Promise<Array<ExifTagEntry> | null> => {
       if (!fileItem)
         return null
@@ -29,8 +30,9 @@ export function useExif(fileItem: FileItem | null) {
 
       return exifView ? exifView.getTagEntries() : null
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }

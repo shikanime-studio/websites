@@ -1,21 +1,24 @@
 import type { ReactNode } from 'react'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useMemo } from 'react'
 import { GalleryContext } from '../hooks/useGallery'
 import { useKeymap } from '../hooks/useKeymap'
 import { scanDirectory } from '../lib/fs'
+import { directoryHandleKey } from '../lib/queryKey'
 
 export function GalleryProvider({
   children,
   handle,
+  selectedPath,
+  setSelectedPath,
 }: {
   children: ReactNode
   handle: FileSystemDirectoryHandle | null
+  selectedPath: string | undefined
+  setSelectedPath: (path?: string, opts?: { replace?: boolean }) => void
 }) {
-  const [selectedIndex, setSelectedIndex] = useState(0)
-
   const { data: files } = useSuspenseQuery({
-    queryKey: ['gallery', handle],
+    queryKey: ['gallery', directoryHandleKey(handle)],
     queryFn: async () => {
       if (!handle)
         return []
@@ -25,20 +28,57 @@ export function GalleryProvider({
     refetchOnWindowFocus: false,
   })
 
+  const selectedIndex = useMemo(() => {
+    if (files.length === 0)
+      return 0
+    if (!selectedPath)
+      return 0
+    const index = files.findIndex(f => f.handle.name === selectedPath)
+    return index === -1 ? 0 : index
+  }, [files, selectedPath])
+
+  useEffect(() => {
+    if (files.length === 0)
+      return
+
+    const desiredPath
+      = selectedPath && files.some(f => f.handle.name === selectedPath)
+        ? selectedPath
+        : files[0]?.handle.name
+
+    if (!desiredPath)
+      return
+
+    if (desiredPath !== selectedPath) {
+      setSelectedPath(desiredPath, { replace: true })
+    }
+  }, [files, selectedPath, setSelectedPath])
+
   const selectFile = useCallback(
     (index: number) => {
-      setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)))
+      const next = files[Math.max(0, Math.min(index, files.length - 1))]
+      if (!next)
+        return
+      setSelectedPath(next.handle.name)
     },
-    [files.length],
+    [files, setSelectedPath],
   )
 
   const navigateNext = useCallback(() => {
-    setSelectedIndex(prev => Math.min(prev + 1, files.length - 1))
-  }, [files.length])
+    const nextIndex = Math.min(selectedIndex + 1, files.length - 1)
+    const next = files[nextIndex]
+    if (!next)
+      return
+    setSelectedPath(next.handle.name)
+  }, [files, selectedIndex, setSelectedPath])
 
   const navigatePrevious = useCallback(() => {
-    setSelectedIndex(prev => Math.max(prev - 1, 0))
-  }, [])
+    const nextIndex = Math.max(selectedIndex - 1, 0)
+    const next = files[nextIndex]
+    if (!next)
+      return
+    setSelectedPath(next.handle.name)
+  }, [files, selectedIndex, setSelectedPath])
 
   useKeymap('navigateNext', () => {
     if (files.length === 0)

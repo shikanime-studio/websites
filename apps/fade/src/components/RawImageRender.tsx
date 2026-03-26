@@ -1,5 +1,5 @@
 import type { FileItem } from '../lib/fs'
-import { useRafImage, useRafRender } from '@shikanime-studio/medialab/hooks/raf'
+import { useRafImage, useRafRender } from '@shikanime-studio/medialab/hooks'
 import { useRef } from 'react'
 import { useLighting } from '../hooks/useLighting'
 

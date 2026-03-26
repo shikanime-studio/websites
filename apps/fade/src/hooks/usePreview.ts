@@ -1,18 +1,21 @@
 import type { FileItem } from '../lib/fs'
-import { RafDataView } from '@shikanime-studio/medialab/raf'
+import { RafDataView } from '@shikanime-studio/medialab'
 import { useSuspenseQuery } from '@tanstack/react-query'
-import { useFile } from './useFile'
+import { fileHandleKey } from '../lib/queryKey'
 
 export function usePreview(fileItem: FileItem | null) {
-  const { file } = useFile(fileItem)
+  const handle = fileItem?.handle ?? null
+  const mimeType = fileItem?.mimeType ?? null
 
   const { data: blob } = useSuspenseQuery({
-    queryKey: ['preview', fileItem, file],
+    queryKey: ['preview', fileHandleKey(handle), mimeType],
     queryFn: async () => {
-      if (!file)
+      if (!handle)
         return null
 
-      if (fileItem?.mimeType === 'image/x-fujifilm-raf') {
+      const file = await handle.getFile()
+
+      if (mimeType === 'image/x-fujifilm-raf') {
         const buffer = await file.arrayBuffer()
         const view = new RafDataView(buffer)
         const jpgView = view.getJpegImage()

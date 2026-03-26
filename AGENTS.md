@@ -45,3 +45,17 @@
 - Each app deploys to Cloudflare via Wrangler (each app has its own `wrangler.jsonc`).
 - Root `pnpm test` runs Vitest (currently exercised by tests under `apps/fade`).
 - Astro apps use `PUBLIC_` env vars for client-side config; Vite/React app uses `VITE_` env vars.
+- vfs means “virtual file system” (Linux VFS-style abstraction). The repo uses `@shikanime-studio/vfs` to isolate the File System Access API and to keep room for a future remote filesystem implementation.
+
+### ESLint
+
+- Each workspace package/app typically has an `eslint.config.ts` using `@antfu/eslint-config` (flat config).
+- Run lint for one workspace: `pnpm -C <workspace> lint`
+
+### TypeScript
+
+- Each workspace package/app typically has:
+  - `tsconfig.json` for editor/typecheck configuration.
+  - `tsconfig.build.json` for declaration-only builds (when the workspace publishes/exports types).
+- Common scripts:
+  - Type declarations check: `pnpm -C <workspace> check`

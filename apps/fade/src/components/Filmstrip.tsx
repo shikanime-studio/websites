@@ -1,21 +1,16 @@
 import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
-import { useVirtualizer } from '@tanstack/react-virtual'
 import { Image } from '@unpic/react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Activity, Suspense, useEffect, useRef } from 'react'
-import { useElementSize } from '../hooks/useElementSize'
 import { useGallery } from '../hooks/useGallery'
 import { useThumbnail } from '../hooks/useThumbnail'
 import { settingsCollection } from '../lib/db'
 import { FileIcon } from './FileIcon'
 
-const ITEM_SIZE = 88
-
 export function Filmstrip() {
   const { files, selectedIndex, selectFile } = useGallery()
   const ref = useRef<HTMLDivElement>(null)
-  const { width } = useElementSize(ref)
 
   const { data } = useLiveQuery(q =>
     q
@@ -26,26 +21,20 @@ export function Filmstrip() {
 
   const isCollapsed = (data?.value as boolean) || false
 
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const virtualizer = useVirtualizer({
-    horizontal: true,
-    count: files.length,
-    getScrollElement: () => ref.current,
-    estimateSize: () => ITEM_SIZE,
-    overscan: width > 0 ? Math.ceil(width / ITEM_SIZE) : 5,
-  })
-
   // Scroll selected thumbnail into view
   useEffect(() => {
-    virtualizer.scrollToIndex(selectedIndex, {
-      align: 'center',
+    if (isCollapsed)
+      return
+    const container = ref.current
+    if (!container)
+      return
+    const selected = container.querySelector<HTMLElement>('button[aria-current="true"]')
+    selected?.scrollIntoView({
       behavior: 'smooth',
+      block: 'nearest',
+      inline: 'center',
     })
-  }, [selectedIndex, virtualizer])
-
-  const modes = new Map(
-    virtualizer.getVirtualItems().map(v => [v.index, 'visible' as const]),
-  )
+  }, [isCollapsed, selectedIndex])
 
   return (
     <div
@@ -89,15 +78,9 @@ export function Filmstrip() {
                 <EmptyFilmstrip />
               )
             : (
-                <div
-                  className="relative h-full w-full"
-                  style={{
-                    width: `${virtualizer.getTotalSize().toString()}px`,
-                  }}
-                >
+                <div className="flex h-full items-center gap-2 px-4 py-4">
                   <FilmstripContent
                     files={files}
-                    modes={modes}
                     selectedIndex={selectedIndex}
                     onSelect={selectFile}
                   />
@@ -119,37 +102,30 @@ function EmptyFilmstrip() {
 
 interface FilmstripContentProps {
   files: Array<FileItem>
-  modes: Map<number, 'visible' | 'hidden'>
   selectedIndex: number
   onSelect: (index: number) => void
 }
 
 function FilmstripContent({
   files,
-  modes,
   selectedIndex,
   onSelect,
 }: FilmstripContentProps) {
   return (
     <>
       {files.map((fileItem, index) => {
-        const mode = modes.get(index) ?? 'hidden'
-        const start = index * ITEM_SIZE
+        if (!fileItem)
+          return null
 
         return (
-          <Activity mode={mode} key={fileItem.handle.name}>
-            <FilmstripItem
-              fileItem={fileItem}
-              isSelected={index === selectedIndex}
-              onClick={() => {
-                onSelect(index)
-              }}
-              style={{
-                transform: `translateX(${start.toString()}px)`,
-                width: '80px',
-              }}
-            />
-          </Activity>
+          <FilmstripItem
+            key={fileItem.handle.name}
+            fileItem={fileItem}
+            isSelected={index === selectedIndex}
+            onClick={() => {
+              onSelect(index)
+            }}
+          />
         )
       })}
     </>
@@ -160,7 +136,6 @@ interface FilmstripItemProps {
   fileItem: FileItem
   isSelected: boolean
   onClick: () => void
-  style: React.CSSProperties
 }
 
 function FilmstripItem(props: FilmstripItemProps) {
@@ -175,17 +150,15 @@ function FilmstripItemSkeleton({
   fileItem,
   isSelected,
   onClick,
-  style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-base-300 hover:border-base-content/50 h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? 'border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]'
           : 'border-transparent'
       }`}
-      style={style}
       onClick={onClick}
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
@@ -201,19 +174,17 @@ function FilmstripItemContent({
   fileItem,
   isSelected,
   onClick,
-  style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
   const { data: url } = useThumbnail(fileItem, 80, 80)
 
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-base-300 hover:border-base-content/50 h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? 'border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]'
           : 'border-transparent'
       }`}
-      style={style}
       onClick={onClick}
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}

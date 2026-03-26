@@ -1,4 +1,4 @@
-import type { LightingParams } from '@shikanime-studio/medialab/hooks/image'
+import type { LightingParams } from '@shikanime-studio/medialab/hooks'
 import { createContext, use } from 'react'
 
 export interface LightingContextType extends LightingParams {

@@ -568,7 +568,7 @@ export class CfaPayloadDataView<T extends ArrayBufferLike> extends TiffDataView<
     return this.getNumberArrayTag(ifdOffset, 279, littleEndian)
   }
 
-  getFirstIfdOffset(littleEndian: boolean) {
+  override getFirstIfdOffset(littleEndian: boolean) {
     const ifdOffset = this.getUint32(4, littleEndian)
     if (ifdOffset < 8 || ifdOffset + 2 > this.byteLength)
       return null
@@ -649,6 +649,8 @@ export class CfaPayloadDataView<T extends ArrayBufferLike> extends TiffDataView<
     for (let i = 0; i < stripOffsets.length; i++) {
       const offset = stripOffsets[i]
       const len = stripByteCounts[i]
+      if (offset === undefined || len === undefined)
+        return null
       if (offset + len > this.byteLength)
         return null
       joined.set(
@@ -663,9 +665,13 @@ export class CfaPayloadDataView<T extends ArrayBufferLike> extends TiffDataView<
 }
 
 export class CfaDataView<T extends ArrayBufferLike> {
+  private readonly raf: DataView<T>
+
   constructor(
-    private readonly raf: DataView<T>,
-  ) {}
+    raf: DataView<T>,
+  ) {
+    this.raf = raf
+  }
 
   getHeader(): CfaHeaderDataView<T> | null {
     const cfaHeaderOffset = this.raf.getUint32(CfaHeaderOffset, false)
@@ -751,7 +757,8 @@ function unpackMsbToU16(
       const absoluteBit = bitIndex + b
       const byteIndex = absoluteBit >> 3
       const bitInByte = 7 - (absoluteBit & 7)
-      const bit = (packed[byteIndex] >> bitInByte) & 1
+      const byte = packed[byteIndex] ?? 0
+      const bit = (byte >> bitInByte) & 1
       value = (value << 1) | bit
     }
     out[i] = value

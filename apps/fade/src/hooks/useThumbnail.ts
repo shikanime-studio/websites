@@ -1,9 +1,9 @@
 import type { FileItem } from '../lib/fs'
-import { useGpuDevice } from '@shikanime-studio/medialab/hooks/gpu'
-import { retryDelay } from '@shikanime-studio/medialab/utils'
+import { RafDataView } from '@shikanime-studio/medialab'
+import { useGpuDevice } from '@shikanime-studio/medialab/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { fileHandleKey } from '../lib/queryKey'
 import thumbnailShader from '../shaders/thumbnail.wgsl?raw'
-import { usePreview } from './usePreview'
 
 function useThumbnailPipeline(device: GPUDevice | null) {
   return useSuspenseQuery({
@@ -36,9 +36,10 @@ function useThumbnailPipeline(device: GPUDevice | null) {
         },
       })
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }
 
@@ -48,22 +49,16 @@ export function useThumbnail(
   height = 256,
   quality = 1.0,
 ) {
-  const { device } = useGpuDevice()
-  const { blob } = usePreview(fileItem)
+  const { data: device } = useGpuDevice()
   const pipeline = useThumbnailPipeline(device)
-  const fileName = fileItem?.handle.name ?? null
+  const handle = fileItem?.handle ?? null
   const mimeType = fileItem?.mimeType ?? null
-  const blobType = blob?.type ?? null
-  const blobSize = blob?.size ?? 0
 
   return useSuspenseQuery({
     queryKey: [
       'thumbnail',
-      fileName,
+      fileHandleKey(handle),
       mimeType,
-      blob,
-      blobType,
-      blobSize,
       width,
       height,
       quality,
@@ -71,10 +66,29 @@ export function useThumbnail(
       pipeline.data,
     ],
     queryFn: async () => {
-      if (!device || !pipeline.data || !blob)
+      if (!device || !pipeline.data || !handle)
         return null
-      if (!blob.type.startsWith('image/') && mimeType !== 'image/x-fujifilm-raf')
-        return null
+
+      const file = await handle.getFile()
+
+      let blob: Blob = file
+
+      if (mimeType === 'image/x-fujifilm-raf') {
+        const buffer = await file.arrayBuffer()
+        const view = new RafDataView(buffer)
+        const jpgView = view.getJpegImage()
+        if (!jpgView)
+          return null
+        blob = new Blob([jpgView as unknown as BlobPart], { type: 'image/jpeg' })
+      }
+      else {
+        const effectiveType = file.type || mimeType || ''
+        if (!effectiveType.startsWith('image/'))
+          return null
+        if (!file.type && mimeType) {
+          blob = file.slice(0, file.size, mimeType)
+        }
+      }
 
       let bitmap: ImageBitmap | null = null
       let srcTexture: GPUTexture | null = null
@@ -89,7 +103,12 @@ export function useThumbnail(
       const bufferSize = paddedBytesPerRow * height
 
       try {
-        bitmap = await createImageBitmap(blob)
+        try {
+          bitmap = await createImageBitmap(blob)
+        }
+        catch {
+          return null
+        }
         if (bitmap.width <= 0 || bitmap.height <= 0)
           return null
 
@@ -217,8 +236,9 @@ export function useThumbnail(
         readBuffer?.destroy()
       }
     },
-    retry: 3,
-    retryDelay,
     staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   })
 }

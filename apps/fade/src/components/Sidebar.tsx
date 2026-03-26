@@ -1,4 +1,4 @@
-import type { ExifTagEntry } from '@shikanime-studio/medialab/exif'
+import type { ExifTagEntry } from '@shikanime-studio/medialab'
 import type { Setting } from '../lib/db'
 import type { FileItem } from '../lib/fs'
 import {
@@ -9,8 +9,8 @@ import {
   LensModelTagId,
   MakeTagId,
   ModelTagId,
-} from '@shikanime-studio/medialab/exif'
-import { useExif } from '@shikanime-studio/medialab/hooks/exif'
+} from '@shikanime-studio/medialab'
+import { useExif } from '@shikanime-studio/medialab/hooks'
 import { eq, useLiveQuery } from '@tanstack/react-db'
 import {
   Camera,
