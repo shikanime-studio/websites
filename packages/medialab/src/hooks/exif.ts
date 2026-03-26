@@ -4,7 +4,6 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { createImageDataView } from '../image'
 import { fileItemKey } from '../queryKey'
 import { RafDataView } from '../raf'
-import { retryDelay } from '../utils'
 
 export function useExif(fileItem: FileItem | null) {
   return useSuspenseQuery({

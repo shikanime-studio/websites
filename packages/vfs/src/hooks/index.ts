@@ -4,4 +4,4 @@ export {
   useFileSystem,
   useFileSystemPicker,
   useWritableFile,
-} from './directory'
+} from './fs'

@@ -1,7 +1,6 @@
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import imageShader from '../shaders/image.wgsl?raw'
-import { retryDelay } from '../utils'
 import { useGpuDevice, useGpuFormat } from './gpu'
 
 export interface LightingParams {

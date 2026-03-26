@@ -5,7 +5,6 @@ import { useEffect } from 'react'
 import { z } from 'zod'
 import { createRafDataView, decodeRafRasterToU16, getRafRasterFromPayload } from '../raf'
 import rafShader from '../shaders/raf.wgsl?raw'
-import { retryDelay } from '../utils'
 import { useGpuDevice, useGpuFormat } from './gpu'
 
 const LightingParamsSchema = z.object({
