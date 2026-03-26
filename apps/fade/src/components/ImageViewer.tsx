@@ -15,7 +15,7 @@ interface ImageViewerProps {
 
 export function ImageViewer({ fileItem }: ImageViewerProps) {
   const { file } = useFile(fileItem ?? null)
-  const { url } = useObjectUrl(file ?? null)
+  const { data: url } = useObjectUrl(file ?? null)
   const { setImage } = useImageInfo()
   const { modal, setModal } = useModal()
   const [loadedImage, setLoadedImage] = useState<HTMLImageElement | null>(null)
