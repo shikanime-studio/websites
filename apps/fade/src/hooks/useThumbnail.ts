@@ -2,6 +2,7 @@ import type { FileItem } from '../lib/fs'
 import { RafDataView } from '@shikanime-studio/medialab'
 import { useGpuDevice } from '@shikanime-studio/medialab/hooks'
 import { useSuspenseQuery } from '@tanstack/react-query'
+import { fileTypeFromBlob } from 'file-type'
 import { fileHandleKey } from '../lib/queryKey'
 import thumbnailShader from '../shaders/thumbnail.wgsl?raw'
 
@@ -72,8 +73,10 @@ export function useThumbnail(
       const file = await handle.getFile()
 
       let blob: Blob = file
+      const detected = !mimeType ? await fileTypeFromBlob(file) : null
+      const effectiveType = mimeType ?? detected?.mime ?? file.type ?? ''
 
-      if (mimeType === 'image/x-fujifilm-raf') {
+      if (effectiveType === 'image/x-fujifilm-raf') {
         const buffer = await file.arrayBuffer()
         const view = new RafDataView(buffer)
         const jpgView = view.getJpegImage()
@@ -82,11 +85,10 @@ export function useThumbnail(
         blob = new Blob([jpgView as unknown as BlobPart], { type: 'image/jpeg' })
       }
       else {
-        const effectiveType = file.type || mimeType || ''
         if (!effectiveType.startsWith('image/'))
           return null
-        if (!file.type && mimeType) {
-          blob = file.slice(0, file.size, mimeType)
+        if (!file.type && effectiveType) {
+          blob = file.slice(0, file.size, effectiveType)
         }
       }
 

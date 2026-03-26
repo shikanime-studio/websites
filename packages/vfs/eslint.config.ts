@@ -7,9 +7,7 @@ export default antfu(
     jsx: {
       a11y: true,
     },
-    react: {
-      reactCompiler: true,
-    },
+    react: true,
   },
   ...pluginQuery.configs['flat/recommended'],
 )

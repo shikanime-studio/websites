@@ -10,11 +10,11 @@ import { FullscreenNavigation } from './FullscreenNavigation'
 import { ImageRender } from './ImageRender'
 
 interface ImageViewerProps {
-  fileItem?: FileItem
+  fileItem: FileItem
 }
 
 export function ImageViewer({ fileItem }: ImageViewerProps) {
-  const { file } = useFile(fileItem ?? null)
+  const { file } = useFile(fileItem)
   const { data: url } = useObjectUrl(file ?? null)
   const { setImage } = useImageInfo()
   const { modal, setModal } = useModal()
@@ -22,6 +22,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
   const [decodeError, setDecodeError] = useState(false)
   const [decodeErrorMessage, setDecodeErrorMessage] = useState<string | null>(null)
   const [prevUrl, setPrevUrl] = useState<string | null>(null)
+  const mimeType = fileItem?.mimeType ?? file?.type ?? ''
 
   if (url !== prevUrl) {
     setPrevUrl(url ?? null)
@@ -30,23 +31,20 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
   }
 
   useEffect(() => {
-    if (!file || !url || !(fileItem?.mimeType?.startsWith('image/') ?? false)) {
+    if (!file || !url || !mimeType.startsWith('image/')) {
       setImage(null)
     }
-  }, [file, url, fileItem?.mimeType, setImage])
-
-  if (!file || !url)
-    return null
+  }, [file, url, mimeType, setImage])
 
   let content: React.ReactNode
   if (decodeError) {
     content = (
       <div className="flex h-full w-full items-center justify-center">
         <div className="flex flex-col items-center gap-4 opacity-50">
-          <FileIcon type={fileItem?.mimeType} className="h-32 w-32 opacity-30" />
+          <FileIcon mimeType={fileItem?.mimeType} className="h-32 w-32 opacity-30" />
           <p className="m-0 text-base font-medium">Preview not available for this image format</p>
           {decodeErrorMessage && (
-            <p className="m-0 max-w-[60ch] break-words text-sm opacity-70">{decodeErrorMessage}</p>
+            <p className="m-0 max-w-[60ch] wrap-break-word text-sm opacity-70">{decodeErrorMessage}</p>
           )}
         </div>
       </div>
@@ -73,12 +71,12 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
 
   return (
     <>
-      {fileItem?.mimeType?.startsWith('image/')
+      {mimeType.startsWith('image/')
         ? (
             <>
               <img
-                src={url}
-                alt={fileItem?.handle.name}
+                src={url ?? undefined}
+                alt={fileItem.handle.name}
                 className="hidden"
                 onLoad={(e) => {
                   const img = e.currentTarget
@@ -86,6 +84,9 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
                   setImage(img)
                 }}
                 onError={async () => {
+                  if (!url) {
+                    return
+                  }
                   setLoadedImage(null)
                   setDecodeError(true)
                   setDecodeErrorMessage(null)
@@ -132,7 +133,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
               </FullscreenModal>
             </>
           )
-        : fileItem?.mimeType?.startsWith('video/')
+        : mimeType.startsWith('video/')
           ? (
               <video
                 key={url}
@@ -148,11 +149,11 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
           : (
               <object
                 data={url}
-                type={fileItem?.mimeType}
+                type={mimeType}
                 className="animate-fade-in h-full w-full rounded-lg object-contain shadow-2xl"
               >
                 <div className="flex h-full flex-col items-center justify-center gap-4 opacity-50">
-                  <FileIcon type={fileItem?.mimeType} className="h-32 w-32 opacity-30" />
+                  <FileIcon mimeType={mimeType} className="h-32 w-32 opacity-30" />
                   <p className="m-0 text-xl font-medium">
                     Preview not available for this file type
                   </p>

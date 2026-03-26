@@ -1,3 +1,4 @@
+import type { LucideProps } from 'lucide-react'
 import {
   File,
   FileArchive,
@@ -8,22 +9,21 @@ import {
   FileVideo,
 } from 'lucide-react'
 
-interface FileIconProps {
-  type?: string | undefined
-  className?: string
-}
+type FileIconProps = {
+  mimeType?: string | undefined
+} & LucideProps
 
-export function FileIcon({ type, className }: FileIconProps) {
+export function FileIcon({ mimeType: type, ...props }: FileIconProps) {
   if (!type) {
-    return <FileQuestion className={className} />
+    return <FileQuestion {...props} />
   }
 
   if (type.startsWith('video/')) {
-    return <FileVideo className={className} />
+    return <FileVideo {...props} />
   }
 
   if (type.startsWith('audio/')) {
-    return <FileAudio className={className} />
+    return <FileAudio {...props} />
   }
 
   if (type.startsWith('text/')) {
@@ -34,13 +34,13 @@ export function FileIcon({ type, className }: FileIconProps) {
       || type.includes('json')
       || type.includes('xml')
     ) {
-      return <FileCode className={className} />
+      return <FileCode {...props} />
     }
-    return <FileText className={className} />
+    return <FileText {...props} />
   }
 
   if (type.includes('pdf')) {
-    return <FileText className={className} />
+    return <FileText {...props} />
   }
 
   if (
@@ -50,7 +50,7 @@ export function FileIcon({ type, className }: FileIconProps) {
     || type.includes('7z')
     || type.includes('compressed')
   ) {
-    return <FileArchive className={className} />
+    return <FileArchive {...props} />
   }
 
   if (type.startsWith('application/')) {
@@ -59,9 +59,9 @@ export function FileIcon({ type, className }: FileIconProps) {
       || type.includes('xml')
       || type.includes('javascript')
     ) {
-      return <FileCode className={className} />
+      return <FileCode {...props} />
     }
   }
 
-  return <File className={className} />
+  return <File {...props} />
 }

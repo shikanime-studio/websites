@@ -15,7 +15,6 @@ export default defineConfig({
         utils: path.resolve(__dirname, 'src/utils.ts'),
       },
       formats: ['es'],
-      fileName: (_format: string, entryName: string) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [

@@ -15,23 +15,6 @@ export function useFileSystem() {
   return context
 }
 
-async function resolveParentDirectory(
-  root: FileSystemDirectoryHandle,
-  path: string,
-  directoryOptions?: FileSystemGetDirectoryOptions,
-) {
-  const parts = path.split('/').filter(Boolean)
-  const parentParts = parts.slice(0, -1)
-  let current = root
-  for (const part of parentParts) {
-    current = await current.getDirectoryHandle(part, directoryOptions)
-  }
-  const basename = parts.at(-1)
-  if (!basename)
-    throw new Error('Path must not be empty')
-  return { parent: current, basename }
-}
-
 export function useFileSystemPicker() {
   const { setRoot } = useFileSystem()
 
@@ -45,7 +28,39 @@ export function useFileSystemPicker() {
   })
 }
 
-export function useFile(
+async function resolveDirectory(
+  root: FileSystemDirectoryHandle,
+  path: string,
+  options?: FileSystemGetDirectoryOptions,
+) {
+  let current = root
+  for (const part of path.split('/').filter(Boolean)) {
+    current = await current.getDirectoryHandle(part, options)
+  }
+  return current
+}
+
+export function useRelativeDirectory(
+  path: string,
+  options?: FileSystemGetDirectoryOptions,
+) {
+  const { root } = useFileSystem()
+
+  return useSuspenseQuery({
+    queryKey: ['fs', 'relative-directory', root, path, options],
+    queryFn: async (): Promise<FileSystemDirectoryHandle> => {
+      if (!root)
+        throw new Error('No root directory selected')
+      return resolveDirectory(root, path, options)
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
+  })
+}
+
+export function useRelativeFile(
   path: string,
   options?: {
     directory?: FileSystemGetDirectoryOptions
@@ -55,16 +70,18 @@ export function useFile(
   const { root } = useFileSystem()
 
   return useSuspenseQuery({
-    queryKey: ['fs', 'file', root, path, options?.directory, options?.file],
+    queryKey: ['fs', 'relative-file', root, path, options?.directory, options?.file],
     queryFn: async (): Promise<FileSystemFileHandle> => {
       if (!root)
         throw new Error('No root directory selected')
 
-      const { parent, basename } = await resolveParentDirectory(
-        root,
-        path,
-        options?.directory,
-      )
+      const parts = path.split('/').filter(Boolean)
+      const basename = parts.at(-1)
+      if (!basename)
+        throw new Error('Path must not be empty')
+
+      const parentPath = parts.slice(0, -1).join('/')
+      const parent = await resolveDirectory(root, parentPath, options?.directory)
       return parent.getFileHandle(basename, options?.file)
     },
     staleTime: Infinity,
@@ -74,6 +91,16 @@ export function useFile(
   })
 }
 
+export function useFile(
+  path: string,
+  options?: {
+    directory?: FileSystemGetDirectoryOptions
+    file?: FileSystemGetFileOptions
+  },
+) {
+  return useRelativeFile(path, options)
+}
+
 export function useWritableFile(
   path: string,
   options?: {
@@ -81,7 +108,7 @@ export function useWritableFile(
     file?: FileSystemGetFileOptions
   },
 ) {
-  const { data: file } = useFile(path, {
+  const { data: file } = useRelativeFile(path, {
     directory: options?.directory ?? { create: true },
     file: options?.file ?? { create: true },
   })
@@ -107,18 +134,6 @@ export function useWritableFile(
   return result
 }
 
-async function resolveDirectory(
-  root: FileSystemDirectoryHandle,
-  path: string,
-  options?: FileSystemGetDirectoryOptions,
-) {
-  let current = root
-  for (const part of path.split('/').filter(Boolean)) {
-    current = await current.getDirectoryHandle(part, options)
-  }
-  return current
-}
-
 export function useDirectory(
   path: string,
   options?: {
@@ -140,7 +155,7 @@ export function useDirectory(
       const entries: Array<FileSystemHandle> = []
       let index = 0
 
-      for await (const [, h] of handle.entries()) {
+      for await (const h of handle.values()) {
         if (index >= startIndex && entries.length < pageSize) {
           entries.push(h)
         }
@@ -151,7 +166,8 @@ export function useDirectory(
 
       return entries
     },
-    getNextPageParam: (_lastPage, pages) => pages.length,
+    getNextPageParam: (lastPage, pages) =>
+      lastPage.length < pageSize ? undefined : pages.length,
     initialPageParam: 0,
     staleTime: Infinity,
   })

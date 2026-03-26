@@ -1,19 +1,16 @@
+import type { UseSuspenseQueryResult } from '@tanstack/react-query'
 import type { Config, Mixpanel } from 'mixpanel-browser'
+import { useSuspenseQuery } from '@tanstack/react-query'
 import mixpanel from 'mixpanel-browser'
-import { createContext, use, useMemo } from 'react'
+import { createContext, use } from 'react'
 
-export interface MixpanelContextValue {
-  instance?: Mixpanel
-}
-
-export const MixpanelContext = createContext<MixpanelContextValue | null>(null)
+export const MixpanelContext = createContext<UseSuspenseQueryResult<Mixpanel> | undefined>(undefined)
 
 export function useMixpanel() {
   const context = use(MixpanelContext)
-  if (!context?.instance) {
-    return mixpanel
-  }
-  return context.instance
+  if (!context)
+    throw new Error('useMixpanel must be used within a MixpanelProvider')
+  return context
 }
 
 export function useMixpanelInstance(
@@ -21,11 +18,14 @@ export function useMixpanelInstance(
   config?: Partial<Config>,
   name?: string,
 ) {
-  return useMemo(() => {
-    if (!name) {
-      mixpanel.init(token, config ?? {})
-      return {}
-    }
-    return { instance: mixpanel.init(token, config ?? {}, name) }
-  }, [token, config, name])
+  return useSuspenseQuery({
+    queryKey: ['mixpanel', token, name, config],
+    queryFn: () => {
+      if (!name) {
+        mixpanel.init(token, config ?? {})
+        return mixpanel
+      }
+      return mixpanel.init(token, config ?? {}, name)
+    },
+  })
 }

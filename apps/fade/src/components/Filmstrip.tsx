@@ -1,16 +1,26 @@
 import type { FileItem } from '../lib/fs'
 import { eq, useLiveQuery } from '@tanstack/react-db'
+import { useVirtualizer } from '@tanstack/react-virtual'
 import { Image } from '@unpic/react'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { Activity, Suspense, useEffect, useRef } from 'react'
+import { useElementSize } from '../hooks/useElementSize'
 import { useGallery } from '../hooks/useGallery'
 import { useThumbnail } from '../hooks/useThumbnail'
 import { settingsCollection } from '../lib/db'
 import { FileIcon } from './FileIcon'
 
 export function Filmstrip() {
-  const { files, selectedIndex, selectFile } = useGallery()
+  const {
+    files,
+    selectedIndex,
+    selectFile,
+    fetchMore,
+    hasMore,
+    isFetchingMore,
+  } = useGallery()
   const ref = useRef<HTMLDivElement>(null)
+  const { width } = useElementSize(ref)
 
   const { data } = useLiveQuery(q =>
     q
@@ -21,20 +31,36 @@ export function Filmstrip() {
 
   const isCollapsed = (data?.value as boolean) || false
 
-  // Scroll selected thumbnail into view
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const virtualizer = useVirtualizer({
+    horizontal: true,
+    count: files.length,
+    getScrollElement: () => ref.current,
+    estimateSize: () => 88,
+    overscan: width > 0 ? Math.ceil(width / 88) : 5,
+  })
+
+  useEffect(() => {
+    const items = virtualizer.getVirtualItems()
+    const last = items.at(-1)
+    if (!last)
+      return
+
+    if (hasMore && !isFetchingMore && last.index >= files.length - 10) {
+      fetchMore()
+    }
+  }, [fetchMore, files.length, hasMore, isFetchingMore, virtualizer])
+
   useEffect(() => {
     if (isCollapsed)
       return
-    const container = ref.current
-    if (!container)
-      return
-    const selected = container.querySelector<HTMLElement>('button[aria-current="true"]')
-    selected?.scrollIntoView({
+    virtualizer.scrollToIndex(selectedIndex, {
+      align: 'center',
       behavior: 'smooth',
-      block: 'nearest',
-      inline: 'center',
     })
-  }, [isCollapsed, selectedIndex])
+  }, [isCollapsed, selectedIndex, virtualizer])
+
+  const virtualItems = virtualizer.getVirtualItems()
 
   return (
     <div
@@ -78,9 +104,15 @@ export function Filmstrip() {
                 <EmptyFilmstrip />
               )
             : (
-                <div className="flex h-full items-center gap-2 px-4 py-4">
+                <div
+                  className="relative h-full w-full px-4 py-4"
+                  style={{
+                    width: `${virtualizer.getTotalSize().toString()}px`,
+                  }}
+                >
                   <FilmstripContent
                     files={files}
+                    virtualItems={virtualItems}
                     selectedIndex={selectedIndex}
                     onSelect={selectFile}
                   />
@@ -102,18 +134,22 @@ function EmptyFilmstrip() {
 
 interface FilmstripContentProps {
   files: Array<FileItem>
+  virtualItems: ReturnType<ReturnType<typeof useVirtualizer>['getVirtualItems']>
   selectedIndex: number
   onSelect: (index: number) => void
 }
 
 function FilmstripContent({
   files,
+  virtualItems,
   selectedIndex,
   onSelect,
 }: FilmstripContentProps) {
   return (
     <>
-      {files.map((fileItem, index) => {
+      {virtualItems.map((virtualItem) => {
+        const index = virtualItem.index
+        const fileItem = files[index]
         if (!fileItem)
           return null
 
@@ -124,6 +160,10 @@ function FilmstripContent({
             isSelected={index === selectedIndex}
             onClick={() => {
               onSelect(index)
+            }}
+            style={{
+              transform: `translateX(${virtualItem.start.toString()}px)`,
+              width: '80px',
             }}
           />
         )
@@ -136,6 +176,7 @@ interface FilmstripItemProps {
   fileItem: FileItem
   isSelected: boolean
   onClick: () => void
+  style: React.CSSProperties
 }
 
 function FilmstripItem(props: FilmstripItemProps) {
@@ -150,15 +191,17 @@ function FilmstripItemSkeleton({
   fileItem,
   isSelected,
   onClick,
+  style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? 'border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]'
           : 'border-transparent'
       }`}
+      style={style}
       onClick={onClick}
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
@@ -174,17 +217,19 @@ function FilmstripItemContent({
   fileItem,
   isSelected,
   onClick,
+  style,
 }: FilmstripItemProps) {
   const { handle } = fileItem
   const { data: url } = useThumbnail(fileItem, 80, 80)
 
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? 'border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]'
           : 'border-transparent'
       }`}
+      style={style}
       onClick={onClick}
       aria-label={`Select ${handle.name}`}
       aria-current={isSelected ? 'true' : 'false'}
@@ -203,7 +248,7 @@ function FilmstripItemContent({
           )
         : (
             <div className="flex h-full w-full items-center justify-center">
-              <FileIcon type={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
+              <FileIcon mimeType={fileItem?.mimeType} className="h-8 w-8 opacity-50" />
             </div>
           )}
       <div

@@ -1,0 +1,1 @@
+{"version":3,"file":"utils.js","sources":["../src/utils.ts"],"sourcesContent":["export function retryDelay(attemptIndex: number) {\n  return Math.min(1000 * 2 ** attemptIndex, 10_000)\n}\n"],"names":["retryDelay","attemptIndex"],"mappings":"AAAO,SAASA,EAAWC,GAAsB;AAC/C,SAAO,KAAK,IAAI,MAAO,KAAKA,GAAc,GAAM;AAClD;"}

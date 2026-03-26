@@ -9,6 +9,8 @@ export function useObjectUrl(blob: Blob | MediaSource | null) {
         return undefined
       return URL.createObjectURL(blob)
     },
+    staleTime: 0,
+    gcTime: 0,
   })
 
   useEffect(() => {
