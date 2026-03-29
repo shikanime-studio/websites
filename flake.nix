@@ -121,6 +121,7 @@
               settings.global.excludes = [
                 "*.gen.ts"
                 "apps/*/node_modules/*"
+                "packages/*/dist/*"
                 "packages/*/node_modules/*"
               ];
             };

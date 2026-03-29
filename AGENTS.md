@@ -1,6 +1,6 @@
-## Website
+# Website
 
-### Quick start
+## Quick start
 
 - Install: `pnpm install`
 - Run an app: `pnpm -C apps/<app> dev`
@@ -12,9 +12,11 @@
 
 - Dev server: `pnpm -C apps/fade dev` (Vite, port 3000)
 - URL: `https://fade.shikanime.studio`
-- Mixpanel env: `VITE_MIXPANEL_TOKEN`, `VITE_MIXPANEL_API_HOST` (see \[\_\_root.tsx\](file:///Users/shikanimedeva/Source/Repos/github.com/shikanime-studio/websites/apps/fade/src/routes/\_\_root.tsx))
+- Mixpanel env: `VITE_MIXPANEL_TOKEN`, `VITE_MIXPANEL_API_HOST`
+  (see \[\_\_root.tsx\](apps/fade/src/routes/\_\_root.tsx))
 - E2E (Playwright): `pnpm -C apps/fade test:e2e`
-- Browsers install (one-time on a machine): `pnpm -C apps/fade exec playwright install`
+- Browsers install (one-time on a machine):
+  `pnpm -C apps/fade exec playwright install`
 
 #### links
 
@@ -33,7 +35,8 @@
 
 ### Non-technical knowledge
 
-- This repo hosts multiple Shikanime Studio web properties (public sites + apps).
+- This repo hosts multiple Shikanime Studio web properties
+  (public sites + apps).
 - www: public-facing studio website.
 - links: link hub / landing page.
 - fade: local image viewer (WebGPU).
@@ -42,6 +45,8 @@
 ### Technical knowledge
 
 - Monorepo managed with pnpm workspaces.
-- Each app deploys to Cloudflare via Wrangler (each app has its own `wrangler.jsonc`).
+- Each app deploys to Cloudflare via Wrangler
+  (each app has its own `wrangler.jsonc`).
 - Root `pnpm test` runs Vitest (currently exercised by tests under `apps/fade`).
-- Astro apps use `PUBLIC_` env vars for client-side config; Vite/React app uses `VITE_` env vars.
+- Astro apps use `PUBLIC_` env vars for client-side config.
+- Vite/React app uses `VITE_` env vars.
