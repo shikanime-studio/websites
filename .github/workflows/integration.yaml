@@ -1,9 +1,11 @@
 jobs:
   javascript:
+    if: ${{ github.event.pull_request.draft == false }}
     secrets:
       OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
     uses: ./.github/workflows/javascript.yaml
   nix:
+    if: ${{ github.event.pull_request.draft == false }}
     secrets:
       CACHIX_AUTH_TOKEN: ${{ secrets.CACHIX_AUTH_TOKEN }}
       OPERATOR_PRIVATE_KEY: ${{ secrets.OPERATOR_PRIVATE_KEY }}
@@ -16,5 +18,10 @@ name: Integration
     branches:
       - main
       - gh/*/*/base
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - ready_for_review
 permissions:
   contents: read
