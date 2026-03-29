@@ -1,5 +1,8 @@
 jobs:
   dependencies:
+    permissions:
+      contents: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -28,6 +31,9 @@ jobs:
           sign-commits: true
           username: operator6o
   stale:
+    permissions:
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -51,6 +57,4 @@ name: Update
     - cron: 0 4 * * 0
   workflow_dispatch: {}
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read

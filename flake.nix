@@ -103,11 +103,25 @@
                   dialect = "sqlite";
                 };
                 sqlfluff-lint.enable = true;
+                typos.configFile =
+                  let
+                    format = pkgs.formats.toml { };
+                    settings = {
+                      files.extend-exclude = [
+                        "apps/links/src/worker-configuration.d.ts"
+                        "apps/reiya/src/worker-configuration.d.ts"
+                        "apps/www/src/worker-configuration.d.ts"
+                      ];
+                    };
+                    configFile = format.generate "typos.toml" settings;
+                  in
+                  "${configFile}";
                 wgslfmt.enable = true;
               };
               settings.global.excludes = [
                 "*.gen.ts"
                 "apps/*/node_modules/*"
+                "packages/*/dist/*"
                 "packages/*/node_modules/*"
               ];
             };

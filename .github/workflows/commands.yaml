@@ -1,6 +1,10 @@
 jobs:
   backport:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, '.backport')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -28,6 +32,10 @@ jobs:
           sign-commits: true
   close:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, '.close')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -53,6 +61,10 @@ jobs:
           username: operator6o
   land:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, '.land')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -84,6 +96,10 @@ jobs:
           username: operator6o
   rebase:
     if: github.event.issue.pull_request != null && contains(github.event.comment.body, '.rebase')
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
     runs-on: ubuntu-slim
     steps:
       - continue-on-error: true
@@ -118,6 +134,4 @@ name: Commands
     types:
       - created
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
