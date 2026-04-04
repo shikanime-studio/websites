@@ -91,6 +91,9 @@ onlyBuiltDependencies:
   - sharp
   - workerd
   - wrangler
+ignoredBuiltDependencies:
+  - "@prisma/engines"
+  - prisma
 overrides:
   vite: "catalog:build"
 packages:
