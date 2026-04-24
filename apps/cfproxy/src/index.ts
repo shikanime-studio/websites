@@ -36,22 +36,16 @@ export default {
       redirect: "manual",
     });
 
-    try {
-      const response = await fetch(proxyRequest);
-      const responseHeaders = new Headers(response.headers);
+    const response = await fetch(proxyRequest);
+    const responseHeaders = new Headers(response.headers);
 
-      responseHeaders.delete("content-security-policy");
-      responseHeaders.delete("content-security-policy-report-only");
+    responseHeaders.delete("content-security-policy");
+    responseHeaders.delete("content-security-policy-report-only");
 
-      return new Response(response.body, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: responseHeaders,
-      });
-    } catch {
-      return new Response("Proxy Error: Destination Unreachable", {
-        status: 502,
-      });
-    }
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers: responseHeaders,
+    });
   },
 } satisfies ExportedHandler<Env>;
