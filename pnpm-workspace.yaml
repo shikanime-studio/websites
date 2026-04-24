@@ -3,7 +3,7 @@ packages:
   - apps/fade
   - apps/links
   - apps/reiya
-  - apps/tsproxy
+  - apps/cfproxy
   - apps/www
 catalogs:
   build:

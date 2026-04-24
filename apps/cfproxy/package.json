@@ -1,5 +1,5 @@
 {
-  "name": "@shikanime-studio/tsproxy",
+  "name": "@shikanime-studio/cfproxy",
   "version": "0.0.0",
   "private": true,
   "type": "module",

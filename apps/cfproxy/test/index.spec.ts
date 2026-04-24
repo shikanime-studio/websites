@@ -4,7 +4,7 @@ import {
 } from "cloudflare:test";
 import { env, exports } from "cloudflare:workers";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import worker from "../src/index";
+import worker from "../src/index.ts";
 
 describe("tailnet proxy worker", () => {
   let fetchSpy: ReturnType<typeof vi.fn>;

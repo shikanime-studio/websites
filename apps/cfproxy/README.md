@@ -1,4 +1,4 @@
-# tsproxy
+# cfproxy
 
 Cloudflare Worker reverse proxy to a Tailscale Funnel origin.
 

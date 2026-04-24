@@ -631,7 +631,7 @@ importers:
       wrangler:
         version: 4.84.1
         specifier: catalog:infra
-  apps/tsproxy:
+  apps/cfproxy:
     dependencies:
       zod:
         version: 4.3.6
