@@ -2,14 +2,14 @@
 
 ## Purpose
 
-- Links is a fast links landing page for Shikanime Studio
-  (see \[README.md\](README.md)).
+- Links is a fast links landing page for Shikanime Studio (see
+  \[README.md\](README.md)).
 - It’s a lightweight hub for studio profiles and resources.
 
 ## URLs
 
-- Production: `https://links.shikanime.studio`
-  (see \[astro.config.mjs\](astro.config.mjs))
+- Production: `https://links.shikanime.studio` (see
+  \[astro.config.mjs\](astro.config.mjs))
 
 ## Commands
 
@@ -23,8 +23,8 @@
 
 ## Configuration
 
-- Mixpanel: `PUBLIC_MIXPANEL_TOKEN`, `PUBLIC_MIXPANEL_API_HOST`
-  (used in \[BaseLayout.astro\](src/layouts/BaseLayout.astro))
+- Mixpanel: `PUBLIC_MIXPANEL_TOKEN`, `PUBLIC_MIXPANEL_API_HOST` (used in
+  \[BaseLayout.astro\](src/layouts/BaseLayout.astro))
 
 ## Technical notes
 

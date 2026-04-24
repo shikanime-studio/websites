@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 export interface FilterButtonProps {
-  label: string
-  active?: boolean
-  hasDropdown?: boolean
-  onClick?: () => void
+  label: string;
+  active?: boolean;
+  hasDropdown?: boolean;
+  onClick?: () => void;
 }
 
 export function FilterButton({
@@ -19,15 +19,15 @@ export function FilterButton({
       onClick={onClick}
       className={`btn btn-neutral flex items-center gap-2 rounded-full border-none px-4 py-2 text-sm font-medium transition-all ${
         active
-          ? 'text-primary bg-gray-200 font-bold hover:bg-gray-300'
-          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          ? "text-primary bg-gray-200 font-bold hover:bg-gray-300"
+          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
       } `}
     >
       {label}
       {hasDropdown && (
         <svg
           aria-hidden="true"
-          className={`h-4 w-4 ${active ? 'text-primary' : 'text-gray-500'}`}
+          className={`h-4 w-4 ${active ? "text-primary" : "text-gray-500"}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -41,11 +41,11 @@ export function FilterButton({
         </svg>
       )}
     </button>
-  )
+  );
 }
 
 interface FilterBarProps {
-  children?: ReactNode
+  children?: ReactNode;
 }
 
 export function FilterBar({ children }: FilterBarProps) {
@@ -53,5 +53,5 @@ export function FilterBar({ children }: FilterBarProps) {
     <div className="scrollbar-hide flex gap-3 overflow-x-auto pb-2">
       {children}
     </div>
-  )
+  );
 }

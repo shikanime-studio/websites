@@ -8,10 +8,11 @@
     {
       "pattern": "fade.shikanime.studio",
       "custom_domain": true,
-      "zone_name": "shikanime.studio"
-    }
+      "zone_name": "shikanime.studio",
+    },
   ],
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
+  "placement": { "mode": "smart" },
 }

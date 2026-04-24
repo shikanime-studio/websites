@@ -1,68 +1,65 @@
-import type { ReactNode } from 'react'
-import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query'
-import { useEffect } from 'react'
-import { GPUContext, useGPUSupport } from '../hooks/useGPU'
+import type { ReactNode } from "react";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { GPUContext, useGPUSupport } from "../hooks/useGPU";
 
 export function GPUProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient()
-  const isSupported = useGPUSupport()
+  const queryClient = useQueryClient();
+  const isSupported = useGPUSupport();
 
   const { data: adapter } = useSuspenseQuery({
-    queryKey: ['gpu', 'adapter', isSupported],
+    queryKey: ["gpu", "adapter", isSupported],
     queryFn: async () => {
       if (!isSupported) {
-        console.warn('GPU not supported')
-        return null
+        console.warn("GPU not supported");
+        return null;
       }
-      return await navigator.gpu.requestAdapter()
+      return await navigator.gpu.requestAdapter();
     },
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,
     retry: false,
-  })
+  });
 
   const { data: device } = useSuspenseQuery({
-    queryKey: ['gpu', 'device', adapter],
+    queryKey: ["gpu", "device", adapter],
     queryFn: async () => {
-      if (!adapter)
-        return null
-      return await adapter.requestDevice()
+      if (!adapter) return null;
+      return await adapter.requestDevice();
     },
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,
     retry: false,
-  })
+  });
 
   const { data: format } = useSuspenseQuery({
-    queryKey: ['gpu', 'format', device],
+    queryKey: ["gpu", "format", device],
     queryFn: () => {
-      if (!device)
-        return null
-      return navigator.gpu.getPreferredCanvasFormat()
+      if (!device) return null;
+      return navigator.gpu.getPreferredCanvasFormat();
     },
     staleTime: Infinity,
     gcTime: Infinity,
     refetchOnWindowFocus: false,
     retry: false,
-  })
+  });
 
   useEffect(() => {
-    if (!device)
-      return
+    if (!device) return;
 
     const onLost = (info: GPUDeviceLostInfo) => {
-      console.error(`GPU device lost: ${info.reason}`)
+      console.error(`GPU device lost: ${info.reason}`);
       return queryClient.invalidateQueries({
-        queryKey: ['gpu', 'device', adapter],
-      })
-    }
+        queryKey: ["gpu", "device", adapter],
+      });
+    };
 
     device.lost.then(onLost).catch(() => {
-      console.error('GPU device lost unexpectedly')
-    })
-  }, [device, queryClient, adapter])
+      console.error("GPU device lost unexpectedly");
+    });
+  }, [device, queryClient, adapter]);
 
   return (
     <GPUContext
@@ -75,5 +72,5 @@ export function GPUProvider({ children }: { children: ReactNode }) {
     >
       {children}
     </GPUContext>
-  )
+  );
 }

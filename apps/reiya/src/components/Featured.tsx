@@ -1,11 +1,11 @@
-import type { CardData } from '../lib/api-client'
-import { Image } from '@unpic/react'
-import { ArrowRight } from 'lucide-react'
-import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from './Card'
-import { EmptyState } from './EmptyState'
+import type { CardData } from "../lib/api-client";
+import { Image } from "@unpic/react";
+import { ArrowRight } from "lucide-react";
+import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from "./Card";
+import { EmptyState } from "./EmptyState";
 
 interface FeaturedCarouselItemProps {
-  item: CardData
+  item: CardData;
 }
 
 function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
@@ -16,7 +16,7 @@ function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
           <CardCarousel
             title={item.title}
             href={item.href}
-            images={item.images.map(img => (
+            images={item.images.map((img) => (
               <Image
                 key={img.src}
                 src={img.src}
@@ -35,20 +35,20 @@ function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
         <CardInfo {...item} />
       </Card>
     </div>
-  )
+  );
 }
 
 interface FeaturedProps {
-  title?: string
-  items: Array<CardData>
-  className?: string
-  viewAllLink?: string
+  title?: string;
+  items: Array<CardData>;
+  className?: string;
+  viewAllLink?: string;
 }
 
 export function Featured({
   title,
   items,
-  className = '',
+  className = "",
   viewAllLink,
 }: FeaturedProps) {
   return (
@@ -70,20 +70,18 @@ export function Featured({
         </div>
       )}
 
-      {items.length > 0
-        ? (
-            <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
-              {items.map(item => (
-                <FeaturedCarouselItem key={item.id} item={item} />
-              ))}
-            </div>
-          )
-        : (
-            <EmptyState
-              title="No items yet"
-              description="We couldn't find any items to display in this section."
-            />
-          )}
+      {items.length > 0 ? (
+        <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
+          {items.map((item) => (
+            <FeaturedCarouselItem key={item.id} item={item} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="No items yet"
+          description="We couldn't find any items to display in this section."
+        />
+      )}
     </div>
-  )
+  );
 }

@@ -4,14 +4,11 @@
     {
       "name": "Launch: Fade",
       "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/fade",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
       "console": "internalConsole",
+      "cwd": "${workspaceFolder}/apps/fade",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "pattern": "Local:.*(http://localhost:[0-9]+)",
@@ -22,14 +19,11 @@
     {
       "name": "Launch: Links",
       "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/links",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
       "console": "internalConsole",
+      "cwd": "${workspaceFolder}/apps/links",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "pattern": "Local:.*(http://localhost:[0-9]+)",
@@ -40,14 +34,11 @@
     {
       "name": "Launch: Reiya",
       "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/reiya",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
       "console": "internalConsole",
+      "cwd": "${workspaceFolder}/apps/reiya",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "pattern": "Local:.*(http://localhost:[0-9]+)",
@@ -58,14 +49,11 @@
     {
       "name": "Launch: Www",
       "type": "node",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/apps/www",
-      "runtimeExecutable": "npm",
-      "runtimeArgs": [
-        "run",
-        "dev"
-      ],
       "console": "internalConsole",
+      "cwd": "${workspaceFolder}/apps/www",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
       "serverReadyAction": {
         "action": "debugWithChrome",
         "pattern": "Local:.*(http://localhost:[0-9]+)",

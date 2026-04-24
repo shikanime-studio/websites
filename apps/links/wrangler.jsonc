@@ -8,14 +8,15 @@
     {
       "pattern": "links.shikanime.studio",
       "custom_domain": true,
-      "zone_name": "shikanime.studio"
-    }
+      "zone_name": "shikanime.studio",
+    },
   ],
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist"
+    "directory": "./dist",
   },
   "observability": {
-    "enabled": true
-  }
+    "enabled": true,
+  },
+  "placement": { "mode": "smart" },
 }

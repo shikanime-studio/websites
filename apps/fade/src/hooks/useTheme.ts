@@ -1,17 +1,17 @@
-import type { Theme } from '../lib/db'
-import { createContext, use } from 'react'
+import type { Theme } from "../lib/db";
+import { createContext, use } from "react";
 
 export interface ThemeContextValue {
-  theme: Theme | undefined
-  setTheme: (theme?: Theme) => void
+  theme: Theme | undefined;
+  setTheme: (theme?: Theme) => void;
 }
 
-export const ThemeContext = createContext<ThemeContextValue | null>(null)
+export const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 export function useTheme() {
-  const context = use(ThemeContext)
+  const context = use(ThemeContext);
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider')
+    throw new Error("useTheme must be used within a ThemeProvider");
   }
-  return context
+  return context;
 }

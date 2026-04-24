@@ -12,9 +12,8 @@ managed as a pnpm workspace monorepo.
 
 ## Repo layout
 
-- apps/*: one deployable app per folder
-- Each app has its own `wrangler.jsonc` and deploys to Cloudflare via
-  Wrangler
+- apps/\*: one deployable app per folder
+- Each app has its own `wrangler.jsonc` and deploys to Cloudflare via Wrangler
 
 ## Quick start
 

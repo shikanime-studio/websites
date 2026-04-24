@@ -1,12 +1,12 @@
-import { ClientOnly } from '@tanstack/react-router'
-import { Monitor, Moon, Sun } from 'lucide-react'
-import { useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
-import { useTheme } from '../hooks/useTheme'
+import { ClientOnly } from "@tanstack/react-router";
+import { Monitor, Moon, Sun } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { useTheme } from "../hooks/useTheme";
 
 interface SettingsModalProps {
-  open: boolean
-  onClose: () => void
+  open: boolean;
+  onClose: () => void;
 }
 
 export function SettingsModal(props: SettingsModalProps) {
@@ -14,29 +14,27 @@ export function SettingsModal(props: SettingsModalProps) {
     <ClientOnly fallback={null}>
       <SettingsModalContent {...props} />
     </ClientOnly>
-  )
+  );
 }
 
 function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
-  const { theme, setTheme } = useTheme()
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const { theme, setTheme } = useTheme();
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog)
-      return
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
     if (isOpen) {
       if (!dialog.open) {
-        dialog.showModal()
+        dialog.showModal();
       }
-    }
-    else {
+    } else {
       if (dialog.open) {
-        dialog.close()
+        dialog.close();
       }
     }
-  }, [isOpen])
+  }, [isOpen]);
 
   return createPortal(
     <dialog
@@ -76,22 +74,22 @@ function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
             <div className="flex items-center gap-2">
               <div className="join">
                 <button
-                  className={`join-item btn btn-sm ${theme === 'light' ? 'btn-active btn-neutral' : ''}`}
+                  className={`join-item btn btn-sm ${theme === "light" ? "btn-active btn-neutral" : ""}`}
                   onClick={() => {
-                    setTheme('light')
+                    setTheme("light");
                   }}
-                  aria-pressed={theme === 'light'}
+                  aria-pressed={theme === "light"}
                   aria-label="Light Mode"
                 >
                   <Sun className="h-4 w-4" />
                   Light
                 </button>
                 <button
-                  className={`join-item btn btn-sm ${theme === 'dark' ? 'btn-active btn-neutral' : ''}`}
+                  className={`join-item btn btn-sm ${theme === "dark" ? "btn-active btn-neutral" : ""}`}
                   onClick={() => {
-                    setTheme('dark')
+                    setTheme("dark");
                   }}
-                  aria-pressed={theme === 'dark'}
+                  aria-pressed={theme === "dark"}
                   aria-label="Dark Mode"
                 >
                   <Moon className="h-4 w-4" />
@@ -103,7 +101,7 @@ function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
                 <button
                   className="btn btn-sm btn-ghost"
                   onClick={() => {
-                    setTheme(undefined)
+                    setTheme(undefined);
                   }}
                   title="Reset to system default"
                   aria-label="Reset to system default"
@@ -128,5 +126,5 @@ function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
       </form>
     </dialog>,
     document.body,
-  )
+  );
 }

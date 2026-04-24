@@ -1,0 +1,9 @@
+{
+  "compilerOptions": { "baseUrl": "." },
+  "extends": [
+    "@tsconfig/node-lts/tsconfig.json",
+    "@tsconfig/node-ts/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
+  ],
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
+}

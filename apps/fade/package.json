@@ -1,23 +1,19 @@
 {
   "name": "@shikanime-studio/fade",
-  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "engines": {
-    "node": ">=22",
-    "pnpm": ">=10"
-  },
+  "type": "module",
   "scripts": {
-    "dev": "vite dev --port 3000",
     "build": "vite build",
     "deploy": "wrangler deploy",
+    "dev": "vite dev --port 3000",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "upload": "wrangler versions upload",
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "upload": "wrangler versions upload"
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:build",
@@ -75,5 +71,9 @@
     "vitest": "catalog:test",
     "web-vitals": "catalog:runtime",
     "wrangler": "catalog:infra"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
   }
 }

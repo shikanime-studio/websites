@@ -9,8 +9,8 @@
 
 ## URLs
 
-- Production: `https://fade.shikanime.studio`
-  (see \[wrangler.jsonc\](wrangler.jsonc))
+- Production: `https://fade.shikanime.studio` (see
+  \[wrangler.jsonc\](wrangler.jsonc))
 
 ## Commands
 
@@ -25,11 +25,11 @@
 
 ## Configuration
 
-- Required at runtime: `VITE_MIXPANEL_TOKEN`, `VITE_MIXPANEL_API_HOST`
-  (used in \[\_\_root.tsx\](src/routes/\_\_root.tsx))
+- Required at runtime: `VITE_MIXPANEL_TOKEN`, `VITE_MIXPANEL_API_HOST` (used in
+  \[\_\_root.tsx\](src/routes/\_\_root.tsx))
 
 ## Technical notes
 
-- Stack: React + Tailwind, WebGPU shaders, TanStack Router + Query
-  (see \[README.md\](README.md)).
+- Stack: React + Tailwind, WebGPU shaders, TanStack Router + Query (see
+  \[README.md\](README.md)).
 - Browser support: requires a browser with WebGPU enabled/available.
