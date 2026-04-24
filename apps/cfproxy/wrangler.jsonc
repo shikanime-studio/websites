@@ -2,6 +2,13 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "copyparty",
   "main": "src/index.ts",
+  "routes": [
+    {
+      "pattern": "copyparty.shikanime.studio",
+      "custom_domain": true,
+      "zone_name": "shikanime.studio",
+    }
+  ],
   "compatibility_date": "2026-04-24",
   "observability": {
     "enabled": true,
