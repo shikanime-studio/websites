@@ -12,9 +12,6 @@
     "test": "vitest",
     "types": "wrangler types src/worker-configuration.d.ts"
   },
-  "dependencies": {
-    "zod": "catalog:runtime"
-  },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@cloudflare/vitest-pool-workers": "catalog:test",

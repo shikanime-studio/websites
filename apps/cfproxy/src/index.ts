@@ -1,8 +1,15 @@
-import { z } from "zod";
+interface Env {
+  KV: KVNamespace;
+}
 
 export default {
   async fetch(request, env): Promise<Response> {
-    const targetHost = z.url().parse(env.TARGET_HOST);
+    const url = new URL(request.url);
+    const incomingHost = url.hostname;
+    const targetHost = await env.KV.get(incomingHost);
+    if (!targetHost) {
+      return new Response(`No mapping found for ${incomingHost}`, { status: 404 });
+    }
 
     const targetUrl = new URL(request.url);
     targetUrl.protocol = "https:";
@@ -32,6 +39,7 @@ export default {
     try {
       const response = await fetch(proxyRequest);
       const responseHeaders = new Headers(response.headers);
+
       responseHeaders.delete("content-security-policy");
       responseHeaders.delete("content-security-policy-report-only");
 
