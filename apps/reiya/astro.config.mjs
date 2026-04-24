@@ -1,16 +1,16 @@
-import process from 'node:process'
-import cloudflare from '@astrojs/cloudflare'
-import partytown from '@astrojs/partytown'
-import react from '@astrojs/react'
-import sitemap from '@astrojs/sitemap'
-import tailwindcss from '@tailwindcss/vite'
-import { defineConfig } from 'astro/config'
+import process from "node:process";
+import cloudflare from "@astrojs/cloudflare";
+import partytown from "@astrojs/partytown";
+import react from "@astrojs/react";
+import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'fr'],
+    defaultLocale: "en",
+    locales: ["en", "fr"],
     routing: {
       prefixDefaultLocale: false,
     },
@@ -18,16 +18,16 @@ export default defineConfig({
   integrations: [
     partytown({
       config: {
-        forward: ['dataLayer.push'],
+        forward: ["dataLayer.push"],
       },
     }),
     react(),
     sitemap(),
   ],
-  output: 'server',
+  output: "server",
   adapter: cloudflare({
-    viteEnvironment: { name: 'ssr' },
-    imageService: 'compile',
+    viteEnvironment: { name: "ssr" },
+    imageService: "compile",
     inspectorPort: false,
     platformProxy: {
       enabled: true,
@@ -35,27 +35,27 @@ export default defineConfig({
   }),
   server: {
     headers: {
-      'Cross-Origin-Opener-Policy': ['same-origin', 'same-origin-allow-popups'],
-      'Referrer-Policy': 'no-referrer-when-downgrade',
+      "Cross-Origin-Opener-Policy": ["same-origin", "same-origin-allow-popups"],
+      "Referrer-Policy": "no-referrer-when-downgrade",
     },
   },
-  site: 'https://reiya.shikanime.studio',
+  site: "https://reiya.shikanime.studio",
   vite: {
     optimizeDeps: {
-      exclude: ['better-auth'],
+      exclude: ["better-auth"],
     },
     plugins: [tailwindcss()],
     resolve: {
       // Use react-dom/server.edge instead of react-dom/server.browser for React 19.
       // Without this, MessageChannel from node:worker_threads needs to be polyfilled.
       alias: {
-        ...(process.env.NODE_ENV === 'production'
-          ? { 'react-dom/server': 'react-dom/server.edge' }
+        ...(process.env.NODE_ENV === "production"
+          ? { "react-dom/server": "react-dom/server.edge" }
           : {}),
       },
     },
     ssr: {
-      external: ['node:async_hooks', 'node:module'],
+      external: ["node:async_hooks", "node:module"],
     },
   },
-})
+});

@@ -1,16 +1,12 @@
-import type { ReactNode } from 'react'
+import type { ReactNode } from "react";
 
 export interface AlertErrorProps {
-  title?: string
-  children: ReactNode
-  onClose?: () => void
+  title?: string;
+  children: ReactNode;
+  onClose?: () => void;
 }
 
-export function AlertError({
-  title,
-  children,
-  onClose,
-}: AlertErrorProps) {
+export function AlertError({ title, children, onClose }: AlertErrorProps) {
   return (
     <div className="alert alert-error cursor-pointer shadow-lg">
       <div className="flex w-full flex-col gap-2">
@@ -29,5 +25,5 @@ export function AlertError({
         )}
       </div>
     </div>
-  )
+  );
 }

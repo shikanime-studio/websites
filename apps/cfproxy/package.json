@@ -1,0 +1,34 @@
+{
+  "name": "@shikanime-studio/cfproxy",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "start": "wrangler dev",
+    "test": "vitest",
+    "types": "wrangler types src/worker-configuration.d.ts"
+  },
+  "dependencies": {
+    "zod": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@cloudflare/vitest-pool-workers": "catalog:test",
+    "@tsconfig/node-lts": "catalog:types",
+    "@tsconfig/node-ts": "catalog:types",
+    "@tsconfig/strictest": "catalog:types",
+    "@types/node": "catalog:types",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test",
+    "wrangler": "catalog:infra"
+  },
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  }
+}

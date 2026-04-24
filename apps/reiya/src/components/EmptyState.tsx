@@ -1,16 +1,16 @@
-import type { ReactNode } from 'react'
-import { Box } from 'lucide-react'
+import type { ReactNode } from "react";
+import { Box } from "lucide-react";
 
 interface EmptyStateProps {
-  title?: string
-  description?: string
-  action?: ReactNode
-  icon?: ReactNode
+  title?: string;
+  description?: string;
+  action?: ReactNode;
+  icon?: ReactNode;
 }
 
 export function EmptyState({
-  title = 'No items found',
-  description = 'We couldn\'t find anything matching your criteria.',
+  title = "No items found",
+  description = "We couldn't find anything matching your criteria.",
   action,
   icon,
 }: EmptyStateProps) {
@@ -25,5 +25,5 @@ export function EmptyState({
       </p>
       {action && <div className="mt-6">{action}</div>}
     </div>
-  )
+  );
 }

@@ -1,25 +1,25 @@
-import type { InputHTMLAttributes, ReactNode } from 'react'
-import { Activity, createContext, use, useState } from 'react'
+import type { InputHTMLAttributes, ReactNode } from "react";
+import { Activity, createContext, use, useState } from "react";
 
 interface TabContextType {
-  activeTab: string
-  setActiveTab: (value: string) => void
+  activeTab: string;
+  setActiveTab: (value: string) => void;
 }
 
-const TabContext = createContext<TabContextType | undefined>(undefined)
+const TabContext = createContext<TabContextType | undefined>(undefined);
 
 interface TabListProps {
-  children: ReactNode
-  className?: string
-  defaultTab: string
+  children: ReactNode;
+  className?: string;
+  defaultTab: string;
 }
 
 export function TabList({
   children,
-  className = '',
+  className = "",
   defaultTab,
 }: TabListProps) {
-  const [activeTab, setActiveTab] = useState(defaultTab)
+  const [activeTab, setActiveTab] = useState(defaultTab);
 
   return (
     <TabContext value={{ activeTab, setActiveTab }}>
@@ -30,27 +30,24 @@ export function TabList({
         {children}
       </div>
     </TabContext>
-  )
+  );
 }
 
-interface TabProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, 'value' | 'onChange'> {
-  children?: ReactNode
-  className?: string
-  value: string
+interface TabProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange"
+> {
+  children?: ReactNode;
+  className?: string;
+  value: string;
 }
 
-export function Tab({
-  children,
-  className = '',
-  value,
-  ...props
-}: TabProps) {
-  const context = use(TabContext)
+export function Tab({ children, className = "", value, ...props }: TabProps) {
+  const context = use(TabContext);
 
   const handleChange = () => {
-    context?.setActiveTab(value)
-  }
+    context?.setActiveTab(value);
+  };
 
   return (
     <input
@@ -59,30 +56,30 @@ export function Tab({
       role="tab"
       {...props}
       className={`tab checked:tab-active checked:border-primary checked:text-primary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-gray-400 transition-colors checked:border-b-4! hover:border-gray-300 hover:text-gray-600 sm:text-xl ${className} `}
-      aria-label={typeof children === 'string' ? children : undefined}
+      aria-label={typeof children === "string" ? children : undefined}
       checked={context?.activeTab === value}
       onChange={handleChange}
     />
-  )
+  );
 }
 
 interface TabContentProps {
-  children: ReactNode
-  className?: string
-  value: string
+  children: ReactNode;
+  className?: string;
+  value: string;
 }
 
 export function TabContent({
   children,
-  className = '',
+  className = "",
   value,
 }: TabContentProps) {
-  const context = use(TabContext)
+  const context = use(TabContext);
   return (
     <div role="tabpanel" className={`tab-content ${className}`}>
-      <Activity mode={context?.activeTab === value ? 'visible' : 'hidden'}>
+      <Activity mode={context?.activeTab === value ? "visible" : "hidden"}>
         {children}
       </Activity>
     </div>
-  )
+  );
 }

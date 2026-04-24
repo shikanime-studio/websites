@@ -1,11 +1,11 @@
-import { ClientOnly } from '@tanstack/react-router'
-import { useEffect, useRef } from 'react'
-import { createPortal } from 'react-dom'
+import { ClientOnly } from "@tanstack/react-router";
+import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
 
 interface FullscreenModalProps {
-  open: boolean
-  onClose: () => void
-  children: React.ReactNode
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
 }
 
 export function FullscreenModal(props: FullscreenModalProps) {
@@ -13,7 +13,7 @@ export function FullscreenModal(props: FullscreenModalProps) {
     <ClientOnly fallback={null}>
       <FullscreenModalContent {...props} />
     </ClientOnly>
-  )
+  );
 }
 
 function FullscreenModalContent({
@@ -21,24 +21,22 @@ function FullscreenModalContent({
   onClose,
   children,
 }: FullscreenModalProps) {
-  const dialogRef = useRef<HTMLDialogElement>(null)
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    const dialog = dialogRef.current
-    if (!dialog)
-      return
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
     if (open) {
       if (!dialog.open) {
-        dialog.showModal()
+        dialog.showModal();
       }
-    }
-    else {
+    } else {
       if (dialog.open) {
-        dialog.close()
+        dialog.close();
       }
     }
-  }, [open])
+  }, [open]);
 
   return createPortal(
     <dialog ref={dialogRef} className="modal bg-black/90" onClose={onClose}>
@@ -53,5 +51,5 @@ function FullscreenModalContent({
       </div>
     </dialog>,
     document.body,
-  )
+  );
 }

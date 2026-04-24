@@ -1,40 +1,36 @@
-import type { FileItem } from '../lib/fs'
-import { useSuspenseQuery } from '@tanstack/react-query'
-import { DimensionsTagId } from '../lib/raf'
-import { createRawImageDataView } from '../lib/raw'
+import type { FileItem } from "../lib/fs";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { DimensionsTagId } from "../lib/raf";
+import { createRawImageDataView } from "../lib/raw";
 
 export function useRawImage(fileItem: FileItem | null) {
   return useSuspenseQuery({
-    queryKey: ['raw-image', fileItem],
+    queryKey: ["raw-image", fileItem],
     queryFn: async () => {
-      if (!fileItem)
-        return null
+      if (!fileItem) return null;
 
-      const view = await createRawImageDataView(fileItem)
-      if (!view)
-        return null
+      const view = await createRawImageDataView(fileItem);
+      if (!view) return null;
 
-      const data = view.getCfa()
-      if (!data)
-        return null
-      const header = view.getCfaHeader()
-      if (!header)
-        return null
-      const tags = header.getTagEntries()
+      const data = view.getCfa();
+      if (!data) return null;
+      const header = view.getCfaHeader();
+      if (!header) return null;
+      const tags = header.getTagEntries();
       const dimEntry = tags.find(
-        t => t.tagId === (DimensionsTagId as number),
-      )
+        (t) => t.tagId === (DimensionsTagId as number),
+      );
 
-      let width = 0
-      let height = 0
+      let width = 0;
+      let height = 0;
 
       if (dimEntry && Array.isArray(dimEntry.value)) {
         // Dimensions value is [height, width]
-        [height, width] = dimEntry.value as [number, number]
+        [height, width] = dimEntry.value as [number, number];
       }
 
-      return { width, height, data }
+      return { width, height, data };
     },
     staleTime: Infinity,
-  })
+  });
 }

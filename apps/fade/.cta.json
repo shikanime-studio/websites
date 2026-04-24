@@ -1,18 +1,15 @@
 {
-  "projectName": "jesaispasoubouffer",
-  "mode": "file-router",
-  "typescript": true,
-  "packageManager": "pnpm",
-  "includeExamples": false,
-  "tailwind": true,
+  "version": 1,
   "addOnOptions": {},
   "envVarValues": {},
-  "git": false,
-  "routerOnly": false,
-  "version": 1,
   "framework": "react-cra",
-  "chosenAddOns": [
-    "cloudflare",
-    "better-auth"
-  ]
+  "git": false,
+  "includeExamples": false,
+  "mode": "file-router",
+  "packageManager": "pnpm",
+  "projectName": "jesaispasoubouffer",
+  "routerOnly": false,
+  "tailwind": true,
+  "typescript": true,
+  "chosenAddOns": ["cloudflare", "better-auth"]
 }

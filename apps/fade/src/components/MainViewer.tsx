@@ -1,20 +1,20 @@
-import type { FileItem } from '../lib/fs'
-import { ChevronLeft, ChevronRight, ImageOff } from 'lucide-react'
-import { Suspense } from 'react'
-import { useGallery } from '../hooks/useGallery'
-import { ImageViewer } from './ImageViewer'
-import { RawImageViewer } from './RawImageViewer'
+import type { FileItem } from "../lib/fs";
+import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
+import { Suspense } from "react";
+import { useGallery } from "../hooks/useGallery";
+import { ImageViewer } from "./ImageViewer";
+import { RawImageViewer } from "./RawImageViewer";
 
 export function MainViewer() {
-  const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious }
-    = useGallery()
+  const { selectedFile, files, selectedIndex, navigateNext, navigatePrevious } =
+    useGallery();
 
   if (files.length === 0) {
-    return <EmptyMainViewer />
+    return <EmptyMainViewer />;
   }
 
-  const canGoPrevious = selectedIndex > 0
-  const canGoNext = selectedIndex < files.length - 1
+  const canGoPrevious = selectedIndex > 0;
+  const canGoNext = selectedIndex < files.length - 1;
 
   return (
     <div className="bg-base-100 relative flex min-w-0 flex-1 items-center justify-center">
@@ -46,7 +46,7 @@ export function MainViewer() {
         <ChevronRight className="h-8 w-8" />
       </button>
     </div>
-  )
+  );
 }
 
 function EmptyMainViewer() {
@@ -60,17 +60,17 @@ function EmptyMainViewer() {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 interface MainViewerContentProps {
-  fileItem: FileItem
+  fileItem: FileItem;
 }
 
 function MainViewerContent({ fileItem }: MainViewerContentProps) {
-  if (fileItem?.mimeType === 'image/x-fujifilm-raf') {
-    return <RawImageViewer fileItem={fileItem} />
+  if (fileItem?.mimeType === "image/x-fujifilm-raf") {
+    return <RawImageViewer fileItem={fileItem} />;
   }
 
-  return <ImageViewer fileItem={fileItem} />
+  return <ImageViewer fileItem={fileItem} />;
 }
