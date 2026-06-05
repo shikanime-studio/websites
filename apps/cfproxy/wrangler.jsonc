@@ -7,7 +7,7 @@
       "pattern": "copyparty.shikanime.studio",
       "custom_domain": true,
       "zone_name": "shikanime.studio",
-    }
+    },
   ],
   "compatibility_date": "2026-04-24",
   "observability": {
@@ -22,8 +22,8 @@
   "kv_namespaces": [
     {
       "binding": "KV",
-      "id": "d8aa3c991fd742729fb23b6608d278df"
-    }
+      "id": "d8aa3c991fd742729fb23b6608d278df",
+    },
   ],
   "upload_source_maps": true,
   "compatibility_flags": ["nodejs_compat"],

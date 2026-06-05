@@ -8,7 +8,9 @@ export default {
     const incomingHost = url.hostname;
     const targetHost = await env.KV.get(incomingHost);
     if (!targetHost) {
-      return new Response(`No mapping found for ${incomingHost}`, { status: 404 });
+      return new Response(`No mapping found for ${incomingHost}`, {
+        status: 404,
+      });
     }
 
     const targetUrl = new URL(request.url);
