@@ -1,4 +1,4 @@
-# websites
+# Websites
 
 Shikanime Studio web properties (public sites + apps), managed as a pnpm workspace monorepo.
 
