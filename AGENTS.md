@@ -1,17 +1,13 @@
 # Websites
 
-Shikanime Studio web properties (public sites + apps), managed as a pnpm workspace monorepo.
+Small personal websites and web properties run on the shikanime domain.
 
-**Language:** TypeScript
+**Language:** Varies per site
 
 ## Structure
 
-- `apps/*` — One deployable app per folder:
-  - `www` — Public-facing studio site (`https://shikanime.studio`)
-  - `links` — Link hub / landing page (`https://links.shikanime.studio`)
-  - `fade` — Local image viewer using WebGPU (`https://fade.shikanime.studio`)
-  - `reiya` — Merch/community site (`https://reiya.shikanime.studio`)
-- Each app has its own `wrangler.jsonc` and deploys to Cloudflare via Wrangler
+- Each site is a self-contained directory with its own configuration
+- Deployed via individual hosting setups
 
 ## Commit Style
 
@@ -35,4 +31,5 @@ Shikanime Studio web properties (public sites + apps), managed as a pnpm workspa
 - Require signed commits
 - Squash+rebase merge only
 
-*Never delete `pnpm-lock.yaml` — use `--no-frozen-lockfile` if needed*
+*Always use worktrees when making changes. Verify sites render correctly
+before submitting.*
