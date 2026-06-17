@@ -34,7 +34,7 @@ Shikanime Studio web properties (public sites + apps), managed as a pnpm workspa
 - Never force-push ghstack branches
 
 
- `main`
+## Protect `main`
 
 - Require 1 approving review
 - Require linear history (no merge commits)
