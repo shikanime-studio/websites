@@ -6,6 +6,7 @@ packages:
   - apps/cfproxy
   - apps/www
   - apps/accounts
+  - packages/auth-shared
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.2.1
