@@ -27,5 +27,15 @@
       "database_id": "PLACEHOLDER_SET_AFTER_TOFU_APPLY",
     },
   ],
+  // Placeholder values only. Real values are provisioned as Worker secrets and
+  // override these at deploy time. They exist so local dev and the Workers
+  // vitest pool have a fully-populated `Cloudflare.Env`.
+  "vars": {
+    "BETTER_AUTH_URL": "https://accounts.shikanime.studio",
+    "BETTER_AUTH_SECRET": "placeholder-not-a-real-secret",
+    "GOOGLE_CLIENT_ID": "placeholder-google-client-id",
+    "GOOGLE_CLIENT_SECRET": "placeholder-google-client-secret",
+    "REIYA_CLIENT_SECRET": "placeholder-reiya-client-secret",
+  },
   "placement": { "mode": "smart" },
 }
