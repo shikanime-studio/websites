@@ -112,3 +112,5 @@ trustPolicy: no-downgrade
 trustPolicyExclude:
   - "chokidar@4.0.3"
   - "undici-types@6.21.0"
+catalog:
+  "@rsbuild/core": ^2.1.10
