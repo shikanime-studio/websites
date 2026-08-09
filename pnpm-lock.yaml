@@ -438,6 +438,9 @@ importers:
       '@cloudflare/vite-plugin':
         specifier: catalog:build
         version: 1.33.1(vite@7.3.2(@types/node@22.19.17)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))(workerd@1.20260421.1)(wrangler@4.84.1)
+      '@shikanime-studio/auth-shared':
+        specifier: workspace:*
+        version: link:../../packages/auth-shared
       '@tailwindcss/vite':
         specifier: catalog:build
         version: 4.2.4(vite@7.3.2(@types/node@22.19.17)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))
