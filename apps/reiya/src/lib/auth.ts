@@ -1,7 +1,7 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap } from "better-auth/plugins";
+import { genericOAuth, oneTap } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
 
@@ -15,7 +15,27 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       },
       usePlural: true,
     }),
-    plugins: [oneTap()],
+    plugins: [
+      oneTap(),
+      genericOAuth({
+        config: [
+          {
+            providerId: "accounts",
+            clientId: "reiya",
+            clientSecret: env.REIYA_CLIENT_SECRET,
+            scopes: ["openid", "profile", "email", "offline_access"],
+            redirectURI:
+              "https://reiya.shikanime.studio/api/auth/oauth2/callback/accounts",
+            authorizationUrl:
+              "https://accounts.shikanime.studio/api/auth/oauth2/authorize",
+            tokenUrl: "https://accounts.shikanime.studio/api/auth/oauth2/token",
+            userInfoUrl:
+              "https://accounts.shikanime.studio/api/auth/oauth2/userinfo",
+            issuer: "https://accounts.shikanime.studio/api/auth",
+          },
+        ],
+      }),
+    ],
     secret: env.BETTER_AUTH_SECRET,
     baseURL: import.meta.env.SITE,
     socialProviders: {
