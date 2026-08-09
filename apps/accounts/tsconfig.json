@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "types": ["vite/client"]
+  },
+  "extends": [
+    "@tsconfig/node-lts/tsconfig.json",
+    "@tsconfig/node-ts/tsconfig.json",
+    "@tsconfig/vite-react/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
+  ],
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
+}
