@@ -1,9 +1,12 @@
+
 packages:
   - apps/fade
   - apps/docs
   - apps/links
   - apps/reiya
   - apps/www
+  - apps/accounts
+  - packages/auth-shared
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.7.0
@@ -76,6 +79,8 @@ catalogs:
     usehooks-ts: ^3.1.1
     web-vitals: ^5.3.0
     zod: ^4.5.4
+    "@better-auth/oauth-provider": ^1.6.26
+    "@better-auth/react": ^1.6.26
   script:
     "@faker-js/faker": ^10.6.0
     "@types/better-sqlite3": ^7.6.13

@@ -14,11 +14,17 @@ import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../assets/global.css?url";
 import { MixpanelProvider } from "../components/MixpanelProvider";
 import { ThemeProvider } from "../components/ThemeProvider";
+import { getSessionUser } from "../lib/session";
 import { useTheme } from "../hooks/useTheme";
 
 const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
+  // Resolves the accounts IdP session during SSR and exposes it to every route
+  // via router context (`Route.useRouteContext().session`). `null` = anonymous.
+  beforeLoad: async () => {
+    return { session: await getSessionUser() };
+  },
   head: () => ({
     meta: [
       {

@@ -8,9 +8,15 @@ interface Props {
 }
 
 const { title, description } = Astro.props
+
+/**
+ * Session resolved by `src/middleware.ts` from the accounts IdP.
+ * Read-only: exposed for downstream personalisation, no auth UI here.
+ */
+const user = Astro.locals.user?.user ?? null
 ---
 
-<html lang="en">
+<html lang="en" data-authenticated={user ? 'true' : 'false'}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />

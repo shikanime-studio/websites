@@ -4,6 +4,7 @@ declare namespace Cloudflare {
   interface Env {
     BETTER_AUTH_SECRET: string;
     GOOGLE_CLIENT_SECRET: string;
+    REIYA_CLIENT_SECRET: string;
   }
 }
 

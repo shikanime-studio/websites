@@ -12,8 +12,8 @@ export function LoginButton() {
   const handleSignIn = () => {
     setIsLoading(true);
     authClient.signIn
-      .social({
-        provider: "google",
+      .oauth2({
+        providerId: "accounts",
         callbackURL: "/",
       })
       .catch(() => {

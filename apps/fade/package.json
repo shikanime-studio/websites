@@ -21,6 +21,7 @@
     "@cloudflare/vite-plugin": "catalog:build",
     "@fontsource-variable/inter": "catalog:runtime",
     "@stylexjs/stylex": "catalog:",
+    "@shikanime-studio/auth-shared": "workspace:*",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-devtools": "catalog:runtime",
