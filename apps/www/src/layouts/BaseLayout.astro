@@ -11,9 +11,15 @@ const {
   title = 'Shikanime Studio',
   description = 'Where ideas collide and imagination soars, we are proud dreamers on the mission to make them a reality',
 } = Astro.props
+
+/**
+ * Session resolved by `src/middleware.ts` from the accounts IdP.
+ * Read-only: exposed for downstream personalisation, no auth UI here.
+ */
+const user = Astro.locals.user?.user ?? null
 ---
 
-<html lang="en">
+<html lang="en" data-authenticated={user ? 'true' : 'false'}>
   <head>
     <meta charset="utf-8" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />

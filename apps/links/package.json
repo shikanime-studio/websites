@@ -21,6 +21,7 @@
     "@astrojs/cloudflare": "catalog:build",
     "@astrojs/sitemap": "catalog:runtime",
     "@fontsource-variable/inter": "catalog:runtime",
+    "@shikanime-studio/auth-shared": "workspace:*",
     "@tailwindcss/vite": "catalog:build",
     "astro": "catalog:build",
     "daisyui": "catalog:runtime",

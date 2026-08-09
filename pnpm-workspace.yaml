@@ -5,6 +5,8 @@ packages:
   - apps/reiya
   - apps/cfproxy
   - apps/www
+  - apps/accounts
+  - packages/auth-shared
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.2.1
@@ -39,7 +41,9 @@ catalogs:
     "@astrojs/partytown": ^2.1.7
     "@astrojs/react": ^5.0.4
     "@astrojs/sitemap": ^3.7.2
-    "@better-auth/passkey": ^1.6.9
+    "@better-auth/passkey": ^1.6.26
+    "@better-auth/oauth-provider": ^1.6.26
+    "@better-auth/react": ^1.6.26
     "@fontsource-variable/bricolage-grotesque": ^5.2.10
     "@fontsource-variable/inter": ^5.2.8
     "@tailwindcss/typography": ^0.5.19
@@ -53,7 +57,7 @@ catalogs:
     "@tanstack/react-start": ^1.167.43
     "@tanstack/react-virtual": ^3.13.24
     "@unpic/react": ^1.0.2
-    better-auth: ^1.6.9
+    better-auth: ^1.6.26
     daisyui: ^5.5.19
     drizzle-orm: ^0.45.2
     drizzle-seed: ^0.3.1
@@ -109,3 +113,5 @@ trustPolicy: no-downgrade
 trustPolicyExclude:
   - "chokidar@4.0.3"
   - "undici-types@6.21.0"
+catalog:
+  "@rsbuild/core": ^2.1.10
