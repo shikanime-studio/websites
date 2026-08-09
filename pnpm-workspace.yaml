@@ -5,6 +5,7 @@ packages:
   - apps/reiya
   - apps/cfproxy
   - apps/www
+  - apps/accounts
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.2.1
