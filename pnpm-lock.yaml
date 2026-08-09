@@ -613,6 +613,9 @@ importers:
       '@fontsource-variable/inter':
         specifier: catalog:runtime
         version: 5.2.8
+      '@shikanime-studio/auth-shared':
+        specifier: workspace:*
+        version: link:../../packages/auth-shared
       '@tailwindcss/vite':
         specifier: catalog:build
         version: 4.2.4(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))
@@ -846,6 +849,9 @@ importers:
       '@fontsource-variable/inter':
         specifier: catalog:runtime
         version: 5.2.8
+      '@shikanime-studio/auth-shared':
+        specifier: workspace:*
+        version: link:../../packages/auth-shared
       '@tailwindcss/vite':
         specifier: catalog:build
         version: 4.2.4(vite@7.3.2(@types/node@25.6.0)(jiti@2.6.1)(lightningcss@1.32.0)(tsx@4.21.0)(yaml@2.8.2))
