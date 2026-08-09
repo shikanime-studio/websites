@@ -65,3 +65,30 @@ wrangler secret put GOOGLE_CLIENT_SECRET     --config apps/accounts/wrangler.jso
 - Completing the accounts flow returns to
   `https://reiya.shikanime.studio/api/auth/oauth2/callback/accounts` with a
   code that exchanges successfully (no `invalid_client` / `invalid_secret`).
+
+## Task 21 — CI coverage (no code change required)
+
+accounts is automatically covered by the existing integration pipeline:
+
+- `.github/workflows/integration.yaml` → `javascript.yaml` runs the
+  `shikanime-studio/actions/pnpm/integration@v9` composite action, which
+  executes the per-app `types` / `test` / `build` pnpm scripts across the
+  workspace.
+- accounts is already a registered workspace member (`pnpm-workspace.yaml`,
+  added in the scaffold commit) and ships the standard scripts the action
+  invokes: `types` (`wrangler types`), `test` (`vitest run`), `build`
+  (`vite build`).
+- No per-app CI enumeration (matrix/list) exists, so there is nothing to edit
+  to opt accounts in — workspace discovery handles it.
+
+Verified locally that all three gates pass for accounts:
+
+```
+pnpm -F @shikanime-studio/accounts types   # exit 0
+pnpm -F @shikanime-studio/accounts test    # 3 passed
+pnpm -F @shikanime-studio/accounts build   # exit 0
+```
+
+The only CI-relevant manual prerequisite is Task 9 (the D1 database must exist
+for `test`/`build` to resolve the `env.DB` binding) and Task 12 (secrets must
+be set for a real deploy). Neither requires a CI config change.
