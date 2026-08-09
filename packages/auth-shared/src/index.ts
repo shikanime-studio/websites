@@ -11,6 +11,8 @@
  * `./session` (added in a later commit).
  */
 
+export { getSession, type GetSessionOptions, type SessionResult } from "./session";
+
 /** Cookie name better-auth writes for the active session. */
 export const SESSION_COOKIE_NAME = "better-auth.session_token";
 
