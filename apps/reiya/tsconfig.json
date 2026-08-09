@@ -1,6 +1,6 @@
 {
   "compilerOptions": { "types": ["astro/client", "node"] },
-  "exclude": ["dist"],
+  "exclude": ["dist", "src/**/*.test.ts", "src/test-worker-entry.ts"],
   "extends": [
     "@tsconfig/node-lts/tsconfig.json",
     "@tsconfig/node-ts/tsconfig.json",
