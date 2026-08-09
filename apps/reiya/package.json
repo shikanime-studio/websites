@@ -17,6 +17,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "astro preview",
     "start": "astro dev",
+    "test": "vitest run",
     "types": "wrangler types src/worker-configuration.d.ts",
     "upload": "wrangler versions upload"
   },
@@ -48,6 +49,8 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
+    "@cloudflare/vitest-pool-workers": "catalog:test",
+    "vitest": "catalog:test",
     "@e18e/eslint-plugin": "catalog:lint",
     "@eslint-react/eslint-plugin": "catalog:lint",
     "@faker-js/faker": "catalog:script",
