@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:build",
+    "@shikanime-studio/auth-shared": "workspace:*",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-devtools": "catalog:runtime",
