@@ -1,5 +1,5 @@
 declare namespace Cloudflare {
   interface Env {
-    TARGET_HOST?: string;
+    TARGET_HOST?: string
   }
 }
