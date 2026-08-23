@@ -1,8 +1,12 @@
 {
   "name": "@shikanime-studio/links",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=10"
+  },
   "scripts": {
     "build": "astro build",
     "check": "astro check",
@@ -43,9 +47,5 @@
     "prettier-plugin-astro": "catalog:format",
     "typescript": "catalog:types",
     "wrangler": "catalog:infra"
-  },
-  "engines": {
-    "node": ">=22",
-    "pnpm": ">=10"
   }
 }
