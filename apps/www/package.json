@@ -42,6 +42,7 @@
     "eslint-plugin-import-lite": "catalog:lint",
     "prettier-plugin-astro": "catalog:format",
     "typescript": "catalog:types",
+    "vite": "catalog:conflicts_build_h7_3_6",
     "wrangler": "catalog:infra"
   },
   "engines": {

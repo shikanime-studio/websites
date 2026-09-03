@@ -1,13 +1,10 @@
 @import "tailwindcss";
-@plugin "daisyui";
 
-/* =============================================
-   Theme Configuration
-   ============================================= */
 @theme {
-  /* No custom colors needed - using daisyUI semantic colors */
+  --font-sans:
+    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 
-  /* Animations */
   --animate-fade-in: fade-in 250ms ease;
 }
 
@@ -23,19 +20,15 @@
   }
 }
 
+@plugin "daisyui";
+
+/* Built-in daisyUI themes driven by data-theme="dark|light" (ThemeProvider). */
+
 /* =============================================
    Base Styles
    ============================================= */
 body {
   margin: 0;
-  font-family:
-    "Inter",
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;

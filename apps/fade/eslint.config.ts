@@ -5,6 +5,7 @@ import pluginRouter from "@tanstack/eslint-plugin-router";
 export default antfu(
   {
     formatters: true,
+    stylistic: false,
     jsx: {
       a11y: true,
     },
@@ -20,6 +21,19 @@ export default antfu(
       "playwright-report/**",
       "test-results/**",
     ],
+  },
+  {
+    files: ["**/*.css", "**/*.json", "**/*.jsonc"],
+    rules: {
+      "format/prettier": "off",
+      "jsonc/sort-keys": "off",
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "unicorn/number-literal-case": "off",
+    },
   },
   {
     files: ["**/routeTree.gen.ts"],

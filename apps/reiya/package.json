@@ -71,6 +71,7 @@
     "prettier-plugin-astro": "catalog:format",
     "tsx": "catalog:script",
     "typescript": "catalog:types",
+    "vite": "catalog:conflicts_build_h7_3_6",
     "wrangler": "catalog:infra"
   },
   "engines": {

@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@cloudflare/vite-plugin": "catalog:build",
+    "@fontsource-variable/inter": "catalog:runtime",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-devtools": "catalog:runtime",
@@ -67,7 +68,7 @@
     "eslint-plugin-react-refresh": "catalog:lint",
     "playwright": "catalog:test",
     "typescript": "catalog:types",
-    "vite": "catalog:build",
+    "vite": "catalog:conflicts_build_h7_3_6",
     "vitest": "catalog:test",
     "web-vitals": "catalog:runtime",
     "wrangler": "catalog:infra"
