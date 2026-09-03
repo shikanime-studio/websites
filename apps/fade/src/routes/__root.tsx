@@ -9,9 +9,9 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import appCss from "../assets/global.css?url";
 import { MixpanelProvider } from "../components/MixpanelProvider";
 import { ThemeProvider } from "../components/ThemeProvider";
-import appCss from "../styles.css?url";
 
 const queryClient = new QueryClient();
 

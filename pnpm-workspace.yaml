@@ -1,93 +1,101 @@
+packages:
+  - apps/fade
+  - apps/links
+  - apps/reiya
+  - apps/www
 catalogs:
   build:
-    "@astrojs/cloudflare": ^13.2.1
-    "@cloudflare/vite-plugin": ^1.33.1
-    "@tailwindcss/vite": ^4.2.4
+    "@astrojs/cloudflare": ^13.7.0
+    "@cloudflare/vite-plugin": ^1.54.3
+    "@tailwindcss/vite": ^4.3.3
     "@tanstack/devtools-vite": ^0.5.5
-    "@tanstack/router-plugin": ^1.167.23
+    "@tanstack/router-plugin": ^1.168.35
     "@vitejs/plugin-react": ^5.2.0
-    astro: ^6.1.9
-    lightningcss: ^1.32.0
-    sharp: ^0.34.5
+    astro: ^6.4.8
+    lightningcss: ^1.33.0
+    sharp: ^0.35.2
     vite: ^7.3.2
   format:
     prettier-plugin-astro: ^0.14.1
   infra:
-    wrangler: ^4.84.1
+    wrangler: ^4.128.0
   lint:
     "@antfu/eslint-config": ^7.7.3
     "@e18e/eslint-plugin": ^0.3.0
     "@eslint-react/eslint-plugin": ^2.13.0
-    "@tanstack/eslint-plugin-query": ^5.100.1
-    "@tanstack/eslint-plugin-router": ^1.161.6
-    "@typescript-eslint/eslint-plugin": ^8.59.0
-    eslint: ^9.39.4
+    "@tanstack/eslint-plugin-query": ^5.102.8
+    "@tanstack/eslint-plugin-router": ^1.162.0
+    "@typescript-eslint/eslint-plugin": ^8.69.0
+    eslint: ^9.39.5
     eslint-plugin-astro: ^1.7.0
     eslint-plugin-format: ^2.0.1
     eslint-plugin-import-lite: ^0.5.2
     eslint-plugin-jsx-a11y: ^6.10.2
     eslint-plugin-react-hooks: ^7.1.1
-    eslint-plugin-react-refresh: ^0.5.2
+    eslint-plugin-react-refresh: ^0.5.6
   runtime:
     "@astrojs/partytown": ^2.1.7
-    "@astrojs/react": ^5.0.4
-    "@astrojs/sitemap": ^3.7.2
-    "@better-auth/passkey": ^1.6.9
-    "@fontsource-variable/bricolage-grotesque": ^5.2.10
-    "@fontsource-variable/inter": ^5.2.8
-    "@tailwindcss/typography": ^0.5.19
-    "@tanstack/react-db": ^0.1.83
+    "@astrojs/react": ^5.0.7
+    "@astrojs/sitemap": ^3.7.4
+    "@better-auth/passkey": ^1.7.2
+    "@fontsource-variable/bricolage-grotesque": ^5.3.0
+    "@fontsource-variable/inter": ^5.3.0
+    "@tailwindcss/typography": ^0.5.20
+    "@tanstack/react-db": ^0.1.96
     "@tanstack/react-devtools": ^0.9.13
-    "@tanstack/react-query": ^5.100.1
-    "@tanstack/react-query-devtools": ^5.100.1
-    "@tanstack/react-router": ^1.168.23
-    "@tanstack/react-router-devtools": ^1.166.13
-    "@tanstack/react-router-ssr-query": ^1.166.11
-    "@tanstack/react-start": ^1.167.43
-    "@tanstack/react-virtual": ^3.13.24
+    "@tanstack/react-query": ^5.102.8
+    "@tanstack/react-query-devtools": ^5.102.8
+    "@tanstack/react-router": ^1.170.32
+    "@tanstack/react-router-devtools": ^1.167.1
+    "@tanstack/react-router-ssr-query": ^1.167.2
+    "@tanstack/react-start": ^1.168.49
+    "@tanstack/react-virtual": ^3.14.10
     "@unpic/react": ^1.0.2
-    better-auth: ^1.6.9
-    daisyui: ^5.5.19
+    better-auth: ^1.7.2
+    daisyui: ^5.7.27
     drizzle-orm: ^0.45.2
     drizzle-seed: ^0.3.1
     file-type: ^21.3.4
     lucide-react: ^0.577.0
-    mixpanel-browser: ^2.78.0
-    react: ^19.2.5
-    react-dom: ^19.2.5
-    simple-icons: ^16.17.0
-    tailwindcss: ^4.2.4
+    mixpanel-browser: ^2.82.1
+    react: ^19.2.8
+    react-dom: ^19.2.8
+    simple-icons: ^16.29.0
+    tailwindcss: ^4.3.3
     usehooks-ts: ^3.1.1
-    web-vitals: ^5.2.0
-    zod: ^4.3.6
+    web-vitals: ^5.3.0
+    zod: ^4.5.4
   script:
-    "@faker-js/faker": ^10.4.0
+    "@faker-js/faker": ^10.6.0
     "@types/better-sqlite3": ^7.6.13
-    better-sqlite3: ^12.9.0
+    better-sqlite3: ^12.11.1
     drizzle-kit: ^0.31.10
-    tsx: ^4.21.0
+    tsx: ^4.23.13
   test:
     "@cloudflare/vitest-pool-workers": ^0.14.9
-    "@playwright/test": ^1.59.1
-    playwright: ^1.59.1
-    vitest: ^4.1.5
+    "@playwright/test": ^1.62.1
+    playwright: ^1.62.1
+    vitest: ^4.1.11
   types:
-    "@astrojs/check": ^0.9.8
-    "@tsconfig/node-lts": ^24.0.0
+    "@astrojs/check": ^0.9.10
+    "@tsconfig/node-lts": ^24.0.1
     "@tsconfig/node-ts": ^23.6.4
     "@tsconfig/strictest": ^2.0.8
     "@tsconfig/vite-react": ^7.0.2
     "@types/eslint-plugin-jsx-a11y": ^6.10.1
-    "@types/node": ^22.19.17
-    "@types/react": ^19.2.14
-    "@types/react-dom": ^19.2.3
+    "@types/node": ^22.20.1
+    "@types/react": ^19.2.18
+    "@types/react-dom": ^19.2.5
     "@types/wicg-file-system-access": ^2023.10.7
-    "@webgpu/types": ^0.1.69
+    "@webgpu/types": ^0.1.72
     typescript: ^5.9.3
+  conflicts_build_h7_3_6:
+    vite: ^7.3.6
 engineStrict: true
 ignoredBuiltDependencies:
   - "@prisma/engines"
   - prisma
+minimumReleaseAge: 1440
 onlyBuiltDependencies:
   - better-sqlite3
   - esbuild
@@ -97,14 +105,10 @@ onlyBuiltDependencies:
   - wrangler
 overrides:
   vite: catalog:build
-packages:
-  - apps/fade
-  - apps/links
-  - apps/reiya
-  - apps/cfproxy
-  - apps/www
+  sharp@<0.35: ^0.35.2
 shellEmulator: true
 trustPolicy: no-downgrade
 trustPolicyExclude:
   - chokidar@4.0.3
   - undici-types@6.21.0
+  - semver@6.3.1
