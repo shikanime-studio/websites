@@ -120,9 +120,11 @@
               };
               settings.global.excludes = [
                 "*.gen.ts"
+                ".github/workflows/*"
                 "apps/*/node_modules/*"
                 "packages/*/dist/*"
                 "packages/*/node_modules/*"
+                "pnpm-lock.yaml"
               ];
             };
           };

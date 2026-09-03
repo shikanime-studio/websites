@@ -68,7 +68,7 @@
     "eslint-plugin-react-refresh": "catalog:lint",
     "playwright": "catalog:test",
     "typescript": "catalog:types",
-    "vite": "catalog:conflicts_build_h7_3_6",
+    "vite": "catalog:build",
     "vitest": "catalog:test",
     "web-vitals": "catalog:runtime",
     "wrangler": "catalog:infra"
