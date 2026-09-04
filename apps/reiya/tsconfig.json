@@ -1,11 +1,10 @@
 {
-  "compilerOptions": { "types": ["astro/client", "node"] },
-  "exclude": ["dist"],
+  "compilerOptions": { "baseUrl": ".", "types": ["vite/client"] },
   "extends": [
     "@tsconfig/node-lts/tsconfig.json",
     "@tsconfig/node-ts/tsconfig.json",
-    "@tsconfig/strictest/tsconfig.json",
-    "astro/tsconfigs/strict"
+    "@tsconfig/vite-react/tsconfig.json",
+    "@tsconfig/strictest/tsconfig.json"
   ],
-  "include": [".astro/types.d.ts", "**/*"]
+  "include": ["**/*.ts", "**/*.tsx", "vite.config.ts"]
 }

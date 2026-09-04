@@ -1,4 +1,4 @@
-/// <reference types="@types/gsi" />
+/// <reference types="vite/client" />
 
 declare namespace Cloudflare {
   interface Env {
@@ -8,8 +8,8 @@ declare namespace Cloudflare {
 }
 
 interface ImportMetaEnv {
-  readonly PUBLIC_GOOGLE_CLIENT_ID: string;
-  readonly SITE: string;
+  readonly VITE_PUBLIC_GOOGLE_CLIENT_ID: string;
+  readonly VITE_SITE: string;
 }
 
 interface ImportMeta {

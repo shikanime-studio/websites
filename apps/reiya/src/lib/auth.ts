@@ -17,10 +17,10 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
     }),
     plugins: [oneTap()],
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: import.meta.env.SITE,
+    baseURL: import.meta.env.VITE_SITE,
     socialProviders: {
       google: {
-        clientId: import.meta.env.PUBLIC_GOOGLE_CLIENT_ID,
+        clientId: import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },

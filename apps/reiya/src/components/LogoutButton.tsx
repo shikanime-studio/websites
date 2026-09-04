@@ -4,7 +4,7 @@ import { authClient } from "../lib/auth-client";
 import { AlertError } from "./AlertError";
 import { Toast } from "./Toast";
 
-export default function LogoutButton() {
+export function LogoutButton() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
