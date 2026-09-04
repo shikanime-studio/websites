@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /ig/
+Disallow: /mal/
+Disallow: /x/
+Disallow: /li/
+Disallow: /ds/
