@@ -48,12 +48,7 @@ export function createAuth(db: DrizzleD1Database<Schema>) {
         scopes: ["openid", "profile", "email", "offline_access"],
         validAudiences: ["https://accounts.shikanime.studio"],
         allowDynamicClientRegistration: false,
-        cachedTrustedClients: new Set([
-          "reiya",
-          "fade",
-          "www",
-          "links",
-        ]),
+        cachedTrustedClients: new Set(["reiya", "fade", "www", "links"]),
         trustedClients: [
           {
             clientId: "reiya",

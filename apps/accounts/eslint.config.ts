@@ -13,11 +13,7 @@ export default antfu(
     },
   },
   {
-    ignores: [
-      "dist/**",
-      ".wrangler/**",
-      ".tanstack/**",
-    ],
+    ignores: ["dist/**", ".wrangler/**", ".tanstack/**"],
   },
   {
     files: ["**/routeTree.gen.ts"],

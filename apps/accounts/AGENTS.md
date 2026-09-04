@@ -2,8 +2,8 @@
 
 ## Purpose
 
-- Accounts is the central OAuth/OIDC identity provider for Shikanime Studio
-  (see [README.md](README.md)).
+- Accounts is the central OAuth/OIDC identity provider for Shikanime Studio (see
+  [README.md](README.md)).
 - It owns user identity and issues sessions that the other apps (fade, www,
   links, reiya) consume via the shared `@shikanime-studio/auth-shared` package.
 - Primary flows: email/password and Google social sign-in, OIDC/OAuth2 consent
@@ -41,12 +41,12 @@ Required environment variables / secrets (set in `wrangler.jsonc`):
 
 - Stack: TanStack Start (React Router) on Cloudflare Workers, D1 (SQLite) via
   Drizzle.
-- Auth: better-auth with the `oneTap()`, `jwt()`, and `oauthProvider()`
-  plugins, in that order.
+- Auth: better-auth with the `oneTap()`, `jwt()`, and `oauthProvider()` plugins,
+  in that order.
 - `oauthProvider` registers `reiya` as a concrete trusted client
-  (`trustedClients`) and `fade`/`www`/`links` as `cachedTrustedClients`
-  (they read the cross-subdomain session cookie rather than exchanging an
-  auth code in this phase).
+  (`trustedClients`) and `fade`/`www`/`links` as `cachedTrustedClients` (they
+  read the cross-subdomain session cookie rather than exchanging an auth code in
+  this phase).
 - Sessions use cross-subdomain cookies scoped to `.shikanime.studio`, so every
   app on a `*.shikanime.studio` subdomain receives the session cookie and can
   resolve the user through the accounts IdP.
