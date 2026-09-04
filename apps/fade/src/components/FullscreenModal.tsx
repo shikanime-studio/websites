@@ -39,14 +39,20 @@ function FullscreenModalContent({
   }, [open]);
 
   return createPortal(
-    <dialog ref={dialogRef} className="modal bg-black/90" onClose={onClose}>
+    <dialog
+      ref={dialogRef}
+      className="bg-[var(--color-overlay)]"
+      onClose={onClose}
+    >
       <button
-        className="btn btn-sm btn-circle btn-ghost absolute top-4 right-4 z-50 text-white"
+        className="text-on-dark absolute top-4 right-4 z-50 cursor-pointer bg-transparent p-2"
         onClick={onClose}
+        aria-label="Close fullscreen"
+        type="button"
       >
         ✕
       </button>
-      <div className="modal-box flex h-full w-full max-w-none items-center justify-center overflow-hidden rounded-none bg-transparent p-0 shadow-none">
+      <div className="flex h-full w-full items-center justify-center overflow-hidden p-0">
         {children}
       </div>
     </dialog>,

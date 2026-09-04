@@ -17,13 +17,13 @@ interface Props {
 const { session } = Astro.props
 ---
 
-<nav class="navbar bg-base-100 fixed top-0 z-50 w-full justify-between px-4 lg:px-6">
+<nav class="bg-body border-border fixed top-0 z-50 flex w-full items-center justify-between border-b px-4 lg:px-6">
   <!-- Navbar Start -->
   <div class="flex items-center">
     <div class="flex items-center gap-6">
       <a
         href="/"
-        class="text-base-content flex items-center gap-2 text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
+        class="text-secondary flex items-center gap-2 text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
       >
         <img src={Logo.src} class="h-8 w-auto" alt="Reiya Logo" width="32" height="32" />
         Reiya
@@ -34,7 +34,7 @@ const { session } = Astro.props
           session && (
             <a
               href="/following"
-              class="btn btn-ghost text-base-content/70 hover:text-base-content hover:bg-base-200 rounded-full font-medium"
+              class="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 font-medium transition-colors"
             >
               Following
             </a>
@@ -42,19 +42,21 @@ const { session } = Astro.props
         }
         <a
           href="/explore"
-          class="btn btn-ghost text-base-content/70 hover:text-base-content hover:bg-base-200 rounded-full font-medium"
+          class="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 font-medium transition-colors"
         >
           Explore
         </a>
 
-        <div class="dropdown dropdown-bottom">
+        <div class="group relative">
           <button
             type="button"
-            class="btn btn-ghost btn-sm text-base-content/70 hover:text-base-content hover:bg-base-200"
+            class="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
           >
             More
           </button>
-          <ul class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow">
+          <ul
+            class="bg-body border-border invisible absolute right-0 z-50 mt-1 w-52 rounded-lg border p-2 opacity-0 shadow-md transition-all group-hover:visible group-hover:opacity-100"
+          >
             <li><a href="/privacy-notices">Privacy Notices</a></li>
           </ul>
         </div>
@@ -68,9 +70,9 @@ const { session } = Astro.props
       <input
         type="text"
         placeholder="Search for a character, license, artist, or convention"
-        class="input input-sm bg-base-200 focus:ring-primary/20 h-10 w-full rounded-full border-none pr-4 pl-10 transition-all focus:ring-2 focus:outline-none"
+        class="bg-surface focus:ring-accent/20 h-10 w-full rounded-full border-none pr-4 pl-10 text-sm transition-all focus:ring-2 focus:outline-none"
       />
-      <div class="text-base-content/50 absolute top-1/2 left-3.5 -translate-y-1/2">
+      <div class="text-secondary/50 absolute top-1/2 left-3.5 -translate-y-1/2">
         <span class="text-xs">🔎</span>
       </div>
     </div>
@@ -82,7 +84,7 @@ const { session } = Astro.props
     {
       session && (
         <>
-          <button class="btn btn-ghost btn-circle btn-sm text-base-content/80">
+          <button class="text-secondary/80 hover:bg-surface flex h-9 w-9 items-center justify-center rounded-full transition-colors">
             <span class="sr-only">Messages</span>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -100,9 +102,9 @@ const { session } = Astro.props
             </svg>
           </button>
 
-          <button class="btn btn-ghost btn-circle btn-sm indicator text-base-content/80">
+          <button class="text-secondary/80 hover:bg-surface relative flex h-9 w-9 items-center justify-center rounded-full transition-colors">
             <span class="sr-only">Notifications</span>
-            <span class="indicator-item badge badge-primary badge-xs border-base-100 top-2 right-2 h-2 w-2 rounded-full border-2 p-0" />
+            <span class="bg-accent border-body absolute top-2 right-2 h-2 w-2 rounded-full border-2 p-0" />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -125,7 +127,7 @@ const { session } = Astro.props
     <!-- CTA Button -->
     <button
       type="button"
-      class="btn btn-primary hidden rounded-full px-4 font-bold normal-case shadow-sm transition-all hover:shadow-md sm:flex"
+      class="hidden items-center rounded-full bg-[var(--color-accent)] px-4 font-bold text-[var(--color-on-accent)] shadow-sm transition-all hover:shadow-md sm:flex"
     >
       + Share
     </button>
@@ -134,8 +136,11 @@ const { session } = Astro.props
     <div class="flex items-center pl-1">
       {
         session ? (
-          <div class="dropdown dropdown-end">
-            <button type="button" class="avatar btn btn-circle btn-ghost">
+          <div class="group relative">
+            <button
+              type="button"
+              class="hover:bg-surface flex h-10 w-10 items-center justify-center rounded-full transition-colors"
+            >
               <div class="w-10 rounded-full">
                 <Image
                   src={session.user.image || `https://ui-avatars.com/api/?name=${session.user.name}`}
@@ -147,11 +152,11 @@ const { session } = Astro.props
                 />
               </div>
             </button>
-            <ul class="menu dropdown-content rounded-box bg-base-100 z-1 w-52 p-2 shadow">
+            <ul class="bg-body border-border invisible absolute right-0 z-50 mt-1 w-52 rounded-lg border p-2 opacity-0 shadow-md transition-all group-hover:visible group-hover:opacity-100">
               <li>
                 <a href="/user">User</a>
               </li>
-              <div class="divider my-0" />
+              <div class="border-border my-1 border-t" />
               <li>
                 <LogoutButton client:load />
               </li>

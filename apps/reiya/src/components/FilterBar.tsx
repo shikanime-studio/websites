@@ -17,9 +17,9 @@ export function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`btn btn-neutral flex items-center gap-2 rounded-full border-none px-4 py-2 text-sm font-medium transition-all ${
+      className={`inline-flex items-center font-medium bg-[var(--color-inverted)] text-[var(--color-on-dark)] flex items-center gap-2 rounded-full border-none px-4 py-2 text-sm font-medium transition-all ${
         active
-          ? "text-primary bg-gray-200 font-bold hover:bg-gray-300"
+          ? "text-accent bg-gray-200 font-bold hover:bg-gray-300"
           : "bg-gray-100 text-gray-700 hover:bg-gray-200"
       } `}
     >
@@ -27,7 +27,7 @@ export function FilterButton({
       {hasDropdown && (
         <svg
           aria-hidden="true"
-          className={`h-4 w-4 ${active ? "text-primary" : "text-gray-500"}`}
+          className={`h-4 w-4 ${active ? "text-accent" : "text-gray-500"}`}
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

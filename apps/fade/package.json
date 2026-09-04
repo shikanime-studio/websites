@@ -16,8 +16,11 @@
     "upload": "wrangler versions upload"
   },
   "dependencies": {
+    "@astryxdesign/core": "catalog:",
+    "@astryxdesign/theme-neutral": "catalog:",
     "@cloudflare/vite-plugin": "catalog:build",
     "@fontsource-variable/inter": "catalog:runtime",
+    "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-devtools": "catalog:runtime",

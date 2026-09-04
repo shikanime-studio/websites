@@ -1,4 +1,6 @@
 import type { FileItem } from "../lib/fs";
+import { IconButton } from "@astryxdesign/core/IconButton";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Image } from "@unpic/react";
@@ -49,12 +51,15 @@ export function Filmstrip() {
 
   return (
     <div
-      className={`bg-base-200 border-base-300 relative border-t transition-all duration-250 ${
+      className={`bg-surface border-border relative border-t transition-all duration-250 ${
         isCollapsed ? "h-4" : "h-30"
       }`}
     >
-      <button
-        className="btn btn-sm btn-square absolute -top-3 left-1/2 z-5 h-6 min-h-0 w-8 -translate-x-1/2 rounded-none rounded-t-md border-b-0"
+      <IconButton
+        className="border-border absolute -top-3 left-1/2 z-5 h-6 min-h-0 w-8 -translate-x-1/2 rounded-t-md border-b"
+        variant="secondary"
+        size="sm"
+        label={isCollapsed ? "Expand filmstrip" : "Collapse filmstrip"}
         onClick={() => {
           if (data) {
             settingsCollection.update("filmstripCollapsed", (draft) => {
@@ -67,14 +72,14 @@ export function Filmstrip() {
             });
           }
         }}
-        aria-label={isCollapsed ? "Expand filmstrip" : "Collapse filmstrip"}
-      >
-        {isCollapsed ? (
-          <ChevronUp className="h-4 w-4" />
-        ) : (
-          <ChevronDown className="h-4 w-4" />
-        )}
-      </button>
+        icon={
+          isCollapsed ? (
+            <ChevronUp className="h-4 w-4" />
+          ) : (
+            <ChevronDown className="h-4 w-4" />
+          )
+        }
+      />
 
       <Activity mode={isCollapsed ? "hidden" : "visible"}>
         <div
@@ -175,7 +180,7 @@ function FilmstripItemSkeleton({
   const { handle } = fileItem;
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-card hover:border-secondary/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? "border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]"
           : "border-transparent"
@@ -186,7 +191,7 @@ function FilmstripItemSkeleton({
       aria-current={isSelected ? "true" : "false"}
     >
       <div className="flex h-full w-full items-center justify-center">
-        <span className="loading loading-spinner loading-md opacity-50"></span>
+        <Spinner size="md" shade="subtle" />
       </div>
     </button>
   );
@@ -203,7 +208,7 @@ function FilmstripItemContent({
 
   return (
     <button
-      className={`bg-base-300 hover:border-base-content/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
+      className={`bg-card hover:border-secondary/50 absolute top-4 left-0 h-20 w-20 cursor-pointer overflow-hidden rounded-lg border-2 p-0 transition-all duration-150 hover:-translate-y-0.5 ${
         isSelected
           ? "border-warning -translate-y-1 shadow-[0_0_15px_rgba(250,189,0,0.4)]"
           : "border-transparent"

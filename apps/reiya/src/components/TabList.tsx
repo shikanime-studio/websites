@@ -25,7 +25,7 @@ export function TabList({
     <TabContext value={{ activeTab, setActiveTab }}>
       <div
         role="tablist"
-        className={`tabs flex-wrap justify-start gap-x-6 gap-y-4 sm:gap-x-8 ${className}`}
+        className={`flex flex-wrap justify-start gap-x-6 gap-y-4 sm:gap-x-8 ${className}`}
       >
         {children}
       </div>
@@ -55,7 +55,7 @@ export function Tab({ children, className = "", value, ...props }: TabProps) {
       name="tabs"
       role="tab"
       {...props}
-      className={`tab checked:tab-active checked:border-primary checked:text-primary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-gray-400 transition-colors checked:border-b-4! hover:border-gray-300 hover:text-gray-600 sm:text-xl ${className} `}
+      className={`border-border checked:border-accent checked:text-secondary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-gray-400 transition-colors checked:border-b-4! hover:border-gray-300 hover:text-gray-600 sm:text-xl ${className} `}
       aria-label={typeof children === "string" ? children : undefined}
       checked={context?.activeTab === value}
       onChange={handleChange}
@@ -76,7 +76,7 @@ export function TabContent({
 }: TabContentProps) {
   const context = use(TabContext);
   return (
-    <div role="tabpanel" className={`tab-content ${className}`}>
+    <div role="tabpanel" className={className}>
       <Activity mode={context?.activeTab === value ? "visible" : "hidden"}>
         {children}
       </Activity>

@@ -1,7 +1,15 @@
+import {
+  Button,
+  Dialog,
+  DialogHeader,
+  Layout,
+  LayoutContent,
+  LayoutFooter,
+  SegmentedControl,
+  SegmentedControlItem,
+} from "@astryxdesign/core";
 import { ClientOnly } from "@tanstack/react-router";
 import { Monitor, Moon, Sun } from "lucide-react";
-import { useEffect, useRef } from "react";
-import { createPortal } from "react-dom";
 import { useTheme } from "../hooks/useTheme";
 
 interface SettingsModalProps {
@@ -19,112 +27,75 @@ export function SettingsModal(props: SettingsModalProps) {
 
 function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
-  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
+  return (
+    <Dialog isOpen={isOpen} onOpenChange={(open) => (open ? null : onClose())}>
+      <Layout
+        header={
+          <DialogHeader
+            title="Settings"
+            onOpenChange={(open) => (open ? null : onClose())}
+          />
+        }
+        content={
+          <LayoutContent>
+            <h4 className="text-secondary border-border mb-3 border-b pb-2 text-xs font-bold tracking-wider uppercase opacity-70">
+              Appearance
+            </h4>
 
-    if (isOpen) {
-      if (!dialog.open) {
-        dialog.showModal();
-      }
-    } else {
-      if (dialog.open) {
-        dialog.close();
-      }
-    }
-  }, [isOpen]);
-
-  return createPortal(
-    <dialog
-      ref={dialogRef}
-      className="modal"
-      onClose={onClose}
-      onCancel={onClose}
-    >
-      <div className="modal-box">
-        <form method="dialog">
-          <button
-            className="btn btn-sm btn-circle btn-ghost absolute top-2 right-2"
-            onClick={onClose}
-            type="button"
-          >
-            ✕
-          </button>
-        </form>
-
-        <h3 className="mb-6 flex items-center gap-2 text-lg font-bold">
-          <span>Settings</span>
-        </h3>
-
-        <div className="py-2">
-          <h4 className="border-base-200 mb-3 border-b pb-2 text-xs font-bold tracking-wider uppercase opacity-50">
-            Appearance
-          </h4>
-
-          <div className="flex items-center justify-between">
-            <div>
-              <span className="font-medium">Theme</span>
-              <p className="mt-0.5 text-xs opacity-70">
-                Switch between light and dark mode
-              </p>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <div className="join">
-                <button
-                  className={`join-item btn btn-sm ${theme === "light" ? "btn-active btn-neutral" : ""}`}
-                  onClick={() => {
-                    setTheme("light");
-                  }}
-                  aria-pressed={theme === "light"}
-                  aria-label="Light Mode"
-                >
-                  <Sun className="h-4 w-4" />
-                  Light
-                </button>
-                <button
-                  className={`join-item btn btn-sm ${theme === "dark" ? "btn-active btn-neutral" : ""}`}
-                  onClick={() => {
-                    setTheme("dark");
-                  }}
-                  aria-pressed={theme === "dark"}
-                  aria-label="Dark Mode"
-                >
-                  <Moon className="h-4 w-4" />
-                  Dark
-                </button>
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="font-medium">Theme</span>
+                <p className="text-secondary mt-0.5 text-xs opacity-80">
+                  Switch between light and dark mode
+                </p>
               </div>
 
-              {theme && (
-                <button
-                  className="btn btn-sm btn-ghost"
-                  onClick={() => {
-                    setTheme(undefined);
+              <div className="flex items-center gap-2">
+                <SegmentedControl
+                  label="Theme"
+                  value={theme ?? ""}
+                  onChange={(value) => {
+                    if (value === "light" || value === "dark") {
+                      setTheme(value);
+                    } else {
+                      setTheme(undefined);
+                    }
                   }}
-                  title="Reset to system default"
-                  aria-label="Reset to system default"
                 >
-                  <Monitor className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
+                  <SegmentedControlItem
+                    value="light"
+                    label="Light"
+                    icon={<Sun className="h-4 w-4" />}
+                  />
+                  <SegmentedControlItem
+                    value="dark"
+                    label="Dark"
+                    icon={<Moon className="h-4 w-4" />}
+                  />
+                </SegmentedControl>
 
-        <div className="modal-action">
-          <button className="btn" onClick={onClose}>
-            Done
-          </button>
-        </div>
-      </div>
-      <form method="dialog" className="modal-backdrop">
-        <button onClick={onClose} type="button">
-          close
-        </button>
-      </form>
-    </dialog>,
-    document.body,
+                {theme && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    label="Reset to system default"
+                    icon={<Monitor className="h-4 w-4" />}
+                    onClick={() => {
+                      setTheme(undefined);
+                    }}
+                  />
+                )}
+              </div>
+            </div>
+          </LayoutContent>
+        }
+        footer={
+          <LayoutFooter>
+            <Button variant="primary" label="Done" onClick={onClose} />
+          </LayoutFooter>
+        }
+      />
+    </Dialog>
   );
 }
