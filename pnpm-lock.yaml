@@ -39,6 +39,9 @@ catalogs:
     '@astryxdesign/theme-neutral':
       version: 0.5.2
       specifier: ^0.5.2
+    '@rsbuild/core':
+      version: 2.1.10
+      specifier: ^2.1.10
     '@stylexjs/stylex':
       version: 0.19.0
       specifier: ^0.19.0
@@ -337,7 +340,7 @@ importers:
         specifier: catalog:lint
       '@rsbuild/core':
         version: 2.1.10
-        specifier: ^2.1.10
+        specifier: 'catalog:'
       '@tanstack/eslint-plugin-query':
         version: 5.100.1(eslint@9.39.4(jiti@2.6.1))(typescript@5.9.3)
         specifier: catalog:lint

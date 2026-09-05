@@ -1,6 +1,6 @@
 import { applyD1Migrations, SELF } from "cloudflare:test";
 import { env } from "cloudflare:workers";
-import { inject, it, expect, beforeAll } from "vitest";
+import { beforeAll, expect, inject, it } from "vitest";
 
 const BASE = "https://accounts.shikanime.studio";
 

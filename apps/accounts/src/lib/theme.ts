@@ -33,7 +33,7 @@ const shikanimeTheme = defineTheme({
       "variant:primary": {
         backgroundColor: "var(--color-accent)",
         color: "var(--color-on-accent)",
-        fontWeight: 700,
+        fontWeight: "700",
       },
     },
     link: {

@@ -43,7 +43,7 @@
     "@cloudflare/vitest-pool-workers": "catalog:test",
     "@e18e/eslint-plugin": "catalog:lint",
     "@eslint-react/eslint-plugin": "catalog:lint",
-    "@rsbuild/core": "^2.1.10",
+    "@rsbuild/core": "catalog:",
     "@tanstack/eslint-plugin-query": "catalog:lint",
     "@tanstack/eslint-plugin-router": "catalog:lint",
     "@tsconfig/node-lts": "catalog:types",
