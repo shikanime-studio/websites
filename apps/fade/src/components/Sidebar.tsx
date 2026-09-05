@@ -1,5 +1,8 @@
 import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
+import { IconButton } from "@astryxdesign/core/IconButton";
+import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -42,12 +45,15 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`bg-base-200 border-base-300 relative shrink-0 border-l transition-all duration-250 ${
+      className={`bg-surface border-border relative shrink-0 border-l transition-all duration-250 ${
         isCollapsed ? "w-8" : "w-70"
       }`}
     >
-      <button
-        className="btn btn-sm btn-square absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-none rounded-l-md border-r-0"
+      <IconButton
+        className="border-border absolute top-1/2 -left-3 z-5 h-8 min-h-0 w-6 -translate-y-1/2 rounded-r-md border-r"
+        variant="secondary"
+        size="sm"
+        label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         onClick={() => {
           if (data) {
             settingsCollection.update("sidebarCollapsed", (draft) => {
@@ -60,21 +66,21 @@ export function Sidebar() {
             });
           }
         }}
-        aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-      >
-        {isCollapsed ? (
-          <ChevronLeft className="h-4 w-4" />
-        ) : (
-          <ChevronRight className="h-4 w-4" />
-        )}
-      </button>
+        icon={
+          isCollapsed ? (
+            <ChevronLeft className="h-4 w-4" />
+          ) : (
+            <ChevronRight className="h-4 w-4" />
+          )
+        }
+      />
 
       <Activity mode={isCollapsed ? "hidden" : "visible"}>
         <div className="h-full overflow-y-auto p-4">
           <Suspense
             fallback={
               <div className="flex h-full items-center justify-center py-10">
-                <span className="loading loading-spinner loading-md opacity-50"></span>
+                <Spinner size="md" shade="subtle" />
               </div>
             }
           >
@@ -274,27 +280,26 @@ function Slider({
   onDoubleClick?: () => void;
 }) {
   return (
-    <div className="flex flex-col gap-1">
+    <div
+      className="flex flex-col gap-1"
+      onDoubleClick={() => {
+        if (onDoubleClick) {
+          onDoubleClick();
+        }
+      }}
+    >
       <div className="flex justify-between">
         <label className="text-xs font-medium opacity-70">{label}</label>
         <span className="text-xs opacity-50">{value.toFixed(2)}</span>
       </div>
-      <input
-        type="range"
-        aria-label={label}
+      <AstryxSlider
+        label={label}
         min={min}
         max={max}
         step={step}
         value={value}
-        onChange={(e) => {
-          onChange(Number.parseFloat(e.target.value));
-        }}
-        onDoubleClick={() => {
-          if (onDoubleClick) {
-            onDoubleClick();
-          }
-        }}
-        className="range range-xs"
+        onChange={onChange}
+        valueDisplay="none"
       />
     </div>
   );
@@ -313,7 +318,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
       id="sidebarSectionCollapsedInfo"
       icon={Info}
     >
-      <div className="bg-base-300 rounded-box mb-5 flex h-32 items-center justify-center overflow-hidden">
+      <div className="bg-card rounded-lg mb-5 flex h-32 items-center justify-center overflow-hidden">
         {fileItem.mimeType?.startsWith("image/") ? (
           <Histogram />
         ) : (
@@ -515,7 +520,7 @@ function CollapsibleSection({
             } as Setting);
           }
         }}
-        className="border-base-300 text-base-content/70 mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
+        className="border-border text-secondary mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
       >
         <div className="flex items-center gap-2">
           {Icon && <Icon className="h-4.5 w-4.5" />}

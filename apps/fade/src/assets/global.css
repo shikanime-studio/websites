@@ -1,10 +1,15 @@
-@import "tailwindcss";
+/* Astryx layer order: reset → component styles → theme tokens → Tailwind bridge → utilities */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "@astryxdesign/core/reset.css";
+@import "@astryxdesign/core/astryx.css";
+@import "@astryxdesign/theme-neutral/theme.css";
+@import "@astryxdesign/core/tailwind-theme.css";
+@import "tailwindcss/utilities.css" layer(utilities);
 
 @theme {
-  --font-sans:
-    "Inter Variable", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
-    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-
   --animate-fade-in: fade-in 250ms ease;
 }
 
@@ -20,14 +25,11 @@
   }
 }
 
-@plugin "daisyui";
-
-/* Built-in daisyUI themes driven by data-theme="dark|light" (ThemeProvider). */
-
 /* =============================================
    Base Styles
    ============================================= */
 body {
+  font-family: var(--font-family-body);
   margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -37,7 +39,7 @@ body {
 /* Scrollbar styling */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: currentColor transparent;
+  scrollbar-color: var(--color-text-secondary) transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -49,7 +51,7 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background-color: currentColor;
+  background-color: var(--color-text-secondary);
   border-radius: 3px;
   opacity: 0.5;
 }

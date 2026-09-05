@@ -33,7 +33,7 @@ export default function LogoutButton() {
         onClick={() => {
           handleLogout();
         }}
-        className="btn btn-ghost"
+        className="hover:bg-surface inline-flex items-center transition-colors"
         disabled={isLoading}
       >
         <LogOut />

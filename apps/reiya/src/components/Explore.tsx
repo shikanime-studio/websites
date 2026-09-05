@@ -83,7 +83,11 @@ function ExploreFeaturedContent() {
     <>
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+          <span
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            role="status"
+            aria-label="Loading"
+          />
         </div>
       </Activity>
       <Activity mode={isLoading ? "hidden" : "visible"}>
@@ -115,7 +119,11 @@ function ExploreArtistsContent() {
     <>
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+          <span
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            role="status"
+            aria-label="Loading"
+          />
         </div>
       </Activity>
       <Activity mode={isLoading ? "hidden" : "visible"}>
@@ -147,7 +155,11 @@ function ExploreCharactersContent() {
     <>
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+          <span
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            role="status"
+            aria-label="Loading"
+          />
         </div>
       </Activity>
       <Activity mode={isLoading ? "hidden" : "visible"}>
@@ -181,7 +193,7 @@ function ExploreConventionsContent() {
     <ExploreSection>
       <ExploreSectionHead>
         <ExploreSectionTitle>
-          <span className="text-primary font-bold">NEXT</span> Upcoming
+          <span className="text-accent font-bold">NEXT</span> Upcoming
           Conventions
         </ExploreSectionTitle>
         <ExploreSectionExpend href="/explore?type=events">
@@ -205,7 +217,11 @@ function ExploreConventionsContent() {
 
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex h-64 w-full items-center justify-center">
-          <span className="loading loading-spinner loading-lg text-primary"></span>
+          <span
+            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            role="status"
+            aria-label="Loading"
+          />
         </div>
       </Activity>
 

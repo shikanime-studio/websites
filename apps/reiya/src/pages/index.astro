@@ -14,10 +14,22 @@ const featuredCategories = categories.slice(0, 8)
       <section>
         <div class="mx-auto flex max-w-2xl flex-col gap-7">
           <div class="flex flex-wrap items-center gap-2">
-            <span class="badge badge-primary badge-lg font-black">Beta</span>
-            <span class="badge badge-ghost badge-lg font-bold">Artist Alley</span>
-            <span class="badge badge-ghost badge-lg font-bold">Conventions</span>
-            <span class="badge badge-ghost badge-lg font-bold">Merch</span>
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--color-gray-subtle)] px-2 py-0.5 text-xs bg-accent px-3 py-1 text-sm font-black"
+              >Beta</span
+            >
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--color-gray-subtle)] px-2 py-0.5 text-xs border-border border px-3 py-1 text-sm font-bold"
+              >Artist Alley</span
+            >
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--color-gray-subtle)] px-2 py-0.5 text-xs border-border border px-3 py-1 text-sm font-bold"
+              >Conventions</span
+            >
+            <span
+              class="inline-flex items-center rounded-full bg-[var(--color-gray-subtle)] px-2 py-0.5 text-xs border-border border px-3 py-1 text-sm font-bold"
+              >Merch</span
+            >
           </div>
 
           <div class="flex flex-col gap-5">
@@ -31,17 +43,27 @@ const featuredCategories = categories.slice(0, 8)
           </div>
 
           <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a href="/explore" class="btn btn-primary btn-lg rounded-full px-10 font-black"> Explore </a>
-            <a href="#for-artists" class="btn btn-ghost btn-lg rounded-full px-10 font-black"> For artists </a>
+            <a
+              href="/explore"
+              class="inline-flex items-center bg-[var(--color-accent)] font-medium text-[var(--color-on-accent)] h-12 px-6 text-base rounded-full px-10 font-black"
+            >
+              Explore
+            </a>
+            <a
+              href="#for-artists"
+              class="hover:bg-surface inline-flex items-center transition-colors h-12 px-6 text-base rounded-full px-10 font-black"
+            >
+              For artists
+            </a>
           </div>
         </div>
       </section>
 
       <section>
-        <div class="border-base-200 bg-base-100 flex flex-col gap-4 rounded-3xl border-2 p-6 shadow-sm">
+        <div class="border-base-200 bg-body flex flex-col gap-4 rounded-3xl border-2 p-6 shadow-sm">
           <div class="flex items-center justify-between gap-4">
             <h2 class="text-base font-black text-gray-900">Browse by category</h2>
-            <a href="/explore" class="text-primary text-sm font-black"> Explore all → </a>
+            <a href="/explore" class="text-accent text-sm font-black"> Explore all → </a>
           </div>
           <div class="flex flex-wrap gap-2">
             {
@@ -49,7 +71,7 @@ const featuredCategories = categories.slice(0, 8)
                 featuredCategories.map((cat) => (
                   <a
                     href="/explore"
-                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    class="border-base-200 hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span class="text-base leading-none">{cat.icon}</span>
                     {cat.name}
@@ -59,21 +81,21 @@ const featuredCategories = categories.slice(0, 8)
                 <>
                   <a
                     href="/explore"
-                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    class="border-base-200 hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span class="text-base leading-none">🏷️</span>
                     Stickers
                   </a>
                   <a
                     href="/explore"
-                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    class="border-base-200 hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span class="text-base leading-none">🎨</span>
                     Prints
                   </a>
                   <a
                     href="/explore"
-                    class="border-base-200 hover:border-base-300 inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    class="border-base-200 hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span class="text-base leading-none">☕</span>
                     Mugs
@@ -87,7 +109,7 @@ const featuredCategories = categories.slice(0, 8)
 
       <section>
         <div class="grid items-start gap-6 lg:grid-cols-2 lg:gap-10">
-          <div class="border-base-200 bg-base-100 flex flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm">
+          <div class="border-base-200 bg-body flex flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm">
             <div class="flex flex-col gap-3">
               <div class="text-sm font-black text-gray-600">How it works</div>
               <h2 class="text-3xl font-black tracking-tight text-gray-900 sm:text-4xl">Explore → Follow → Plan</h2>
@@ -98,7 +120,7 @@ const featuredCategories = categories.slice(0, 8)
 
             <div class="grid gap-3 sm:grid-cols-3">
               <div class="border-base-200 flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
-                <div class="text-primary text-2xl font-black">①</div>
+                <div class="text-accent text-2xl font-black">①</div>
                 <div class="text-base font-black text-gray-900">Explore</div>
                 <div class="text-sm font-semibold text-gray-600">Merch, artists, and events in one place.</div>
               </div>
@@ -117,7 +139,7 @@ const featuredCategories = categories.slice(0, 8)
 
           <section
             id="for-artists"
-            class="border-base-200 bg-base-100 flex scroll-mt-24 flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm"
+            class="border-base-200 bg-body flex scroll-mt-24 flex-col gap-6 rounded-3xl border-2 p-8 shadow-sm"
           >
             <div class="flex flex-col gap-3">
               <div class="text-sm font-black text-gray-600">For artists & circles</div>
@@ -150,7 +172,7 @@ const featuredCategories = categories.slice(0, 8)
       </section>
 
       <section>
-        <div class="border-base-300 bg-base-100 flex flex-col gap-6 rounded-3xl border-2 border-dashed p-8">
+        <div class="border-border bg-body flex flex-col gap-6 rounded-3xl border-2 border-dashed p-8">
           <div class="flex flex-col gap-3">
             <h2 class="text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">Ready to browse?</h2>
             <p class="max-w-2xl text-lg font-semibold text-gray-600">
@@ -158,7 +180,12 @@ const featuredCategories = categories.slice(0, 8)
             </p>
           </div>
           <div class="flex flex-col gap-3 sm:flex-row">
-            <a href="/explore" class="btn btn-primary btn-lg rounded-full px-10 font-black"> Go to Explore </a>
+            <a
+              href="/explore"
+              class="inline-flex items-center bg-[var(--color-accent)] font-medium text-[var(--color-on-accent)] h-12 px-6 text-base rounded-full px-10 font-black"
+            >
+              Go to Explore
+            </a>
           </div>
         </div>
       </section>

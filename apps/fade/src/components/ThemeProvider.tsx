@@ -1,10 +1,13 @@
 import type { ReactNode } from "react";
 import type { Theme } from "../lib/db";
 import { eq, useLiveQuery } from "@tanstack/react-db";
-import { useEffect } from "react";
 import { ThemeContext } from "../hooks/useTheme";
 import { settingsCollection } from "../lib/db";
 
+/**
+ * Persists the user's light/dark preference. The DOM attribute itself is
+ * owned by Astryx's <Theme mode={...}> — this provider only supplies the mode.
+ */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const { data: theme } = useLiveQuery((q) =>
     q
@@ -14,16 +17,6 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 
   const themeValue = theme?.value as Theme | undefined;
-
-  useEffect(() => {
-    const root = document.documentElement;
-
-    if (themeValue) {
-      root.setAttribute("data-theme", themeValue);
-    } else {
-      root.removeAttribute("data-theme");
-    }
-  }, [themeValue]);
 
   const setTheme = (newTheme?: Theme) => {
     if (!newTheme) {

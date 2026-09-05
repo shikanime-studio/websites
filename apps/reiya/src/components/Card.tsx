@@ -61,7 +61,7 @@ export function CardInfo({
             {artist.name}
           </span>
           {artist.verified && (
-            <CircleCheck className="text-primary h-3.5 w-3.5" />
+            <CircleCheck className="text-accent h-3.5 w-3.5" />
           )}
           {artist.level && (
             <span className="flex h-4 w-4 items-center justify-center rounded-full bg-purple-100 text-[10px] font-bold text-purple-600">
@@ -165,7 +165,7 @@ export function CardStatus({ status }: CardStatusProps) {
   if (status !== "OPEN") return null;
 
   return (
-    <div className="bg-primary absolute top-3 left-3 z-20 rounded-md px-2 py-1 text-xs font-bold tracking-wide text-black uppercase">
+    <div className="bg-accent absolute top-3 left-3 z-20 rounded-md px-2 py-1 text-xs font-bold tracking-wide text-black uppercase">
       Open
     </div>
   );

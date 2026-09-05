@@ -110,3 +110,7 @@ trustPolicyExclude:
   - chokidar@4.0.3
   - undici-types@6.21.0
   - semver@6.3.1
+catalog:
+  "@astryxdesign/core": ^0.5.2
+  "@astryxdesign/theme-neutral": ^0.5.2
+  "@stylexjs/stylex": ^0.19.0

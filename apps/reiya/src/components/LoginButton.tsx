@@ -28,7 +28,7 @@ export default function LoginButton() {
     <>
       <button
         type="button"
-        className="btn rounded-full px-4 font-bold"
+        className="inline-flex items-center font-medium rounded-full px-4 font-bold"
         onClick={() => {
           handleSignIn();
         }}
@@ -36,7 +36,11 @@ export default function LoginButton() {
       >
         {isLoading ? (
           <>
-            <span className="loading loading-spinner loading-xs"></span>
+            <span
+              className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-current"
+              role="status"
+              aria-label="Loading"
+            />
             SIGNING IN
           </>
         ) : (

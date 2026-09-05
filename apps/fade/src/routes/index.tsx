@@ -1,3 +1,4 @@
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { z } from "zod";
@@ -25,7 +26,7 @@ function GalleryContainer() {
 
   return (
     <GalleryProvider handle={handle}>
-      <div className="bg-base-100 text-base-content selection:bg-warning selection:text-warning-content flex h-screen flex-col">
+      <div className="bg-body text-secondary selection:bg-warning selection:text-on-warning flex h-screen flex-col">
         <ToolBar />
         <div className="flex min-h-0 flex-1 overflow-hidden">
           <ImageInfoProvider>
@@ -51,7 +52,7 @@ function App() {
         <Suspense
           fallback={
             <div className="flex h-screen items-center justify-center">
-              <span className="loading loading-spinner loading-lg text-warning"></span>
+              <Spinner size="lg" />
             </div>
           }
         >

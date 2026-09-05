@@ -54,8 +54,8 @@ export function CardModal({ card, onClose }: CardModalProps) {
   };
 
   return createPortal(
-    <dialog className="modal modal-open">
-      <div className="modal-box flex max-h-[90vh] w-11/12 max-w-6xl flex-col overflow-hidden rounded-3xl bg-white p-0 shadow-2xl md:flex-row">
+    <dialog className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-body flex max-h-[90vh] w-11/12 max-w-6xl flex-col overflow-hidden rounded-3xl p-0 shadow-2xl md:flex-row">
         <button
           type="button"
           onClick={onClose}
@@ -105,7 +105,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
           <button
             type="button"
             onClick={scrollToTop}
-            className={`hover:text-primary absolute right-6 bottom-6 z-30 transform rounded-full bg-white p-3 text-gray-700 shadow-lg transition-all duration-300 ${
+            className={`hover:text-accent absolute right-6 bottom-6 z-30 transform rounded-full bg-white p-3 text-gray-700 shadow-lg transition-all duration-300 ${
               showScrollTop
                 ? "translate-y-0 opacity-100"
                 : "pointer-events-none translate-y-10 opacity-0"
@@ -172,7 +172,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
                 <div className="flex items-center gap-1 font-bold text-gray-900">
                   <span className="truncate">{card.artist.name}</span>
                   {card.artist.verified && (
-                    <CheckCircle className="text-primary h-3 w-3 shrink-0" />
+                    <CheckCircle className="text-accent h-3 w-3 shrink-0" />
                   )}
                 </div>
                 <div className="truncate text-sm text-gray-500">
@@ -223,19 +223,19 @@ export function CardModal({ card, onClose }: CardModalProps) {
             <div className="flex gap-3">
               <button
                 type="button"
-                className="btn btn-primary shadow-primary/30 hover:shadow-primary/40 flex-1 transform rounded-full font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
+                className="inline-flex items-center bg-[var(--color-accent)] font-medium text-[var(--color-on-accent)] shadow-primary/30 hover:shadow-primary/40 flex-1 transform rounded-full font-bold text-white shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl"
               >
                 Request this style
               </button>
               <button
                 type="button"
-                className="btn btn-circle btn-ghost border border-gray-200 hover:bg-gray-50"
+                className="hover:bg-surface inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors border border-gray-200 hover:bg-gray-50"
               >
                 <Heart className="h-5 w-5 text-gray-400" />
               </button>
               <button
                 type="button"
-                className="btn btn-circle btn-ghost border border-gray-200 hover:bg-gray-50"
+                className="hover:bg-surface inline-flex h-9 w-9 items-center justify-center rounded-full transition-colors border border-gray-200 hover:bg-gray-50"
               >
                 <Share className="h-5 w-5 text-gray-400" />
               </button>
@@ -243,7 +243,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
           </div>
         </div>
       </div>
-      <form method="dialog" className="modal-backdrop">
+      <form method="dialog" className="fixed inset-0 -z-10">
         <button type="submit" onClick={onClose}>
           close
         </button>

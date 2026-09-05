@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { IconButton } from "@astryxdesign/core/IconButton";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useGallery } from "../hooks/useGallery";
 import { useModal } from "../hooks/useModal";
@@ -28,27 +29,29 @@ export function FullscreenNavigation({ children }: FullscreenNavigationProps) {
       }}
     >
       {files.length > 1 && (
-        <button
-          className="btn btn-circle btn-ghost absolute left-4 z-50 text-white"
+        <IconButton
+          className="text-on-dark absolute left-4 z-50"
+          variant="ghost"
+          label="Previous file"
+          icon={<ChevronLeft className="h-8 w-8" />}
           onClick={(e) => {
             e.stopPropagation();
             navigatePrevious();
           }}
-        >
-          <ChevronLeft className="h-8 w-8" />
-        </button>
+        />
       )}
       {children}
       {files.length > 1 && (
-        <button
-          className="btn btn-circle btn-ghost absolute right-4 z-50 text-white"
+        <IconButton
+          className="text-on-dark absolute right-4 z-50"
+          variant="ghost"
+          label="Next file"
+          icon={<ChevronRight className="h-8 w-8" />}
           onClick={(e) => {
             e.stopPropagation();
             navigateNext();
           }}
-        >
-          <ChevronRight className="h-8 w-8" />
-        </button>
+        />
       )}
     </div>
   );
