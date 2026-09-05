@@ -8,20 +8,29 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 async function setRangeValue(locator: Locator, value: number) {
-  await locator.evaluate((el: HTMLInputElement, nextValue: number) => {
-    const input = el;
-    const valueSetter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      "value",
-    )?.set;
-    if (valueSetter) {
-      valueSetter.call(input, String(nextValue));
+  // Astryx Slider renders a div[role="slider"] driven by keyboard events
+  // (daisyUI used a native <input type="range">). Focus the thumb, walk it
+  // to the target with PageUp/PageDown + Arrow keys, then assert via
+  // aria-valuenow. Fractional targets are reached by nudging from the
+  // nearest whole-step value with Arrow presses (step 0.01/0.05).
+  await locator.press("Home");
+  for (let i = 0; i < 200 && i < 100; i += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    const now = Number(await locator.getAttribute("aria-valuenow"));
+    if (Math.abs(now - value) < 1e-9) break;
+    // eslint-disable-next-line no-await-in-loop
+    if (now < value) {
+      // eslint-disable-next-line no-await-in-loop
+      await locator.press(
+        value - now >= 0.5 ? "PageUp" : "ArrowRight",
+      );
     } else {
-      input.value = String(nextValue);
+      // eslint-disable-next-line no-await-in-loop
+      await locator.press(
+        now - value >= 0.5 ? "PageDown" : "ArrowLeft",
+      );
     }
-    input.dispatchEvent(new Event("input", { bubbles: true }));
-    input.dispatchEvent(new Event("change", { bubbles: true }));
-  }, value);
+  }
 }
 
 test("imports an image and adjusts lighting controls", async ({
@@ -169,17 +178,17 @@ test("imports an image and adjusts lighting controls", async ({
   const exposureSlider = page.getByRole("slider", { name: "Exposure" });
   await expect(exposureSlider).toBeVisible();
   await setRangeValue(exposureSlider, 1.25);
-  await expect(exposureSlider).toHaveValue("1.25");
+  await expect(exposureSlider).toHaveAttribute("aria-valuenow", "1.25");
 
   const temperatureSlider = page.getByRole("slider", { name: "Temperature" });
   await setRangeValue(temperatureSlider, 0.5);
-  await expect(temperatureSlider).toHaveValue("0.5");
+  await expect(temperatureSlider).toHaveAttribute("aria-valuenow", "0.5");
 
   const tintSlider = page.getByRole("slider", { name: "Tint" });
   await setRangeValue(tintSlider, -0.3);
-  await expect(tintSlider).toHaveValue("-0.3");
+  await expect(tintSlider).toHaveAttribute("aria-valuenow", "-0.3");
 
   const hueSlider = page.getByRole("slider", { name: "Hue" });
   await setRangeValue(hueSlider, 0.2);
-  await expect(hueSlider).toHaveValue("0.2");
+  await expect(hueSlider).toHaveAttribute("aria-valuenow", "0.2");
 });
