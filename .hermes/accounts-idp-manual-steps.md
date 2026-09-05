@@ -1,8 +1,8 @@
 # accounts Central IdP — Manual Deployment Steps
 
-This runbook covers the steps that cannot be performed by the agent because
-they require live Cloudflare access and secret values. Each step is manual and
-must be run by a human with the appropriate credentials.
+This runbook covers the steps that cannot be performed by the agent because they
+require live Cloudflare access and secret values. Each step is manual and must
+be run by a human with the appropriate credentials.
 
 The corresponding implementation commits live on the `accounts-idp` branch.
 
@@ -26,8 +26,8 @@ custom-domain record automatically on first deploy.
 The accounts `wrangler.jsonc` ships with a `"PLACEHOLDER"` `database_id`. After
 `tofu apply` returns the real D1 id, either:
 
-- run `wrangler deploy` / `wrangler versions upload` for accounts (it writes
-  the real id into `wrangler.jsonc` automatically), or
+- run `wrangler deploy` / `wrangler versions upload` for accounts (it writes the
+  real id into `wrangler.jsonc` automatically), or
 - manually replace `PLACEHOLDER` with the id from `tofu output accounts`.
 
 ## Task 12 — reiya Worker secret rotation (manual wrangler)
@@ -63,8 +63,8 @@ wrangler secret put GOOGLE_CLIENT_SECRET     --config apps/accounts/wrangler.jso
 - Visiting reiya's sign-in button redirects to
   `https://accounts.shikanime.studio/api/auth/oauth2/authorize?...`.
 - Completing the accounts flow returns to
-  `https://reiya.shikanime.studio/api/auth/oauth2/callback/accounts` with a
-  code that exchanges successfully (no `invalid_client` / `invalid_secret`).
+  `https://reiya.shikanime.studio/api/auth/oauth2/callback/accounts` with a code
+  that exchanges successfully (no `invalid_client` / `invalid_secret`).
 
 ## Task 21 — CI coverage (no code change required)
 
@@ -78,17 +78,17 @@ accounts is automatically covered by the existing integration pipeline:
   added in the scaffold commit) and ships the standard scripts the action
   invokes: `types` (`wrangler types`), `test` (`vitest run`), `build`
   (`vite build`).
-- No per-app CI enumeration (matrix/list) exists, so there is nothing to edit
-  to opt accounts in — workspace discovery handles it.
+- No per-app CI enumeration (matrix/list) exists, so there is nothing to edit to
+  opt accounts in — workspace discovery handles it.
 
 Verified locally that all three gates pass for accounts:
 
-```
+```text
 pnpm -F @shikanime-studio/accounts types   # exit 0
 pnpm -F @shikanime-studio/accounts test    # 3 passed
 pnpm -F @shikanime-studio/accounts build   # exit 0
 ```
 
 The only CI-relevant manual prerequisite is Task 9 (the D1 database must exist
-for `test`/`build` to resolve the `env.DB` binding) and Task 12 (secrets must
-be set for a real deploy). Neither requires a CI config change.
+for `test`/`build` to resolve the `env.DB` binding) and Task 12 (secrets must be
+set for a real deploy). Neither requires a CI config change.

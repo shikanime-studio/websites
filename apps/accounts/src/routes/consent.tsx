@@ -1,3 +1,7 @@
+import { Banner } from "@astryxdesign/core/Banner";
+import { Button } from "@astryxdesign/core/Button";
+import { Card } from "@astryxdesign/core/Card";
+import { Heading } from "@astryxdesign/core/Heading";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { authClient } from "../lib/auth-client";
@@ -22,7 +26,9 @@ function Consent() {
   const [isLoading, setIsLoading] = useState(clientId !== null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(
-    clientId === null ? "Missing client_id in the authorization request." : null,
+    clientId === null
+      ? "Missing client_id in the authorization request."
+      : null,
   );
 
   const clientName = resolvedName ?? clientId;
@@ -71,25 +77,22 @@ function Consent() {
   };
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center p-4">
-      <div className="card bg-base-100 w-full max-w-md shadow-xl">
-        <div className="card-body gap-6">
+    <main className="flex min-h-dvh items-center justify-center p-4">
+      <Card className="w-full max-w-md">
+        <div className="flex flex-col gap-6 p-6">
           <div className="text-center">
-            <h1 className="card-title justify-center text-xl font-bold">
-              Authorize access
-            </h1>
+            <Heading level={1}>Authorize access</Heading>
             <p className="mt-2 text-sm opacity-70">
-              {isLoading
-                ? "Loading application details…"
-                : (
-                    <>
-                      <span className="font-semibold">
-                        {clientName ?? "An application"}
-                      </span>
-                      {" "}
-                      wants to access your Shikanime Studio account.
-                    </>
-                  )}
+              {isLoading ? (
+                "Loading application details…"
+              ) : (
+                <>
+                  <span className="font-semibold">
+                    {clientName ?? "An application"}
+                  </span>{" "}
+                  wants to access your Shikanime Studio account.
+                </>
+              )}
             </p>
           </div>
 
@@ -99,52 +102,37 @@ function Consent() {
                 This will allow it to:
               </h2>
               <ul className="list-inside list-disc space-y-1 text-sm opacity-80">
-                {scopes.map(scope => (
+                {scopes.map((scope) => (
                   <li key={scope}>{scope}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {error && (
-            <div role="alert" className="alert alert-error text-sm">
-              <span>{error}</span>
-            </div>
-          )}
+          {error && <Banner status="error" title={error} />}
 
-          <div className="card-actions justify-end gap-2">
-            <button
+          <div className="flex justify-end gap-2">
+            <Button
               type="button"
-              className="btn btn-ghost rounded-full"
+              variant="ghost"
+              label="DENY"
+              isDisabled={isSubmitting}
               onClick={() => {
                 submitConsent(false);
               }}
-              disabled={isSubmitting}
-            >
-              DENY
-            </button>
-            <button
+            />
+            <Button
               type="button"
-              className="btn btn-primary rounded-full font-bold"
+              variant="primary"
+              label={isSubmitting ? "WORKING" : "ALLOW"}
+              isLoading={isSubmitting}
               onClick={() => {
                 submitConsent(true);
               }}
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      WORKING
-                    </>
-                  )
-                : (
-                    "ALLOW"
-                  )}
-            </button>
+            />
           </div>
         </div>
-      </div>
+      </Card>
     </main>
   );
 }

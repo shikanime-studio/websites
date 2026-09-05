@@ -115,3 +115,6 @@ trustPolicyExclude:
   - "undici-types@6.21.0"
 catalog:
   "@rsbuild/core": ^2.1.10
+  "@astryxdesign/core": ^0.5.2
+  "@astryxdesign/theme-neutral": ^0.5.2
+  "@stylexjs/stylex": ^0.19.0

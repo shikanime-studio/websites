@@ -1,3 +1,4 @@
+import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -9,6 +10,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { shikanimeTheme } from "../lib/theme";
 import appCss from "../styles.css?url";
 
 const queryClient = new QueryClient();
@@ -30,15 +32,25 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ClientOnly>
-        <Outlet />
+        <AstryxTheme theme={shikanimeTheme} mode="system">
+          <Outlet />
+          <TanStackDevtools
+            config={{ position: "bottom-right" }}
+            plugins={[
+              {
+                name: "TanStack Query",
+                render: <ReactQueryDevtoolsPanel />,
+                defaultOpen: true,
+              },
+              {
+                name: "TanStack Router",
+                render: <TanStackRouterDevtoolsPanel />,
+                defaultOpen: false,
+              },
+            ]}
+          />
+        </AstryxTheme>
       </ClientOnly>
-      <TanStackDevtools
-        config={{ position: "bottom-right" }}
-        plugins={[
-          { name: "TanStack Query", render: <ReactQueryDevtoolsPanel />, defaultOpen: true },
-          { name: "TanStack Router", render: <TanStackRouterDevtoolsPanel />, defaultOpen: false },
-        ]}
-      />
     </QueryClientProvider>
   );
 }

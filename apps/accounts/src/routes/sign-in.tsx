@@ -1,3 +1,6 @@
+import { Button } from "@astryxdesign/core/Button";
+import { Card } from "@astryxdesign/core/Card";
+import { Heading } from "@astryxdesign/core/Heading";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
@@ -25,42 +28,31 @@ function SignIn() {
   };
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center p-4">
-      <div className="card bg-base-100 w-full max-w-sm shadow-xl">
-        <div className="card-body items-center gap-6 text-center">
-          <h1 className="card-title text-xl font-bold">
-            Sign in to Shikanime Studio
-          </h1>
+    <main className="flex min-h-dvh items-center justify-center p-4">
+      <Card className="w-full max-w-sm">
+        <div className="flex flex-col items-center gap-6 p-6 text-center">
+          <Heading level={1}>Sign in to Shikanime Studio</Heading>
           <p className="text-sm opacity-70">
             Use your Google account to continue.
           </p>
-          <button
+          <Button
             type="button"
-            className="btn btn-primary w-full rounded-full font-bold"
+            variant="primary"
+            label="CONTINUE WITH GOOGLE"
+            width="100%"
+            isLoading={isLoading}
             onClick={handleSignIn}
-            disabled={isLoading}
-          >
-            {isLoading
-              ? (
-                  <>
-                    <span className="loading loading-spinner loading-xs"></span>
-                    SIGNING IN
-                  </>
-                )
-              : (
-                  "CONTINUE WITH GOOGLE"
-                )}
-          </button>
+          />
           <p className="text-xs opacity-50">
             One Tap may appear automatically. Or use the button above.
           </p>
           {error && (
-            <div role="alert" className="alert alert-error text-sm">
-              <span>{error}</span>
-            </div>
+            <p role="alert" className="text-sm text-(--color-error)">
+              {error}
+            </p>
           )}
         </div>
-      </div>
+      </Card>
     </main>
   );
 }

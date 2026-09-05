@@ -1,11 +1,11 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { Schema } from "../schema";
-import * as schema from "../schema";
 import { oauthProvider } from "@better-auth/oauth-provider";
-import { env } from "cloudflare:workers";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, oneTap } from "better-auth/plugins";
+import { env } from "cloudflare:workers";
+import * as schema from "../schema";
 
 export function createAuth(db: DrizzleD1Database<Schema>) {
   return betterAuth({
@@ -48,12 +48,7 @@ export function createAuth(db: DrizzleD1Database<Schema>) {
         scopes: ["openid", "profile", "email", "offline_access"],
         validAudiences: ["https://accounts.shikanime.studio"],
         allowDynamicClientRegistration: false,
-        cachedTrustedClients: new Set([
-          "reiya",
-          "fade",
-          "www",
-          "links",
-        ]),
+        cachedTrustedClients: new Set(["reiya", "fade", "www", "links"]),
         trustedClients: [
           {
             clientId: "reiya",

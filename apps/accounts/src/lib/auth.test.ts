@@ -1,6 +1,6 @@
 import { applyD1Migrations, SELF } from "cloudflare:test";
 import { env } from "cloudflare:workers";
-import { inject, it, expect, beforeAll } from "vitest";
+import { beforeAll, expect, inject, it } from "vitest";
 
 const BASE = "https://accounts.shikanime.studio";
 
@@ -32,7 +32,7 @@ it("migrations produced the expected better-auth tables in D1", async () => {
     "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('user','session','account','verification','jwks','oauth_client','oauth_access_token','oauth_refresh_token','oauth_consent')",
   ).all()) as { results: { name: string }[] };
 
-  const names = results.map(r => r.name).sort();
+  const names = results.map((r) => r.name).sort();
   expect(names).toEqual([
     "account",
     "jwks",
