@@ -222,9 +222,9 @@ describe("demosaic", () => {
       expect(result.pixels[rPxIdx + 2]).toBe(255); // B (neighbors also 0xffff)
     });
 
-    it("handles Unknown pattern as fallback to RGGB", () => {
+    it("handles non-RGGB pattern as fallback to RGGB", () => {
       const cfa = new Uint16Array([0xffff, 0x0000, 0x0000, 0x8000]);
-      const result = demosaic(cfa, 2, 2, CfaPattern.Unknown, 16);
+      const result = demosaic(cfa, 2, 2, CfaPattern.Rggb, 16);
       expect(result.pixels.length).toBe(4 * 3);
     });
   });

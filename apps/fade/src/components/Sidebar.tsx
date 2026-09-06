@@ -1,5 +1,4 @@
-import type { Setting } from "../lib/db";
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
@@ -13,21 +12,15 @@ import {
   Sun,
 } from "lucide-react";
 import { Activity, Suspense } from "react";
-import { useExif } from "../hooks/useExif";
-import { useFile } from "../hooks/useFile";
+import { useExif } from "@shikanime-studio/darkroom/react";
+import { useFile } from "@shikanime-studio/darkroom/react";
 import { useGallery } from "../hooks/useGallery";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
 import { settingsCollection } from "../lib/db";
 import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from "../lib/exif";
+  ExifTagId,
+} from "@shikanime-studio/darkroom";
 import { formatBytes } from "../lib/intl";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
@@ -367,13 +360,13 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
 
   const tags = Object.fromEntries(exifData.map((e) => [e.tagId, e.value]));
 
-  const make = tags[MakeTagId] as string | undefined;
-  const model = tags[ModelTagId] as string | undefined;
-  const lensModel = tags[LensModelTagId] as string | undefined;
-  const fNumber = tags[FNumberTagId] as number | undefined;
-  const exposureTime = tags[ExposureTimeTagId] as number | undefined;
-  const iso = tags[ISOTagId] as number | undefined;
-  const focalLength = tags[FocalLengthTagId] as number | undefined;
+  const make = tags[ExifTagId.Make] as string | undefined;
+  const model = tags[ExifTagId.Model] as string | undefined;
+  const lensModel = tags[ExifTagId.LensModel] as string | undefined;
+  const fNumber = tags[ExifTagId.FNumber] as number | undefined;
+  const exposureTime = tags[ExifTagId.ExposureTime] as number | undefined;
+  const iso = tags[ExifTagId.ISO] as number | undefined;
+  const focalLength = tags[ExifTagId.FocalLength] as number | undefined;
 
   return (
     <CollapsibleSection
@@ -498,50 +491,59 @@ function CollapsibleSection({
   const { data } = useLiveQuery((q) =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, id))
+      .where(({ settings }) => eq(settings.id, "sidebarCollapsed"))
       .findOne(),
   );
-
   const isCollapsed = (data?.value as boolean) || false;
-  const isOpen = !isCollapsed;
 
   return (
-    <div className={className}>
-      <button
-        onClick={() => {
-          if (data) {
-            settingsCollection.update(id, (draft) => {
-              draft.value = !isCollapsed;
-            });
-          } else {
-            settingsCollection.insert({
-              id,
-              value: !isCollapsed,
-            } as Setting);
-          }
-        }}
-        className="border-border text-secondary mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
-      >
-        <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-4.5 w-4.5" />}
-          <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
-            {title}
-          </h2>
-        </div>
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4 opacity-50" />
-        ) : (
-          <ChevronRight className="h-4 w-4 opacity-50" />
-        )}
-      </button>
-
-      <div
-        className={`grid transition-all duration-300 ease-in-out ${
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-      >
-        <div className="overflow-hidden">{children}</div>
-      </div>
+    <div className={`${className} ${isCollapsed ? "hidden" : ""}`}>
+      <CollapsibleHeading title={title} id={id} icon={Icon} />
+      {children}
     </div>
+  );
+}
+
+function CollapsibleHeading({
+  title,
+  id,
+  icon: Icon,
+}: {
+  title: string;
+  id: string;
+  icon?: React.ElementType;
+}) {
+  const { data } = useLiveQuery((q) =>
+    q
+      .from({ settings: settingsCollection })
+      .where(({ settings }) => eq(settings.id, "sidebarCollapsed"))
+      .findOne(),
+  );
+  const isCollapsed = (data?.value as boolean) || false;
+
+  return (
+    <button
+      className="border-border flex w-full items-center justify-between border-b border-b-border bg-transparent px-0 py-2 text-left text-xs font-bold tracking-wider uppercase opacity-70 transition-colors"
+      onClick={() => {
+        if (data) {
+          settingsCollection.update("sidebarCollapsed", (draft) => {
+            draft.value = !isCollapsed;
+          });
+        } else {
+          settingsCollection.insert({
+            id: "sidebarCollapsed",
+            value: !isCollapsed,
+          });
+        }
+      }}
+    >
+      <span className="flex items-center gap-2">
+        {Icon && <Icon className="h-3 w-3 opacity-70" />}
+        {title}
+      </span>
+      <ChevronDown
+        className={`h-3 w-3 transition-transform ${isCollapsed ? "rotate-180" : ""}`}
+      />
+    </button>
   );
 }

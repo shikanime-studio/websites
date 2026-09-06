@@ -1,5 +1,5 @@
 /**
- * Image processing sub-package — client/server (main thread ↔ WebWorker) architecture.
+ * Darkroom client-side API — main thread ↔ WebWorker architecture.
  *
  * Exports:
  * - Protocol types for worker messaging
@@ -15,4 +15,5 @@ export * from "./parsers/raf";
 export { demosaic, detectCfaPattern, CfaPattern } from "./demosaic";
 export type { DemosaicResult, DemosaicOptions } from "./demosaic";
 export { createImageWorkerClient } from "./worker-client";
+export { renderDemosaic } from "./shaders/raf";
 // worker.ts is a WebWorker entry point — imported via new URL in worker-client.ts

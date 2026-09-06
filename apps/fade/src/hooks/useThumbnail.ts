@@ -1,9 +1,9 @@
-import type { FileItem } from "../image-processing/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import thumbnailShader from "../shaders/thumbnail.wgsl?raw";
 import { useGPU } from "./useGPU";
-import { usePreview } from "./usePreview";
+import { usePreview } from "@shikanime-studio/darkroom/react";
 
 function useThumbnailPipeline() {
   const { device } = useGPU();

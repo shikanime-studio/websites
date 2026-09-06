@@ -3,6 +3,7 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - packages/*
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.7.0

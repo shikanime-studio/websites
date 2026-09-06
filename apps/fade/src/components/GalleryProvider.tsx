@@ -1,9 +1,8 @@
-import type { ReactNode } from "react";
+import { scanDirectoryFromHandle } from "@shikanime-studio/fs";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GalleryContext } from "../hooks/useGallery";
-import { useKeymap } from "../hooks/useKeymap";
-import { scanDirectory } from "../lib/fs";
+import type { ReactNode } from "react";
 
 export function GalleryProvider({
   children,
@@ -15,10 +14,10 @@ export function GalleryProvider({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { data: files } = useSuspenseQuery({
-    queryKey: ["gallery", handle],
+    queryKey: ["gallery", handle?.name],
     queryFn: async () => {
       if (!handle) return [];
-      return scanDirectory(handle);
+      return scanDirectoryFromHandle(handle);
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
@@ -26,45 +25,57 @@ export function GalleryProvider({
 
   const selectFile = useCallback(
     (index: number) => {
-      setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)));
+      if (!files || index < 0) return;
+      setSelectedIndex(Math.min(index, files.length - 1));
     },
-    [files.length],
+    [files],
   );
 
   const navigateNext = useCallback(() => {
+    if (!files) return;
     setSelectedIndex((prev) => Math.min(prev + 1, files.length - 1));
-  }, [files.length]);
+  }, [files]);
 
   const navigatePrevious = useCallback(() => {
     setSelectedIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  useKeymap("navigateNext", () => {
-    if (files.length === 0) return;
-    navigateNext();
-  });
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!files || files.length === 0) return;
 
-  useKeymap("navigatePrevious", () => {
-    if (files.length === 0) return;
-    navigatePrevious();
-  });
+      switch (event.key) {
+        case "ArrowRight":
+          navigateNext();
+          event.preventDefault();
+          break;
+        case "ArrowLeft":
+          navigatePrevious();
+          event.preventDefault();
+          break;
+        case "Home":
+          selectFile(0);
+          event.preventDefault();
+          break;
+        case "End":
+          selectFile(files.length - 1);
+          event.preventDefault();
+          break;
+      }
+    };
 
-  useKeymap("selectFirst", () => {
-    if (files.length === 0) return;
-    selectFile(0);
-  });
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [files, navigateNext, navigatePrevious, selectFile]);
 
-  useKeymap("selectLast", () => {
-    if (files.length === 0) return;
-    selectFile(files.length - 1);
-  });
-
-  const selectedFile = files[selectedIndex] ?? null;
+  const selectedFile = files && files.length > 0 ? files[selectedIndex] : null;
 
   return (
-    <GalleryContext
+    <GalleryContext.Provider
       value={{
-        files,
+        files: files ?? [],
         selectedIndex,
         selectFile,
         navigateNext,
@@ -73,6 +84,6 @@ export function GalleryProvider({
       }}
     >
       {children}
-    </GalleryContext>
+    </GalleryContext.Provider>
   );
 }

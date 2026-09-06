@@ -5,32 +5,38 @@
  * Reads EXIF tags from JPEG APP1, PNG eXIf, WebP EXIF, and TIFF containers.
  */
 
-export enum Endianness {
-  Little = 0x4949, // 'II'
-  Big = 0x4d4d, // 'MM'
-}
+export const Endianness = {
+  Little: 0x4949, // 'II'
+  Big: 0x4d4d, // 'MM'
+} as const;
 
-export enum ExifType {
-  BYTE = 1,
-  ASCII = 2,
-  SHORT = 3,
-  LONG = 4,
-  RATIONAL = 5,
-  SLONG = 9,
-  SRATIONAL = 10,
-}
+export type Endianness = (typeof Endianness)[keyof typeof Endianness];
 
-export enum ExifTagId {
-  Make = 0x010f,
-  Model = 0x0110,
-  ExifOffset = 0x8769,
-  ExposureTime = 0x829a,
-  FNumber = 0x829d,
-  ISO = 0x8827,
-  DateTimeOriginal = 0x9003,
-  FocalLength = 0x920a,
-  LensModel = 0xa433,
-}
+export const ExifType = {
+  BYTE: 1,
+  ASCII: 2,
+  SHORT: 3,
+  LONG: 4,
+  RATIONAL: 5,
+  SLONG: 9,
+  SRATIONAL: 10,
+} as const;
+
+export type ExifType = (typeof ExifType)[keyof typeof ExifType];
+
+export const ExifTagId = {
+  Make: 0x010f,
+  Model: 0x0110,
+  ExifOffset: 0x8769,
+  ExposureTime: 0x829a,
+  FNumber: 0x829d,
+  ISO: 0x8827,
+  DateTimeOriginal: 0x9003,
+  FocalLength: 0x920a,
+  LensModel: 0xa433,
+} as const;
+
+export type ExifTagId = (typeof ExifTagId)[keyof typeof ExifTagId];
 
 export type ExifTagEntry = {
   tagId: number;
@@ -61,11 +67,19 @@ function isContainer(type: ExifType): boolean {
 }
 
 export class ExifDataView<T extends ArrayBufferLike = ArrayBufferLike> {
+  readonly buffer: T;
+  readonly byteOffset: number;
+  readonly byteLength: number | undefined;
+
   constructor(
-    public readonly buffer: T,
-    public readonly byteOffset: number = 0,
-    public readonly byteLength?: number,
-  ) {}
+    buffer: T,
+    byteOffset: number = 0,
+    byteLength?: number,
+  ) {
+    this.buffer = buffer;
+    this.byteOffset = byteOffset;
+    this.byteLength = byteLength;
+  }
 
   private get _view(): DataView<T> {
     return new DataView(this.buffer, this.byteOffset, this.byteLength);
@@ -192,11 +206,19 @@ export class ExifDataView<T extends ArrayBufferLike = ArrayBufferLike> {
 // ── Container parsers ────────────────────────────────────────────
 
 export class JpegDataView<T extends ArrayBufferLike = ArrayBufferLike> {
+  readonly buffer: T;
+  readonly byteOffset: number;
+  readonly byteLength: number | undefined;
+
   constructor(
-    public readonly buffer: T,
-    public readonly byteOffset: number = 0,
-    public readonly byteLength?: number,
-  ) {}
+    buffer: T,
+    byteOffset: number = 0,
+    byteLength?: number,
+  ) {
+    this.buffer = buffer;
+    this.byteOffset = byteOffset;
+    this.byteLength = byteLength;
+  }
 
   private get _view(): DataView<T> {
     return new DataView(this.buffer, this.byteOffset, this.byteLength);
@@ -251,11 +273,19 @@ export class JpegDataView<T extends ArrayBufferLike = ArrayBufferLike> {
 }
 
 export class PngDataView<T extends ArrayBufferLike = ArrayBufferLike> {
+  readonly buffer: T;
+  readonly byteOffset: number;
+  readonly byteLength: number | undefined;
+
   constructor(
-    public readonly buffer: T,
-    public readonly byteOffset: number = 0,
-    public readonly byteLength?: number,
-  ) {}
+    buffer: T,
+    byteOffset: number = 0,
+    byteLength?: number,
+  ) {
+    this.buffer = buffer;
+    this.byteOffset = byteOffset;
+    this.byteLength = byteLength;
+  }
 
   private get _view(): DataView<T> {
     return new DataView(this.buffer, this.byteOffset, this.byteLength);
@@ -292,11 +322,19 @@ export class PngDataView<T extends ArrayBufferLike = ArrayBufferLike> {
 }
 
 export class WebPDataView<T extends ArrayBufferLike = ArrayBufferLike> {
+  readonly buffer: T;
+  readonly byteOffset: number;
+  readonly byteLength: number | undefined;
+
   constructor(
-    public readonly buffer: T,
-    public readonly byteOffset: number = 0,
-    public readonly byteLength?: number,
-  ) {}
+    buffer: T,
+    byteOffset: number = 0,
+    byteLength?: number,
+  ) {
+    this.buffer = buffer;
+    this.byteOffset = byteOffset;
+    this.byteLength = byteLength;
+  }
 
   private get _view(): DataView<T> {
     return new DataView(this.buffer, this.byteOffset, this.byteLength);

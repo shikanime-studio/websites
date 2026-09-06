@@ -17,9 +17,9 @@
 /** A file item that can be opened and read */
 export interface FileItem {
   name: string;
-  mimeType?: string;
-  size?: number;
-  lastModified?: number;
+  mimeType?: string | undefined;
+  size?: number | undefined;
+  lastModified?: number | undefined;
   /** Sidecar files associated with this file (e.g., .xmp alongside .raf) */
   sidecars: Array<FileItem>;
   /** The underlying storage handle — used by the provider */
@@ -40,7 +40,7 @@ export interface FileData {
   /** The file content as ArrayBuffer */
   data: ArrayBuffer;
   /** MIME type detected from file content */
-  mimeType?: string;
+  mimeType?: string | undefined;
   /** The original file name */
   name: string;
 }
@@ -155,23 +155,21 @@ export async function scanDirectoryFromHandle(
 
   const result: Array<FileItem> = [];
   for (const groupItems of groups.values()) {
-    let primaryItem = groupItems[0];
+    let primaryItem: FileItem | undefined;
     let bestScore = -1;
     for (const item of groupItems) {
-      let score = 0;
-      item.mimeType ??= undefined;
       // Score: image/video > other
-      if (item.mimeType?.startsWith("image/") || item.mimeType?.startsWith("video/")) {
-        score = 2;
-      } else {
-        score = 1;
-      }
+      const score =
+        item.mimeType?.startsWith("image/") || item.mimeType?.startsWith("video/")
+          ? 2
+          : 1;
       if (score > bestScore) {
         bestScore = score;
         primaryItem = item;
       }
     }
 
+    if (!primaryItem) continue;
     const sidecars = groupItems.filter((i) => i !== primaryItem);
     sidecars.sort((a, b) => a.name.localeCompare(b.name));
     primaryItem.sidecars = sidecars;

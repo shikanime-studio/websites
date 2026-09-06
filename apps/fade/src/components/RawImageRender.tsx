@@ -1,7 +1,7 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { useRef } from "react";
 import { useLighting } from "../hooks/useLighting";
-import { useRawImage } from "../hooks/useRawImage";
+import { useRawImage } from "@shikanime-studio/darkroom/react";
 import { useRawImageRender } from "../hooks/useRawImageRender";
 
 interface RawImageRenderProps {

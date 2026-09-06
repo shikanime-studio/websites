@@ -17,9 +17,11 @@
  *   B pixel (odd, odd):   G from horizontal, R from vertical
  */
 
-export enum CfaPattern {
-  Rggb = "rggb",
-}
+export const CfaPattern = {
+  Rggb: "rggb",
+} as const;
+
+export type CfaPattern = (typeof CfaPattern)[keyof typeof CfaPattern];
 
 export interface DemosaicOptions {
   pattern: CfaPattern;

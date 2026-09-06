@@ -5,13 +5,15 @@
  * bit depth, and color space from the file header without decoding pixels.
  */
 
-export enum ImageFormat {
-  Jpeg = "jpeg",
-  Png = "png",
-  Webp = "webp",
-  Tiff = "tiff",
-  Unknown = "unknown",
-}
+export const ImageFormat = {
+  Jpeg: "jpeg",
+  Png: "png",
+  Webp: "webp",
+  Tiff: "tiff",
+  Unknown: "unknown",
+} as const;
+
+export type ImageFormat = (typeof ImageFormat)[keyof typeof ImageFormat];
 
 export interface ImageDimensions {
   format: ImageFormat;

@@ -20,6 +20,8 @@
     "@astryxdesign/theme-neutral": "catalog:",
     "@cloudflare/vite-plugin": "catalog:build",
     "@fontsource-variable/inter": "catalog:runtime",
+    "@shikanime-studio/darkroom": "workspace:*",
+    "@shikanime-studio/fs": "workspace:*",
     "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",

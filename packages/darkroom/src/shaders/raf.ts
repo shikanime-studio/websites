@@ -1,23 +1,24 @@
 import rafShader from "./raf.wgsl?raw";
 
-import type { DemosaicResult } from "../image-processing/demosaic";
-import type { RawImageDataView } from "../image-processing/raw";
+import type { DemosaicResult } from "../demosaic";
+import type { RawImageDataView } from "../raw";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface RenderResources {
-  device: GPUDevice;
-  pipeline: GPURenderPipeline;
-  uniformBuffer: GPUBuffer;
-  sampler: GPUSampler;
-  texture: GPUTexture;
-  stagingBuffer: GPUBuffer;
-  commandEncoder: GPUCommandEncoder;
+  device: any;
+  pipeline: any;
+  uniformBuffer: any;
+  sampler: any;
+  texture: any;
+  stagingBuffer: any;
+  commandEncoder: any;
 }
 
 let resources: RenderResources | null = null;
 let textureWidth = 0;
 let textureHeight = 0;
 
-function createResources(device: GPUDevice, width: number, height: number): RenderResources {
+function createResources(device: any, width: number, height: number): RenderResources {
   const pipeline = device.createRenderPipeline({
     layout: "auto",
     vertex: {
@@ -55,15 +56,6 @@ function createResources(device: GPUDevice, width: number, height: number): Rend
     usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
   });
 
-  const bindGroup = device.createBindGroup({
-    layout: pipeline.getBindGroupLayout(0),
-    entries: [
-      { binding: 0, resource: { buffer: uniformBuffer } },
-      { binding: 1, resource: sampler },
-      { binding: 2, resource: texture.createView() },
-    ],
-  });
-
   return {
     device,
     pipeline,
@@ -71,17 +63,16 @@ function createResources(device: GPUDevice, width: number, height: number): Rend
     sampler,
     texture,
     stagingBuffer,
-    commandEncoder: null as unknown as GPUCommandEncoder,
+    commandEncoder: null as unknown as any,
   };
 }
 
-async function ensureResources(device: GPUDevice, width: number, height: number): Promise<RenderResources> {
+async function ensureResources(device: any, width: number, height: number): Promise<RenderResources> {
   if (resources && textureWidth === width && textureHeight === height) {
     return resources;
   }
 
   if (resources) {
-    // GPU objects are garbage-collected; no explicit destroy() in web GPU
     resources = null;
   }
 
@@ -101,7 +92,7 @@ const VERTICES = new Float32Array([
 ]);
 
 export async function renderDemosaic(
-  device: GPUDevice,
+  device: any,
   data: RawImageDataView,
   _demosaicResult: DemosaicResult,
 ): Promise<Uint8ClampedArray> {
@@ -113,16 +104,14 @@ export async function renderDemosaic(
   const uniformData = new Float32Array([
     width,
     height,
-    0.0, // cfaR offset
-    0.0, // cfaG offset
-    0.0, // cfaB offset
-    0.0, // edge strength
+    0.0,
+    0.0,
+    0.0,
+    0.0,
   ]);
   device.queue.writeBuffer(res.uniformBuffer, 0, uniformData);
 
-  // Write raw CFA data to texture as BGRA
   const rowBytes = width * 2;
-  // CFA data is 16-bit per pixel; normalize to 8-bit for shader input
   const cfaArray = new Uint8Array(width * height * 2);
   cfaArray.set(new Uint8Array(data.cfaBuffer));
   device.queue.writeTexture(
@@ -131,7 +120,6 @@ export async function renderDemosaic(
     { width, height },
   );
 
-  // Record render pass
   res.commandEncoder = device.createCommandEncoder();
 
   const textureView = res.texture.createView();
@@ -165,7 +153,6 @@ export async function renderDemosaic(
   renderPass.draw(4);
   renderPass.end();
 
-  // Read back result
   const readEnc = device.createCommandEncoder();
   readEnc.copyTextureToBuffer(
     { texture: res.texture },
