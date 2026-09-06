@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "../image-processing/fs";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import thumbnailShader from "../shaders/thumbnail.wgsl?raw";

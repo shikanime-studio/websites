@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "../image-processing/fs";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";

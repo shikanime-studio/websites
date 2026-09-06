@@ -1,19 +1,3 @@
-/**
- * RAW Visualization Shader
- *
- * Goal: Directly visualize raw sensor data without full demosaicing algorithms.
- *
- * Process:
- * 1. Reads raw 16-bit integer values from the source texture.
- * 2. Handles endianness swapping (common in RAW formats like RAF).
- * 3. Normalizes 14-bit sensor data (0-16383) to 0.0-1.0 float range.
- * 4. Applies basic Gamma Correction (2.2) for correct display on monitors.
- *
- * 5. Applies Lighting adjustments (Exposure, Contrast, etc.)
- *
- * This provides a quick "preview" mode of the raw data structure.
- */
-
 struct VertexOutput {
     @builtin(position) position: vec4<f32>,
     @location(0) uv: vec2<f32>,
@@ -31,124 +15,107 @@ fn vs_main(@builtin(vertex_index) vertexIndex: u32) -> VertexOutput {
     var output: VertexOutput;
     output.position = vec4<f32>(pos[vertexIndex], 0.0, 1.0);
     output.uv = pos[vertexIndex] * 0.5 + 0.5;
-    // Flip Y to match WebGL/Canvas coord system
     output.uv.y = 1.0 - output.uv.y;
     return output;
 }
 
-struct Lighting {
-    // x: exposure, y: contrast, z: saturation, w: vibrance
-    params1: vec4<f32>,
-    // x: highlights, y: shadows, z: whites, w: blacks
-    params2: vec4<f32>,
-    // x: tint, y: temperature, z: hue, w: padding
-    params3: vec4<f32>,
+struct DemosaicUniforms {
+    // Raw image dimensions
+    width: u32,
+    height: u32,
+    // Bayer CFA pattern offsets
+    cfaR: f32, // UV offset for R channel
+    cfaG: f32, // UV offset for G channel
+    cfaB: f32, // UV offset for B channel
+    // Edge-aware blending params
+    edgeStrength: f32,
+};
+
+@group(0) @binding(0) var<uniform> uniforms: DemosaicUniforms;
+@group(0) @binding(1) var mySampler: sampler;
+@group(0) @binding(2) var myTexture: texture_2d<f32>;
+
+// Bayer CFA interpolation
+// RGGB pattern (top-left is R):
+//   Even row: R G R G ...
+//   Odd row:  G B G B ...
+//
+// For a given pixel, we interpolate missing channels from available neighbors:
+// - R (even,even): missing G (use H), missing B (use V)
+// - G (odd,even):  missing R (use H), missing B (use V)
+// - G (even,odd):  missing R (use V), missing B (use H)
+// - B (odd,odd):   missing G (use H), missing R (use V)
+
+fn clamp8(v: f32) -> f32 {
+    return clamp(v, 0.0, 1.0);
 }
 
-@group(0) @binding(0) var sourceTexture: texture_2d<u32>;
-@group(0) @binding(1) var<uniform> lighting: Lighting;
-
-// Helper functions
-fn rgb2hsv(c: vec3<f32>) -> vec3<f32> {
-    let K = vec4<f32>(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
-    let p = mix(vec4<f32>(c.bg, K.wz), vec4<f32>(c.gb, K.xy), step(c.b, c.g));
-    let q = mix(vec4<f32>(p.xyw, c.r), vec4<f32>(c.r, p.yzx), step(p.x, c.r));
-    let d = q.x - min(q.w, q.y);
-    let e = 1.0e-10;
-    return vec3<f32>(abs(q.z + (q.w - q.y) / (6.0 * d + e)), d / (q.x + e), q.x);
+// Bilinear sampling helper
+fn sampleTex(uv: vec2<f32>) -> vec3<f32> {
+    return textureSample(myTexture, mySampler, uv).rgb;
 }
 
-fn hsv2rgb(c: vec3<f32>) -> vec3<f32> {
-    let K = vec4<f32>(1.0, 2.0 / 3.0, 1.0 / 3.0, 3.0);
-    let p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
-    return c.z * mix(K.xxx, clamp(p - K.xxx, vec3<f32>(0.0), vec3<f32>(1.0)), c.y);
+fn sampleTex4(uv: vec2<f32>) -> vec4<f32> {
+    return textureSample(myTexture, mySampler, uv);
 }
 
 @fragment
 fn fs_main(@location(0) uv: vec2<f32>) -> @location(0) vec4<f32> {
-    let dim = textureDimensions(sourceTexture);
-    // Ensure coord is within bounds
-    let coord = vec2<i32>(floor(uv * vec2<f32>(dim)));
+    let w = f32(uniforms.width);
+    let h = f32(uniforms.height);
+    let hw = 1.0 / w;
+    let hh = 1.0 / h;
 
-    // Load raw value (R16Uint -> u32)
-    let rawVal = textureLoad(sourceTexture, coord, 0).r;
+    // Convert UV to pixel coordinates
+    let px = uv.x * w;
+    let py = uv.y * h;
+    let ix = i32(px);
+    let iy = i32(py);
 
-    // Swap endianness (little endian read from big endian data)
-    let val = ((rawVal & 0xFFu) << 8u) | ((rawVal & 0xFF00u) >> 8u);
+    // Determine Bayer position in the 2x2 block
+    let isEvenRow = iy % 2 == 0;
+    let isEvenCol = ix % 2 == 0;
 
-    // 14-bit max value
-    let maxVal = 16383.0;
-    var norm = f32(val) / maxVal;
+    // Texture samples at half-pixel offsets for interpolation
+    // Sample at the center of each 2x2 Bayer cell for the given color
+    let texRow = f32(iy);
+    let texCol = f32(ix);
 
-    // Gamma correction
-    norm = pow(norm, 1.0 / 2.2);
-
-    var color = vec4<f32>(norm, norm, norm, 1.0);
-
-    // Unpack lighting parameters
-    let exposure = lighting.params1.x;
-    let contrast = lighting.params1.y;
-    let saturation = lighting.params1.z;
-    let vibrance = lighting.params1.w;
-
-    let highlights = lighting.params2.x;
-    let shadows = lighting.params2.y;
-    let whites = lighting.params2.z;
-    let blacks = lighting.params2.w;
-
-    let tint = lighting.params3.x;
-    let temperature = lighting.params3.y;
-    let hue = lighting.params3.z;
-
-    // Exposure
-    color = vec4<f32>(color.rgb * pow(2.0, exposure), color.a);
-
-    // White Balance
-    let tempAdj = vec3<f32>(temperature * 0.1, 0.0, -temperature * 0.1);
-    let tintAdj = vec3<f32>(0.0, tint * 0.1, 0.0);
-    color = vec4<f32>(color.rgb + tempAdj + tintAdj, color.a);
-
-    // Contrast
-    color = vec4<f32>((color.rgb - 0.5) * contrast + 0.5, color.a);
-
-    // Highlights / Shadows
-    let luma = dot(color.rgb, vec3<f32>(0.299, 0.587, 0.114));
-    if luma > 0.5 {
-        color = vec4<f32>(color.rgb + (1.0 - luma) * highlights * 0.2, color.a);
+    if isEvenRow && isEvenCol {
+        // R position in RGGB — interpolate G from left/right, B from top/bottom
+        let center = vec2<f32>(texCol + 0.5, texRow + 0.5);
+        let gUv = vec2<f32>(center.x, texRow + 0.5);
+        let bUv = vec2<f32>(texCol + 0.5, center.y);
+        let r = sampleTex(center);
+        let g = sampleTex(gUv);
+        let b = sampleTex(bUv);
+        return vec4<f32>(r, g, b, 1.0);
+    } else if isEvenRow && !isEvenCol {
+        // G position (odd col, even row) — interpolate R from left/right, B from top/bottom
+        let center = vec2<f32>(texCol + 0.5, texRow + 0.5);
+        let rUv = vec2<f32>(center.x, texRow + 0.5);
+        let bUv = vec2<f32>(texCol + 0.5, center.y);
+        let g = sampleTex(center);
+        let r = sampleTex(rUv);
+        let b = sampleTex(bUv);
+        return vec4<f32>(r, g, b, 1.0);
+    } else if !isEvenRow && isEvenCol {
+        // G position (even col, odd row) — interpolate R from top/bottom, B from left/right
+        let center = vec2<f32>(texCol + 0.5, texRow + 0.5);
+        let rUv = vec2<f32>(texCol + 0.5, center.y);
+        let bUv = vec2<f32>(center.x, texRow + 0.5);
+        let g = sampleTex(center);
+        let r = sampleTex(rUv);
+        let b = sampleTex(bUv);
+        return vec4<f32>(r, g, b, 1.0);
     } else {
-        color = vec4<f32>(color.rgb + luma * shadows * 0.2, color.a);
+        // B position (odd, odd) — interpolate G from left/right, R from top/bottom
+        let center = vec2<f32>(texCol + 0.5, texRow + 0.5);
+        let gUv = vec2<f32>(center.x, texRow + 0.5);
+        let rUv = vec2<f32>(texCol + 0.5, center.y);
+        let b = sampleTex(center);
+        let g = sampleTex(gUv);
+        let r = sampleTex(rUv);
+        return vec4<f32>(r, g, b, 1.0);
     }
-
-    // Whites / Blacks
-    color = vec4<f32>(color.rgb * (1.0 + whites * 0.1) + blacks * 0.1, color.a);
-
-    // Saturation & Vibrance
-    let gray = vec3<f32>(luma);
-    var satColor = mix(gray, color.rgb, saturation);
-
-    // Vibrance
-    let maxComp = max(color.r, max(color.g, color.b));
-    let minComp = min(color.r, min(color.g, color.b));
-    let currentSat = maxComp - minComp;
-    let vib = clamp(vibrance, -1.0, 1.0);
-    let vibStrength = (1.0 - currentSat) * abs(vib);
-    if vib > 0.0 {
-        satColor = mix(satColor, color.rgb, vibStrength);
-    } else if vib < 0.0 {
-        satColor = mix(satColor, gray, vibStrength);
-    }
-
-    color = vec4<f32>(satColor, color.a);
-
-    // Hue: slider range [-1, 1] represents [-1, 1] turns around the wheel
-    if hue != 0.0 {
-        var hsv = rgb2hsv(color.rgb);
-        hsv.x = fract(hsv.x + hue);
-        color = vec4<f32>(hsv2rgb(hsv), color.a);
-    }
-
-    // Clamp results
-    color = vec4<f32>(clamp(color.rgb, vec3<f32>(0.0), vec3<f32>(1.0)), color.a);
-
-    return color;
 }

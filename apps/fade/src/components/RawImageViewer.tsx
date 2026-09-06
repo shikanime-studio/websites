@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "../image-processing/fs";
 import { Suspense } from "react";
 import { useModal } from "../hooks/useModal";
 import { FullscreenModal } from "./FullscreenModal";
