@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { Carousel } from "@astryxdesign/core/Carousel";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { useQuery } from "@tanstack/react-query";
 import { Image } from "@unpic/react";
 import { ArrowRight } from "lucide-react";
@@ -28,7 +30,7 @@ interface ExploreSectionHeadProps {
 
 export function ExploreSectionTitle({ children }: { children: ReactNode }) {
   return (
-    <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900">
+    <h2 className="flex items-center gap-2 text-xl font-bold text-secondary">
       {children}
     </h2>
   );
@@ -44,7 +46,7 @@ export function ExploreSectionExpend({
   return (
     <a
       href={href}
-      className="flex items-center gap-1 text-sm font-bold text-gray-500 transition-colors hover:text-gray-900"
+      className="flex items-center gap-1 text-sm font-bold text-secondary/70 transition-colors hover:text-secondary"
     >
       {children}
       <ArrowRight className="h-3 w-3" />
@@ -84,7 +86,7 @@ function ExploreFeaturedContent() {
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
             role="status"
             aria-label="Loading"
           />
@@ -120,7 +122,7 @@ function ExploreArtistsContent() {
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
             role="status"
             aria-label="Loading"
           />
@@ -156,7 +158,7 @@ function ExploreCharactersContent() {
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
+            className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
             role="status"
             aria-label="Loading"
           />
@@ -200,28 +202,28 @@ function ExploreConventionsContent() {
           View all events
         </ExploreSectionExpend>
       </ExploreSectionHead>
-      <div className="carousel carousel-center scrollbar-hide w-full gap-3">
+      <Carousel
+        hasButtons={false}
+        hasEdgeFade={false}
+        aria-label="Upcoming conventions"
+        className="w-full"
+      >
         {["USA", "Europe", "Japan", "Asia", "Online", "Popup Shops"].map(
           (cat) => (
-            <div className="carousel-item" key={cat}>
-              <button
-                type="button"
-                className="rounded-full bg-white px-3 py-1.5 text-xs font-bold whitespace-nowrap text-gray-600 hover:bg-gray-50"
-              >
-                {cat}
-              </button>
-            </div>
+            <button
+              type="button"
+              key={cat}
+              className="border-border bg-surface text-secondary hover:bg-body rounded-full border px-3 py-1.5 text-xs font-bold whitespace-nowrap transition-colors"
+            >
+              {cat}
+            </button>
           ),
         )}
-      </div>
+      </Carousel>
 
       <Activity mode={isLoading ? "visible" : "hidden"}>
         <div className="flex h-64 w-full items-center justify-center">
-          <span
-            className="h-8 w-8 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-[var(--color-accent)]"
-            role="status"
-            aria-label="Loading"
-          />
+          <Spinner aria-label="Loading" size="lg" />
         </div>
       </Activity>
 
@@ -238,7 +240,7 @@ function ExploreConventionsContent() {
                   key={event.id}
                 >
                   {image ? (
-                    <div className="relative aspect-square overflow-hidden rounded-xl bg-gray-100">
+                    <div className="relative aspect-square overflow-hidden rounded-xl bg-surface">
                       <Image
                         src={image.src}
                         width={image.width}
@@ -247,18 +249,18 @@ function ExploreConventionsContent() {
                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                         alt={event.title}
                       />
-                      <div className="absolute top-2 left-2 rounded-full bg-white/90 p-1 shadow-sm">
-                        <div className="h-4 w-4 rounded-full bg-red-500"></div>
+                      <div className="absolute top-2 left-2 rounded-full bg-body/90 p-1 shadow-sm">
+                        <div className="h-4 w-4 rounded-full bg-error"></div>
                       </div>
                     </div>
                   ) : null}
                   <div className="flex items-center gap-1">
-                    <span className="text-xs text-gray-500">{event.price}</span>
+                    <span className="text-xs text-secondary/70">{event.price}</span>
                   </div>
-                  <h4 className="truncate text-sm font-bold text-gray-900">
+                  <h4 className="truncate text-sm font-bold text-secondary">
                     {event.title}
                   </h4>
-                  <div className="text-xs font-bold text-gray-900">
+                  <div className="text-xs font-bold text-secondary">
                     {event.artist.name}
                   </div>
                 </a>

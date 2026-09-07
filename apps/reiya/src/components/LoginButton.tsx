@@ -1,12 +1,13 @@
+import { Button } from "@astryxdesign/core/Button";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { useState } from "react";
 import { siGoogle } from "simple-icons";
 import { authClient } from "../lib/auth-client";
-import { AlertError } from "./AlertError";
-import { Toast } from "./Toast";
+import { useAppToast } from "./Toast";
 
 export function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useAppToast();
 
   const handleSignIn = () => {
     setIsLoading(true);
@@ -16,7 +17,7 @@ export function LoginButton() {
         callbackURL: "/",
       })
       .catch(() => {
-        setError("An error occurred during sign in");
+        toast("An error occurred during sign in");
         setIsLoading(false);
       })
       .finally(() => {
@@ -26,21 +27,17 @@ export function LoginButton() {
 
   return (
     <>
-      <button
-        type="button"
-        className="inline-flex items-center font-medium rounded-full px-4 font-bold"
+      <Button
+        variant="secondary"
+        label="Sign in with Google"
         onClick={() => {
           handleSignIn();
         }}
-        disabled={isLoading}
+        isDisabled={isLoading}
       >
         {isLoading ? (
           <>
-            <span
-              className="h-3 w-3 animate-spin rounded-full border-2 border-[var(--color-border)] border-t-current"
-              role="status"
-              aria-label="Loading"
-            />
+            <Spinner size="sm" shade="inherit" aria-label="Signing in" />
             SIGNING IN
           </>
         ) : (
@@ -51,23 +48,7 @@ export function LoginButton() {
             SIGN IN
           </>
         )}
-      </button>
-      {error && (
-        <Toast
-          duration={3000}
-          onClose={() => {
-            setError(null);
-          }}
-        >
-          <AlertError
-            onClose={() => {
-              setError(null);
-            }}
-          >
-            {error}
-          </AlertError>
-        </Toast>
-      )}
+      </Button>
     </>
   );
 }

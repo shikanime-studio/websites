@@ -1,4 +1,5 @@
 import type { FileItem } from "../lib/fs";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { Suspense } from "react";
 import { useModal } from "../hooks/useModal";
 import { FullscreenModal } from "./FullscreenModal";
@@ -12,9 +13,9 @@ interface RawImageViewerProps {
 function RawCanvasSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`${className ?? ""} flex items-center justify-center bg-zinc-800/50`}
+      className={`${className ?? ""} flex items-center justify-center bg-overlay`}
     >
-      <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+      <Spinner shade="onMedia" aria-label="Loading image" />
     </div>
   );
 }

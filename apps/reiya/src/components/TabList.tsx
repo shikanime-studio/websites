@@ -55,7 +55,7 @@ export function Tab({ children, className = "", value, ...props }: TabProps) {
       name="tabs"
       role="tab"
       {...props}
-      className={`border-border checked:border-accent checked:text-secondary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-gray-400 transition-colors checked:border-b-4! hover:border-gray-300 hover:text-gray-600 sm:text-xl ${className} `}
+      className={`border-border checked:border-accent checked:text-secondary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-secondary/50 transition-colors checked:border-b-4! hover:border-border hover:text-secondary/80 sm:text-xl ${className} `}
       aria-label={typeof children === "string" ? children : undefined}
       checked={context?.activeTab === value}
       onChange={handleChange}

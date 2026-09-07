@@ -10,7 +10,7 @@ export function Hero() {
 
       {/* Banners Grid */}
       <div className="grid h-48 grid-cols-1 gap-4 md:h-64 md:grid-cols-3">
-        <div className="group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-3xl bg-neutral p-8 text-white shadow-lg">
+        <div className="group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-3xl bg-neutral p-8 text-on-accent shadow-lg">
           <div className="absolute inset-0 bg-[url('https://placehold.co/800x600/3c283e/FFF?text=Merch')] bg-cover bg-center opacity-40 transition duration-500 group-hover:scale-105" />
           <div className="relative z-10">
             <h2 className="mb-2 text-2xl font-bold">Track Merch</h2>
@@ -20,7 +20,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-3xl bg-[#5c2e2e] p-8 text-white shadow-lg">
+        <div className="group relative flex cursor-pointer flex-col justify-end overflow-hidden rounded-3xl bg-[#5c2e2e] p-8 text-on-accent shadow-lg">
           <div className="absolute inset-0 bg-[url('https://placehold.co/800x600/5c2e2e/7f3f3f?text=Conventions')] bg-cover bg-center opacity-60 transition duration-500 group-hover:scale-105" />
           <div className="relative z-10">
             <h2 className="mb-2 text-2xl font-bold">Conventions & Popups</h2>

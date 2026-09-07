@@ -301,9 +301,6 @@ importers:
       '@unpic/react':
         specifier: catalog:runtime
         version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      daisyui:
-        specifier: catalog:runtime
-        version: 5.7.27
       file-type:
         specifier: catalog:runtime
         version: 21.3.4

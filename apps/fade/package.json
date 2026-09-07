@@ -33,7 +33,6 @@
     "@tanstack/react-virtual": "catalog:runtime",
     "@tanstack/router-plugin": "catalog:build",
     "@unpic/react": "catalog:runtime",
-    "daisyui": "catalog:runtime",
     "file-type": "catalog:runtime",
     "lucide-react": "catalog:runtime",
     "mixpanel-browser": "catalog:runtime",

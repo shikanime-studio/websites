@@ -10,7 +10,7 @@ export function AlertError({ title, children, onClose }: AlertErrorProps) {
   return (
     <div
       role="alert"
-      className="cursor-pointer rounded-md border border-[var(--color-error)] bg-[var(--color-error-muted)] px-4 py-3 text-[var(--color-on-error)] shadow-lg"
+      className="cursor-pointer rounded-md border border-error bg-error-muted px-4 py-3 text-on-error shadow-lg"
     >
       <div className="flex w-full flex-col gap-2">
         {title && <h3 className="text-lg font-bold">{title}</h3>}

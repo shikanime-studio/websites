@@ -19,7 +19,7 @@ function NotFoundPage() {
               <h1 className="text-accent -rotate-2 transform text-8xl font-black tracking-tighter md:text-9xl">
                 404
               </h1>
-              <span className="absolute -top-4 -right-8 rotate-12 transform rounded-full bg-black px-3 py-1 text-sm font-bold text-white shadow-md">
+              <span className="absolute -top-4 -right-8 rotate-12 transform rounded-full bg-body px-3 py-1 text-sm font-bold text-on-accent shadow-md">
                 OOF!
               </span>
             </div>
@@ -41,13 +41,13 @@ function NotFoundPage() {
             <div className="flex flex-col justify-center gap-4 pt-4 sm:flex-row lg:justify-start">
               <Link
                 to="/"
-                className="bg-accent text-on-accent inline-flex items-center rounded-full px-8 font-bold text-white shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="bg-accent text-on-accent inline-flex items-center rounded-full px-8 font-bold text-on-accent shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
               >
                 Take Me Home
               </Link>
               <Link
                 to="/explore"
-                className="border-border inline-flex items-center rounded-full border bg-white px-8 font-bold transition-all duration-300 hover:bg-surface"
+                className="border-border inline-flex items-center rounded-full border bg-body px-8 font-bold transition-all duration-300 hover:bg-surface"
               >
                 Explore Merch
               </Link>

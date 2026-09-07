@@ -1,4 +1,5 @@
 import type { FileItem } from "../lib/fs";
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { useEffect, useState } from "react";
 import { useFile } from "../hooks/useFile";
 import { useImageInfo } from "../hooks/useImageInfo";
@@ -59,7 +60,7 @@ export function ImageViewer({ fileItem }: ImageViewerProps) {
               />
             ) : (
               <div className="flex h-full w-full items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-zinc-500 border-t-transparent" />
+                <Spinner size="lg" shade="onMedia" aria-label="Loading image" />
               </div>
             )}
           </div>
