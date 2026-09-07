@@ -2,7 +2,7 @@ import { Spinner } from "@astryxdesign/core/Spinner";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { z } from "zod";
-import { DirectoryProvider } from "../components/DirectoryProvider";
+import { DirectoryProvider } from "@shikanime-studio/fs/provider";
 import { Filmstrip } from "../components/Filmstrip";
 import { GalleryProvider } from "../components/GalleryProvider";
 import { GPUProvider } from "../components/GPUProvider";
@@ -12,7 +12,7 @@ import { MainViewer } from "../components/MainViewer";
 import { ModalProvider } from "../components/ModalProvider";
 import { Sidebar } from "../components/Sidebar";
 import { ToolBar } from "../components/ToolBar";
-import { useDirectory } from "../hooks/useDirectory";
+import { useDirectory } from "@shikanime-studio/fs/react";
 
 export const Route = createFileRoute("/")({
   component: App,

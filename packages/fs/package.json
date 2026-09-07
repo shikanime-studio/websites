@@ -1,0 +1,21 @@
+{
+  "name": "@shikanime-studio/fs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
+    "./provider": "./src/provider.tsx"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "react": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:types",
+    "typescript": "catalog:types"
+  }
+}

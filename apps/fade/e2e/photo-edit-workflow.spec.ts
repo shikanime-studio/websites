@@ -21,14 +21,10 @@ async function setRangeValue(locator: Locator, value: number) {
     // eslint-disable-next-line no-await-in-loop
     if (now < value) {
       // eslint-disable-next-line no-await-in-loop
-      await locator.press(
-        value - now >= 0.5 ? "PageUp" : "ArrowRight",
-      );
+      await locator.press(value - now >= 0.5 ? "PageUp" : "ArrowRight");
     } else {
       // eslint-disable-next-line no-await-in-loop
-      await locator.press(
-        now - value >= 0.5 ? "PageDown" : "ArrowLeft",
-      );
+      await locator.press(now - value >= 0.5 ? "PageDown" : "ArrowLeft");
     }
   }
 }

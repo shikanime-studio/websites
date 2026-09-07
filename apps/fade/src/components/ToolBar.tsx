@@ -3,7 +3,7 @@ import { IconButton } from "@astryxdesign/core/IconButton";
 import { Tooltip } from "@astryxdesign/core/Tooltip";
 import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
 import { siGithub } from "simple-icons";
-import { useDirectory } from "../hooks/useDirectory";
+import { useDirectory } from "@shikanime-studio/fs/react";
 import { useGallery } from "../hooks/useGallery";
 import { useModal } from "../hooks/useModal";
 import { SettingsModal } from "./SettingsModal";

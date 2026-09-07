@@ -1,0 +1,23 @@
+{
+  "name": "@shikanime-studio/darkroom",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@shikanime-studio/fs": "workspace:*",
+    "@tanstack/react-query": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@types/react": "catalog:types",
+    "@webgpu/types": "catalog:types",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  }
+}
