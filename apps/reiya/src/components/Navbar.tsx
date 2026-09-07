@@ -128,7 +128,7 @@ export function Navbar() {
         {/* CTA Button */}
         <button
           type="button"
-          className="hidden items-center rounded-full bg-[var(--color-accent)] px-4 font-bold text-[var(--color-on-accent)] shadow-sm transition-all hover:shadow-md sm:flex"
+          className="hidden items-center rounded-full bg-accent px-4 font-bold text-on-accent shadow-sm transition-all hover:shadow-md sm:flex"
         >
           + Share
         </button>

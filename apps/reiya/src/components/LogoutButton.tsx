@@ -1,12 +1,12 @@
+import { Button } from "@astryxdesign/core/Button";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
-import { AlertError } from "./AlertError";
-import { Toast } from "./Toast";
+import { useAppToast } from "./Toast";
 
 export function LogoutButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useAppToast();
 
   const handleLogout = () => {
     setIsLoading(true);
@@ -19,7 +19,7 @@ export function LogoutButton() {
         },
       })
       .catch(() => {
-        setError("Failed to logout");
+        toast("Failed to logout");
       })
       .finally(() => {
         setIsLoading(false);
@@ -27,34 +27,16 @@ export function LogoutButton() {
   };
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => {
-          handleLogout();
-        }}
-        className="hover:bg-surface inline-flex items-center transition-colors"
-        disabled={isLoading}
-      >
-        <LogOut />
-        Logout
-      </button>
-      {error && (
-        <Toast
-          duration={3000}
-          onClose={() => {
-            setError(null);
-          }}
-        >
-          <AlertError
-            onClose={() => {
-              setError(null);
-            }}
-          >
-            {error}
-          </AlertError>
-        </Toast>
-      )}
-    </>
+    <Button
+      variant="ghost"
+      label="Log out"
+      onClick={() => {
+        handleLogout();
+      }}
+      isDisabled={isLoading}
+    >
+      <LogOut />
+      Logout
+    </Button>
   );
 }

@@ -1,3 +1,4 @@
+import { Spinner } from "@astryxdesign/core/Spinner";
 import { Suspense } from "react";
 import { useHistogram } from "../hooks/useHistogram";
 import { useImageInfo } from "../hooks/useImageInfo";
@@ -9,9 +10,9 @@ interface HistogramProps {
 function HistogramSkeleton({ className = "" }: { className?: string }) {
   return (
     <div
-      className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md bg-zinc-800/50 ${className}`}
+      className={`relative flex h-32 w-full items-center justify-center overflow-hidden rounded-md bg-overlay ${className}`}
     >
-      <div className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-500 border-t-transparent" />
+      <Spinner aria-label="Loading histogram" />
     </div>
   );
 }

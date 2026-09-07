@@ -90,7 +90,7 @@ function HomePage() {
                   <Link
                     key={cat.id}
                     to="/explore"
-                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-body px-4 py-2 text-sm font-black text-secondary shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span className="text-base leading-none">{cat.icon}</span>
                     {cat.name}
@@ -100,21 +100,21 @@ function HomePage() {
                 <>
                   <Link
                     to="/explore"
-                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-body px-4 py-2 text-sm font-black text-secondary shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span className="text-base leading-none">🏷️</span>
                     Stickers
                   </Link>
                   <Link
                     to="/explore"
-                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-body px-4 py-2 text-sm font-black text-secondary shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span className="text-base leading-none">🎨</span>
                     Prints
                   </Link>
                   <Link
                     to="/explore"
-                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-white px-4 py-2 text-sm font-black text-gray-900 shadow-sm transition hover:-translate-y-0.5"
+                    className="border-border hover:border-border inline-flex items-center gap-2 rounded-full border-2 bg-body px-4 py-2 text-sm font-black text-secondary shadow-sm transition hover:-translate-y-0.5"
                   >
                     <span className="text-base leading-none">☕</span>
                     Mugs
@@ -141,7 +141,7 @@ function HomePage() {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
                   <div className="text-accent text-2xl font-black">①</div>
                   <div className="text-secondary text-base font-black">
                     Explore
@@ -150,7 +150,7 @@ function HomePage() {
                     Merch, artists, and events in one place.
                   </div>
                 </div>
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
                   <div className="text-secondary text-2xl font-black">②</div>
                   <div className="text-secondary text-base font-black">
                     Follow
@@ -159,7 +159,7 @@ function HomePage() {
                     Save creators and characters you want to revisit.
                   </div>
                 </div>
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
                   <div className="text-accent text-2xl font-black">③</div>
                   <div className="text-secondary text-base font-black">
                     Plan
@@ -189,7 +189,7 @@ function HomePage() {
               </div>
 
               <div className="grid gap-3">
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-5">
                   <div className="text-secondary text-sm font-black">
                     Artist-friendly
                   </div>
@@ -197,7 +197,7 @@ function HomePage() {
                     Simple pages that load fast and read well.
                   </div>
                 </div>
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-5">
                   <div className="text-secondary text-sm font-black">
                     Convention-first
                   </div>
@@ -205,7 +205,7 @@ function HomePage() {
                     Built for real booths, weekends, and small drops.
                   </div>
                 </div>
-                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-5">
+                <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-5">
                   <div className="text-secondary text-sm font-black">
                     Built in public
                   </div>

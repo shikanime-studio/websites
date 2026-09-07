@@ -1,48 +1,22 @@
-import type { ReactNode } from "react";
-import { useState } from "react";
-import { createPortal } from "react-dom";
-import { useTimeout } from "usehooks-ts";
+import { useToast } from "@astryxdesign/core/Toast";
 
-export interface ToastProps {
-  children: ReactNode;
-  className?: string;
+export interface ToastOptions {
+  type?: "info" | "error";
   duration?: number;
-  onClose?: () => void;
 }
 
-export function Toast({
-  children,
-  className = "",
-  duration,
-  onClose,
-}: ToastProps) {
-  const [isHovered, setIsHovered] = useState(false);
+/**
+ * Imperative toast helper backed by the Astryx toast system.
+ * Replaces the former daisyUI `toast` positioning classes.
+ */
+export function useAppToast() {
+  const showToast = useToast();
 
-  useTimeout(
-    () => {
-      onClose?.();
-    },
-    duration && !isHovered ? duration : null,
-  );
-
-  return createPortal(
-    <div
-      className={`toast toast-end toast-bottom z-50 ${className}`}
-      onMouseEnter={() => {
-        setIsHovered(true);
-      }}
-      onMouseLeave={() => {
-        setIsHovered(false);
-      }}
-      onFocus={() => {
-        setIsHovered(true);
-      }}
-      onBlur={() => {
-        setIsHovered(false);
-      }}
-    >
-      {children}
-    </div>,
-    document.body,
-  );
+  return (message: string, options: ToastOptions = {}) =>
+    showToast({
+      body: message,
+      type: options.type ?? "error",
+      isAutoHide: true,
+      autoHideDuration: options.duration ?? 3000,
+    });
 }

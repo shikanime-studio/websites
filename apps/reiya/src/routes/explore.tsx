@@ -44,9 +44,9 @@ function ExplorePage() {
           <div key={cat.id}>
             <button
               type="button"
-              className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-700 shadow-sm transition hover:bg-gray-50"
+              className="flex items-center gap-2 rounded-full bg-body px-4 py-2 text-sm font-semibold whitespace-nowrap text-secondary shadow-sm transition hover:bg-surface"
             >
-              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100 text-xs text-gray-600">
+              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-surface text-xs text-secondary/80">
                 {cat.icon}
               </span>
               {cat.name}
@@ -56,7 +56,7 @@ function ExplorePage() {
         <div>
           <button
             type="button"
-            className="flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 text-sm font-semibold whitespace-nowrap text-gray-700 transition hover:bg-gray-200"
+            className="flex items-center gap-2 rounded-full bg-surface px-4 py-2 text-sm font-semibold whitespace-nowrap text-secondary transition hover:bg-surface"
           >
             All categories &rarr;
           </button>

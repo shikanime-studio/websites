@@ -1,4 +1,5 @@
 import type { CardData } from "../lib/api-client";
+import { Carousel } from "@astryxdesign/core/Carousel";
 import { Image } from "@unpic/react";
 import { ArrowRight } from "lucide-react";
 import { Card, CardBookmark, CardCarousel, CardInfo, CardStatus } from "./Card";
@@ -10,7 +11,7 @@ interface FeaturedCarouselItemProps {
 
 function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
   return (
-    <div className="carousel-item w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
+    <div className="w-70 min-w-70 sm:w-[320px] sm:min-w-[320px]">
       <Card>
         <div className="w-full">
           <CardCarousel
@@ -56,12 +57,12 @@ export function Featured({
       {(title ?? viewAllLink) && (
         <div className="flex items-center justify-between px-1">
           {title && (
-            <h2 className="text-xl font-bold text-gray-900">{title}</h2>
+            <h2 className="text-xl font-bold text-secondary">{title}</h2>
           )}
           {viewAllLink && (
             <a
               href={viewAllLink}
-              className="flex items-center gap-1 text-sm font-bold text-gray-500 transition-colors hover:text-gray-900"
+              className="flex items-center gap-1 text-sm font-bold text-secondary/70 transition-colors hover:text-secondary"
             >
               View all
               <ArrowRight className="h-3 w-3" />
@@ -71,11 +72,15 @@ export function Featured({
       )}
 
       {items.length > 0 ? (
-        <div className="carousel carousel-center scrollbar-hide -mx-4 w-full gap-4 px-4 sm:mx-0 sm:px-0">
+        <Carousel
+          hasButtons={false}
+          hasEdgeFade={false}
+          className="-mx-4 w-full sm:mx-0"
+        >
           {items.map((item) => (
             <FeaturedCarouselItem key={item.id} item={item} />
           ))}
-        </div>
+        </Carousel>
       ) : (
         <EmptyState
           title="No items yet"

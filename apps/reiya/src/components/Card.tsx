@@ -1,5 +1,8 @@
+import type { CarouselHandle } from "@astryxdesign/core/Carousel";
 import type { MouseEvent, ReactNode } from "react";
 import type { CardData } from "../lib/api-client";
+import { Carousel } from "@astryxdesign/core/Carousel";
+import { IconButton } from "@astryxdesign/core/IconButton";
 import { Image } from "@unpic/react";
 import {
   Bookmark,
@@ -39,7 +42,7 @@ export function CardInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="truncate text-lg leading-tight font-bold text-gray-900">
+      <h3 className="truncate text-lg leading-tight font-bold text-secondary">
         <a href={href} onClick={handleTitleClick} className="hover:underline">
           {title}
         </a>
@@ -54,31 +57,31 @@ export function CardInfo({
               height={artist.avatar.height}
               alt={artist.name}
               layout="constrained"
-              className="h-5 w-5 overflow-hidden rounded-full ring-1 ring-gray-100"
+              className="h-5 w-5 overflow-hidden rounded-full ring-1 ring-border"
             />
           </div>
-          <span className="max-w-25 truncate text-sm font-medium text-gray-600">
+          <span className="max-w-25 truncate text-sm font-medium text-secondary/80">
             {artist.name}
           </span>
           {artist.verified && (
             <CircleCheck className="text-accent h-3.5 w-3.5" />
           )}
           {artist.level && (
-            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-purple-100 text-[10px] font-bold text-purple-600">
+            <span className="flex h-4 w-4 items-center justify-center rounded-full bg-accent-muted text-[10px] font-bold text-accent">
               {artist.level}
             </span>
           )}
         </div>
         <div className="flex items-center gap-1">
           <svg
-            className="h-4 w-4 text-yellow-400"
+            className="h-4 w-4 text-accent"
             fill="currentColor"
             viewBox="0 0 20 20"
           >
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-          <span className="text-sm font-bold text-gray-900">{rating}</span>
-          <span className="text-sm text-gray-500">({reviewCount})</span>
+          <span className="text-sm font-bold text-secondary">{rating}</span>
+          <span className="text-sm text-secondary/70">({reviewCount})</span>
         </div>
       </div>
     </div>
@@ -122,7 +125,7 @@ export function CardPaginationDot({ active }: CardPaginationDotProps) {
   return (
     <div
       className={`h-1.5 w-1.5 rounded-full shadow-sm transition-all ${
-        active ? "scale-110 bg-white" : "bg-white/50"
+        active ? "scale-110 bg-body" : "bg-body/50"
       }`}
     />
   );
@@ -139,20 +142,20 @@ export function CardNavigation({
 }: CardNavigationProps) {
   return (
     <>
-      <button
-        type="button"
+      <IconButton
+        variant="secondary"
+        label="Next image"
+        icon={<ChevronRight className="h-4 w-4" />}
         onClick={onNextClick}
-        className="absolute top-1/2 right-2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-black/70"
-      >
-        <ChevronRight className="h-4 w-4" />
-      </button>
-      <button
-        type="button"
+        className="absolute top-1/2 right-2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      />
+      <IconButton
+        variant="secondary"
+        label="Previous image"
+        icon={<ChevronLeft className="h-4 w-4" />}
         onClick={onPrevClick}
-        className="absolute top-1/2 left-2 z-20 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100 hover:bg-black/70"
-      >
-        <ChevronLeft className="h-4 w-4" />
-      </button>
+        className="absolute top-1/2 left-2 z-20 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
+      />
     </>
   );
 }
@@ -165,7 +168,7 @@ export function CardStatus({ status }: CardStatusProps) {
   if (status !== "OPEN") return null;
 
   return (
-    <div className="bg-accent absolute top-3 left-3 z-20 rounded-md px-2 py-1 text-xs font-bold tracking-wide text-black uppercase">
+    <div className="bg-accent text-on-accent absolute top-3 left-3 z-20 rounded-md px-2 py-1 text-xs font-bold tracking-wide uppercase">
       Open
     </div>
   );
@@ -180,7 +183,7 @@ export function CardBookmark({ onClick }: CardBookmarkProps) {
     <button
       type="button"
       onClick={onClick}
-      className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-gray-900 shadow-sm transition hover:bg-white"
+      className="absolute top-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-body/90 text-secondary shadow-sm transition hover:bg-body"
     >
       <Bookmark className="h-4 w-4" />
     </button>
@@ -204,26 +207,18 @@ export function CardCarousel({
   onClick,
 }: CardCarouselProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scrollToIndex = (index: number) => {
-    if (carouselRef.current) {
-      const width = carouselRef.current.clientWidth;
-      carouselRef.current.scrollTo({
-        left: width * index,
-        behavior: "smooth",
-      });
-    }
-  };
+  const carouselHandleRef = useRef<CarouselHandle>(null);
 
   const handleNextClick = (e: MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     const maxIndex = images.length > 0 ? images.length - 1 : 0;
     if (currentImageIndex < maxIndex) {
-      scrollToIndex(currentImageIndex + 1);
+      carouselHandleRef.current?.scrollTo(currentImageIndex + 1);
+      setCurrentImageIndex(currentImageIndex + 1);
     } else {
-      scrollToIndex(0);
+      carouselHandleRef.current?.scrollTo(0);
+      setCurrentImageIndex(0);
     }
   };
 
@@ -232,20 +227,11 @@ export function CardCarousel({
     e.stopPropagation();
     const maxIndex = images.length > 0 ? images.length - 1 : 0;
     if (currentImageIndex > 0) {
-      scrollToIndex(currentImageIndex - 1);
+      carouselHandleRef.current?.scrollTo(currentImageIndex - 1);
+      setCurrentImageIndex(currentImageIndex - 1);
     } else {
-      scrollToIndex(maxIndex);
-    }
-  };
-
-  const handleScroll = () => {
-    if (carouselRef.current) {
-      const index = Math.round(
-        carouselRef.current.scrollLeft / carouselRef.current.clientWidth,
-      );
-      if (index !== currentImageIndex && index >= 0 && index < images.length) {
-        setCurrentImageIndex(index);
-      }
+      carouselHandleRef.current?.scrollTo(maxIndex);
+      setCurrentImageIndex(maxIndex);
     }
   };
 
@@ -257,28 +243,29 @@ export function CardCarousel({
   };
 
   return (
-    <div className="hover:shadow-primary/20 group relative aspect-video w-full overflow-hidden rounded-2xl bg-gray-200 shadow-none transition-all duration-500 ease-out hover:shadow-xl">
+    <div className="hover:shadow-primary/20 group relative aspect-video w-full overflow-hidden rounded-2xl bg-surface shadow-none transition-all duration-500 ease-out hover:shadow-xl">
       <a
         href={href}
         onClick={handleContainerClick}
         className="relative block h-full w-full"
       >
-        <div
-          ref={carouselRef}
-          onScroll={handleScroll}
-          className="carousel carousel-center scrollbar-hide relative z-10 flex h-full w-full snap-x snap-mandatory"
+        <Carousel
+          hasSnap
+          hasLoop
+          hasButtons={false}
+          hasEdgeFade={false}
+          aria-label={title}
+          handleRef={carouselHandleRef}
+          className="relative z-10 h-full w-full"
         >
           {images.length > 0 ? (
             images.map((img) => (
-              <div
-                key={crypto.randomUUID()}
-                className="carousel-item h-full w-full shrink-0 snap-center"
-              >
+              <div key={images.indexOf(img)} className="h-full w-full">
                 {img}
               </div>
             ))
           ) : (
-            <div className="carousel-item h-full w-full shrink-0 snap-center">
+            <div className="h-full w-full">
               <Image
                 src={`https://placehold.co/600x800/ffe4e6/be123c?text=${encodeURIComponent(
                   title,
@@ -290,7 +277,7 @@ export function CardCarousel({
               />
             </div>
           )}
-        </div>
+        </Carousel>
       </a>
 
       {children}
@@ -320,7 +307,7 @@ export function CardCarousel({
 
 export function CardCarouselCount({ count }: { count: number }) {
   return (
-    <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-md bg-black/60 px-2 py-1 text-xs font-bold text-white backdrop-blur-sm">
+    <div className="absolute top-2 right-2 z-20 flex items-center gap-1.5 rounded-md bg-overlay px-2 py-1 text-xs font-bold text-body backdrop-blur-sm">
       <Files className="h-3 w-3" />
       <span>{count}</span>
     </div>
@@ -362,7 +349,7 @@ export function CardShowcaseCarousel({
   };
 
   return (
-    <div className="hover:shadow-primary/20 group relative w-full overflow-hidden rounded-2xl bg-gray-200 shadow-none transition-all duration-500 ease-out hover:shadow-xl">
+    <div className="hover:shadow-primary/20 group relative w-full overflow-hidden rounded-2xl bg-surface shadow-none transition-all duration-500 ease-out hover:shadow-xl">
       <a
         href={href}
         onClick={handleContainerClick}
