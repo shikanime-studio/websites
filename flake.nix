@@ -109,6 +109,7 @@
                     settings = {
                       files.extend-exclude = [
                         "apps/links/src/worker-configuration.d.ts"
+                        "apps/accounts/src/worker-configuration.d.ts"
                         "apps/reiya/src/worker-configuration.d.ts"
                         "apps/www/src/worker-configuration.d.ts"
                       ];
