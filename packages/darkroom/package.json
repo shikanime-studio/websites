@@ -16,7 +16,9 @@
     "effect": "catalog:runtime"
   },
   "devDependencies": {
+    "@types/node": "catalog:types",
     "@types/react": "catalog:types",
+    "@types/wicg-file-system-access": "catalog:types",
     "@tsconfig/node-lts": "catalog:types",
     "@webgpu/types": "catalog:types",
     "typescript": "catalog:types",

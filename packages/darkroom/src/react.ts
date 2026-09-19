@@ -1,5 +1,6 @@
+import { Effect } from "effect";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { getFileSystem } from "@shikanime-studio/fs";
+import { readFile } from "@shikanime-studio/fs";
 import type { FileItem } from "@shikanime-studio/fs";
 import { createImageWorkerClient } from "./worker-client";
 import { extractJpegFromRaf } from "./parsers/raf";
@@ -19,8 +20,7 @@ export function useFile(fileItem: FileItem | null) {
     queryKey: ["file", fileItem?.name],
     queryFn: async () => {
       if (!fileItem) return null;
-      const fs = getFileSystem();
-      const { data } = await fs.readFile(fileItem);
+      const { data } = await Effect.runPromise(readFile(fileItem));
       return new File([data], fileItem.name);
     },
     staleTime: Infinity,
@@ -66,8 +66,7 @@ export function useExif(fileItem: FileItem | null) {
       const client = getWorkerClient();
       await client.init();
 
-      const fs = getFileSystem();
-      const { data: buffer } = await fs.readFile(fileItem);
+      const { data: buffer } = await Effect.runPromise(readFile(fileItem));
       const mimeType = fileItem.mimeType ?? "application/octet-stream";
 
       try {
@@ -91,8 +90,7 @@ export function useRawImage(fileItem: FileItem | null) {
       const client = getWorkerClient();
       await client.init();
 
-      const fs = getFileSystem();
-      const { data, name } = await fs.readFile(fileItem);
+      const { data, name } = await Effect.runPromise(readFile(fileItem));
       const mimeType = fileItem.mimeType ?? "application/octet-stream";
 
       const frame = await client.parseRaw(data, mimeType);
@@ -114,13 +112,12 @@ export function demosaicImage(
   fileItem: FileItem,
 ): Promise<{ width: number; height: number; pixels: Uint8ClampedArray } | null> {
   const client = getWorkerClient();
-  return client.init().then(() => {
-    const fs = getFileSystem();
-    return fs.readFile(fileItem).then(({ data }) => {
+  return client.init().then(() =>
+    Effect.runPromise(readFile(fileItem)).then(({ data }) => {
       const mimeType = fileItem.mimeType ?? "application/octet-stream";
       return client.demosaic(data, mimeType).catch(() => null);
-    });
-  });
+    }),
+  );
 }
 
 export function terminateImageWorker() {

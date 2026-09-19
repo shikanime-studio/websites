@@ -1,6 +1,6 @@
 import type { FileItem } from "@shikanime-studio/fs";
-import { useEffect, useState } from "react";
 import { useFile } from "@shikanime-studio/darkroom/react";
+import { useEffect, useState } from "react";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useModal } from "../hooks/useModal";
 import { useObjectUrl } from "../hooks/useObjectUrl";

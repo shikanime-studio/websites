@@ -19,6 +19,7 @@
     "@astryxdesign/core": "catalog:",
     "@astryxdesign/theme-neutral": "catalog:",
     "@cloudflare/vite-plugin": "catalog:build",
+    "effect": "catalog:runtime",
     "@fontsource-variable/inter": "catalog:runtime",
     "@shikanime-studio/darkroom": "workspace:*",
     "@shikanime-studio/fs": "workspace:*",

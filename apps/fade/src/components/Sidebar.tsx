@@ -1,7 +1,12 @@
 import type { FileItem } from "@shikanime-studio/fs";
+import type { CollapsibleSectionId } from "../lib/db";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
+import {
+  ExifTagId,
+} from "@shikanime-studio/darkroom";
+import { useExif, useFile  } from "@shikanime-studio/darkroom/react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -12,15 +17,10 @@ import {
   Sun,
 } from "lucide-react";
 import { Activity, Suspense } from "react";
-import { useExif } from "@shikanime-studio/darkroom/react";
-import { useFile } from "@shikanime-studio/darkroom/react";
 import { useGallery } from "../hooks/useGallery";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
 import { settingsCollection } from "../lib/db";
-import {
-  ExifTagId,
-} from "@shikanime-studio/darkroom";
 import { formatBytes } from "../lib/intl";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
@@ -483,7 +483,7 @@ function CollapsibleSection({
   className = "",
 }: {
   title: string;
-  id: string;
+  id: CollapsibleSectionId;
   icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
@@ -491,59 +491,35 @@ function CollapsibleSection({
   const { data } = useLiveQuery((q) =>
     q
       .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "sidebarCollapsed"))
+      .where(({ settings }) => eq(settings.id, id))
       .findOne(),
   );
-  const isCollapsed = (data?.value as boolean) || false;
+  const isCollapsed = data?.value ?? false;
 
   return (
-    <div className={`${className} ${isCollapsed ? "hidden" : ""}`}>
-      <CollapsibleHeading title={title} id={id} icon={Icon} />
-      {children}
+    <div className={className}>
+      <button
+        className="border-border flex w-full items-center justify-between border-b border-b-border bg-transparent px-0 py-2 text-left text-xs font-bold tracking-wider uppercase opacity-70 transition-colors"
+        onClick={() => {
+          if (data) {
+            settingsCollection.update(id, (draft) => {
+              if (draft.id !== id) return;
+              draft.value = !isCollapsed;
+            });
+          } else {
+            settingsCollection.insert({ id, value: true });
+          }
+        }}
+      >
+        <span className="flex items-center gap-2">
+          {Icon && <Icon className="h-3 w-3 opacity-70" />}
+          {title}
+        </span>
+        <ChevronDown
+          className={`h-3 w-3 transition-transform ${isCollapsed ? "rotate-180" : ""}`}
+        />
+      </button>
+      {!isCollapsed && children}
     </div>
-  );
-}
-
-function CollapsibleHeading({
-  title,
-  id,
-  icon: Icon,
-}: {
-  title: string;
-  id: string;
-  icon?: React.ElementType;
-}) {
-  const { data } = useLiveQuery((q) =>
-    q
-      .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "sidebarCollapsed"))
-      .findOne(),
-  );
-  const isCollapsed = (data?.value as boolean) || false;
-
-  return (
-    <button
-      className="border-border flex w-full items-center justify-between border-b border-b-border bg-transparent px-0 py-2 text-left text-xs font-bold tracking-wider uppercase opacity-70 transition-colors"
-      onClick={() => {
-        if (data) {
-          settingsCollection.update("sidebarCollapsed", (draft) => {
-            draft.value = !isCollapsed;
-          });
-        } else {
-          settingsCollection.insert({
-            id: "sidebarCollapsed",
-            value: !isCollapsed,
-          });
-        }
-      }}
-    >
-      <span className="flex items-center gap-2">
-        {Icon && <Icon className="h-3 w-3 opacity-70" />}
-        {title}
-      </span>
-      <ChevronDown
-        className={`h-3 w-3 transition-transform ${isCollapsed ? "rotate-180" : ""}`}
-      />
-    </button>
   );
 }

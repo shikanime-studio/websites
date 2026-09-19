@@ -12,11 +12,15 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "effect": "catalog:runtime",
     "react": "catalog:runtime"
   },
   "devDependencies": {
+    "@types/node": "catalog:types",
     "@types/react": "catalog:types",
     "@types/wicg-file-system-access": "catalog:types",
-    "typescript": "catalog:types"
+    "@tsconfig/node-lts": "catalog:types",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
   }
 }

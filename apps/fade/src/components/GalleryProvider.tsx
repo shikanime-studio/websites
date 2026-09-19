@@ -1,8 +1,9 @@
-import { scanDirectoryFromHandle } from "@shikanime-studio/fs";
+import type { ReactNode } from "react";
+import { scanDirectory } from "@shikanime-studio/fs";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { Effect } from "effect";
 import { useCallback, useEffect, useState } from "react";
 import { GalleryContext } from "../hooks/useGallery";
-import type { ReactNode } from "react";
 
 export function GalleryProvider({
   children,
@@ -14,10 +15,10 @@ export function GalleryProvider({
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { data: files } = useSuspenseQuery({
-    queryKey: ["gallery", handle?.name],
+    queryKey: ["gallery", handle],
     queryFn: async () => {
       if (!handle) return [];
-      return scanDirectoryFromHandle(handle);
+      return Effect.runPromise(scanDirectory(handle));
     },
     staleTime: Infinity,
     refetchOnWindowFocus: false,
@@ -70,10 +71,11 @@ export function GalleryProvider({
     };
   }, [files, navigateNext, navigatePrevious, selectFile]);
 
-  const selectedFile = files && files.length > 0 ? files[selectedIndex] : null;
+  const selectedFile =
+    files && files.length > 0 ? (files[selectedIndex] ?? null) : null;
 
   return (
-    <GalleryContext.Provider
+    <GalleryContext
       value={{
         files: files ?? [],
         selectedIndex,
@@ -84,6 +86,6 @@ export function GalleryProvider({
       }}
     >
       {children}
-    </GalleryContext.Provider>
+    </GalleryContext>
   );
 }

@@ -1,7 +1,7 @@
 import type { FileItem } from "@shikanime-studio/fs";
+import { useRawImage } from "@shikanime-studio/darkroom/react";
 import { useRef } from "react";
 import { useLighting } from "../hooks/useLighting";
-import { useRawImage } from "@shikanime-studio/darkroom/react";
 import { useRawImageRender } from "../hooks/useRawImageRender";
 
 interface RawImageRenderProps {
@@ -21,7 +21,7 @@ export function RawImageRender({
 
   const width = rawData?.width ?? 0;
   const height = rawData?.height ?? 0;
-  const data = rawData?.data ?? new Uint16Array(0);
+  const data = rawData?.cfa ?? new Uint16Array(0);
 
   useRawImageRender(canvasRef, width, height, data.buffer, lighting);
 
