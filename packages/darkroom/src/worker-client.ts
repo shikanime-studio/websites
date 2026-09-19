@@ -1,8 +1,14 @@
 /**
  * Worker client — creates and manages an ImageWorker, providing
  * an async API for off-thread image processing.
+ *
+ * RPC mechanics (correlation, timeout, error typing) are built on
+ * Effect Deferreds; the public surface stays promise-shaped for
+ * TanStack Query consumers.
  */
 
+import { Cause, Data, Deferred, Effect } from "effect";
+import type { Duration } from "effect";
 import type {
   MainToWorkerMessage,
   WorkerToMainMessage,
@@ -11,8 +17,23 @@ import type {
 } from "./protocol";
 import type { DemosaicResult } from "./demosaic";
 
+export class WorkerError extends Data.TaggedError("WorkerError")<{
+  message: string;
+}> {}
+
+type RequestMessage = Extract<MainToWorkerMessage, { requestId: string }>;
+type WorkerReplyType = "rawParsed" | "exifParsed" | "demosaiced";
+type Reply<T extends WorkerReplyType> = Extract<
+  WorkerToMainMessage,
+  { type: T }
+>;
+
 let worker: Worker | null = null;
 let ready = false;
+let initResolve: (() => void) | null = null;
+
+type PendingReply = Deferred.Deferred<WorkerToMainMessage, WorkerError>;
+const pending = new Map<string, PendingReply>();
 
 function ensureWorker(): Worker {
   if (worker) return worker;
@@ -23,134 +44,158 @@ function ensureWorker(): Worker {
     name: "fade-image-worker",
   });
 
-  worker.addEventListener("message", (event: MessageEvent<WorkerToMainMessage>) => {
-    const message = event.data;
-    if (message.type === "ready") {
-      ready = true;
-    }
-  });
+  worker.addEventListener(
+    "message",
+    (event: MessageEvent<WorkerToMainMessage>) => {
+      const message = event.data;
+      if (message.type === "ready") {
+        ready = true;
+        const resolve = initResolve;
+        initResolve = null;
+        resolve?.();
+        return;
+      }
+      if (!message.requestId) return;
+      const reply = pending.get(message.requestId);
+      if (!reply) return;
+      if (message.type === "error") {
+        Effect.runSync(
+          Deferred.fail(reply, new WorkerError({ message: message.message })),
+        );
+      } else {
+        Effect.runSync(Deferred.succeed(reply, message));
+      }
+    },
+  );
 
   return worker;
 }
 
-function sendMessage(message: MainToWorkerMessage): void {
-  const w = ensureWorker();
-  w.postMessage(message);
-}
-
-function awaitResponse<T extends WorkerToMainMessage>(
-  requestId: string,
-  messageTypes: T["type"][],
-  timeoutMs = 30000,
-): Promise<T> {
-  const w = ensureWorker();
-
-  return new Promise<T>((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      w.removeEventListener("message", handler);
-      reject(new Error(`Worker timeout for request ${requestId}`));
-    }, timeoutMs);
-
-    function handler(event: MessageEvent<WorkerToMainMessage>) {
-      const message = event.data;
-      if (
-        message.type === "error" &&
-        message.requestId === requestId
-      ) {
-        clearTimeout(timeout);
-        w.removeEventListener("message", handler);
-        reject(new Error(message.message));
-      } else if (
-        message.type !== "ready" &&
-        message.requestId === requestId &&
-        messageTypes.includes(message.type)
-      ) {
-        clearTimeout(timeout);
-        w.removeEventListener("message", handler);
-        resolve(message as T);
-      }
-    }
-
-    w.addEventListener("message", handler);
+function call<T extends WorkerReplyType>(
+  message: RequestMessage,
+  replyType: T,
+  timeout: Duration.DurationInput = "30 seconds",
+): Effect.Effect<Reply<T>, WorkerError> {
+  return Effect.gen(function* () {
+    const reply = yield* Deferred.make<WorkerToMainMessage, WorkerError>();
+    pending.set(message.requestId, reply);
+    yield* Effect.sync(() => ensureWorker().postMessage(message));
+    return yield* Deferred.await(reply).pipe(
+      Effect.timeoutFail({
+        duration: timeout,
+        onTimeout: () =>
+          new WorkerError({
+            message: `Worker timeout for request ${message.requestId}`,
+          }),
+      }),
+      Effect.ensuring(Effect.sync(() => pending.delete(message.requestId))),
+      Effect.flatMap((response) =>
+        response.type === replyType
+          ? Effect.succeed(response as Reply<T>)
+          : Effect.fail(
+              new WorkerError({
+                message: `Unexpected response type: ${response.type}`,
+              }),
+            ),
+      ),
+    );
   });
 }
 
-export class ImageWorkerClient {
-  private worker: Worker;
-
-  constructor() {
-    this.worker = ensureWorker();
-  }
-
-  async init(): Promise<void> {
+function initEffect(): Effect.Effect<void, WorkerError> {
+  return Effect.gen(function* () {
     if (ready) return;
-    return new Promise<void>((resolve, reject) => {
-      const timeout = setTimeout(() => {
-        this.worker.removeEventListener("message", handler);
-        reject(new Error("Worker init timeout"));
-      }, 5000);
-
-      const handler = (event: MessageEvent<WorkerToMainMessage>) => {
-        if (event.data.type === "ready") {
-          ready = true;
-          clearTimeout(timeout);
-          this.worker.removeEventListener("message", handler);
-          resolve();
-        }
-      };
-
-      this.worker.addEventListener("message", handler);
-      this.worker.postMessage({ action: "init" } satisfies MainToWorkerMessage);
-    });
-  }
-
-  async demosaic(
-    data: ArrayBuffer,
-    mimeType: string,
-  ): Promise<DemosaicResult> {
-    const requestId = generateRequestId();
-    sendMessage({ action: "demosaic", requestId, data, mimeType });
-
-    const response = await awaitResponse(
-      requestId,
-      ["demosaiced", "error"],
+    const done = yield* Deferred.make<void>();
+    initResolve = () => Effect.runSync(Deferred.succeed(done, undefined));
+    ensureWorker().postMessage({
+      action: "init",
+    } satisfies MainToWorkerMessage);
+    yield* Deferred.await(done).pipe(
+      Effect.timeoutFail({
+        duration: "5 seconds",
+        onTimeout: () => new WorkerError({ message: "Worker init timeout" }),
+      }),
+      Effect.ensuring(Effect.sync(() => (initResolve = null))),
     );
-    if (response.type !== "demosaiced") {
-      throw new Error("Unexpected response type");
-    }
-    return {
-      width: response.width,
-      height: response.height,
-      pixels: response.pixels,
-    };
+  });
+}
+
+let idCounter = 0;
+function generateRequestId(): string {
+  return `req_${Date.now()}_${++idCounter}`;
+}
+
+/**
+ * Bridge an Effect exit to a promise rejection carrying the typed
+ * error itself (runPromise wraps failures in FiberFailure; a .catch
+ * handler would resolve instead of reject).
+ */
+function run<A, E>(effect: Effect.Effect<A, E>): Promise<A> {
+  return Effect.runPromiseExit(effect).then((exit) =>
+    exit._tag === "Success"
+      ? exit.value
+      : Promise.reject(Cause.squash(exit.cause)),
+  );
+}
+
+export class ImageWorkerClient {
+  init(): Promise<void> {
+    return run(initEffect());
   }
 
-  async parseRaw(
-    data: ArrayBuffer,
-    mimeType: string,
-  ): Promise<RawFrameInfo> {
-    const requestId = generateRequestId();
-    sendMessage({ action: "parseRaw", requestId, data, mimeType });
-
-    const response = await awaitResponse(requestId, ["rawParsed", "error"]);
-    if (response.type !== "rawParsed") {
-      throw new Error("Unexpected response type");
-    }
-    return response.frame;
+  demosaic(data: ArrayBuffer, mimeType: string): Promise<DemosaicResult> {
+    return run(
+      Effect.map(
+        call(
+          {
+            action: "demosaic",
+            requestId: generateRequestId(),
+            data,
+            mimeType,
+          },
+          "demosaiced",
+        ),
+        (response) => ({
+          width: response.width,
+          height: response.height,
+          pixels: response.pixels,
+        }),
+      ),
+    );;
   }
 
-  async getExif(
-    data: ArrayBuffer,
-    mimeType: string,
-  ): Promise<ExifTagEntry[]> {
-    const requestId = generateRequestId();
-    sendMessage({ action: "getExif", requestId, data, mimeType });
+  parseRaw(data: ArrayBuffer, mimeType: string): Promise<RawFrameInfo> {
+    return run(
+      Effect.map(
+        call(
+          {
+            action: "parseRaw",
+            requestId: generateRequestId(),
+            data,
+            mimeType,
+          },
+          "rawParsed",
+        ),
+        (response) => response.frame,
+      ),
+    );;
+  }
 
-    const response = await awaitResponse(requestId, ["exifParsed", "error"]);
-    if (response.type !== "exifParsed") {
-      throw new Error("Unexpected response type");
-    }
-    return response.tags;
+  getExif(data: ArrayBuffer, mimeType: string): Promise<ExifTagEntry[]> {
+    return run(
+      Effect.map(
+        call(
+          {
+            action: "getExif",
+            requestId: generateRequestId(),
+            data,
+            mimeType,
+          },
+          "exifParsed",
+        ),
+        (response) => response.tags,
+      ),
+    );;
   }
 
   terminate(): void {
@@ -162,11 +207,7 @@ export class ImageWorkerClient {
   }
 }
 
-let idCounter = 0;
-function generateRequestId(): string {
-  return `req_${Date.now()}_${++idCounter}`;
-}
-
 export function createImageWorkerClient(): ImageWorkerClient {
   return new ImageWorkerClient();
 }
+

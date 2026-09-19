@@ -12,10 +12,12 @@
   },
   "dependencies": {
     "@shikanime-studio/fs": "workspace:*",
-    "@tanstack/react-query": "catalog:runtime"
+    "@tanstack/react-query": "catalog:runtime",
+    "effect": "catalog:runtime"
   },
   "devDependencies": {
     "@types/react": "catalog:types",
+    "@tsconfig/node-lts": "catalog:types",
     "@webgpu/types": "catalog:types",
     "typescript": "catalog:types",
     "vitest": "catalog:test"

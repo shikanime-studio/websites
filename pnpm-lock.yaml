@@ -146,6 +146,9 @@ catalogs:
     drizzle-seed:
       specifier: ^0.3.1
       version: 0.3.1
+    effect:
+      specifier: ^3.22.2
+      version: 3.22.2
     file-type:
       specifier: ^21.3.4
       version: 21.3.4
@@ -767,7 +770,13 @@ importers:
       '@tanstack/react-query':
         specifier: catalog:runtime
         version: 5.102.8(react@19.2.8)
+      effect:
+        specifier: catalog:runtime
+        version: 3.22.2
     devDependencies:
+      '@tsconfig/node-lts':
+        specifier: catalog:types
+        version: 24.0.1
       '@types/react':
         specifier: catalog:types
         version: 19.2.18
@@ -790,6 +799,9 @@ importers:
       '@types/react':
         specifier: catalog:types
         version: 19.2.18
+      '@types/wicg-file-system-access':
+        specifier: catalog:types
+        version: 2023.10.7
       typescript:
         specifier: catalog:types
         version: 5.9.3
@@ -4461,6 +4473,9 @@ packages:
 
   effect@3.18.4:
     resolution: {integrity: sha512-b1LXQJLe9D11wfnOKAk3PKxuqYshQ0Heez+y5pnkd3jLj1yx9QhM72zZ9uUrOQyNvrs2GZZd/3maL0ZV18YuDA==}
+
+  effect@3.22.2:
+    resolution: {integrity: sha512-fm1CQXCs7GTMwpadZxwU5rnAb2bN6mbQpknq/pXBGCzSKkosNYb9k0wsoL0TfB10rSa5xOEZJjo77u/KLXSANg==}
 
   electron-to-chromium@1.5.420:
     resolution: {integrity: sha512-2yD6XreGusOfNV+dUcvipJEXc3n/n7fgr7996aszTG+YY5E4mqM4tOq/3uhP129cazL9YHbVWSpc79ePotWtPA==}
@@ -10992,6 +11007,11 @@ snapshots:
       fast-check: 3.23.2
     optional: true
 
+  effect@3.22.2:
+    dependencies:
+      '@standard-schema/spec': 1.1.0
+      fast-check: 3.23.2
+
   electron-to-chromium@1.5.420: {}
 
   emmet@2.4.11:
@@ -11756,7 +11776,6 @@ snapshots:
   fast-check@3.23.2:
     dependencies:
       pure-rand: 6.1.0
-    optional: true
 
   fast-deep-equal@3.1.3: {}
 
