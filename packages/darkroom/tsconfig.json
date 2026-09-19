@@ -17,7 +17,8 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "types": ["node", "react", "wicg-file-system-access"]
   },
   "extends": [
     "@tsconfig/node-lts/tsconfig.json"

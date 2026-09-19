@@ -38,6 +38,11 @@ export const setting = z.discriminatedUnion("id", [
 export type Setting = z.infer<typeof setting>;
 export type Theme = Extract<Setting, { id: "theme" }>["value"];
 
+export type CollapsibleSectionId = Extract<
+  Setting,
+  { id: `sidebarSectionCollapsed${string}` }
+>["id"];
+
 export const keymap = z.discriminatedUnion("command", [
   z.object({
     command: z.literal("navigateNext"),
