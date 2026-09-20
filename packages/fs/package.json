@@ -1,0 +1,26 @@
+{
+  "name": "@shikanime-studio/fs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.tsx",
+    "./provider": "./src/provider.tsx"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "effect": "4.0.0-rc.116",
+    "react": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/wicg-file-system-access": "catalog:types",
+    "@tsconfig/node-lts": "catalog:types",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  }
+}
