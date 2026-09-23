@@ -1,5 +1,6 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
+import { RegistryProvider } from "@effect/atom-react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
@@ -46,20 +47,22 @@ export const Route = createRootRoute({
 function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
-      <MixpanelProvider
-        token={import.meta.env.VITE_MIXPANEL_TOKEN}
-        config={{
-          autocapture: true,
-          record_sessions_percent: 100,
-          api_host: import.meta.env.VITE_MIXPANEL_API_HOST,
-        }}
-      >
-        <ClientOnly>
-          <ThemeProvider>
-            <AstryxSurface />
-          </ThemeProvider>
-        </ClientOnly>
-      </MixpanelProvider>
+      <RegistryProvider>
+        <MixpanelProvider
+          token={import.meta.env.VITE_MIXPANEL_TOKEN}
+          config={{
+            autocapture: true,
+            record_sessions_percent: 100,
+            api_host: import.meta.env.VITE_MIXPANEL_API_HOST,
+          }}
+        >
+          <ClientOnly>
+            <ThemeProvider>
+              <AstryxSurface />
+            </ThemeProvider>
+          </ClientOnly>
+        </MixpanelProvider>
+      </RegistryProvider>
     </QueryClientProvider>
   );
 }
