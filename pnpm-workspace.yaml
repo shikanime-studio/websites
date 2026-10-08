@@ -3,6 +3,7 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - packages/*
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.7.0
@@ -35,6 +36,7 @@ catalogs:
     eslint-plugin-react-refresh: ^0.5.6
   runtime:
     "@astrojs/partytown": ^2.1.7
+    effect: ^3.22.2 # legacy apps pin; fade stack uses effect@4 RC
     "@astrojs/react": ^5.0.7
     "@astrojs/sitemap": ^3.7.4
     "@better-auth/passkey": ^1.7.2
@@ -89,6 +91,8 @@ catalogs:
     "@types/wicg-file-system-access": ^2023.10.7
     "@webgpu/types": ^0.1.72
     typescript: ^5.9.3
+  conflicts_runtime_4_0_0mrc_116:
+    effect: 4.0.0-rc.116
 engineStrict: true
 ignoredBuiltDependencies:
   - "@prisma/engines"
@@ -113,4 +117,5 @@ trustPolicyExclude:
 catalog:
   "@astryxdesign/core": ^0.5.2
   "@astryxdesign/theme-neutral": ^0.5.2
+  "@effect/atom-react": 4.0.0-rc.116
   "@stylexjs/stylex": ^0.19.0

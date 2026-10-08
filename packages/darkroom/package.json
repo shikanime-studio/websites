@@ -1,0 +1,28 @@
+{
+  "name": "@shikanime-studio/darkroom",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./react": "./src/react.ts"
+  },
+  "scripts": {
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@effect/atom-react": "4.0.0-rc.116",
+    "@shikanime-studio/fs": "workspace:*",
+    "@tanstack/react-query": "catalog:runtime",
+    "effect": "4.0.0-rc.116"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:types",
+    "@types/react": "catalog:types",
+    "@types/wicg-file-system-access": "catalog:types",
+    "@tsconfig/node-lts": "catalog:types",
+    "@webgpu/types": "catalog:types",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  }
+}

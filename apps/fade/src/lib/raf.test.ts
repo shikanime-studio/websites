@@ -1,5 +1,5 @@
+import type { FileItem } from "@shikanime-studio/fs";
 import type { ExifTagEntry } from "./exif";
-import type { FileItem } from "./fs";
 import { describe, expect, it } from "vitest";
 import { MakeTagId } from "./exif";
 import {
@@ -17,6 +17,7 @@ import { createRawImageDataView } from "./raw";
 // Mock FileItem creator
 function createFileItem(file: File): FileItem {
   return {
+    name: file.name,
     handle: {
       getFile: () => Promise.resolve(file),
     } as unknown as FileSystemFileHandle,

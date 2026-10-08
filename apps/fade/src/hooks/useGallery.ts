@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { createContext, use } from "react";
 
 export interface GalleryState {

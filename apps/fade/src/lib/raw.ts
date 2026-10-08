@@ -1,4 +1,4 @@
-import type { FileItem } from "./fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { RafDataView } from "./raf";
 
 export async function createRawImageDataView(

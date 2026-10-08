@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";

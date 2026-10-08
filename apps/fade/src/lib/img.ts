@@ -1,4 +1,4 @@
-import type { FileItem } from "./fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import type { RafDataView } from "./raf";
 import { ExifDataView } from "./exif";
 import { createRawImageDataView } from "./raw";

@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { useCallback, useState } from "react";
-import { DirectoryContext, useFileSystemSupport } from "../hooks/useDirectory";
+import { DirectoryContext, useFileSystemSupport } from "./react";
 
 export function DirectoryProvider({ children }: { children: ReactNode }) {
   const [handle, setHandle] = useState<FileSystemDirectoryHandle | null>(null);

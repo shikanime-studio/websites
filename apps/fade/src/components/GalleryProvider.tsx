@@ -1,9 +1,23 @@
 import type { ReactNode } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useAtomSuspense } from "@effect/atom-react";
+import { ImageRuntime } from "@shikanime-studio/darkroom/react";
+import { scanFileItems } from "@shikanime-studio/fs";
+import { Effect } from "effect";
+import * as AsyncResult from "effect/unstable/reactivity/AsyncResult";
+import * as Atom from "effect/unstable/reactivity/Atom";
+import { useCallback, useEffect, useState } from "react";
 import { GalleryContext } from "../hooks/useGallery";
-import { useKeymap } from "../hooks/useKeymap";
-import { scanDirectory } from "../lib/fs";
+
+const galleryAtom = Atom.family((handle: FileSystemDirectoryHandle | null) =>
+  ImageRuntime.atom(() => (handle ? scanFileItems(handle) : Effect.succeed([])),
+  ));
+
+const useGalleryFiles = (handle: FileSystemDirectoryHandle | null) => {
+  const result = useAtomSuspense(galleryAtom(handle), {
+    includeFailure: true,
+  });
+  return AsyncResult.isSuccess(result) ? result.value : [];
+};
 
 export function GalleryProvider({
   children,
@@ -14,57 +28,62 @@ export function GalleryProvider({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data: files } = useSuspenseQuery({
-    queryKey: ["gallery", handle],
-    queryFn: async () => {
-      if (!handle) return [];
-      return scanDirectory(handle);
-    },
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-  });
+  const files = useGalleryFiles(handle);
 
   const selectFile = useCallback(
     (index: number) => {
-      setSelectedIndex(Math.max(0, Math.min(index, files.length - 1)));
+      if (!files || index < 0) return;
+      setSelectedIndex(Math.min(index, files.length - 1));
     },
-    [files.length],
+    [files],
   );
 
   const navigateNext = useCallback(() => {
+    if (!files) return;
     setSelectedIndex((prev) => Math.min(prev + 1, files.length - 1));
-  }, [files.length]);
+  }, [files]);
 
   const navigatePrevious = useCallback(() => {
     setSelectedIndex((prev) => Math.max(prev - 1, 0));
   }, []);
 
-  useKeymap("navigateNext", () => {
-    if (files.length === 0) return;
-    navigateNext();
-  });
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (!files || files.length === 0) return;
 
-  useKeymap("navigatePrevious", () => {
-    if (files.length === 0) return;
-    navigatePrevious();
-  });
+      switch (event.key) {
+        case "ArrowRight":
+          navigateNext();
+          event.preventDefault();
+          break;
+        case "ArrowLeft":
+          navigatePrevious();
+          event.preventDefault();
+          break;
+        case "Home":
+          selectFile(0);
+          event.preventDefault();
+          break;
+        case "End":
+          selectFile(files.length - 1);
+          event.preventDefault();
+          break;
+      }
+    };
 
-  useKeymap("selectFirst", () => {
-    if (files.length === 0) return;
-    selectFile(0);
-  });
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [files, navigateNext, navigatePrevious, selectFile]);
 
-  useKeymap("selectLast", () => {
-    if (files.length === 0) return;
-    selectFile(files.length - 1);
-  });
-
-  const selectedFile = files[selectedIndex] ?? null;
+  const selectedFile =
+    files && files.length > 0 ? (files[selectedIndex] ?? null) : null;
 
   return (
     <GalleryContext
       value={{
-        files,
+        files: files ?? [],
         selectedIndex,
         selectFile,
         navigateNext,

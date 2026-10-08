@@ -1,4 +1,4 @@
-import type { FileItem } from "../lib/fs";
+import type { FileItem } from "@shikanime-studio/fs";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { Suspense } from "react";
 import { useModal } from "../hooks/useModal";
