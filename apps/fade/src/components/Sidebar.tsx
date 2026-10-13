@@ -1,11 +1,13 @@
 import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
+import { Card } from "@astryxdesign/core/Card";
 import { Collapsible } from "@astryxdesign/core/Collapsible";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
+import { Text } from "@astryxdesign/core/Text";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -289,8 +291,12 @@ function Slider({
       }}
     >
       <div className="flex justify-between">
-        <label className="text-xs font-medium opacity-70">{label}</label>
-        <span className="text-xs opacity-50">{value.toFixed(2)}</span>
+        <Text type="label" className="opacity-70">
+          {label}
+        </Text>
+        <Text type="label" className="opacity-50 tabular-nums">
+          {value.toFixed(2)}
+        </Text>
       </div>
       <AstryxSlider
         label={label}
@@ -318,7 +324,10 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
       id="sidebarSectionCollapsedInfo"
       icon={Info}
     >
-      <div className="bg-card rounded-lg mb-5 flex h-32 items-center justify-center overflow-hidden">
+      <Card
+        className="mb-5 flex h-32 items-center justify-center overflow-hidden"
+        padding={0}
+      >
         {fileItem.mimeType?.startsWith("image/") ? (
           <Histogram />
         ) : (
@@ -326,7 +335,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
             <FileIcon type={fileItem.mimeType} className="h-8 w-8 opacity-50" />
           </div>
         )}
-      </div>
+      </Card>
 
       <MetadataList>
         <MetadataListItem label="Filename">
