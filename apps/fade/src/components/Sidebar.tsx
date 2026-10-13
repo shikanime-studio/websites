@@ -3,6 +3,7 @@ import type { FileItem } from "../lib/fs";
 import { Collapsible } from "@astryxdesign/core/Collapsible";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
+import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -327,34 +328,25 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
         )}
       </div>
 
-      <dl className="m-0 flex flex-col gap-4">
-        <div className="flex flex-col gap-1">
-          <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-            Filename
-          </dt>
-          <dd className="m-0 text-sm font-medium break-all" title={handle.name}>
+      <MetadataList>
+        <MetadataListItem label="Filename">
+          <span className="text-sm font-medium break-all" title={handle.name}>
             {handle.name}
-          </dd>
-        </div>
+          </span>
+        </MetadataListItem>
 
         {image && (
-          <div className="flex flex-col gap-1">
-            <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-              Dimensions
-            </dt>
-            <dd className="m-0 text-sm font-medium">
-              {image.naturalWidth} ×{image.naturalHeight}
-            </dd>
-          </div>
+          <MetadataListItem label="Dimensions">
+            <span className="text-sm font-medium">
+              {image.naturalWidth} × {image.naturalHeight}
+            </span>
+          </MetadataListItem>
         )}
 
-        <div className="flex flex-col gap-1">
-          <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-            File Size
-          </dt>
-          <dd className="m-0 text-sm font-medium">{formatBytes(file.size)}</dd>
-        </div>
-      </dl>
+        <MetadataListItem label="File Size">
+          <span className="text-sm font-medium">{formatBytes(file.size)}</span>
+        </MetadataListItem>
+      </MetadataList>
     </CollapsibleSection>
   );
 }
@@ -381,76 +373,52 @@ function CameraSection({ fileItem }: { fileItem: FileItem }) {
       icon={Camera}
       className="mt-8"
     >
-      <dl className="m-0 flex flex-col gap-4">
+      <MetadataList>
         {(make ?? model) && (
-          <div className="flex flex-col gap-1">
-            <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-              Camera
-            </dt>
-            <dd className="m-0 text-sm font-medium">
+          <MetadataListItem label="Camera">
+            <span className="text-sm font-medium">
               {[make, model].filter(Boolean).join(" ")}
-            </dd>
-          </div>
+            </span>
+          </MetadataListItem>
         )}
 
         {lensModel && (
-          <div className="flex flex-col gap-1">
-            <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-              Lens
-            </dt>
-            <dd className="m-0 text-sm font-medium">{lensModel}</dd>
-          </div>
+          <MetadataListItem label="Lens">
+            <span className="text-sm font-medium">{lensModel}</span>
+          </MetadataListItem>
         )}
 
         <div className="grid grid-cols-2 gap-4">
           {fNumber && (
-            <div className="flex flex-col gap-1">
-              <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-                Aperture
-              </dt>
-              <dd className="m-0 text-sm font-medium">
-                f/
-                {fNumber}
-              </dd>
-            </div>
+            <MetadataListItem label="Aperture">
+              <span className="text-sm font-medium">f/{fNumber}</span>
+            </MetadataListItem>
           )}
 
           {exposureTime && (
-            <div className="flex flex-col gap-1">
-              <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-                Shutter
-              </dt>
-              <dd className="m-0 text-sm font-medium">
+            <MetadataListItem label="Shutter">
+              <span className="text-sm font-medium">
                 {exposureTime >= 1
                   ? exposureTime
                   : `1/${Math.round(1 / exposureTime).toString()}`}
                 s
-              </dd>
-            </div>
+              </span>
+            </MetadataListItem>
           )}
 
           {iso && (
-            <div className="flex flex-col gap-1">
-              <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-                ISO
-              </dt>
-              <dd className="m-0 text-sm font-medium">{iso}</dd>
-            </div>
+            <MetadataListItem label="ISO">
+              <span className="text-sm font-medium">{iso}</span>
+            </MetadataListItem>
           )}
 
           {focalLength && (
-            <div className="flex flex-col gap-1">
-              <dt className="text-[11px] font-bold tracking-wider uppercase opacity-50">
-                Focal Length
-              </dt>
-              <dd className="m-0 text-sm font-medium">
-                {focalLength}
-                mm
-              </dd>
-            </div>
+            <MetadataListItem label="Focal Length">
+              <span className="text-sm font-medium">{focalLength}mm</span>
+            </MetadataListItem>
           )}
         </div>
-      </dl>
+      </MetadataList>
     </CollapsibleSection>
   );
 }
