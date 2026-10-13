@@ -1,12 +1,12 @@
 import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
+import { Collapsible } from "@astryxdesign/core/Collapsible";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Info,
@@ -503,45 +503,34 @@ function CollapsibleSection({
   );
 
   const isCollapsed = (data?.value as boolean) || false;
-  const isOpen = !isCollapsed;
 
   return (
     <div className={className}>
-      <button
-        onClick={() => {
+      <Collapsible
+        isOpen={!isCollapsed}
+        onOpenChange={(open) => {
           if (data) {
             settingsCollection.update(id, (draft) => {
-              draft.value = !isCollapsed;
+              draft.value = !open;
             });
           } else {
             settingsCollection.insert({
               id,
-              value: !isCollapsed,
+              value: !open,
             } as Setting);
           }
         }}
-        className="border-border text-secondary mb-5 flex w-full items-center justify-between border-b pb-3 outline-none"
+        trigger={
+          <div className="border-border text-secondary mb-5 flex w-full items-center gap-2 border-b pb-3">
+            {Icon && <Icon className="h-4.5 w-4.5" />}
+            <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
+              {title}
+            </h2>
+          </div>
+        }
       >
-        <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-4.5 w-4.5" />}
-          <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
-            {title}
-          </h2>
-        </div>
-        {isOpen ? (
-          <ChevronDown className="h-4 w-4 opacity-50" />
-        ) : (
-          <ChevronRight className="h-4 w-4 opacity-50" />
-        )}
-      </button>
-
-      <div
-        className={`grid transition-all duration-300 ease-in-out ${
-          isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
-        }`}
-      >
-        <div className="overflow-hidden">{children}</div>
-      </div>
+        {children}
+      </Collapsible>
     </div>
   );
 }
