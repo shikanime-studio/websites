@@ -7,6 +7,7 @@ import {
   LayoutFooter,
   SegmentedControl,
   SegmentedControlItem,
+  Text,
 } from "@astryxdesign/core";
 import { ClientOnly } from "@tanstack/react-router";
 import { Monitor, Moon, Sun } from "lucide-react";
@@ -39,9 +40,12 @@ function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
         }
         content={
           <LayoutContent>
-            <h4 className="text-secondary border-border mb-3 border-b pb-2 text-xs font-bold tracking-wider uppercase opacity-70">
+            <Text
+              type="label"
+              className="text-secondary border-border mb-3 border-b pb-2 uppercase opacity-70"
+            >
               Appearance
-            </h4>
+            </Text>
 
             <div className="flex items-center justify-between">
               <div>
