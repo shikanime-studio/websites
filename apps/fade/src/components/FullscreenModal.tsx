@@ -1,4 +1,6 @@
+import { IconButton } from "@astryxdesign/core/IconButton";
 import { ClientOnly } from "@tanstack/react-router";
+import { X } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 
@@ -44,14 +46,13 @@ function FullscreenModalContent({
       className="bg-[var(--color-overlay)]"
       onClose={onClose}
     >
-      <button
-        className="text-on-dark absolute top-4 right-4 z-50 cursor-pointer bg-transparent p-2"
+      <IconButton
+        icon={<X className="text-on-dark h-5 w-5" />}
+        label="Close fullscreen"
+        variant="ghost"
+        className="absolute top-4 right-4 z-50"
         onClick={onClose}
-        aria-label="Close fullscreen"
-        type="button"
-      >
-        ✕
-      </button>
+      />
       <div className="flex h-full w-full items-center justify-center overflow-hidden p-0">
         {children}
       </div>
