@@ -1,4 +1,5 @@
 import type { FileItem } from "../lib/fs";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { eq, useLiveQuery } from "@tanstack/react-db";
@@ -112,7 +113,7 @@ export function Filmstrip() {
 function EmptyFilmstrip() {
   return (
     <div className="flex h-full items-center justify-center">
-      <p className="m-0 text-sm opacity-50">Your files will appear here</p>
+      <EmptyState title="Your files will appear here" isCompact />
     </div>
   );
 }
