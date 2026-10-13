@@ -1,5 +1,6 @@
 import { Button } from "@astryxdesign/core/Button";
 import { IconButton } from "@astryxdesign/core/IconButton";
+import { Toolbar } from "@astryxdesign/core/Toolbar";
 import { Tooltip } from "@astryxdesign/core/Tooltip";
 import { AlertTriangle, FolderOpen, Image, Settings } from "lucide-react";
 import { siGithub } from "simple-icons";
@@ -13,15 +14,19 @@ export function ToolBar() {
 
   return (
     <>
-      <header className="bg-body border-border flex h-12 min-h-12 items-center border-b px-4">
-        <ToolBarLogo />
-        <ToolBarStatus />
-        <ToolBarActions
-          onSettingsClick={() => {
-            setModal("settings");
-          }}
-        />
-      </header>
+      <Toolbar
+        label="Main"
+        className="bg-body border-border h-12 min-h-12 border-b px-4"
+        startContent={<ToolBarLogo />}
+        centerContent={<ToolBarStatus />}
+        endContent={
+          <ToolBarActions
+            onSettingsClick={() => {
+              setModal("settings");
+            }}
+          />
+        }
+      />
 
       <SettingsModal
         open={modal === "settings"}
@@ -48,13 +53,9 @@ function ToolBarStatus() {
   const { files, selectedIndex } = useGallery();
 
   return (
-    <div className="flex flex-1 justify-center">
-      {files.length > 0 && (
-        <span className="text-sm tabular-nums opacity-70">
-          {selectedIndex + 1} /{files.length}
-        </span>
-      )}
-    </div>
+    <span className="text-sm tabular-nums opacity-70">
+      {files.length > 0 ? `${selectedIndex + 1} / ${files.length}` : ""}
+    </span>
   );
 }
 

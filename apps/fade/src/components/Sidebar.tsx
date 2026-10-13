@@ -1,6 +1,7 @@
 import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
 import { Collapsible } from "@astryxdesign/core/Collapsible";
+import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
@@ -97,9 +98,7 @@ export function Sidebar() {
 }
 
 function EmptySidebar() {
-  return (
-    <p className="py-5 text-center text-sm opacity-50">No image selected</p>
-  );
+  return <EmptyState title="No image selected" isCompact />;
 }
 
 function SidebarContent({ fileItem }: { fileItem: FileItem }) {
