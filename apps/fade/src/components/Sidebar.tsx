@@ -499,9 +499,9 @@ function CollapsibleSection({
         trigger={
           <div className="border-border text-secondary mb-5 flex w-full items-center gap-2 border-b pb-3">
             {Icon && <Icon className="h-4.5 w-4.5" />}
-            <h2 className="m-0 text-sm font-bold tracking-wide uppercase">
+            <Text type="label" className="m-0 uppercase">
               {title}
-            </h2>
+            </Text>
           </div>
         }
       >
