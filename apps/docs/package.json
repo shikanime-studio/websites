@@ -1,0 +1,39 @@
+{
+  "name": "@shikanime-studio/docs",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "build": "docusaurus build",
+    "clear": "docusaurus clear",
+    "deploy": "wrangler deploy",
+    "dev": "docusaurus dev",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "preview": "docusaurus build && wrangler dev",
+    "serve": "docusaurus serve",
+    "start": "docusaurus dev",
+    "types": "wrangler types src/worker-configuration.d.ts",
+    "upload": "wrangler versions upload",
+    "write-heading-ids": "docusaurus write-heading-ids"
+  },
+  "dependencies": {
+    "@docusaurus/core": "catalog:runtime",
+    "@docusaurus/preset-classic": "catalog:runtime",
+    "@docusaurus/theme-mermaid": "catalog:runtime",
+    "@mdx-js/react": "catalog:runtime",
+    "@mermaid-js/layout-elk": "catalog:runtime",
+    "clsx": "catalog:runtime",
+    "prism-react-renderer": "catalog:runtime",
+    "react": "catalog:runtime",
+    "react-dom": "catalog:runtime"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@docusaurus/module-type-aliases": "catalog:runtime",
+    "@docusaurus/tsconfig": "catalog:runtime",
+    "@docusaurus/types": "catalog:runtime",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types",
+    "wrangler": "catalog:infra"
+  }
+}
