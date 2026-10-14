@@ -1,3 +1,4 @@
+import { Button } from "@astryxdesign/core/Button";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
@@ -112,22 +113,20 @@ function ConsentPage() {
         )
         : null}
       <div className="flex gap-3">
-        <button
-          type="button"
-          className="bg-accent text-on-accent inline-flex h-12 flex-1 items-center justify-center rounded-full px-8 text-base font-black"
-          disabled={consent.isPending}
+        <Button
+          className="flex-1"
+          label="Allow"
+          variant="primary"
+          isDisabled={consent.isPending}
           onClick={() => consent.mutate(true)}
-        >
-          Allow
-        </button>
-        <button
-          type="button"
-          className="border-border text-secondary inline-flex h-12 flex-1 items-center justify-center rounded-full border-2 px-8 text-base font-black transition-colors hover:bg-surface"
-          disabled={consent.isPending}
+        />
+        <Button
+          className="flex-1"
+          label="Deny"
+          variant="secondary"
+          isDisabled={consent.isPending}
           onClick={() => consent.mutate(false)}
-        >
-          Deny
-        </button>
+        />
       </div>
     </div>
   );

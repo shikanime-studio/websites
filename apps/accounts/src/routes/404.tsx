@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Button } from "@astryxdesign/core/Button";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/404")({
   component: NotFound,
@@ -11,12 +12,7 @@ function NotFound() {
       <p className="text-secondary/80 text-center text-base font-semibold">
         This page does not exist.
       </p>
-      <Link
-        to="/"
-        className="bg-accent text-on-accent inline-flex h-12 items-center rounded-full px-10 text-base font-black"
-      >
-        Go home
-      </Link>
+      <Button href="/" label="Go home" variant="primary" />
     </div>
   );
 }

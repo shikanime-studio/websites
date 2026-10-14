@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { count } from "drizzle-orm";
 import { createD1Database } from "../lib/db";
 import { users } from "../schema";
 
 const countUsers = createServerFn().handler(async (): Promise<number> => {
   const db = createD1Database();
-  const rows = await db.select({ id: users.id }).from(users);
-  return rows.length;
+  const rows = await db.select({ value: count() }).from(users);
+  return rows[0]?.value ?? 0;
 });
 
 export const Route = createFileRoute("/")({
@@ -41,7 +42,7 @@ function HomePage() {
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
               <div className="text-secondary text-sm font-black">
                 Discovery
               </div>
@@ -49,7 +50,7 @@ function HomePage() {
                 /.well-known/openid-configuration
               </code>
             </div>
-            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
               <div className="text-secondary text-sm font-black">
                 Authorization
               </div>
@@ -57,7 +58,7 @@ function HomePage() {
                 /oauth2/authorize
               </code>
             </div>
-            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-white p-4">
+            <div className="border-border flex flex-col gap-1 rounded-2xl border-2 bg-body p-4">
               <div className="text-secondary text-sm font-black">Token</div>
               <code className="text-secondary/70 text-xs break-all">
                 /oauth2/token
