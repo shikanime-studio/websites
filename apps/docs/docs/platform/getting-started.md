@@ -4,21 +4,21 @@ sidebar_position: 3
 
 # Getting started
 
-Zero-to-productive on the Shikanime platform.
+Zero-to-productive on the Shikanime Studio platform.
 
 ## Accounts and access
 
 | What                | Where                                            |
 | ------------------- | ------------------------------------------------ |
 | GitHub orgs         | `shikanime-labs`, `shikanime-studio`             |
-| Identity provider   | Authelia (OIDC SSO) backed by LLDAP              |
+| Identity provider   | Authelia OIDC SSO backed by LLDAP                 |
 | Secrets             | sops-nix (`*.enc.yaml`) fleet-wide, Vaultwarden for interactive use |
 | Cluster access      | Tailscale + kubeconfig from the leader           |
 | Agent credentials   | sops `hermes-agent-a2a-token-<peer>` per host    |
 
 ## Prerequisites
 
-- **jj** (Jujutsu) — all repos are jj-managed; bare git commits will
+- **jj**, Jujutsu — all repos are jj-managed. Bare git commits will
   fight the tooling
 - **Nix** with flakes — every repo has a `flake.nix` and a devenv shell
   (`nix develop`)
@@ -42,20 +42,20 @@ flowchart LR
    column is the tactical plan.
 2. **Branch**: fresh jj workspace pinned to `main@origin` — never work in
    the shared checkout.
-3. **Verify**: `nix fmt` (scoped!), `pnpm lint`, `pnpm build` as
+3. **Verify**: `nix fmt` scoped, `pnpm lint`, `pnpm build` as
    applicable.
 4. **Land**: push branch → PR → CI green → squash merge. A verbal lgtm
    is the approval signal.
-5. **Deploy happens by Git**: Flux reconciles manifests; Workers Builds
+5. **Deploy happens by Git**: Flux reconciles manifests. Workers Builds
    deploys `main` of websites.
 
 ## Conventions that will bite you
 
 - Commits: plain capitalized title, no conventional-commit prefix.
-  Agent-assisted commits carry the Automata co-author trailer;
+  Agent-assisted commits carry the Automata co-author trailer.
   `manifests` and `skills` require `Signed-off-by` (gitlint CC1).
-- Markdown wraps at 80 columns; `nix fmt` runs scoped
-  (`nix fmt apps/<app>`), a whole-tree run dirties ~64 files.
+- Markdown wraps at 80 columns. `nix fmt` runs scoped
+  (`nix fmt apps/<app>`). A whole-tree run dirties ~64 files.
 - jj does not auto-track bookmarks — `jj bookmark track <branch>
   --remote=origin` before every push.
 - Docusaurus apps must NOT set `"type": "module"` in package.json —

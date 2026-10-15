@@ -49,13 +49,13 @@ flowchart TB
 
 The x86 server nodes and ARM nodes share the `nishir.nix` cluster profile:
 Tailscale, SSH, Avahi, firewall, distributed build wiring, and the imports
-every node shares (ai, distributed, forgejo, server). The Strix Halo nodes
-(kushira/sashina) carry the local inference workload (see
-[Inference](../services/ai-infrastructure)).
+every node shares: ai, distributed, forgejo, and server. The Strix Halo
+nodes kushira and sashina carry the local inference workload. See
+[Inference](../services/ai-infrastructure).
 
 `automata` is the odd one out: a NixOS image built as a containerdisk and
 run as a KubeVirt virtual machine in the cluster — it hosts the agent
-automation plane (see [Agent automation](../automation/hermes)).
+automation plane. See [Agent automation](../automation/hermes).
 
 ## Capability registry
 
@@ -86,7 +86,7 @@ vice versa; the Strix Halo nodes advertise `build-x86`.
 
 ## Deployment
 
-Hosts pull their configuration via **comin** (git-pull deployment) —
+Hosts pull their configuration via **comin**, a git-pull deployment —
 `nixos-rebuild switch --flake .#<host>` remains available for manual
 switches. Darwin host `telsha` uses `darwin-rebuild switch --flake .#telsha`.
 

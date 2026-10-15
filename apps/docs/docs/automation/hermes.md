@@ -5,15 +5,16 @@ sidebar_position: 1
 # Hermes agent fleet
 
 Agent automation across the platform runs on **Hermes Agent** instances,
-declared in the machines flake (`modules/nixos/profiles/ai.nix`) and run
-fleet-wide — every Nix host runs a hermes-agent service, and the
+declared in the machines flake at `modules/nixos/profiles/ai.nix` and
+run fleet-wide — every Nix host runs a hermes-agent service, and the
 KubeVirt VM `automata` acts as the central hub.
 
 ## Mesh schema
 
 The peer list is Nix-generated from the capability registry: cluster
-peers (`:9900` API), workstation/bot peers (`:8642` A2A), hub peers, each
-with per-peer sops secrets materialized through `sops.templates`.
+peers on the `:9900` API, workstation/bot peers on `:8642` A2A, hub
+peers, each with per-peer sops secrets materialized through
+`sops.templates`.
 
 ```mermaid
 flowchart TB
@@ -40,11 +41,11 @@ flowchart TB
 
 ## The automata hub
 
-`automata` is a NixOS qcow2 wrapped as an OCI containerdisk, built by the
-machines flake (`packages.x86_64-linux.automata`) and run as a KubeVirt
-VM in the nishir cluster: q35 machine, EFI without secure boot, 6 GiB
-RAM / 2 vCPU requested, amd64 node selector, root containerDisk + a PVC
-workspaces disk + cloud-init over a Secret.
+`automata` is a NixOS qcow2 wrapped as an OCI containerdisk. The
+machines flake builds it as `packages.x86_64-linux.automata`, and it
+runs as a KubeVirt VM in the nishir cluster: q35 machine, EFI without
+secure boot, 6 GiB RAM / 2 vCPU requested, amd64 node selector, root
+containerDisk + a PVC workspaces disk + cloud-init over a Secret.
 
 It is **the A2A hub**: peer agents register against it, and `hubTrust`
 means the hub accepts `ws` connections.
@@ -77,7 +78,7 @@ sequenceDiagram
   H-->>A: response
 ```
 
-## Hermes plugins (Nix-packaged)
+## Nix-packaged Hermes plugins
 
 | Plugin                    | Role                                    |
 | ------------------------- | --------------------------------------- |
@@ -90,12 +91,13 @@ sequenceDiagram
 ## Skills
 
 The `shikanime-labs/skills` repo is a curated catalog of self-improved
-agent skills (the `sks-*` family: dev loop, PR landing, issue triage,
-nix authoring, sops authoring, ...). Skills are mirrored to
+agent skills. The `sks-*` family covers dev loop, PR landing, issue
+triage, nix authoring, sops authoring, and more. Skills are mirrored to
 `~/.hermes/skills` as a detached git clone; resync is fetch + ff-only
 main, stashing local lessons.
 
 ## Computer use
 
-`ai.nix` installs the `cua-driver` binary (AT-SPI/D-Bus) fleet-wide, so
-hermes' `computer-use` extra can drive desktop automation on any host.
+`ai.nix` installs the `cua-driver` binary for AT-SPI/D-Bus fleet-wide,
+so hermes' `computer-use` extra can drive desktop automation on any
+host.

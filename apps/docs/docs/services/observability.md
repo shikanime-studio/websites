@@ -16,7 +16,7 @@ agents on every node.
 | VictoriaLogs (vlinsert, vlselect ×2) | log storage and LogsQL query |
 | kube-state-metrics    | cluster-state metrics                         |
 | Grafana + grafana-operator + grafana-image-renderer | dashboards as CRs, image rendering |
-| blackbox              | SLO probes (deployed in `shikanime` ns)      |
+| blackbox              | SLO probes deployed in the `shikanime` ns       |
 
 ```mermaid
 flowchart LR
@@ -37,8 +37,8 @@ flowchart LR
 holds raw Grafana JSON (currently `blackbox`, `blocky`,
 `halogen-flash`, `llama-cpp`). Conventions that keep the operator happy:
 
-- stable kebab-case `uid`; tags include `shikanime` + topic tags
-- `graphTooltip: 1` (crosshair sync), `editable: true`
+- stable kebab-case `uid`. Tags include `shikanime` + topic tags.
+- `graphTooltip: 1` for crosshair sync, `editable: true`
 - datasource via **template variable**, never a hardcoded uid
 - nest under `dashboards/<topic>/` only when a topic needs multiple
   boards
@@ -51,5 +51,6 @@ pulls from the repo by tag — no manual imports.
 
 Longhorn disk warnings are the classic false friend: the alert is
 **snapshot-inclusive** free space — the 58 GiB eMMC nodes trip it while
-raw usage is fine (recovery: nix gc or drop a disk). Alert routing is
-declared in manifests (vmalert rules → VMAlertmanager receivers).
+raw usage is fine. Recovery is nix gc or dropping a disk. Alert routing
+is declared in manifests as vmalert rules pointing at VMAlertmanager
+receivers.

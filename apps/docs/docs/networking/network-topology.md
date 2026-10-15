@@ -46,17 +46,17 @@ flowchart TB
 There is no public path to any cluster service. The Kubernetes API is
 reached at `nishir-k8s-operator.taila659a.ts.net` — a tailscale-operator
 exposed endpoint — and every per-app Gateway holds a tailnet `100.x`
-address (see [Gateway & DNS](./gateway-dns)). Administration from
+address — see [Gateway & DNS](./gateway-dns). Administration from
 outside requires tailnet membership first; membership + tag then
 determines reachability via the [ACL](./tailnet).
 
 ## Cluster networking
 
-- **CNI:** canal (Calico policy + flannel) with kernel tuning from
+- **CNI:** canal — Calico policy + flannel — with kernel tuning from
   knix: bridge netfilter, overlayfs, BBR, enlarged conntrack and
   neighbor tables, dual-stack forwarding.
 - **Multus** attaches secondary networks where a pod needs a separate
-  interface (netpol keyed on `network-status` annotation).
+  interface, with netpol keyed on the `network-status` annotation.
 - **Tailscale operator** subnet-routes cluster services into the
   tailnet and exposes the kube API securely.
 - **Gateway API** is the only ingress: 40 per-app Gateways, each with

@@ -4,10 +4,10 @@ sidebar_position: 1
 
 # System architecture
 
-The platform is two planes joined by Git: a **control plane of
-repositories** (GitHub as the source of truth) and a **runtime plane**
-(Nix fleet + RKE2 cluster + Cloudflare edge). Nothing reaches
-production except through a commit.
+The platform is two planes joined by Git. The **control plane of
+repositories** has GitHub as the source of truth. The **runtime
+plane** is the Nix fleet, the RKE2 cluster, and the Cloudflare edge.
+Nothing reaches production except through a commit.
 
 ```mermaid
 flowchart TB
@@ -64,13 +64,14 @@ flowchart TB
 
 Three distinct reconcile loops, all commit-driven:
 
-1. **Hosts (comin):** commit to `machines` → comin on each host pulls
-   its branch → new closure builds (Cachix-served) → activation. No
-   SSH-driven mutation; drift self-heals on the next pull.
-2. **Cluster (Flux):** commit to `manifests` → flux-operator detects →
+1. **Hosts via comin:** commit to `machines` → comin on each host
+   pulls its branch → new closure builds served from Cachix →
+   activation. No SSH-driven mutation; drift self-heals on the next
+   pull.
+2. **Cluster via Flux:** commit to `manifests` → flux-operator detects →
    kustomize-controller builds the overlay → helm-controller /
    kustomize-controller apply → cluster state converges.
-3. **Edge (Workers Builds):** merge to `websites` `main` → Cloudflare
+3. **Edge via Workers Builds:** merge to `websites` `main` → Cloudflare
    path-filtered build per app → wrangler deploy. Verified only by the
    log's `Uploaded`/`Deployed` lines.
 
@@ -93,8 +94,8 @@ sequenceDiagram
 ## Agents as first-class operators
 
 Every Nix host runs a `hermes-agent` service; the KubeVirt VM `automata`
-is the A2A hub. Agents hold the same tools as humans (gh, jj, kubectl
-read-only probes) and the same constraints: they push branches, open
+is the A2A hub. Agents hold the same tools as humans — gh, jj, kubectl
+read-only probes — and the same constraints: they push branches, open
 PRs, and land only through the protected-`main` gates — the
 [Landing protections](../automation/dev-workflow) ruleset blocks
 self-approval even for agents. The capability split is encoded in the

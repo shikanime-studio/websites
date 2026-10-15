@@ -17,7 +17,7 @@ known edges where they interact badly.
 
 - **external-dns** watches Gateway/HTTPRoute resources and maintains
   the `*.i` records — app exposure is fully declarative.
-- **blocky** runs as the fleet's DNS sinkhole (ad/malware blocking)
+- **blocky** runs as the fleet's DNS sinkhole for ad/malware blocking,
   with its own Grafana dashboard.
 - The vanity names resolve **inside the tailnet only** — they point at
   100.x addresses.
@@ -31,19 +31,18 @@ known edges where they interact badly.
 | Inference plane      | mTLS (client certs)       | Envoy AI Gateway `BackendSecurityPolicy` |
 | Matrix Synapse       | tailscale cert            | — (tailnet name only) |
 
-## Known edges (verified incidents)
+## Known edges from verified incidents
 
 - **Matrix/OIDC cookie break:** Synapse clients must use
   `matrix.taila659a.ts.net`. The vanity hostname passes through the
   gateway and breaks the OIDC cookie round-trip — the tailnet name is
   canonical for clients.
 - **Split DNS:** pods resolving tailnet names depend on the cluster's
-  DNS forwarding (coredns via knix); a mismatch shows up as pods
-  reaching services by IP but not by MagicDNS name.
+  DNS forwarding, which runs coredns via knix. A mismatch shows up as
+  pods reaching services by IP but not by MagicDNS name.
 - **Custom domains on Workers** take over the hostname at the zone
   level: an app moved from Pages to Workers must re-add its
-  `custom_domain` route or the hostname 404s (cfproxy decommission
-  taught this).
+  `custom_domain` route or the hostname 404s.
 
 ## Certificate lifecycle
 
