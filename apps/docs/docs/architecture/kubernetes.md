@@ -9,15 +9,15 @@ holds all cluster state as Kustomize trees, applied by Flux.
 
 ## Clusters
 
-- **`nishir`** — the main cluster. It runs RKE2 on the Nix fleet.
-  Overlay
-  `tailnet`; components: kubevirt, longhorn, tailscale, tls,
-  victoriametrics — plus autoscaler, cert-manager, cluster-api,
-  descheduler, envoy-gateway, envoy-ai-gateway, external-dns,
-  flux-operator, gatekeeper, grafana-operator, local-path-provisioner,
-  node-feature-discovery, trust-manager, victoria-logs.
-- **`telsha`** — the Darwin-side cluster tree. It uses overlay `tailnet`
-  with component tailscale.
+`nishir` is the main cluster. It runs RKE2 on the Nix fleet under overlay
+`tailnet`, with components kubevirt, longhorn, tailscale, tls, and
+victoriametrics, plus autoscaler, cert-manager, cluster-api, descheduler,
+envoy-gateway, envoy-ai-gateway, external-dns, flux-operator, gatekeeper,
+grafana-operator, local-path-provisioner, node-feature-discovery,
+trust-manager, and victoria-logs.
+
+`telsha` is the Darwin-side cluster tree. It uses overlay `tailnet` with
+component tailscale.
 
 Controllers/operators are installed out-of-band from `bootstraps/` as
 `HelmChart` resources, and Flux reconciles everything else. KubeVirt is
@@ -121,10 +121,13 @@ sequenceDiagram
 
 ## Notes
 
-- VMs need `/dev/kvm` on the node with Intel VT-x or AMD-V support.
-  Scheduling keys off the `nodes.kubevirt.io/resource/kvm` label
-  published via node-feature-discovery.
-- Longhorn PVCs cannot shrink while bound — size them minimally and grow;
-  resizing requires delete pod+pvc+pv for volume-claim template flips.
-- Config overlays each own their Flux `Kustomization`; skaffold render
-  excludes cert material.
+VMs need `/dev/kvm` on the node with Intel VT-x or AMD-V support.
+Scheduling keys off the `nodes.kubevirt.io/resource/kvm` label
+published via node-feature-discovery.
+
+Longhorn PVCs cannot shrink while bound, so size them minimally and
+grow. Resizing requires delete pod+pvc+pv for volume-claim template
+flips.
+
+Config overlays each own their Flux `Kustomization`, and skaffold
+render excludes cert material.

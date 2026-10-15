@@ -38,13 +38,12 @@ flowchart LR
   FADE[fade] -->|WebGPU local| GPU[client GPU]
 ```
 
-- The static-heavy apps www, links, and docs serve from the ASSETS
-  binding. The Worker is a thin shell.
-- fade does its heavy lifting **client-side**: files never leave the
-  machine. EXIF and RAF parsing, demosaic, and rendering run in WebGPU
-  shaders and in Web Workers from the darkroom package.
-- reiya is the only main-branch app with a database, D1 `reiya`,
-  reached through drizzle-orm.
+The static-heavy apps www, links, and docs serve from the ASSETS
+binding. The Worker is a thin shell. fade does its heavy lifting
+**client-side**: files never leave the machine. EXIF and RAF parsing,
+demosaic, and rendering run in WebGPU shaders and in Web Workers from
+the darkroom package. reiya is the only main-branch app with a
+database, D1 `reiya`, reached through drizzle-orm.
 
 **Tailnet service for the operator:**
 
@@ -83,14 +82,14 @@ flowchart LR
   IM["immich (+ml, postgres, valkey)<br/>photos"] --> USER
 ```
 
-- Indexing: prowlarr feeds the *arr apps tracker results.
-- Acquisition: qbittorrent downloads. The xqbit job,
-  `qbittorrent-cleanup`, reaps `missingFiles` and resumes recoverable
-  errored torrents.
-- Organization: the *arr apps import, rename, and manage the library;
-  bazarr/metatube/maintainerr attach subtitles, metadata, and cleanup.
-- Consumption: jellyfin streams, with transcoding on the x86 nodes.
-  immich serves photos with ML tagging from its own model pod.
+prowlarr handles indexing: it feeds the *arr apps tracker results.
+qbittorrent handles acquisition. The xqbit job, `qbittorrent-cleanup`,
+reaps `missingFiles` and resumes recoverable errored torrents. The
+*arr apps handle organization: they import, rename, and manage the
+library, and bazarr/metatube/maintainerr attach subtitles, metadata,
+and cleanup. jellyfin handles consumption, streaming with transcoding
+on the x86 nodes. immich serves photos with ML tagging from its own
+model pod.
 
 ## Inference path: prompt → tokens
 

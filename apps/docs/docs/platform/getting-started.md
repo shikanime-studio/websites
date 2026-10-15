@@ -18,12 +18,11 @@ Zero-to-productive on the Shikanime Studio platform.
 
 ## Prerequisites
 
-- **jj**, Jujutsu — all repos are jj-managed. Bare git commits will
-  fight the tooling
-- **Nix** with flakes — every repo has a `flake.nix` and a devenv shell
-  (`nix develop`)
-- **pnpm ≥ 10** for the websites monorepo
-- **Tailscale** membership in the tailnet
+Four tools gate access to the repos. **jj** (Jujutsu) comes first: all
+repos are jj-managed, and bare git commits will fight the tooling.
+**Nix** with flakes is next — every repo has a `flake.nix` and a devenv
+shell (`nix develop`). The websites monorepo needs **pnpm ≥ 10**.
+Finally, **Tailscale** membership in the tailnet.
 
 ## The repos you touch daily
 
@@ -51,12 +50,15 @@ flowchart LR
 
 ## Conventions that will bite you
 
-- Commits: plain capitalized title, no conventional-commit prefix.
-  Agent-assisted commits carry the Automata co-author trailer.
-  `manifests` and `skills` require `Signed-off-by` (gitlint CC1).
-- Markdown wraps at 80 columns. `nix fmt` runs scoped
-  (`nix fmt apps/<app>`). A whole-tree run dirties ~64 files.
-- jj does not auto-track bookmarks — `jj bookmark track <branch>
-  --remote=origin` before every push.
-- Docusaurus apps must NOT set `"type": "module"` in package.json —
-  webpack mis-parses the codegen and the SSG build crashes.
+Commits use a plain capitalized title, no conventional-commit prefix.
+Agent-assisted commits carry the Automata co-author trailer. `manifests`
+and `skills` require `Signed-off-by` (gitlint CC1).
+
+Markdown wraps at 80 columns. `nix fmt` runs scoped
+(`nix fmt apps/<app>`). A whole-tree run dirties ~64 files.
+
+jj does not auto-track bookmarks — `jj bookmark track <branch>`
+--remote=origin` before every push.
+
+Docusaurus apps must NOT set `"type": "module"` in package.json.
+webpack mis-parses the codegen and the SSG build crashes.

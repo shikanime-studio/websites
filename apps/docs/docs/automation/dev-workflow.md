@@ -38,16 +38,17 @@ flowchart LR
 
 ## jj is the working surface
 
-All org repos are jj-managed. Two rules prevent most damage:
+All org repos are jj-managed. Two rules prevent most damage.
 
-- **Never work in the cloned checkout.** Every unit opens a fresh
-  workspace pinned to the remote tip:
-  `jj workspace add ../<repo>.<unit> -r 'main@origin'`. Concurrent WIP
-  in the checkout never folds into your change.
-- **Pushed bookmarks are immutable.** To rebuild a branch: `jj new` off
-  `main@origin`, `jj restore --from <old>` only the intended files,
-  re-point the bookmark with `--allow-backwards`, push. Always re-diff
-  against `main` — `restore` carries over whatever the old commit held.
+**Never work in the cloned checkout.** Every unit opens a fresh
+workspace pinned to the remote tip:
+`jj workspace add ../<repo>.<unit> -r 'main@origin'`. Concurrent WIP
+in the checkout never folds into your change.
+
+**Pushed bookmarks are immutable.** To rebuild a branch: `jj new` off
+`main@origin`, `jj restore --from <old>` only the intended files,
+re-point the bookmark with `--allow-backwards`, push. Always re-diff
+against `main` — `restore` carries over whatever the old commit held.
 
 jj does not auto-track bookmarks: `jj bookmark track <branch>
 --remote=origin` before `jj git push`, or the push is rejected. A success
@@ -71,19 +72,22 @@ a commit without it is rejected at push.
 
 ## PRs and landing
 
-- PRs open with `--head <org>:<branch>`, where `<org>` is the repo owner
-  and not the login, and body sections `# Why` / `## What` /
-  `## References` restating the commit. Bodies are written to a file and
-  passed via `--body-file` — inline `--body` gets mangled by shell
-  expansion.
-- `main` is protected in both orgs: 1 approval, linear history, signed
-  commits, squash-only. A verbal "lgtm" is the approval signal. After
-  it, `gh pr merge --squash --admin` lands the PR. Self-approval is
-  blocked by the org "Landing protections" ruleset.
-- Duplicate check first: if an open PR already delivers the change, stack
-  on its branch instead of opening another. Stacks land in dependency
-  order, base first.
-- Inside a jj workspace gh has no git remote — pass `-R <org>/<repo>`.
+PRs open with `--head <org>:<branch>`, where `<org>` is the repo owner
+and not the login, and body sections `# Why` / `## What` /
+`## References` restating the commit. Bodies are written to a file and
+passed via `--body-file` — inline `--body` gets mangled by shell
+expansion.
+
+`main` is protected in both orgs: 1 approval, linear history, signed
+commits, squash-only. A verbal "lgtm" is the approval signal. After
+it, `gh pr merge --squash --admin` lands the PR. Self-approval is
+blocked by the org "Landing protections" ruleset.
+
+Check for duplicates first: if an open PR already delivers the change,
+stack on its branch instead of opening another. Stacks land in
+dependency order, base first.
+
+Inside a jj workspace gh has no git remote — pass `-R <org>/<repo>`.
 
 ## Branch classes
 

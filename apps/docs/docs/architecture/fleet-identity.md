@@ -52,13 +52,14 @@ protected-`main` rulesets enforce this as well.
 
 ## Fleet plane: Authelia + LLDAP
 
-- **LLDAP** is the lightweight directory; admin runs via GraphQL on
-  port 17170, reached through a port-forward of `svc/lldap`. Users
-  and groups live here.
-- **Authelia** fronts it as the OIDC SSO for every `*.i.shikanime.studio`
-  service that needs a login, such as Grafana and Forgejo.
-- Cluster workloads register as Authelia OIDC clients. Each app
-  carries its own client credentials in sops.
+LLDAP is the lightweight directory. Admin runs via GraphQL on port 17170,
+reached through a port-forward of `svc/lldap`. Users and groups live
+here.
+
+Authelia fronts it as the OIDC SSO for every `*.i.shikanime.studio`
+service that needs a login, such as Grafana and Forgejo. Cluster
+workloads register as Authelia OIDC clients. Each app carries its own
+client credentials in sops.
 
 ## Tailnet tags as capability tokens
 
@@ -71,17 +72,20 @@ no API keys stored in CI.
 
 ## Secrets: sops everywhere
 
-- At-rest: `secrets/<host>.enc.yaml` per host, age-encrypted,
-  MAC-integrity-checked; editing = decrypt → modify → re-encrypt with
-  the right recipients AND `--encrypted-regex` from metadata.
-- At-render: `sops.templates` materialize env fragments into services,
-  for example `hermes-agent-a2a-token-<peer>`, without writing
-  plaintext to the store.
-- Interactive: Vaultwarden holds human secrets. It is
-  Bitwarden-compatible and synced separately from the fleet.
-- Web: Cloudflare Worker secrets per app, set by `wrangler secret put` —
-  `BETTER_AUTH_SECRET`, `GOOGLE_CLIENT_SECRET` — never in the
-  monorepo.
+At rest, each host keeps `secrets/<host>.enc.yaml`, age-encrypted and
+MAC-integrity-checked. Editing means decrypt, modify, re-encrypt with
+the right recipients AND `--encrypted-regex` from metadata.
+
+At render time, `sops.templates` materialize env fragments into
+services — for example `hermes-agent-a2a-token-<peer>` — without
+writing plaintext to the store.
+
+For interactive use, Vaultwarden holds human secrets. It is
+Bitwarden-compatible and synced separately from the fleet.
+
+On the web, each app sets Cloudflare Worker secrets via
+`wrangler secret put` — `BETTER_AUTH_SECRET`,
+`GOOGLE_CLIENT_SECRET` — never in the monorepo.
 
 ## Persona → commit mapping
 

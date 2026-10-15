@@ -56,12 +56,14 @@ Peers address each other over the tailnet:
 
 - Peer endpoints: `https://<peer>.taila659a.ts.net:8642`
 - Hub expose: `https://a2a.automata.i.shikanime.studio`
-- Ports `9900`/`8642` between tailnet peers are plain HTTP; TLS terminates
-  at the `a2a.<app>.i.shikanime.studio` vanity names.
-- Auth tokens per peer: sops secrets `hermes-agent-a2a-token-<peer>`,
-  materialized into the agent env via `sops.templates`.
-- Per-peer API server keys: `hermes-agent-api-server-key-<peer>` injected
-  as `HERMES_PEER_<NAME>_KEY` env lines.
+
+Ports `9900` and `8642` between tailnet peers are plain HTTP. TLS
+terminates at the `a2a.<app>.i.shikanime.studio` vanity names.
+
+Auth tokens are per peer: sops secrets `hermes-agent-a2a-token-<peer>`,
+materialized into the agent env via `sops.templates`. Per-peer API
+server keys `hermes-agent-api-server-key-<peer>` are injected as
+`HERMES_PEER_<NAME>_KEY` env lines.
 
 Machine-to-workstation links are denied by tailnet ACL — the hub relays.
 

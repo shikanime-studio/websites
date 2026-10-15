@@ -4,14 +4,13 @@ sidebar_position: 2
 
 # Overview
 
-Shikanime Studio operates as two GitHub organizations with a shared identity:
-
-- **Shikanime Studio** (`shikanime-studio`) — public-facing web properties
-  and product work. Owns the `websites` monorepo.
-- **Shikanime Labs** (`shikanime-labs`) — infrastructure, tooling, and
-  automation. Owns `machines`, `manifests`, `skills`, `actions`,
-  `dashboards`, `tailnet`, `knix`, `wharf`, `niximgs`, `automata`,
-  `enhancements`, and more.
+Shikanime Studio operates as two GitHub organizations with a shared
+identity. **Shikanime Studio** (`shikanime-studio`) is the public-facing
+side: web properties and product work. It owns the `websites` monorepo.
+**Shikanime Labs** (`shikanime-labs`) covers infrastructure, tooling,
+and automation. It owns `machines`, `manifests`, `skills`, `actions`,
+`dashboards`, `tailnet`, `knix`, `wharf`, `niximgs`, `automata`,
+`enhancements`, and more.
 
 Cross-org proposals are tracked KEP-style in `shikanime-labs/enhancements`.
 
@@ -61,15 +60,16 @@ erDiagram
 
 ## Conventions
 
-- **Language**: TypeScript for web, Nix for fleet and packages, Go for CLI
-  tooling, YAML for manifests.
-- **Commits**: plain capitalized titles, no conventional-commit prefix.
-  Agent-assisted commits carry the Automata co-author trailer
-  (`automata@shikanime.studio`). `manifests` and `skills` additionally
-  require `Signed-off-by` (gitlint CC1).
-- **Formatting**: `nix fmt` (treefmt) before shipping. Markdown wraps at 80
-  columns.
-- **Landing**: PR + squash. Verbal lgtm is the approval signal.
+The languages are fixed: TypeScript for web, Nix for fleet and
+packages, Go for CLI tooling, YAML for manifests.
+
+Commits use plain capitalized titles, no conventional-commit prefix.
+Agent-assisted commits carry the Automata co-author trailer
+(`automata@shikanime.studio`). `manifests` and `skills` additionally
+require `Signed-off-by` (gitlint CC1).
+
+Run `nix fmt` (treefmt) before shipping. Markdown wraps at 80 columns.
+Landing is PR + squash, and a verbal lgtm is the approval signal.
 
 ## Landing flow
 

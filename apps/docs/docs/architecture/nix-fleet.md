@@ -18,14 +18,12 @@ the source of truth for every host. Layout:
 - `secrets/*.enc.yaml` — sops-nix encrypted secrets, decrypted at
   activation time; some hosts materialize fragments via `sops.templates`
 
-Key profiles:
-
-- **`ai.nix`** — runs the `hermes-agent` service fleet-wide and wires
-  computer-use automation; the `cua-driver` binary for AT-SPI/D-Bus is
-  installed via `flake/nixos.nix` so hermes' `computer-use` extra can drive
-  the desktop.
-- **`nishir.nix`** — the cluster node profile every RKE2 node imports.
-- **`distributed.nix`** — remote builders and build offload settings.
+Key profiles: `ai.nix` runs the `hermes-agent` service fleet-wide and wires
+computer-use automation. The `cua-driver` binary for AT-SPI/D-Bus is
+installed via `flake/nixos.nix` so hermes' `computer-use` extra can drive
+the desktop. `nishir.nix` is the cluster node profile every RKE2 node
+imports, and `distributed.nix` holds remote builders and build offload
+settings.
 
 Flake outputs: `nixosConfigurations.{ashira,manash,nalsha,fushi,minish,nemishi,sashina,kushira,nixtar}`,
 `darwinConfigurations.telsha`, and `packages.<system>.*`. The packages
@@ -33,10 +31,9 @@ include the `automata` containerdisk.
 
 ## Container images
 
-Two sibling repos build the fleet's OCI images from Nix:
-
-- **`wharf`** — builds OCI images from Nix flakes.
-- **`niximgs`** — a Bitnami-style registry of Nix-built images.
+Two sibling repos build the fleet's OCI images from Nix: `wharf` builds
+OCI images from Nix flakes, and `niximgs` is a Bitnami-style registry
+of Nix-built images.
 
 `knix` provides the opinionated RKE2 deployment module used to stand the
 cluster up on the Nix hosts.
