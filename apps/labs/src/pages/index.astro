@@ -1,0 +1,14 @@
+---
+import Footer from '../components/Footer.astro'
+import Hero from '../components/Hero.astro'
+import LabsSections from '../components/LabsSections.astro'
+import BaseLayout from '../layouts/BaseLayout.astro'
+
+export const prerender = true
+---
+
+<BaseLayout>
+  <Hero />
+  <LabsSections />
+  <Footer />
+</BaseLayout>

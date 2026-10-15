@@ -4,9 +4,11 @@ packages:
   - apps/links
   - apps/reiya
   - apps/www
+  - apps/labs
 catalogs:
   build:
     "@astrojs/cloudflare": ^13.7.0
+    "@astrojs/react": ^6.0.6
     "@cloudflare/vite-plugin": ^1.54.3
     "@tailwindcss/vite": ^4.3.3
     "@tanstack/devtools-vite": ^0.5.5
