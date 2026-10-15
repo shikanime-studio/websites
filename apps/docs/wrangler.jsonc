@@ -3,6 +3,13 @@
   "name": "docs",
   "compatibility_date": "2026-09-07",
   "compatibility_flags": ["nodejs_compat"],
+  "routes": [
+    {
+      "pattern": "docs.shikanime.studio",
+      "custom_domain": true,
+      "zone_name": "shikanime.studio",
+    },
+  ],
   "assets": {
     "directory": "./build",
     "not_found_handling": "single-page-application"
