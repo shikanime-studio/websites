@@ -2,14 +2,14 @@
 sidebar_position: 2
 ---
 
-# Identity mesh: web SSO
+# Identity mesh
 
 The web properties are moving from per-app auth to a **central identity
 provider**: the `accounts` app, in flight as
 [PR #366](https://github.com/shikanime-studio/websites/pull/366).
 The work rides branch `feat/accounts-sso` as stacked PRs #306–#327.
 This is separate from the fleet-side SSO built on Authelia and LDAP.
-See [Cluster services](../services/catalog). The web mesh is
+See [Catalog](../services/catalog). The web mesh is
 better-auth based and scoped to `*.shikanime.studio`.
 
 ## accounts — OIDC provider

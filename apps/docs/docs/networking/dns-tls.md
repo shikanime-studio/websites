@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# DNS & TLS
+# Certificates
 
 Two DNS systems and two TLS issuance paths, one per plane, plus the
 known edges where they interact badly.

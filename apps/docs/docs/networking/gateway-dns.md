@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Gateway & DNS
+# Gateways
 
 Shikanime Studio's ingress model is **tailnet-native**: there is no public
 load balancer. Every exposed service gets its own Gateway API `Gateway`
@@ -36,7 +36,7 @@ flowchart TB
   blast radius of one app per gateway
 - **Vanity names** under `*.i.shikanime.studio` route to these
   gateways. The mTLS inference plane is the exception — see
-  [Inference platform](../services/ai-infrastructure).
+  [AI infrastructure](../services/ai-infrastructure).
 - **external-dns** manages DNS records; **cert-manager +
   trust-manager** issue TLS for the gateway hostnames
 - The **tailscale-operator** component wires cluster services into the

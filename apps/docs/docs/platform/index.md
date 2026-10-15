@@ -25,7 +25,7 @@ AI agents:
   the tailnet via A2A, the agent-to-agent protocol, with a KubeVirt VM
   (`automata`) as hub — see the [glossary](../platform/glossary) for every
   term used in this book
-- **Web properties on Cloudflare Workers** — Astro and Docusaurus apps in
+- **Products on Cloudflare Workers** — Astro and Docusaurus apps in
   a pnpm monorepo
 
 Everything described here lives in version control:
@@ -34,7 +34,7 @@ Everything described here lives in version control:
 | -------------- | ---------------------------------------------- |
 | Machines (Nix) | `shikanime-labs/machines`                      |
 | Cluster apps   | `shikanime-labs/manifests`                     |
-| Web properties | `shikanime-studio/websites`                    |
+| Products       | `shikanime-studio/websites`                    |
 | Agent skills   | `shikanime-labs/skills`                        |
 | Org automation | `shikanime-labs/actions`                       |
 | Grafana boards | `shikanime-labs/dashboards`                    |

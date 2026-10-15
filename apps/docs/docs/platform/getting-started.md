@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Getting started
+# Quick start
 
 Zero-to-productive on the Shikanime Studio platform.
 

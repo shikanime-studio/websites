@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Repository catalog
+# Repositories
 
 Every repository in both orgs, grouped by layer.
 
@@ -23,7 +23,7 @@ Every repository in both orgs, grouped by layer.
 
 | Repo       | Purpose                                                          |
 | ---------- | ---------------------------------------------------------------- |
-| `websites` | The pnpm monorepo: www, links, reiya, fade, docs, plus accounts in flight, on Cloudflare Workers — see [Web properties](../products/web-properties) |
+| `websites` | The pnpm monorepo: www, links, reiya, fade, docs, plus accounts in flight, on Cloudflare Workers — see [Products](../products/web-properties) |
 | `hakurei`  | The Touhou MMO: deterministic Rust core, authoritative gRPC server, Bevy thin client — see [Hakurei](../products/hakurei) |
 | `tailscale-gateway` | Kubernetes controller wiring Gateway API → Tailscale Serve |
 

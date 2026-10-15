@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Hardware fleet
+# Hardware
 
 The platform runs on eleven hosts managed by the
 [`machines`](https://github.com/shikanime-labs/machines) flake.

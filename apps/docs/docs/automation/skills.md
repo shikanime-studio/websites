@@ -2,7 +2,7 @@
 sidebar_position: 4
 ---
 
-# Skills catalog
+# Skills
 
 [`shikanime-labs/skills`](https://github.com/shikanime-labs/skills) is
 the org's procedural memory: a curated catalog of self-improved agent
@@ -43,7 +43,7 @@ flowchart LR
 On fleet hosts, `machines`/`skills` Nix modules set
 `services.hermes-agent.settings.skills.external_dirs`, mounting the
 catalog into `~/.hermes/skills` — which is how the agents documented in
-[Hermes agent fleet](./hermes) know the dev loop at all.
+[Automata](./hermes) know the dev loop at all.
 
 ## CI
 

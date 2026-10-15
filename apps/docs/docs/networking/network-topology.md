@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Network topology
+# Topology
 
 Three network domains, deliberately isolated: the public Cloudflare
 edge, the tailnet, and the pod network. Cross-domain traffic exists
@@ -46,7 +46,7 @@ flowchart TB
 There is no public path to any cluster service. The Kubernetes API is
 reached at `nishir-k8s-operator.taila659a.ts.net` — a tailscale-operator
 exposed endpoint — and every per-app Gateway holds a tailnet `100.x`
-address — see [Gateway & DNS](./gateway-dns). Administration from
+address — see [Gateways](./gateway-dns). Administration from
 outside requires tailnet membership first; membership + tag then
 determines reachability via the [ACL](./tailnet).
 

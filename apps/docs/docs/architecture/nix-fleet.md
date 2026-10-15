@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Nix fleet
+# Fleet
 
 [`shikanime-labs/machines`](https://github.com/shikanime-labs/machines) is
 the source of truth for every host. Layout:

@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Hermes agent fleet
+# Automata
 
 Agent automation across the platform runs on **Hermes Agent** instances,
 declared in the machines flake at `modules/nixos/profiles/ai.nix` and

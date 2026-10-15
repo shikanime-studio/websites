@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Hakurei — the MMO
+# Hakurei
 
 `shikanime-studio/hakurei` is the flagship product: a **single-universe
 Touhou MMO with Dofus-like tactical combat** — every player shares one
