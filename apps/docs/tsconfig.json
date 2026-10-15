@@ -1,6 +1,1 @@
-{
-  "extends": "@docusaurus/tsconfig",
-  "compilerOptions": {
-    "baseUrl": "."
-  }
-}
+{ "compilerOptions": { "baseUrl": "." }, "extends": "@docusaurus/tsconfig" }

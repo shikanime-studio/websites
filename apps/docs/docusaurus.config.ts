@@ -53,9 +53,15 @@ const config: Config = {
         },
         {
           type: "docSidebar",
-          sidebarId: "infrastructure",
+          sidebarId: "architecture",
           position: "left",
-          label: "Infrastructure",
+          label: "Architecture",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "networking",
+          position: "left",
+          label: "Networking",
         },
         {
           type: "docSidebar",
@@ -68,6 +74,12 @@ const config: Config = {
           sidebarId: "automation",
           position: "left",
           label: "Automation",
+        },
+        {
+          type: "docSidebar",
+          sidebarId: "products",
+          position: "left",
+          label: "Products",
         },
         {
           href: "https://github.com/shikanime-studio/websites",

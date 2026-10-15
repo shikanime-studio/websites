@@ -77,9 +77,11 @@ flowchart TB
 
 ## Reading order
 
-1. **Platform** — the orgs, the repos, the public web properties, getting
-   started
-2. **Infrastructure** — the metal, the Nix fleet, the clusters, the
-   tailnet
-3. **Services** — what actually runs: media, identity, forge, inference
-4. **Automation** — Hermes agents, the A2A mesh, CI, and repo hygiene
+1. **Platform** — the orgs, the repos, getting started
+2. **Architecture** — system model, the metal, the Nix fleet, the
+   clusters, identity, how data flows end to end
+3. **Networking** — topology, DNS & TLS, the tailnet, gateways
+4. **Services** — the catalog: media, inference, observability
+5. **Automation** — Hermes agents, the A2A mesh, CI, the dev workflow,
+   the skills catalog
+6. **Products** — Hakurei, the web properties, the identity mesh

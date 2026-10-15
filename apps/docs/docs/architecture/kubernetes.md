@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 ---
 
 # Kubernetes
@@ -21,7 +21,8 @@ holds all cluster state as Kustomize trees, applied by Flux.
 Controllers/operators are installed out-of-band from `bootstraps/`
 (`HelmChart` resources), Flux reconciles everything else. KubeVirt is the
 one exception to the HelmRelease pattern: version-pinned operator manifest
-+ `KubeVirt` CR under `infrastructure/kubevirt/`, because KubeVirt ships
+
+- `KubeVirt` CR under `infrastructure/kubevirt/`, because KubeVirt ships
 no official Helm chart.
 
 ## Repo layout
