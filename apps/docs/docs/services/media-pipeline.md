@@ -39,12 +39,13 @@ sequenceDiagram
   JF-->>U: streamable
 ```
 
-- The *arr apps own the library layout. jellyfin only reads it.
-- Downloads land on host paths (`/mnt/patchouli`), libraries on
-  Longhorn PVCs — the import step is the boundary.
-- `xqbit` (`qbittorrent-cleanup`) runs as a sidecar loop: reaps
-  `missingFiles` torrents and resumes recoverable errored ones.
-  Config comes via `QBT_URL`/`QBT_USER`/`QBT_PASSWORD`.
+The *arr apps own the library layout. jellyfin only reads it. Downloads
+land on host paths (`/mnt/patchouli`) while libraries sit on Longhorn
+PVCs. The import step is the boundary between the two.
+
+`xqbit` (`qbittorrent-cleanup`) runs as a sidecar loop: it reaps
+`missingFiles` torrents and resumes recoverable errored ones. Config
+comes via `QBT_URL`/`QBT_USER`/`QBT_PASSWORD`.
 
 ## Images
 

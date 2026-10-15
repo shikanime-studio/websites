@@ -87,28 +87,33 @@ flowchart TB
 
 ## History: why this shape
 
-- **Ollama era, 2024** — single-model serving on the cluster. PVs
-  moved around by hand. First appearance of "GPU node" scheduling.
-- **llama.cpp single node, 2025 to 2026** — `llama-server` per model,
-  GGUFs prefetched by init containers into emptyDir. `models-preset.ini`
-  maps gateway model names to local files.
-- **RPC pair experiment, Sep 2026** — two llama.cpp processes bridged
-  over RPC as `rpc-head` + `rpc-worker`, with macvlan `br1` attach and
-  chunked prefill tuning, to pool both Halos for one model. Deep effort:
-  health probes on pod IPs, cache on local-path, RPC-peer alerts.
-  Verdict: workable but prefill-bound — long prompts starved decode.
-- **halogen-flash cutover, Sep 30 in #2703** — peonist
-  `halogen-flash-server` adopted from a live evaluation in #2701:
-  **10–20× prefill, 3× decode, 13× lower TTFT** — time-to-first-token —
-  **at 32K depth** vs the
-  RPC baseline, on a *single* node. The RPC pair was removed the same
-  day. Final removal landed Oct 6 in #2774. The route for
-  `qwen/qwen3.8-flash` points at halogen with nous/openrouter as
-  fallback tiers.
-- **llama-cpp residual role, Oct 12 in #2875** — scaled to one
-  replica, embeddings only (`qwen/qwen3-embedding-8b`, Q6_K,
-  `n-gpu-layers 999` = fully offloaded to the iGPU). LLM serving is
-  halogen's job now.
+The **Ollama era, 2024** was single-model serving on the cluster. PVs
+moved around by hand, and "GPU node" scheduling appeared for the first
+time.
+
+The **llama.cpp single node era, 2025 to 2026** ran `llama-server` per
+model, with GGUFs prefetched by init containers into emptyDir.
+`models-preset.ini` mapped gateway model names to local files.
+
+The **RPC pair experiment, Sep 2026** bridged two llama.cpp processes
+over RPC as `rpc-head` + `rpc-worker`, with macvlan `br1` attach and
+chunked prefill tuning, to pool both Halos for one model. It was a deep
+effort: health probes on pod IPs, cache on local-path, RPC-peer alerts.
+The verdict was workable but prefill-bound — long prompts starved
+decode.
+
+The **halogen-flash cutover, Sep 30 in #2703** adopted peonist
+`halogen-flash-server` from a live evaluation in #2701. It delivered
+**10–20× prefill, 3× decode, 13× lower TTFT** — time-to-first-token —
+**at 32K depth** vs the RPC baseline, on a *single* node. The RPC pair
+was removed the same day, and final removal landed Oct 6 in #2774. The
+route for `qwen/qwen3.8-flash` points at halogen with nous/openrouter as
+fallback tiers.
+
+The **llama-cpp residual role, Oct 12 in #2875** scaled it to one
+replica, embeddings only (`qwen/qwen3-embedding-8b`, Q6_K,
+`n-gpu-layers 999` = fully offloaded to the iGPU). LLM serving is
+halogen's job now.
 
 The lesson the platform took: on unified-memory APUs the bottleneck is
 prefill bandwidth, not weight capacity — an engine built for the memory
@@ -116,28 +121,34 @@ model beats clustering general-purpose servers.
 
 ## Gateway plane (`apps/inference`)
 
-- `Gateway/inference` (ns `shikanime`): client auth is API-key
-  based — `SecurityPolicy/inference-apikey` checks gateway-issued keys
-  from `Secret/inference-key`, one key per client identity. Upstream
-  provider keys are NOT client credentials — they 401. TLS client-cert
-  validation is configured on the EnvoyProxy listener plane.
-- `AIGatewayRoute default`: `x-ai-eg-model` header → backend chain,
-  each with `modelNameOverride`:
-  `qwen/qwen3.8-flash` → halogen at priority p0 → nous → openrouter;
-  `z-ai/glm-5.3-flash` → z-ai-openai → nous;
-  `qwen/qwen3-embedding-8b` → llama-cpp → nous → openrouter.
-  A catch-all `.*` route and further model routes for mistral and
-  glm-5.3 exist — read `aigatewayroute.yaml` for the live table.
-- `Backend`/`AIServiceBackend` CRs resolve each tier: halogen via
-  headless svc :8731. Remote providers use their own key-injecting
-  `BackendSecurityPolicy`s.
-- Timeouts: `AIGatewayRoute` rules set `request: 0s`, disabled —
-  generation length is unbounded at the route. The llama-cpp HTTPRoutes
-  carry the 600 s cap instead.
-- Known edges: `/mcp/z-ai` 500s from an ai-gateway v1.1.0 MCP header
-  gap, tracked in manifests#1894. Anthropic-schema backends are only
-  reachable via `/anthropic/v1/messages`. There is no
-  OpenAI-to-Anthropic translation.
+`Gateway/inference` (ns `shikanime`) authenticates clients by API key.
+`SecurityPolicy/inference-apikey` checks gateway-issued keys from
+`Secret/inference-key`, one key per client identity. Upstream provider
+keys are NOT client credentials — they 401. TLS client-cert validation
+is configured on the EnvoyProxy listener plane.
+
+`AIGatewayRoute default` maps the `x-ai-eg-model` header to a backend
+chain, each with `modelNameOverride`:
+
+- `qwen/qwen3.8-flash` → halogen at priority p0 → nous → openrouter
+- `z-ai/glm-5.3-flash` → z-ai-openai → nous
+- `qwen/qwen3-embedding-8b` → llama-cpp → nous → openrouter
+
+A catch-all `.*` route and further model routes for mistral and glm-5.3
+exist — read `aigatewayroute.yaml` for the live table.
+
+`Backend`/`AIServiceBackend` CRs resolve each tier: halogen via headless
+svc :8731. Remote providers use their own key-injecting
+`BackendSecurityPolicy`s.
+
+On timeouts, `AIGatewayRoute` rules set `request: 0s`, disabled, so
+generation length is unbounded at the route. The llama-cpp HTTPRoutes
+carry the 600 s cap instead.
+
+Known edges: `/mcp/z-ai` 500s from an ai-gateway v1.1.0 MCP header gap,
+tracked in manifests#1894. Anthropic-schema backends are only reachable
+via `/anthropic/v1/messages`. There is no OpenAI-to-Anthropic
+translation.
 
 ## Observability
 

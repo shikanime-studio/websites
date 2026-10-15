@@ -33,14 +33,13 @@ better-auth based and scoped to `*.shikanime.studio`.
 ## auth-shared — session reader
 
 `packages/auth-shared`, from the same PR stack, gives every sibling app a
-one-call session read across subdomains:
-
-- `SESSION_COOKIE_NAME` (`better-auth.session_token`),
-  `getSessionToken()` raw cookie extractor
-- `getSession()` resolves the signed-in user from the shared
-  `.shikanime.studio` cookie against the accounts IdP at
-  `https://accounts.shikanime.studio`, with a 2500 ms timeout
-- Consumed by `fade`, `links`, and `www` via PRs #322, #324, and #342
+one-call session read across subdomains. It exposes
+`SESSION_COOKIE_NAME` (`better-auth.session_token`) and the raw cookie
+extractor `getSessionToken()`. Its `getSession()` resolves the signed-in
+user from the shared `.shikanime.studio` cookie against the accounts IdP
+at `https://accounts.shikanime.studio`, with a 2500 ms timeout. The
+package is consumed by `fade`, `links`, and `www` via PRs #322, #324,
+and #342.
 
 ```mermaid
 sequenceDiagram
@@ -64,10 +63,11 @@ accounts in PR #315, with an OIDC regression harness in PR #316.
 
 ## Stack notes
 
-- The PR stack was originally ghstack-shaped but the `orig` refs are
-  broken on the remote — new work stacks as plain PRs with
-  `--base gh/shikanime/<tip#>/base`. GitHub retargets to `main` as
-  lower PRs land
-- `apps/accounts` is **not on main** — every main Workers build of it
-  fails `root directory not found` until #366 lands. The other four
-  apps deploy cleanly from `main`
+The PR stack was originally ghstack-shaped but the `orig` refs are
+broken on the remote. New work stacks as plain PRs with
+`--base gh/shikanime/<tip#>/base`. GitHub retargets to `main` as
+lower PRs land.
+
+`apps/accounts` is **not on main** — every main Workers build of it
+fails `root directory not found` until #366 lands. The other four
+apps deploy cleanly from `main`.
