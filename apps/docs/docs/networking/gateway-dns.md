@@ -11,8 +11,8 @@ by the ACL repo.
 
 ## The pattern
 
-Live state: **38 Gateways Programmed**, ~110 HTTPRoutes. The
-`shikanime` namespace alone hosts 30 per-app gateways (authelia,
+Live state: **40 Gateways** (39 Programmed), 104 HTTPRoutes. The
+`shikanime` namespace alone hosts 34 per-app gateways (authelia,
 forgejo, immich, jellyfin, the *arr stack, synapse, llama-cpp,
 inference, hermes-agent, honcho, ...), plus gateways for
 Grafana/VictoriaLogs, Longhorn, and Flux.
@@ -36,7 +36,7 @@ flowchart TB
   blast radius of one app per gateway
 - **Vanity names** under `*.i.shikanime.studio` route to these
   gateways; the mTLS inference plane is the exception (see
-  [Inference platform](../services/inference))
+  [Inference platform](../services/ai-infrastructure))
 - **external-dns** manages DNS records; **cert-manager +
   trust-manager** issue TLS for the gateway hostnames
 - The **tailscale-operator** component wires cluster services into the

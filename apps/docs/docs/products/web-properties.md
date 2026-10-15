@@ -14,7 +14,7 @@ monorepo and deploy to **Cloudflare Workers** via git integration on `main`
 | `links` | links.shikanime.studio         | Astro, link hub / landing page         |
 | `fade`  | fade.shikanime.studio          | Local WebGPU image viewer (TanStack)   |
 | `reiya` | reiya.shikanime.studio         | Merch / community site (Astro)         |
-| `docs`  | this site                      | Docusaurus 3, Workers static assets    |
+| `docs`  | this site                      | Docusaurus 3, Workers assets (manual wrangler deploy) |
 
 ## Monorepo schema
 

@@ -32,7 +32,7 @@ flowchart TB
 
   subgraph cluster["nishir cluster — 8 RKE2 nodes"]
     FLUX[flux-operator<br/>+ controllers]
-    APPS["31 apps / 18 operators<br/>Longhorn · Envoy GW · VM/VL"]
+    APPS["32 apps / 20 operators<br/>Longhorn · Envoy GW · VM/VL"]
     FLUX --> APPS
   end
 

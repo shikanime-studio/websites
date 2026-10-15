@@ -19,7 +19,7 @@ the `nishir` cluster:
 
 | App              | Purpose                                        |
 | ---------------- | ---------------------------------------------- |
-| `forgejo`        | Git forge (shares one image digest with `gitea-mirror`) |
+| `forgejo`        | Git forge (codeberg rootless image)               |
 | `gitea-mirror`   | Repository mirroring                           |
 | `synapse`        | Matrix homeserver (`matrix.taila659a.ts.net`)  |
 | `mautrix`        | Matrix bridges                                 |
@@ -40,7 +40,8 @@ the `nishir` cluster:
 | App               | Purpose                                          |
 | ----------------- | ------------------------------------------------ |
 | `inference`       | mTLS inference gateway (Envoy AI Gateway)        |
-| `llama-cpp`       | llama.cpp serving (LWS router mode on Halo nodes) |
+| `llama-cpp`       | llama.cpp embedding server (Qwen3-Embedding-8B)  |
+| `halogen-flash`   | Strix Halo LLM engine (qwen3.8-flash w4b) — see [AI infrastructure](./ai-infrastructure) |
 | `honcho`          | Agent memory (`honcho-postgres`, `honcho-deriver`) |
 | `automata`        | Agent VM plane — see [Automation](../automation/hermes) |
 
@@ -50,7 +51,6 @@ the `nishir` cluster:
 | ----------------------- | ------------------------------------------ |
 | `blackbox`              | Blackbox SLO probes                        |
 | `grafana-image-renderer`| Grafana rendering backend                  |
-| `halogen-flash`         | Fleet flash/dashboard tooling              |
 | `blocky`                | DNS                                        |
 
 Dashboards are pinned by tag from `shikanime-labs/dashboards`; alerting

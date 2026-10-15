@@ -55,9 +55,8 @@ protected-`main` rulesets.
   17170 (port-forward `svc/lldap`). Users and groups live here.
 - **Authelia** fronts it as the OIDC SSO for every `*.i.shikanime.studio`
   service that needs a login (Grafana, Forgejo, ...).
-- Cluster workloads register as Authelia OIDC clients; the
-  authelia+gitea-mirror pair shares one image digest — never
-  bulk-replace it.
+- Cluster workloads register as Authelia OIDC clients (each app
+  carries its own client credentials in sops).
 
 ## Tailnet tags as capability tokens
 

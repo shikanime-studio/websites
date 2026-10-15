@@ -1,5 +1,5 @@
 ---
-sidebar_position: 6
+sidebar_position: 7
 ---
 
 # Dataflow
@@ -60,7 +60,7 @@ flowchart LR
 ```mermaid
 flowchart LR
   A1[agent manash] -->|":9900 plain http<br/>tailnet-only"| HUB
-  A2[agent telsha] -->|":8642 ws, hub trust"| HUB["automata VM hub<br/>a2a.automata.i"]
+  A2[agent telsha] -->|":8642 plain http<br/>hub trust"| HUB["automata VM hub<br/>a2a.automata.i"]
   HUB -->|relay| A2
   A1 -.->|"direct machine→ws DENIED by ACL"| A2
 ```
@@ -96,16 +96,15 @@ flowchart LR
 ```mermaid
 flowchart LR
   C[client/agent] -->|"mTLS required<br/>bare probe = 000"| EGW["Envoy AI Gateway<br/>AIGatewayRoute"]
-  EGW -->|preset route| LWS["llama-cpp LWS router<br/>rpc-head"]
-  LWS -->|"leader→worker"| W1["kushira worker<br/>8060S"]
-  LWS --> W2["sashina worker<br/>8060S"]
-  W1 & W2 -->|"weights+KV ≤ 128 GiB GTT"| TOK[tokens]
+  EGW -->|"x-ai-eg-model"| HF["halogen-flash-0/1<br/>one per Halo node"]
+  EGW -->|"fallback tier"| REM["nous · openrouter"]
+  EGW -->|embeddings| LC["llama-cpp-0<br/>Qwen3-Embedding-8B"]
 ```
 
-Model selection rides a ConfigMap consumed by the Backend /
-AIServiceBackend CRs; capacity is bounded by the Halo GTT budget shared
-between weights and KV cache (see
-[Inference platform](../services/inference)).
+Model selection is the x-ai-eg-model header; each route is a backend
+chain with remote-provider fallback tiers. The binding constraint is the
+Halo unified GTT pool shared between weights and KV cache — full story
+in [AI infrastructure](../services/ai-infrastructure).
 
 ## Observability path (signal → dashboard)
 

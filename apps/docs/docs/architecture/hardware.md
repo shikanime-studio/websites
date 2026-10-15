@@ -51,7 +51,7 @@ The x86 server nodes and ARM nodes share the `nishir.nix` cluster profile:
 Tailscale, SSH, Avahi, firewall, distributed build wiring, and the imports
 every node shares (ai, distributed, forgejo, server). The Strix Halo nodes
 (kushira/sashina) carry the local inference workload (see
-[Inference](../services/inference)).
+[Inference](../services/ai-infrastructure)).
 
 `automata` is the odd one out: a NixOS image built as a containerdisk and
 run as a KubeVirt virtual machine in the cluster — it hosts the agent
