@@ -3,28 +3,28 @@ sidebar_position: 1
 slug: /
 ---
 
-# Introduction
+# Platform
 
-This handbook documents the Shikanime platform **from zero**: who we are,
+This handbook documents the Shikanime Studio platform **from zero**: who we are,
 what hardware runs it, how it is configured, what services it hosts, and
 how agents automate it. Every claim here is sourced from the actual
 repositories — `machines`, `manifests`, `websites`, `skills`, `actions`.
 
 ## The 30-second version
 
-Shikanime is a personal platform operated by one engineer and a fleet of
+Shikanime Studio is a personal platform operated by one engineer and a fleet of
 AI agents:
 
-- **Two GitHub orgs** — Studio (public web) and Labs (infrastructure)
+- **Two GitHub orgs** — Studio for public web, Labs for infrastructure
 - **Eleven Nix-managed hosts** — x86 minis, Raspberry Pis, two Strix Halo
   inference nodes, a laptop, a Mac, one KubeVirt VM
 - **One RKE2 cluster** (`nishir`) declaratively managed by Flux from Git
 - **Dozens of self-hosted services** — media, identity, git forge, Matrix,
   local LLM inference
 - **An agent mesh** — Hermes Agent instances on every host, peered over
-  the tailnet via A2A (agent-to-agent protocol), with a KubeVirt VM
-  (`automata`) as hub — see the [glossary](../platform/glossary) for every term
-  used in this book
+  the tailnet via A2A, the agent-to-agent protocol, with a KubeVirt VM
+  (`automata`) as hub — see the [glossary](../platform/glossary) for every
+  term used in this book
 - **Web properties on Cloudflare Workers** — Astro and Docusaurus apps in
   a pnpm monorepo
 
@@ -86,4 +86,4 @@ flowchart TB
 3. **Networking** — topology, DNS & TLS, the tailnet, gateways
 4. **Services** — the catalog, the AI infrastructure, media, observability
 5. **Automation** — Hermes agents, CI, the dev workflow, the skills catalog
-6. **Products** — Hakurei, the web properties, the identity mesh
+6. **Products** — Hakurei, the identity mesh, the web properties

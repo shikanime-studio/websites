@@ -4,19 +4,23 @@ sidebar_position: 2
 
 # CI & repo automation
 
+Every Shikanime Studio repository runs the same continuous-integration
+grammar, driven by the reusable actions in `shikanime-labs/actions`.
+
 ## GitHub Actions
 
-`shikanime-labs/actions` provides the reusable actions every repo consumes
-(pinned at v9): `nix/setup`, `nix/integration`, `checkout`, `direnv`,
-`pnpm/integration`, plus `flux`, `skaffold`, `land`, `rebase`, `backport`,
-`release`, `run`, `command`, `checks`, `cleanup`, `close`. Draft PRs skip
-nix/skaffold jobs — mark a PR ready to arm them; a wedged run is un-stuck
-by cancel + empty commit.
+`shikanime-labs/actions`, pinned at v9, provides the reusable actions
+every repo consumes: `nix/setup`, `nix/integration`, `checkout`,
+`direnv`, `pnpm/integration`, plus `flux`, `skaffold`, `land`, `rebase`,
+`backport`, `release`, `run`, `command`, `checks`, `cleanup`, `close`.
+Draft PRs skip nix/skaffold jobs — mark a PR ready to arm them; a wedged
+run is un-stuck by cancel + empty commit.
 
-The `websites` repo runs `integration.yaml` calling `javascript.yaml`
-(`build` + recursive `build-workspace` via `pnpm/integration`) and
-`nix.yaml` (flake checks + packages, Cachix `shikanime-studio`), plus
-`triage`, `commands`, `cleanup`, and `release` workflows.
+The `websites` repo runs `integration.yaml`, which calls
+`javascript.yaml` for `build` plus recursive `build-workspace` via
+`pnpm/integration`, and `nix.yaml` for flake checks plus packages with
+Cachix `shikanime-studio`. It also runs `triage`, `commands`, `cleanup`,
+and `release` workflows.
 
 ```mermaid
 flowchart TB
@@ -30,14 +34,12 @@ flowchart TB
 
 ## Automata CLI
 
-[`automata`](https://github.com/shikanime-labs/automata) (Go) keeps
-repositories tidy:
+The [`automata`](https://github.com/shikanime-labs/automata) CLI is
+written in Go. It keeps repositories tidy:
 
 - bumps kustomize image tags + recommended labels in `kustomization.yaml`
 - bumps GitHub Actions versions in `.github/workflows`
 - runs discovered `update.sh` scripts
-
-It ships as a GitHub Action (`automata-action`) for hands-free landing.
 
 ## Renovate
 
@@ -49,4 +51,4 @@ status is a non-required legacy check.
 
 Cloudflare Workers Builds deploy `main` on push. A deploy is verified by
 the build log's `Uploaded`/`Deployed` lines — never by the green check
-alone (a wrong path filter exits green while building nothing).
+alone. A wrong path filter exits green while building nothing.

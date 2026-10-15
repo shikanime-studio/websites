@@ -5,8 +5,8 @@ sidebar_position: 3
 # Web properties
 
 All public web properties live in the `shikanime-studio/websites` pnpm
-monorepo and deploy to **Cloudflare Workers** via git integration on `main`
-(Workers Builds). Each app has its own `wrangler.jsonc`.
+monorepo and deploy to **Cloudflare Workers** via git integration on
+`main`, using Workers Builds. Each app has its own `wrangler.jsonc`.
 
 | App     | URL                            | Stack                                  |
 | ------- | ------------------------------ | -------------------------------------- |
@@ -14,7 +14,7 @@ monorepo and deploy to **Cloudflare Workers** via git integration on `main`
 | `links` | links.shikanime.studio         | Astro, link hub / landing page         |
 | `fade`  | fade.shikanime.studio          | Local WebGPU image viewer (TanStack)   |
 | `reiya` | reiya.shikanime.studio         | Merch / community site (Astro)         |
-| `docs`  | this site                      | Docusaurus 3, Workers assets (manual wrangler deploy) |
+| `docs`  | this site                      | Docusaurus 3, Workers assets, manual wrangler deploy |
 
 ## Monorepo schema
 
@@ -45,8 +45,8 @@ flowchart LR
 
 ## Dependency catalogs
 
-Versions are centralized in `pnpm-workspace.yaml` catalogs — apps never pin
-plain specifiers (an ESLint rule enforces it):
+Versions are centralized in `pnpm-workspace.yaml` catalogs — an ESLint
+rule enforces it, so apps never pin plain specifiers:
 
 | Catalog    | Holds                                                    |
 | ---------- | -------------------------------------------------------- |
@@ -58,15 +58,15 @@ plain specifiers (an ESLint rule enforces it):
 | `script`   | tsx, drizzle-kit, better-sqlite3                         |
 
 `trustPolicy: no-downgrade` blocks packages whose newer version lost
-provenance evidence; exceptions are explicit in `trustPolicyExclude`.
+provenance evidence. Exceptions are explicit in `trustPolicyExclude`.
 
 ## CI and deploy
 
-CI runs `pnpm/integration` (check → lint → build) plus a treefmt gate.
+CI runs `pnpm/integration` — check, lint, build — plus a treefmt gate.
 Deploy is push-to-main → Workers Builds. Verify a deploy by the build
-log's `Uploaded`/`Deployed` lines — never by the green check alone (a
-wrong path filter exits green while building nothing; filter by package
-name `--filter @shikanime-studio/<x>`, not directory).
+log's `Uploaded`/`Deployed` lines — never by the green check alone. A
+wrong path filter exits green while building nothing. Filter by
+package name `--filter @shikanime-studio/<x>`, not directory.
 
 ```mermaid
 sequenceDiagram

@@ -4,10 +4,10 @@ sidebar_position: 3
 
 # Dev workflow
 
-Every Shikanime repo runs the same loop: jj workspaces, plain-English
+Every Shikanime Studio repo runs the same loop: jj workspaces, plain-English
 commits with trailers, PRs to protected `main`, squash landing. The loop
-is codified in the `sks-*` skill family (`shikanime-labs/skills`) and is
-identical for humans and agents.
+is codified in the `sks-*` skill family of `shikanime-labs/skills` and
+is identical for humans and agents.
 
 ## Lifecycle
 
@@ -56,28 +56,30 @@ equals local `@`.
 
 ## Commit envelope
 
-Plain capitalized title (no conventional-commit prefix), body with
-labels (`Design:`, `Related:`, `Issue:` per the repo's `AGENTS.md`), plus
-two trailers on agent-assisted commits:
+Plain capitalized title with no conventional-commit prefix, body with
+the labels `Design:`, `Related:`, `Issue:` per the repo's `AGENTS.md`,
+plus trailers. The `Co-authored-by: Automata` trailer appears only on
+commits that used the automata agent or the inference infrastructure.
 
 ```text
 Co-authored-by: Automata <automata@shikanime.studio>
 Signed-off-by: <contributor> <email>
 ```
 
-`manifests` and `skills` enforce `Signed-off-by` via gitlint (CC1) — a
-commit without it is rejected at push.
+`manifests` and `skills` enforce `Signed-off-by` via gitlint rule CC1 —
+a commit without it is rejected at push.
 
 ## PRs and landing
 
-- PRs open with `--head <org>:<branch>` (the repo owner, not the login)
-  and body sections `# Why` / `## What` / `## References` restating the
-  commit. Bodies are written to a file and passed via `--body-file` —
-  inline `--body` gets mangled by shell expansion.
+- PRs open with `--head <org>:<branch>`, where `<org>` is the repo owner
+  and not the login, and body sections `# Why` / `## What` /
+  `## References` restating the commit. Bodies are written to a file and
+  passed via `--body-file` — inline `--body` gets mangled by shell
+  expansion.
 - `main` is protected in both orgs: 1 approval, linear history, signed
-  commits, squash-only. A verbal "lgtm" is the approval signal; after it,
-  `gh pr merge --squash --admin` lands (self-approval is blocked by the
-  org "Landing protections" ruleset).
+  commits, squash-only. A verbal "lgtm" is the approval signal. After
+  it, `gh pr merge --squash --admin` lands the PR. Self-approval is
+  blocked by the org "Landing protections" ruleset.
 - Duplicate check first: if an open PR already delivers the change, stack
   on its branch instead of opening another. Stacks land in dependency
   order, base first.
@@ -95,10 +97,11 @@ commit without it is rejected at push.
 
 ## Formatting
 
-`nix fmt` (treefmt) reformats the whole tree per run — scope it
-(`nix fmt apps/<app>`) and restore anything outside your change before
-committing. Markdown wraps at 80 columns; never skip the formatter, and
-never run it over GitHub issue/PR bodies (free text, exempt).
+`nix fmt` runs treefmt over the whole tree per run — scope it to your
+app with `nix fmt apps/<app>` and restore anything outside your change
+before committing. Markdown wraps at 80 columns; never skip the formatter, and
+never run it over GitHub issue/PR bodies. Those bodies are free text
+and are exempt.
 
 ## Verification before "done"
 

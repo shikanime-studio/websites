@@ -16,17 +16,17 @@ records why each layer exists.
 | ------------------- | ------------------------------------------------- |
 | Nodes               | `kushira`, `sashina` — Minisforum MS-S1 Max       |
 | APU                 | AMD Strix Halo, Radeon 8060S iGPU (gfx1151)       |
-| Memory              | 128 GiB LPDDR5X **unified** (no VRAM split)       |
-| GPU memory model    | GTT (Graphics Translation Table) — GPU shares host RAM |
-| Allocatable to k8s  | ~116 GiB per node (capacity 125 GiB)              |
+| Memory              | 128 GiB LPDDR5X **unified**, no VRAM split       |
+| GPU memory model    | GTT, the Graphics Translation Table — GPU shares host RAM |
+| Allocatable to k8s  | ~116 GiB per node of a 125 GiB capacity          |
 | Scheduling label    | `node.kubernetes.io/instance-type: minisforum-ms-s1` |
 
 The single design fact everything else derives from: **unified memory**.
-The 8060S and the CPU share one 128 GiB pool (GTT), so "VRAM" is a
+The 8060S and the CPU share one 128 GiB GTT pool, so "VRAM" is a
 policy decision, not a hardware boundary. A model that fits RAM can be
-served; anything else must be quantized or routed elsewhere.
+served. Anything else must be quantized or routed elsewhere.
 
-## Serving path (live shape, Oct 2026)
+## Serving path — live shape, Oct 2026
 
 ```mermaid
 flowchart TB
@@ -62,14 +62,14 @@ flowchart TB
 
 1. **Weights arrive** via an init prefetch into a local-path PVC
    (`cache-huggingface`, 128–256 GiB) — `qwen38-flash-next-w4b.hgn`
-   is 115.5 GiB including the MTP (multi-token-prediction) sidecar and
+   is 115.5 GiB including the multi-token-prediction MTP sidecar and
    tokenizer. The engine
-   container itself makes **no outbound connections** (no runtime
-   downloads; the cache claim is mounted at the default HF path).
-2. **Weights lock** ~68 GiB of the node's unified memory (w4b
-   checkpoint + KV pool reservation). The k8s memory request is 80 GiB
+   container itself makes **no outbound connections**. No runtime
+   downloads happen. The cache claim is mounted at the default HF path.
+2. **Weights lock** ~68 GiB of the node's unified memory from the w4b
+   checkpoint plus the KV pool reservation. The k8s memory request is 80 GiB
    so the scheduler reserves practically the whole node. VPA was scoped
-   to CPU only (#2711) — memory is pinned, not autoscaled. One engine
+   to CPU only in #2711 — memory is pinned, not autoscaled. One engine
    per node: `podAntiAffinity` on `kubernetes.io/hostname` across the
    2-replica StatefulSet.
 3. **Decode** runs on the iGPU over ROCm (`/dev/kfd`, `/dev/dri`
@@ -81,31 +81,31 @@ flowchart TB
    (`BackendTrafficPolicy halogen-flash-affinity`) so a conversation's
    KV stays warm on the node that built it.
 5. **Requests** enter through the tailnet-only Gateway VIP, present a
-   client certificate (bare probes die at TLS with `000` — by design)
+   client certificate — bare probes die at TLS with `000`, by design —
    plus a gateway-issued `sk-infer` key, and carry
    `x-ai-eg-model` for route selection.
 
-## Why this shape (history)
+## History: why this shape
 
-- **Ollama era (2024)** — single-model serving on the cluster; PVs
+- **Ollama era, 2024** — single-model serving on the cluster. PVs
   moved around by hand. First appearance of "GPU node" scheduling.
-- **llama.cpp single node (2025→2026)** — `llama-server` per model,
-  GGUFs prefetched by init containers into emptyDir; `models-preset.ini`
+- **llama.cpp single node, 2025 to 2026** — `llama-server` per model,
+  GGUFs prefetched by init containers into emptyDir. `models-preset.ini`
   maps gateway model names to local files.
-- **RPC pair experiment (Sep 2026)** — two llama.cpp processes bridged
-  over RPC (`rpc-head` + `rpc-worker`, macvlan `br1` attach, chunked
-  prefill tuning) to pool both Halos for one model. Deep effort:
+- **RPC pair experiment, Sep 2026** — two llama.cpp processes bridged
+  over RPC as `rpc-head` + `rpc-worker`, with macvlan `br1` attach and
+  chunked prefill tuning, to pool both Halos for one model. Deep effort:
   health probes on pod IPs, cache on local-path, RPC-peer alerts.
   Verdict: workable but prefill-bound — long prompts starved decode.
-- **halogen-flash cutover (Sep 30, #2703)** — peonist
-  `halogen-flash-server` adopted from a live evaluation (#2701):
-  **10–20× prefill, 3× decode, 13× lower TTFT** (time-to-first-token)
+- **halogen-flash cutover, Sep 30 in #2703** — peonist
+  `halogen-flash-server` adopted from a live evaluation in #2701:
+  **10–20× prefill, 3× decode, 13× lower TTFT** — time-to-first-token —
   **at 32K depth** vs the
   RPC baseline, on a *single* node. The RPC pair was removed the same
-  day (final removal landed Oct 6, #2774); the route for
+  day. Final removal landed Oct 6 in #2774. The route for
   `qwen/qwen3.8-flash` points at halogen with nous/openrouter as
   fallback tiers.
-- **llama-cpp residual role (Oct 12, #2875)** — scaled to one
+- **llama-cpp residual role, Oct 12 in #2875** — scaled to one
   replica, embeddings only (`qwen/qwen3-embedding-8b`, Q6_K,
   `n-gpu-layers 999` = fully offloaded to the iGPU). LLM serving is
   halogen's job now.
@@ -118,25 +118,26 @@ model beats clustering general-purpose servers.
 
 - `Gateway/inference` (ns `shikanime`): client auth is API-key
   based — `SecurityPolicy/inference-apikey` checks gateway-issued keys
-  from `Secret/inference-key` (one key per client identity; upstream
-  provider keys are NOT client credentials — they 401). TLS client-cert
+  from `Secret/inference-key`, one key per client identity. Upstream
+  provider keys are NOT client credentials — they 401. TLS client-cert
   validation is configured on the EnvoyProxy listener plane.
 - `AIGatewayRoute default`: `x-ai-eg-model` header → backend chain,
   each with `modelNameOverride`:
-  `qwen/qwen3.8-flash` → halogen (p0) → nous → openrouter;
+  `qwen/qwen3.8-flash` → halogen at priority p0 → nous → openrouter;
   `z-ai/glm-5.3-flash` → z-ai-openai → nous;
   `qwen/qwen3-embedding-8b` → llama-cpp → nous → openrouter.
-  A catch-all `.*` route and further model routes (mistral, glm-5.3)
-  exist — read `aigatewayroute.yaml` for the live table.
-- `Backend`/`AIServiceBackend` CRs resolve each tier (halogen via
-  headless svc :8731; remote providers with their own key-injecting
-  `BackendSecurityPolicy`s).
-- Timeouts: `AIGatewayRoute` rules set `request: 0s` (disabled) —
-  generation length is unbounded at the route; the llama-cpp HTTPRoutes
+  A catch-all `.*` route and further model routes for mistral and
+  glm-5.3 exist — read `aigatewayroute.yaml` for the live table.
+- `Backend`/`AIServiceBackend` CRs resolve each tier: halogen via
+  headless svc :8731. Remote providers use their own key-injecting
+  `BackendSecurityPolicy`s.
+- Timeouts: `AIGatewayRoute` rules set `request: 0s`, disabled —
+  generation length is unbounded at the route. The llama-cpp HTTPRoutes
   carry the 600 s cap instead.
-- Known edges: `/mcp/z-ai` 500s (ai-gateway v1.1.0 MCP header gap,
-  manifests#1894); Anthropic-schema backends only reachable via
-  `/anthropic/v1/messages` (no OpenAI→Anthropic translation).
+- Known edges: `/mcp/z-ai` 500s from an ai-gateway v1.1.0 MCP header
+  gap, tracked in manifests#1894. Anthropic-schema backends are only
+  reachable via `/anthropic/v1/messages`. There is no
+  OpenAI-to-Anthropic translation.
 
 ## Observability
 

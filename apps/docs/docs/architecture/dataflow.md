@@ -7,7 +7,7 @@ sidebar_position: 7
 How bytes actually move: commits to running systems, requests to
 services, metrics to dashboards, prompts to tokens.
 
-## Git → runtime (reconciliation)
+## Git → runtime: reconciliation
 
 ```mermaid
 flowchart LR
@@ -27,7 +27,7 @@ edge is push-triggered but immutable per deployment.
 
 ## User request paths
 
-**Public web (anon):**
+**Public web for anonymous users:**
 
 ```mermaid
 flowchart LR
@@ -38,15 +38,15 @@ flowchart LR
   FADE[fade] -->|WebGPU local| GPU[client GPU]
 ```
 
-- Static-heavy apps (www, links, docs) serve from the ASSETS binding;
-  the Worker is a thin shell.
+- The static-heavy apps www, links, and docs serve from the ASSETS
+  binding. The Worker is a thin shell.
 - fade does its heavy lifting **client-side**: files never leave the
-  machine — parsing (EXIF/RAF), demosaic, and rendering run in WebGPU
-  shaders and Web Workers (darkroom package).
-- reiya is the only main-branch app with a database (D1 `reiya`),
+  machine. EXIF and RAF parsing, demosaic, and rendering run in WebGPU
+  shaders and in Web Workers from the darkroom package.
+- reiya is the only main-branch app with a database, D1 `reiya`,
   reached through drizzle-orm.
 
-**Tailnet service (operator):**
+**Tailnet service for the operator:**
 
 ```mermaid
 flowchart LR
@@ -55,7 +55,7 @@ flowchart LR
   S --> P[(Longhorn PVC)]
 ```
 
-**Agent mesh (A2A):**
+**Agent mesh over A2A:**
 
 ```mermaid
 flowchart LR
@@ -65,7 +65,7 @@ flowchart LR
   A1 -.->|"direct machine→ws DENIED by ACL"| A2
 ```
 
-## Media pipeline (servarr)
+## Media pipeline: servarr
 
 ```mermaid
 flowchart LR
@@ -84,14 +84,15 @@ flowchart LR
 ```
 
 - Indexing: prowlarr feeds the *arr apps tracker results.
-- Acquisition: qbittorrent downloads; xqbit (`qbittorrent-cleanup`)
-  reaps `missingFiles` and resumes recoverable errored torrents.
+- Acquisition: qbittorrent downloads. The xqbit job,
+  `qbittorrent-cleanup`, reaps `missingFiles` and resumes recoverable
+  errored torrents.
 - Organization: the *arr apps import, rename, and manage the library;
   bazarr/metatube/maintainerr attach subtitles, metadata, and cleanup.
-- Consumption: jellyfin streams (transcoding on the x86 nodes);
+- Consumption: jellyfin streams, with transcoding on the x86 nodes.
   immich serves photos with ML tagging from its own model pod.
 
-## Inference path (prompt → tokens)
+## Inference path: prompt → tokens
 
 ```mermaid
 flowchart LR
@@ -106,7 +107,7 @@ chain with remote-provider fallback tiers. The binding constraint is the
 Halo unified GTT pool shared between weights and KV cache — full story
 in [AI infrastructure](../services/ai-infrastructure).
 
-## Observability path (signal → dashboard)
+## Observability path: signal → dashboard
 
 ```mermaid
 flowchart LR
@@ -118,7 +119,7 @@ flowchart LR
   BB[blackbox probes] --> VM
 ```
 
-## Secret flow (sops)
+## Secret flow: sops
 
 ```mermaid
 flowchart LR
