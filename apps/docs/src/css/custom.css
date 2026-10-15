@@ -1,24 +1,25 @@
-/* Shikanime docs theme overrides. */
+/* Shikanime docs theme overrides — www color schema (newfuture). */
 :root {
-  --ifm-color-primary: #7c7cff;
-  --ifm-color-primary-dark: #6363f0;
-  --ifm-color-primary-darker: #5454e0;
-  --ifm-color-primary-darkest: #4545bd;
-  --ifm-color-primary-light: #9090ff;
-  --ifm-color-primary-lighter: #a3a3ff;
-  --ifm-color-primary-lightest: #c0c0ff;
+  --ifm-color-primary: #c44300;
+  --ifm-color-primary-dark: #b63600;
+  --ifm-color-primary-darker: #a82700;
+  --ifm-color-primary-darkest: #9a1500;
+  --ifm-color-primary-light: #d25100;
+  --ifm-color-primary-lighter: #e05e0c;
+  --ifm-color-primary-lightest: #ee6b23;
+  --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 8%);
+}
+
+[data-theme="dark"] {
+  --ifm-color-primary: #f5712c;
+  --ifm-color-primary-dark: #e36113;
+  --ifm-color-primary-darker: #d25100;
+  --ifm-color-primary-darkest: #c04000;
+  --ifm-color-primary-light: #ff7e3b;
+  --ifm-color-primary-lighter: #ff8b4a;
+  --ifm-color-primary-lightest: #ff9857;
   --ifm-background-color: #0d0d12;
   --ifm-navbar-background-color: #0d0d12;
   --ifm-footer-background-color: #0a0a0e;
   --docusaurus-highlighted-code-line-bg: rgb(0 0 0 / 20%);
-}
-
-[data-theme="light"] {
-  --ifm-color-primary: #5555cc;
-  --ifm-color-primary-dark: #4747b3;
-  --ifm-color-primary-darker: #3f3fa3;
-  --ifm-color-primary-darkest: #343486;
-  --ifm-color-primary-light: #6e6ed6;
-  --ifm-color-primary-lighter: #8181dc;
-  --ifm-color-primary-lightest: #a4a4e9;
 }
