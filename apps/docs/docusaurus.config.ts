@@ -3,7 +3,7 @@ import type { Config } from "@docusaurus/types";
 import { themes as prismThemes } from "prism-react-renderer";
 
 const config: Config = {
-  title: "Shikanime Docs",
+  title: "Shikanime Studio Docs",
   tagline: "Shikanime Studio & Labs platform documentation",
   favicon: "img/favicon.ico",
   url: "https://docs.shikanime.studio",
@@ -43,7 +43,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: "Shikanime",
+      title: "Shikanime Studio",
       items: [
         {
           type: "docSidebar",

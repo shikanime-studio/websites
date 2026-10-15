@@ -56,8 +56,8 @@ flowchart TB
 | Hardware      | 11 hosts, 3 arches                  | [Hardware fleet](./hardware) |
 | Host config   | NixOS / nix-darwin + sops-nix       | [Nix fleet](./nix-fleet) |
 | Kubernetes    | RKE2 via knix, Flux GitOps          | [Kubernetes](./kubernetes) |
-| Ingress       | Envoy Gateway + Tailscale           | [Gateway & DNS](../networking/gateway-dns) |
-| Edge          | Cloudflare Workers                  | [Web properties](../products/web-properties) |
+| Ingress       | Envoy Gateway + Tailscale           | [Gateways](../networking/gateway-dns) |
+| Edge          | Cloudflare Workers                  | [Products](../products/web-properties) |
 | Automation    | Hermes + skills + actions           | [Automation](../automation/hermes) |
 
 ## The Git-to-production paths

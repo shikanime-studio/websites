@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# CI & repo automation
+# Continuous integration
 
 Every Shikanime Studio repository runs the same continuous-integration
 grammar, driven by the reusable actions in `shikanime-labs/actions`.

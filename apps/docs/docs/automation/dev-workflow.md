@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# Dev workflow
+# Workflow
 
 Every Shikanime Studio repo runs the same loop: jj workspaces, plain-English
 commits with trailers, PRs to protected `main`, squash landing. The loop

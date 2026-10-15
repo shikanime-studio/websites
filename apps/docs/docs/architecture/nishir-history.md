@@ -2,7 +2,7 @@
 sidebar_position: 8
 ---
 
-# Nishir history and rationale
+# History
 
 Nishir is the cluster everything runs on — but its current shape is the
 result of four years of deliberate migrations, each solving a real

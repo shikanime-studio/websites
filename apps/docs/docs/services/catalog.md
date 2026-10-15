@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Cluster services
+# Catalog
 
 The `apps/` tree in manifests deploys the self-hosted service catalog on
 the `nishir` cluster:
