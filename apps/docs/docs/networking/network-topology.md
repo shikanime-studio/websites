@@ -59,7 +59,7 @@ determines reachability via the [ACL](./tailnet).
   interface (netpol keyed on `network-status` annotation).
 - **Tailscale operator** subnet-routes cluster services into the
   tailnet and exposes the kube API securely.
-- **Gateway API** is the only ingress: 38 per-app Gateways, each with
+- **Gateway API** is the only ingress: 40 per-app Gateways, each with
   its own envoy data-plane deployment in `envoy-gateway-system`.
 
 ## ACL plane summary

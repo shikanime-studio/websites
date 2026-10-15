@@ -22,7 +22,9 @@ AI agents:
 - **Dozens of self-hosted services** — media, identity, git forge, Matrix,
   local LLM inference
 - **An agent mesh** — Hermes Agent instances on every host, peered over
-  the tailnet via A2A, with a KubeVirt VM (`automata`) as hub
+  the tailnet via A2A (agent-to-agent protocol), with a KubeVirt VM
+  (`automata`) as hub — see the [glossary](../platform/glossary) for every term
+  used in this book
 - **Web properties on Cloudflare Workers** — Astro and Docusaurus apps in
   a pnpm monorepo
 
@@ -77,11 +79,11 @@ flowchart TB
 
 ## Reading order
 
-1. **Platform** — the orgs, the repos, getting started
+1. **Platform** — the orgs and repos ([overview](../platform/overview)), then
+   getting started, the repository catalog, the glossary
 2. **Architecture** — system model, the metal, the Nix fleet, the
-   clusters, identity, how data flows end to end
+   clusters, identity, the cluster's history, how data flows end to end
 3. **Networking** — topology, DNS & TLS, the tailnet, gateways
-4. **Services** — the catalog: media, inference, observability
-5. **Automation** — Hermes agents, the A2A mesh, CI, the dev workflow,
-   the skills catalog
+4. **Services** — the catalog, the AI infrastructure, media, observability
+5. **Automation** — Hermes agents, CI, the dev workflow, the skills catalog
 6. **Products** — Hakurei, the web properties, the identity mesh
