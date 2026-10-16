@@ -33,7 +33,6 @@ Every repository in both orgs, grouped by layer.
 | ------------------- | ------------------------------------------------------------- |
 | `skills`            | The agent skill catalog — see [Skills catalog](../automation/skills) |
 | `actions`           | Reusable actions + org workflows: `.land`/`.rebase`/`.close`/`.backport` comment commands, nix/pnpm/skaffold/flux integration actions |
-| `automata`          | Go CLI for repo/cluster hygiene: kustomize image tags, workflow bumps, `update.sh`, flake/k0sctl updates |
 | `devlib`            | Nix flake-module library: devenv profiles for nix, rust, python, and more; home modules; workflow/config generators for ghstack, sops, renovate, and more |
 | `minishells`        | Per-org dev shells for the cloud-pi-native family, over devlib |
 | `xqbit`             | qBittorrent hygiene via `qbittorrent-cleanup`, which reaps missing/errored torrents |
