@@ -32,15 +32,6 @@ flowchart TB
   NX -.->|draft PRs skipped| PR
 ```
 
-## Automata CLI
-
-The [`automata`](https://github.com/shikanime-labs/automata) CLI is
-written in Go. It keeps repositories tidy:
-
-- bumps kustomize image tags + recommended labels in `kustomization.yaml`
-- bumps GitHub Actions versions in `.github/workflows`
-- runs discovered `update.sh` scripts
-
 ## Renovate
 
 Dependency bots open green Renovate PRs; "land renovate PRs" means Gate 2
