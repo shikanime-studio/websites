@@ -103,3 +103,52 @@ main, stashing local lessons.
 `ai.nix` installs the `cua-driver` binary for AT-SPI/D-Bus fleet-wide,
 so hermes' `computer-use` extra can drive desktop automation on any
 host.
+
+## Scheduled jobs
+
+The hub also runs the fleet's background automation: twelve cron jobs
+declared in the same `automata.nix` profile, shipped as
+`<HERMES_HOME>/cron/jobs.json` via the module's `hermesHomeFiles`. Jobs
+live in VCS, not the local cron store — the VM is rebuilt from declared
+config, so any ad-hoc job would die on the next rebuild. Each run is a
+fresh session with a hard interrupt budget, which is why every prompt
+is self-contained: absolute URLs, dedup against `gh issue list`, and
+repo commit conventions restated inline. Output is log-only
+(`deliver = "local"`); findings become GitHub issues and PRs, not
+reports.
+
+```mermaid
+flowchart TB
+  subgraph morning["daily 08:00-08:45"]
+    A1[alert triage] --> A2[flux triage] --> A3[ci triage]
+    A3 --> A4[docs sync]
+  end
+  subgraph midday["daily 09:15-10:45"]
+    B1[security audit] --> B2[github triage]
+    B2 --> B3[branch cleanup] --> B4[notif sweep]
+    B4 --> B5[redteam] --> B6[renovate landing]
+    B6 --> B7[k8s events triage]
+  end
+  subgraph weekly["mondays 09:00"]
+    W1[efficiency audit]
+  end
+  morning & midday & weekly --> OUT["issues + PRs"]
+```
+
+Triage jobs (alerts, Flux, CI failures, docs drift, security) all share
+one shape: enumerate findings, dedup against open issues, file one
+issue per new finding, and fastlane the small fixes — max 3 landings
+per run, never wait on checks. `daily-github-cleanup` is what retired
+the per-repo `cleanup.yaml` workflows: one batched job sweeps
+fully-merged branches fleet-wide, blocked branches stay. The Monday
+audit is the odd one out — it brainstorms with the A2A peers
+themselves (`a2a_call` per peer), aggregates proposals, and files at
+most three as issues. Renovate landing is gated on green checks and
+merges with `--squash --admin`. Several jobs close with a
+`honcho_search` / `honcho_conclude` pass, writing durable lessons to
+agent memory so the next run does not re-file rejected proposals.
+
+The same mechanism, one abstraction down: profile distributions in
+`shikanime-labs/skills` can ship `cron/jobs.json` per profile, default
+paused — the operator's workstation enables the ones it wants. The
+catalog's profiles currently carry one paused weekly watch job each.
