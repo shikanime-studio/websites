@@ -1,0 +1,65 @@
+---
+import { Image, getImage } from 'astro:assets'
+import Machine from '../components/Machine'
+import IntroSectionBackground from '../assets/intro-section-background.webp'
+import InfinityHorizonsLogo from '../assets/infinity-horizon-logo.webp'
+import ProjectElkiaLogo from '../assets/project-elkia-logo.webp'
+import ShikanimeStudioLogo from '../assets/header-logo.webp'
+
+const optimizedIntroSectionBackground = await getImage({
+  src: IntroSectionBackground,
+})
+
+const projects = [
+  {
+    href: 'https://shikanime.notion.site/Infinity-Horizons-f0a47e34242b48109c20139ce5242890?pvs=4',
+    logo: InfinityHorizonsLogo,
+    alt: 'Infinity Horizons Logo',
+  },
+  {
+    href: 'https://shikanime.notion.site/Project-Elkia-7546ce161bf14ea9b08f380c988b472f?pvs=4',
+    logo: ProjectElkiaLogo,
+    alt: 'Project Elkia Logo',
+  },
+  { href: 'https://fade.shikanime.studio', logo: ShikanimeStudioLogo, alt: 'Darkroom on Fade' },
+]
+---
+
+<section
+  id="dream"
+  class="bg-base-100 flex min-h-screen w-full flex-col items-center justify-center bg-center"
+  style={`background-image: url('${optimizedIntroSectionBackground.src}')`}
+>
+  <div class="flex max-w-prose flex-col gap-y-4 rounded p-4 backdrop-blur">
+    <h2 class="text-3xl font-extrabold">✨ Our Dream</h2>
+    <p class="text-xl">
+      We are committed to cultivating an experience, a universe and a movement that embodies the very essence of
+      innovation for humanity. Our journey is fueled by a deep reverence for the past and an unwavering commitment to
+      shaping the future. Together, for all the dreamers who aspire the world, we are on a quest that will shape the way
+      we meaningfully engage with technology.
+    </p>
+  </div>
+</section>
+
+<section id="machine" class="bg-base-100 flex min-h-screen w-full flex-col items-center justify-center">
+  <div class="flex w-full max-w-5xl flex-col items-center gap-8 p-4">
+    <h2 class="text-3xl font-extrabold">You found the machine</h2>
+    <p class="max-w-prose opacity-70">
+      It eats pixels and spits out characters. All the magic happens right here in your browser. Nothing gets uploaded.
+      Your video stays yours.
+    </p>
+    <Machine client:load />
+  </div>
+</section>
+
+<section id="projects" class="bg-base-100 flex min-h-screen w-full flex-col items-center justify-center">
+  <div class="flex flex-wrap justify-center gap-12 p-4">
+    {
+      projects.map((project) => (
+        <a href={project.href}>
+          <Image src={project.logo} alt={project.alt} width={150} height={150} class="mx-auto" loading="eager" />
+        </a>
+      ))
+    }
+  </div>
+</section>
