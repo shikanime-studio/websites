@@ -12,7 +12,7 @@ discussion → issue → comments → PR.
 
 ## Shape
 
-- **41 skills** under `skills/`. The `sks-*` family covers `sks-dev`,
+- **47 skills** under `skills/`. The `sks-*` family covers `sks-dev`,
   `sks-pr`, `sks-issue`, `sks-land`, `sks-nix-authoring`,
   `sks-sops-secrets-authoring`, and more. The catalog also carries
   `cpn-release-patch` and `nixpkgs-pr-review`
@@ -30,7 +30,7 @@ The same catalog reaches every runtime four ways:
 
 ```mermaid
 flowchart LR
-  CAT["skills repo<br/>41 skills + 8 profiles"] --> NIX["Nix modules<br/>external_dirs"]
+  CAT["skills repo<br/>47 skills + 8 profiles"] --> NIX["Nix modules<br/>external_dirs"]
   CAT --> TAP["hermes skills tap add"]
   CAT --> NPM["npm @shikanime-labs/skills"]
   CAT --> REG["skills.sh registry<br/>npx skills add"]
@@ -47,8 +47,8 @@ catalog into `~/.hermes/skills` — which is how the agents documented in
 
 ## CI
 
-The repo runs the org workflow grammar: `cleanup`, `commands`,
-`integration`, `nix`, `release`, `triage`. The `nix.yaml` workflow runs
+The repo runs the org workflow grammar: `commands`, `integration`,
+`nix`, `release`. The `nix.yaml` workflow runs
 Checks + Packages matrix jobs pushing to the `shikanime-studio` Cachix
 cache. Commits are gitlint-enforced for `Signed-off-by` under rule CC1.
 Local mirror

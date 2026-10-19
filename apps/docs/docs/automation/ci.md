@@ -12,15 +12,17 @@ grammar, driven by the reusable actions in `shikanime-labs/actions`.
 `shikanime-labs/actions`, pinned at v9, provides the reusable actions
 every repo consumes: `nix/setup`, `nix/integration`, `checkout`,
 `direnv`, `pnpm/integration`, plus `flux`, `skaffold`, `land`, `rebase`,
-`backport`, `release`, `run`, `command`, `checks`, `cleanup`, `close`.
-Draft PRs skip nix/skaffold jobs — mark a PR ready to arm them; a wedged
+`backport`, `release`, `run`, `command`, `checks`, `close`. Draft PRs
+skip nix/skaffold jobs — mark a PR ready to arm them; a wedged
 run is un-stuck by cancel + empty commit.
 
 The `websites` repo runs `integration.yaml`, which calls
 `javascript.yaml` for `build` plus recursive `build-workspace` via
 `pnpm/integration`, and `nix.yaml` for flake checks plus packages with
-Cachix `shikanime-studio`. It also runs `triage`, `commands`, `cleanup`,
-and `release` workflows.
+Cachix `shikanime-studio`. It also runs `commands` and `release`
+workflows. The former `triage` and `cleanup` workflows are gone: the
+automata agent owns triage and branch cleanup as daily cron jobs, so
+per-repo workflows would duplicate it.
 
 ```mermaid
 flowchart TB
