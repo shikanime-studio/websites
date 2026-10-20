@@ -7,12 +7,26 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import appCss from "../assets/global.css?url";
 import { Navbar } from "../components/Navbar";
 import { I18nProvider } from "../i18n";
 
 const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
+  head: () => ({
+    meta: [
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Hikari" },
+      {
+        name: "description",
+        content: "Cosplay photoshoot commissions, planned end to end",
+      },
+      { name: "theme-color", content: "#f5f5f5" },
+    ],
+    links: [{ rel: "stylesheet", href: appCss }],
+  }),
   component: RootComponent,
   shellComponent: RootDocument,
 });
