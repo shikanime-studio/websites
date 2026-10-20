@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "version": "6",
+      "breakpoints": true,
+      "idx": 0,
+      "tag": "0000_windy_loki",
+      "when": 1792532718534
+    }
+  ]
+}
