@@ -51,6 +51,8 @@ terraform.rc
 
 .env
 .env.*
+.dev.vars
+.dev.vars.*
 .devenv*
 .direnv*
 

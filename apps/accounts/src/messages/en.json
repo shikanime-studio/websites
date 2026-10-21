@@ -1,0 +1,120 @@
+{
+  "accounts.home.title": {
+    "defaultMessage": "One account for all of Shikanime Studio"
+  },
+  "accounts.home.subtitle": {
+    "defaultMessage": "Sign in once and move between every Shikanime Studio property without repeating yourself."
+  },
+  "accounts.home.signin": { "defaultMessage": "Sign in" },
+  "accounts.home.forApps": { "defaultMessage": "For applications" },
+  "accounts.home.forAppsDesc": {
+    "defaultMessage": "First-party clients authenticate through the standard OAuth 2.1 authorization-code flow with OpenID Connect identity tokens."
+  },
+  "accounts.home.identities": { "defaultMessage": "identities" },
+  "accounts.home.identity": { "defaultMessage": "identity" },
+  "accounts.home.registered": {
+    "defaultMessage": "registered across the fleet."
+  },
+  "accounts.nav.brand": { "defaultMessage": "Accounts" },
+  "accounts.nav.signin": { "defaultMessage": "Sign in" },
+  "accounts.footer.note": {
+    "defaultMessage": "Shikanime Studio — Accounts"
+  },
+  "accounts.login.title": { "defaultMessage": "Sign in" },
+  "accounts.login.subtitle": {
+    "defaultMessage": "One account for all of Shikanime Studio. Continue to the application that sent you here."
+  },
+  "accounts.login.protected": {
+    "defaultMessage": "Protected by Shikanime Studio SSO."
+  },
+  "accounts.login.signedInTitle": { "defaultMessage": "You are signed in" },
+  "accounts.login.signedInBody": {
+    "defaultMessage": "Return to the application that sent you here to finish connecting."
+  },
+  "accounts.consent.title": { "defaultMessage": "Authorize access" },
+  "accounts.consent.wants": {
+    "defaultMessage": "wants to access your Shikanime Studio account."
+  },
+  "accounts.consent.allow": { "defaultMessage": "Allow" },
+  "accounts.consent.deny": { "defaultMessage": "Deny" },
+  "accounts.consent.scopesLabel": {
+    "defaultMessage": "This will allow the application to:"
+  },
+  "accounts.consent.signInRequired": {
+    "defaultMessage": "Sign in before approving access."
+  },
+  "accounts.consent.revokeHint": {
+    "defaultMessage": "You can revoke access at any time from your account settings."
+  },
+  "accounts.consent.anApp": { "defaultMessage": "An application" },
+  "accounts.404.code": { "defaultMessage": "404" },
+  "accounts.404.title": { "defaultMessage": "Page not found" },
+  "accounts.404.body": {
+    "defaultMessage": "The page you are looking for does not exist or has moved."
+  },
+  "accounts.404.home": { "defaultMessage": "Go home" },
+  "accounts.center.title": { "defaultMessage": "Account Center" },
+  "accounts.center.welcome": { "defaultMessage": "Welcome" },
+  "accounts.center.profile": { "defaultMessage": "Profile" },
+  "accounts.center.security": { "defaultMessage": "Security" },
+  "accounts.center.securityEmail": {
+    "defaultMessage": "Password and security"
+  },
+  "accounts.center.activity": { "defaultMessage": "Activity" },
+  "accounts.center.signOut": { "defaultMessage": "Sign out" },
+  "accounts.center.profileTitle": { "defaultMessage": "Profile" },
+  "accounts.center.profileDesc": {
+    "defaultMessage": "How you appear across Shikanime Studio applications."
+  },
+  "accounts.center.displayName": { "defaultMessage": "Display name" },
+  "accounts.center.displayNameDesc": {
+    "defaultMessage": "Shown on the consent screen and shared when an application requests your profile."
+  },
+  "accounts.center.email": { "defaultMessage": "Email" },
+  "accounts.center.emailDesc": {
+    "defaultMessage": "Your sign-in identifier, shared only with applications you authorize."
+  },
+  "accounts.center.emailVerified": { "defaultMessage": "Verified" },
+  "accounts.center.emailUnverified": { "defaultMessage": "Not verified" },
+  "accounts.center.save": { "defaultMessage": "Save" },
+  "accounts.center.saveError": {
+    "defaultMessage": "Could not save. Try again."
+  },
+  "accounts.center.saving": { "defaultMessage": "Saving…" },
+  "accounts.center.saved": { "defaultMessage": "Saved" },
+  "accounts.center.provider": { "defaultMessage": "Sign-in provider" },
+  "accounts.center.providerDesc": {
+    "defaultMessage": "How you authenticate to your Shikanime Studio account."
+  },
+  "accounts.center.securityTitle": { "defaultMessage": "Security" },
+  "accounts.center.securityDesc": {
+    "defaultMessage": "Devices and applications connected to your account."
+  },
+  "accounts.center.sessionsTitle": { "defaultMessage": "Where you're signed in" },
+  "accounts.center.sessionsDesc": {
+    "defaultMessage": "Devices that have an active session on your account."
+  },
+  "accounts.center.thisDevice": { "defaultMessage": "This device" },
+  "accounts.center.currentSession": { "defaultMessage": "Current session" },
+  "accounts.center.signOutOthers": {
+    "defaultMessage": "Sign out other devices"
+  },
+  "accounts.center.noOtherSessions": {
+    "defaultMessage": "No other devices are signed in."
+  },
+  "accounts.center.unknownDevice": { "defaultMessage": "Unknown device" },
+  "accounts.center.signedIn": { "defaultMessage": "Signed in" },
+  "accounts.center.appsTitle": { "defaultMessage": "Applications" },
+  "accounts.center.appsDesc": {
+    "defaultMessage": "Applications you authorized to use your Shikanime Studio account."
+  },
+  "accounts.center.noApps": {
+    "defaultMessage": "No applications have access yet."
+  },
+  "accounts.center.scopes": { "defaultMessage": "Scopes" },
+  "accounts.center.authorized": { "defaultMessage": "Authorized" },
+  "accounts.center.revoke": { "defaultMessage": "Remove access" },
+  "accounts.center.deviceOn": {
+    "defaultMessage": "{browser} on {system}"
+  }
+}
