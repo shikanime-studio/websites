@@ -102,7 +102,7 @@ function RootComponent() {
         <I18nProvider>
           <div className="flex min-h-dvh flex-col">
             <Navbar />
-            <main className="grow">
+            <main className="flex grow flex-col">
               <Outlet />
             </main>
           </div>

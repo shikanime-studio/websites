@@ -6,7 +6,7 @@ export function SiteFooter() {
   const year = String(new Date().getFullYear());
 
   return (
-    <footer className="border-hairline border-t">
+    <footer className="border-hairline mt-auto border-t">
       <div className="hk-shell flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2.5">
           <HikariMark />

@@ -15,7 +15,7 @@ export function HeroArt() {
     >
       {/* coral disc with a camera */}
       <div
-        className="absolute -top-2 -left-2 flex size-32 -rotate-6 items-center justify-center rounded-full border-2 sm:top-2 sm:left-0 sm:size-40"
+        className="absolute -top-2 -left-2 flex size-32 -rotate-6 items-center justify-center rounded-full border-2 sm:top-2 sm:left-0 sm:size-40 lg:size-44"
         style={{ background: "var(--hk-accent)", borderColor: OUTLINE }}
       >
         <Camera className="text-[#241c18]" size={44} strokeWidth={1.6} />
@@ -23,7 +23,7 @@ export function HeroArt() {
 
       {/* lilac sticker with a heart */}
       <div
-        className="absolute top-0 right-2 flex size-24 rotate-12 items-center justify-center rounded-[26px] border-2 sm:size-28"
+        className="absolute top-0 right-2 flex size-24 rotate-12 items-center justify-center rounded-[26px] border-2 sm:size-28 lg:size-32"
         style={{ background: "var(--hk-candy-lilac)", borderColor: OUTLINE }}
       >
         <Heart className="text-[#241c18]" size={30} strokeWidth={1.8} />
@@ -31,7 +31,7 @@ export function HeroArt() {
 
       {/* sky disc with the event */}
       <div
-        className="absolute right-0 bottom-16 hidden size-24 -rotate-6 items-center justify-center rounded-full border-2 text-[15px] font-black sm:flex sm:size-28"
+        className="absolute -right-4 bottom-16 hidden size-24 -rotate-6 items-center justify-center rounded-full border-2 text-[15px] font-black sm:flex sm:size-28 xl:size-32"
         style={{ background: "var(--hk-candy-sky)", borderColor: OUTLINE, color: INK }}
       >
         C108
@@ -47,7 +47,7 @@ export function HeroArt() {
 
       {/* the ticket */}
       <div
-        className="absolute top-1/2 left-1/2 w-[236px] -translate-x-1/2 -translate-y-1/2 -rotate-3 rounded-[26px] border-2 bg-white p-4 sm:w-[286px] sm:p-5"
+        className="absolute top-1/2 left-1/2 w-[236px] -translate-x-1/2 -translate-y-1/2 -rotate-3 rounded-[26px] border-2 bg-white p-4 sm:w-[260px] sm:p-5 lg:w-[272px] xl:w-[304px] xl:p-6"
         style={{
           borderColor: INK,
           boxShadow: "7px 7px 0 var(--hk-ink)",
