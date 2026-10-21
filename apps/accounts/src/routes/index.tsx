@@ -20,9 +20,9 @@ export const Route = createFileRoute("/")({
 });
 
 const ENDPOINTS = [
-  { name: "Discovery", path: "/.well-known/openid-configuration" },
-  { name: "Authorization", path: "/oauth2/authorize" },
-  { name: "Token", path: "/oauth2/token" },
+  { name: "Discovery", path: "/api/auth/.well-known/openid-configuration" },
+  { name: "Authorization", path: "/api/auth/oauth2/authorize" },
+  { name: "Token", path: "/api/auth/oauth2/token" },
 ];
 
 function HomePage() {

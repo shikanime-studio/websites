@@ -2,7 +2,7 @@ import { Card } from "@astryxdesign/core/Card";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { OneTap } from "../components/OneTap";
 import { useSession } from "../hooks/useSession";
 
@@ -15,7 +15,7 @@ function LoginPage() {
   const [error, setError] = useState<string | null>(null);
 
   if (session?.user) {
-    return <RedirectedNotice />;
+    return <SignedInNotice />;
   }
 
   return (
@@ -53,7 +53,19 @@ function LoginPage() {
   );
 }
 
-function RedirectedNotice() {
+function SignedInNotice() {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    // `sig` marks a signed authorization request. Without it this is a
+    // plain visit, and with `prompt` the provider would bounce back here,
+    // so leave those to the user.
+    if (params.has("client_id") && params.has("sig") && !params.has("prompt")) {
+      window.location.replace(
+        `/api/auth/oauth2/authorize${window.location.search}`,
+      );
+    }
+  }, []);
+
   return (
     <div className="mx-auto flex w-full max-w-md flex-col px-4 py-24">
       <Card padding={5}>

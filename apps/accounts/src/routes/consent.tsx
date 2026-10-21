@@ -10,6 +10,8 @@ import { createFileRoute, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
 
+const LEADING_QUESTION = /^\?/;
+
 interface ConsentSearch {
   client_id?: string;
   scope?: string;
@@ -41,7 +43,7 @@ export const Route = createFileRoute("/consent")({
 });
 
 function ConsentPage() {
-  const { client_id: clientId, scope, oauth_query: oauthQuery } = useSearch({
+  const { client_id: clientId, scope } = useSearch({
     from: "/consent",
   });
   const { data: session } = useSession();
@@ -49,6 +51,13 @@ function ConsentPage() {
 
   const consent = useMutation({
     mutationFn: async (accept: boolean) => {
+      // The consent page's own query string is the signed authorization
+      // request; the provider verifies its signature before recording the
+      // decision, so forward it verbatim.
+      const oauthQuery = window.location.search.replace(LEADING_QUESTION, "");
+      if (!oauthQuery) {
+        throw new Error("Missing authorization request");
+      }
       const res = await fetch("/api/auth/oauth2/consent", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -61,11 +70,15 @@ function ConsentPage() {
       if (!res.ok) {
         throw new Error(`Consent failed (${res.status})`);
       }
-      const body = (await res.json()) as { redirect_uri?: string };
-      if (!body.redirect_uri) {
+      const body = (await res.json()) as { redirect?: boolean; url?: string };
+      if (body.redirect !== true || typeof body.url !== "string") {
         throw new Error("Missing redirect target");
       }
-      return body.redirect_uri;
+      const target = new URL(body.url, window.location.origin);
+      if (target.protocol !== "https:" && target.protocol !== "http:") {
+        throw new Error("Unsafe redirect target");
+      }
+      return target.toString();
     },
     onSuccess: (redirectUri) => {
       window.location.assign(redirectUri);

@@ -16,8 +16,20 @@ export function OneTap({ onError }: OneTapProps) {
     startedRef.current = true;
     authClient.oneTap(
       {
+        // The plugin navigates to `callbackURL` (default `/`) after the
+        // sign-in, discarding the server's OAuth redirect. Returning here
+        // lets the page resume the authorization request with the new
+        // session instead of dropping the user on the landing page.
+        callbackURL: window.location.href,
         button: {
           container: "[data-one-tap-button]",
+          config: {
+            type: "standard",
+            theme: "outline",
+            size: "large",
+            text: "continue_with",
+            shape: "pill",
+          },
         },
       },
       {
