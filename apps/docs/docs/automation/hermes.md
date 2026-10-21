@@ -110,7 +110,9 @@ The hub also runs the fleet's background automation: twelve cron jobs
 declared in the same `automata.nix` profile, shipped as
 `<HERMES_HOME>/cron/jobs.json` via the module's `hermesHomeFiles`. Jobs
 live in VCS, not the local cron store — the VM is rebuilt from declared
-config, so any ad-hoc job would die on the next rebuild. Each run is a
+config, so any ad-hoc job would die on the next rebuild. Schedules sit in
+a 00:00-02:45 UTC night window, staggered in 15-minute steps, so triage
+writes land while the European working day is asleep. Each run is a
 fresh session with a hard interrupt budget, which is why every prompt
 is self-contained: absolute URLs, dedup against `gh issue list`, and
 repo commit conventions restated inline. Output is log-only
@@ -119,20 +121,20 @@ reports.
 
 ```mermaid
 flowchart TB
-  subgraph morning["daily 08:00-08:45"]
+  subgraph night1["daily 00:00-00:45 UTC"]
     A1[alert triage] --> A2[flux triage] --> A3[ci triage]
     A3 --> A4[docs sync]
   end
-  subgraph midday["daily 09:15-10:45"]
+  subgraph night2["daily 01:15-02:45 UTC"]
     B1[security audit] --> B2[github triage]
     B2 --> B3[branch cleanup] --> B4[notif sweep]
     B4 --> B5[redteam] --> B6[renovate landing]
     B6 --> B7[k8s events triage]
   end
-  subgraph weekly["mondays 09:00"]
+  subgraph weekly["mondays 01:00 UTC"]
     W1[efficiency audit]
   end
-  morning & midday & weekly --> OUT["issues + PRs"]
+  night1 & night2 & weekly --> OUT["issues + PRs"]
 ```
 
 Triage jobs (alerts, Flux, CI failures, docs drift, security) all share
