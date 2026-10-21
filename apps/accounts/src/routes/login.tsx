@@ -1,7 +1,7 @@
 import { Card } from "@astryxdesign/core/Card";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { OneTap } from "../components/OneTap";
 import { useSession } from "../hooks/useSession";
@@ -19,17 +19,18 @@ function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-24">
-      <Card padding={5}>
-        <div className="flex flex-col items-center gap-5 text-center">
-          <div className="bg-accent/10 text-accent flex h-12 w-12 items-center justify-center rounded-full text-xl font-black">
+    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+      <Card padding={6}>
+        <div className="flex flex-col items-center gap-6 text-center">
+          <span className="bg-accent/10 text-accent flex size-14 items-center justify-center rounded-2xl text-lg font-black">
             S
-          </div>
+          </span>
           <div className="flex flex-col gap-2">
-            <Heading level={1}>Sign in</Heading>
+            <Heading level={1} type="display-3" className="font-display">
+              Welcome back
+            </Heading>
             <Text color="secondary">
-              One account for all of Shikanime Studio. Continue to the
-              application that sent you here.
+              Sign in to your Shikanime Studio account.
             </Text>
           </div>
           {error
@@ -40,14 +41,16 @@ function LoginPage() {
             )
             : null}
           <OneTap onError={setError} />
+          <Text size="sm" color="secondary" className="text-balance">
+            Your Google account is only used to confirm it's you. We never post
+            anything on your behalf.
+          </Text>
         </div>
       </Card>
-      <Text
-        color="secondary"
-        size="sm"
-        className="mt-6 text-center"
-      >
-        Protected by Shikanime Studio SSO.
+      <Text size="sm" color="secondary" className="mt-6 text-center">
+        <Link to="/" className="hover:text-foreground font-medium transition-colors">
+          Learn about your account
+        </Link>
       </Text>
     </div>
   );
@@ -55,13 +58,24 @@ function LoginPage() {
 
 function SignedInNotice() {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-24">
-      <Card padding={5}>
+    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+      <Card padding={6}>
         <div className="flex flex-col items-center gap-4 text-center">
-          <Heading level={1}>You are signed in</Heading>
+          <span className="bg-accent/10 text-accent flex size-12 items-center justify-center rounded-full text-sm font-black">
+            S
+          </span>
+          <Heading level={1} type="display-3" className="font-display">
+            You're signed in
+          </Heading>
           <Text color="secondary">
-            Return to the application that sent you here to finish connecting.
+            You can close this tab and return to the application you came from.
           </Text>
+          <Link
+            to="/settings"
+            className="bg-surface border-border hover:bg-body mt-2 rounded-full border px-4 py-2 text-sm font-semibold transition-colors"
+          >
+            Open Accounts Center
+          </Link>
         </div>
       </Card>
     </div>

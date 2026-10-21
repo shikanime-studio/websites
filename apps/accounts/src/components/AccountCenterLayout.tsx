@@ -1,31 +1,28 @@
-import { Avatar } from "@astryxdesign/core/Avatar";
-import { useTranslator } from "@astryxdesign/core/i18n";
-import { Text } from "@astryxdesign/core/Text";
+import type { LucideIcon } from "lucide-react";
 import { Link, Outlet, useMatchRoute } from "@tanstack/react-router";
-import { useSession } from "../hooks/useSession";
+import {
+  LayoutGrid,
+  LogOut,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react";
 import { authClient } from "../lib/auth-client";
 
-interface AccountCenterLayoutProps {
-  title: string;
+interface NavItem {
+  to: "/settings" | "/settings/profile" | "/settings/security";
+  label: string;
+  icon: LucideIcon;
+  exact?: boolean;
 }
 
-export function AccountCenterLayout({ title }: AccountCenterLayoutProps) {
-  const t = useTranslator();
-  const { data: session } = useSession();
-  const matchRoute = useMatchRoute();
+const NAV_ITEMS: NavItem[] = [
+  { to: "/settings", label: "Overview", icon: LayoutGrid, exact: true },
+  { to: "/settings/profile", label: "Personal details", icon: UserRound },
+  { to: "/settings/security", label: "Password and security", icon: ShieldCheck },
+];
 
-  const navItems = [
-    {
-      to: "/settings/profile",
-      label: t("accounts.center.profile"),
-      key: "profile",
-    },
-    {
-      to: "/settings/security",
-      label: t("accounts.center.securityEmail"),
-      key: "security",
-    },
-  ] as const;
+export function AccountCenterLayout() {
+  const matchRoute = useMatchRoute();
 
   async function handleSignOut() {
     await authClient.signOut();
@@ -33,69 +30,48 @@ export function AccountCenterLayout({ title }: AccountCenterLayoutProps) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-4xl px-4 py-10">
-      <div className="flex flex-col gap-3 pb-8">
-        <Text size="sm" color="secondary">
-          {t("accounts.center.title")}
-        </Text>
-        <div className="flex items-center gap-4">
-          {session?.user
-            ? (
-              <Avatar
-                name={session.user.name ?? session.user.email}
-                src={session.user.image ?? ""}
-                size="lg"
-              />
-            )
-            : null}
-          <div className="flex flex-col">
-            <Text size="xl" weight="bold">
-              {title}
-            </Text>
-            {session?.user
-              ? (
-                <Text color="secondary" size="sm">
-                  {session.user.email}
-                </Text>
-              )
-              : null}
-          </div>
-        </div>
-      </div>
-
-      <div className="grid gap-8 md:grid-cols-[220px_1fr]">
-        <nav aria-label={t("accounts.center.title")} className="md:border-border md:border-r md:pr-4">
-          <ul className="flex flex-row gap-1 md:flex-col">
-            {navItems.map((item) => {
-              const active = matchRoute({ to: item.to, fuzzy: true });
+    <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
+      <div className="grid gap-8 md:grid-cols-[232px_minmax(0,1fr)] md:gap-12">
+        <nav aria-label="Account Center" className="hidden md:sticky md:top-24 md:block md:self-start">
+          <ul className="flex flex-wrap gap-2 md:flex-col md:flex-nowrap md:gap-1">
+            {NAV_ITEMS.map((item) => {
+              const active = Boolean(
+                matchRoute({ to: item.to, fuzzy: !item.exact }),
+              );
               return (
-                <li key={item.key} className="md:last:border-b-0 border-b md:border-0">
+                <li key={item.to}>
                   <Link
                     to={item.to}
                     aria-current={active ? "page" : undefined}
                     className={
                       active
-                        ? "text-secondary bg-surface block rounded-lg px-3 py-2 text-sm font-semibold"
-                        : "hover:text-secondary text-secondary/70 block rounded-lg px-3 py-2 text-sm font-medium transition-colors"
+                        ? "border-border bg-surface flex items-center gap-3 rounded-full border px-3.5 py-2 text-sm font-semibold shadow-sm md:rounded-xl md:px-3 md:py-2.5"
+                        : "text-secondary hover:text-foreground flex items-center gap-3 rounded-full px-3.5 py-2 text-sm font-medium transition-colors md:rounded-xl md:px-3 md:py-2.5"
                     }
                   >
-                    {item.label}
+                    <item.icon
+                      size={18}
+                      aria-hidden
+                      className={active ? "text-accent" : "text-secondary/70"}
+                    />
+                    <span>{item.label}</span>
                   </Link>
                 </li>
               );
             })}
-            <li className="md:mt-4 md:border-0">
+            <li className="hidden md:mt-6 md:block md:border-t md:border-border md:pt-4">
               <button
                 type="button"
                 onClick={handleSignOut}
-                className="hover:text-secondary text-secondary/70 block w-full rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors"
+                className="text-secondary hover:text-foreground flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition-colors"
               >
-                {t("accounts.center.signOut")}
+                <LogOut size={18} aria-hidden className="text-secondary/70" />
+                Sign out
               </button>
             </li>
           </ul>
         </nav>
-        <div>
+        <div className="min-w-0">
           <Outlet />
         </div>
       </div>

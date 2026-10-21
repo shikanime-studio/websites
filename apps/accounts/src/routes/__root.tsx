@@ -1,5 +1,3 @@
-import type {AppLocale} from "../messages";
-import { InternationalizationProvider } from "@astryxdesign/core/i18n";
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -12,8 +10,8 @@ import {
 import appCss from "../assets/global.css?url";
 import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
+import { NotFound } from "../components/NotFound";
 import { queryClient } from "../lib/query-client";
-import {  appMessages } from "../messages";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -50,25 +48,22 @@ export const Route = createRootRoute({
     ],
   }),
   component: RootComponent,
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 });
 
 function RootComponent() {
-  const locale: AppLocale = "en";
-
   return (
     <QueryClientProvider client={queryClient}>
-      <InternationalizationProvider locale={locale} messages={appMessages}>
-        <AstryxTheme theme={neutralTheme} mode="system">
-          <div className="flex min-h-screen flex-col">
-            <Navbar />
-            <main className="grow pt-14">
-              <Outlet />
-            </main>
-            <Footer />
-          </div>
-        </AstryxTheme>
-      </InternationalizationProvider>
+      <AstryxTheme theme={neutralTheme} mode="system">
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="grow pt-14">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      </AstryxTheme>
     </QueryClientProvider>
   );
 }

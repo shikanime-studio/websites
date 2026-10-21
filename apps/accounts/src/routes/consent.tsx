@@ -1,16 +1,23 @@
 import { Avatar } from "@astryxdesign/core/Avatar";
-import { Badge } from "@astryxdesign/core/Badge";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { useMutation } from "@tanstack/react-query";
-import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { AppWindow, Check } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
 
 const LEADING_QUESTION = /^\?/;
+
+const SCOPE_LABELS: Record<string, string> = {
+  openid: "Confirm your identity",
+  profile: "Your name and profile picture",
+  email: "Your email address",
+  offline_access: "Stay connected while you're away",
+};
 
 interface ConsentSearch {
   client_id?: string;
@@ -82,15 +89,21 @@ function ConsentPage() {
   });
 
   const scopes = (scope ?? "").split(" ").filter(Boolean);
+  const permissions = scopes.map((value) => ({
+    value,
+    label: SCOPE_LABELS[value] ?? value,
+  }));
 
   if (!session?.user) {
     return (
-      <div className="mx-auto flex w-full max-w-md flex-col px-4 py-24">
-        <Card padding={5}>
+      <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+        <Card padding={6}>
           <div className="flex flex-col items-center gap-4 text-center">
-            <Heading level={1}>Sign in required</Heading>
+            <Heading level={1} type="display-3">
+              Sign in to continue
+            </Heading>
             <Text color="secondary">
-              Sign in before approving access.
+              An application is waiting for your approval.
             </Text>
             <Button
               label="Sign in"
@@ -106,42 +119,55 @@ function ConsentPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-24">
-      <Card padding={5}>
+    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-24">
+      <Card padding={6}>
         <div className="flex flex-col items-center gap-5 text-center">
           <div className="flex items-center gap-3">
             <Avatar
               name={session.user.name ?? session.user.email ?? "User"}
               src={session.user.image ?? ""}
-              size="md"
+              size="lg"
             />
-            <span className="text-secondary/50 text-lg">→</span>
-            <div className="border-border bg-surface text-secondary flex h-10 w-10 items-center justify-center rounded-xl border text-sm font-black">
-              {(clientId ?? "?").slice(0, 2).toUpperCase()}
-            </div>
-          </div>
-          <Heading level={1}>Authorize access</Heading>
-          <Text color="secondary">
-            <span className="text-secondary font-bold">
-              {clientId ?? "An application"}
+            <span className="text-secondary/40" aria-hidden>
+              ·
             </span>
-            {" "}
-            wants to access your Shikanime Studio account.
-          </Text>
-          {scopes.length > 0
+            <span className="border-border bg-surface text-secondary flex size-12 items-center justify-center rounded-2xl border">
+              <AppWindow size={20} aria-hidden />
+            </span>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Heading level={1} type="display-3">
+              Allow access?
+            </Heading>
+            <Text color="secondary" className="text-balance">
+              <span className="text-primary font-semibold">
+                {clientId ?? "An application"}
+              </span>
+              {" "}
+              wants to use your Shikanime Studio account.
+            </Text>
+          </div>
+
+          {permissions.length > 0
             ? (
-              <div className="flex w-full flex-col items-start gap-2">
-                <Text size="sm" weight="semibold">
-                  This will allow the application to:
-                </Text>
-                <div className="flex flex-wrap gap-2">
-                  {scopes.map((s: string) => (
-                    <Badge key={s} variant="info" label={s} />
-                  ))}
-                </div>
-              </div>
+              <ul className="bg-body flex w-full flex-col gap-2 rounded-xl p-4 text-left">
+                {permissions.map((permission) => (
+                  <li
+                    key={permission.value}
+                    className="flex items-start gap-2.5"
+                  >
+                    <Check
+                      size={16}
+                      aria-hidden
+                      className="text-accent mt-0.5 shrink-0"
+                    />
+                    <Text size="sm">{permission.label}</Text>
+                  </li>
+                ))}
+              </ul>
             )
             : null}
+
           {error
             ? (
               <Text color="accent" size="sm" weight="semibold" role="alert">
@@ -149,18 +175,18 @@ function ConsentPage() {
               </Text>
             )
             : null}
-          <Divider className="w-full" />
-          <div className="flex w-full gap-3">
+
+          <Divider />
+
+          <div className="flex w-full flex-col gap-2">
             <Button
-              className="flex-1"
               label="Allow"
               variant="primary"
               isDisabled={consent.isPending}
               onClick={() => consent.mutate(true)}
             />
             <Button
-              className="flex-1"
-              label="Deny"
+              label="Not now"
               variant="secondary"
               isDisabled={consent.isPending}
               onClick={() => consent.mutate(false)}
@@ -168,8 +194,15 @@ function ConsentPage() {
           </div>
         </div>
       </Card>
-      <Text color="secondary" size="sm" className="mt-6 text-center">
-        You can revoke access at any time from your account settings.
+      <Text size="sm" color="secondary" className="mt-6 text-center">
+        You can remove access anytime in{" "}
+        <Link
+          to="/settings/security"
+          className="hover:text-foreground font-medium transition-colors"
+        >
+          Apps and websites
+        </Link>
+        .
       </Text>
     </div>
   );

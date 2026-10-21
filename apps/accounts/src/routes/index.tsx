@@ -1,89 +1,184 @@
+import type { LucideIcon } from "lucide-react";
+import { Avatar } from "@astryxdesign/core/Avatar";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
+import { Divider } from "@astryxdesign/core/Divider";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
-import { count } from "drizzle-orm";
+import { getRequest } from "@tanstack/react-start/server";
+import {
+  ChevronRight,
+  Fingerprint,
+  LayoutGrid,
+  ShieldCheck,
+  Smartphone,
+  UserRound,
+} from "lucide-react";
+import { createAuth } from "../lib/auth";
 import { createD1Database } from "../lib/db";
-import { users } from "../schema";
 
-const countUsers = createServerFn().handler(async (): Promise<number> => {
+const isSignedIn = createServerFn().handler(async (): Promise<boolean> => {
+  const request = getRequest();
   const db = createD1Database();
-  const rows = await db.select({ value: count() }).from(users);
-  return rows[0]?.value ?? 0;
+  const auth = createAuth(db);
+  const session = await auth.api.getSession({ headers: request.headers });
+  return Boolean(session?.user);
 });
 
 export const Route = createFileRoute("/")({
-  loader: () => countUsers(),
+  loader: async () => {
+    const signedIn = await isSignedIn();
+    if (signedIn) {
+      throw redirect({ to: "/settings" });
+    }
+    return null;
+  },
   component: HomePage,
 });
 
-const ENDPOINTS = [
-  { name: "Discovery", path: "/api/auth/.well-known/openid-configuration" },
-  { name: "Authorization", path: "/api/auth/oauth2/authorize" },
-  { name: "Token", path: "/api/auth/oauth2/token" },
+const FEATURES: Array<{ icon: LucideIcon, title: string, body: string }> = [
+  {
+    icon: Fingerprint,
+    title: "One sign-in, everywhere",
+    body: "The same identity follows you across every Shikanime Studio app and device.",
+  },
+  {
+    icon: LayoutGrid,
+    title: "Apps you choose",
+    body: "See what you've connected and remove access whenever you change your mind.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Yours to control",
+    body: "Update your name, review your sessions, and keep your account safe.",
+  },
 ];
 
-function HomePage() {
-  const userCount = Route.useLoaderData();
+const PREVIEW_ROWS: Array<{ icon: LucideIcon, label: string }> = [
+  { icon: UserRound, label: "Personal details" },
+  { icon: ShieldCheck, label: "Password and security" },
+  { icon: Smartphone, label: "Where you're signed in" },
+];
 
+function AccountPreview() {
   return (
-    <div className="mx-auto w-full max-w-5xl px-4">
-      <div className="flex flex-col items-center gap-12 py-14 text-center sm:py-20">
-        <section className="flex max-w-2xl flex-col items-center gap-4">
-          <Heading level={1} type="display-1">
-            One account for all of Shikanime Studio
-          </Heading>
-          <Text size="lg" color="secondary">
-            Sign in once and move between every Shikanime Studio property
-            without repeating yourself.
+    <Card
+      padding={0}
+      className="shadow-black/5 w-full overflow-hidden shadow-xl"
+    >
+      <div className="border-border flex items-center gap-2 border-b px-4 py-3">
+        <span className="bg-accent text-on-accent flex size-6 items-center justify-center rounded-full text-[10px] font-black">
+          S
+        </span>
+        <Text size="sm" weight="semibold">
+          Accounts Center
+        </Text>
+      </div>
+      <div className="flex items-center gap-3 px-4 py-4">
+        <Avatar name="Shikanime Deva" size="lg" />
+        <div className="flex min-w-0 flex-col">
+          <Text size="sm" weight="semibold">
+            Shikanime Deva
           </Text>
-          <Button
-            href="/login"
-            label="Sign in"
-            variant="primary"
-            className="mt-2"
-          />
-        </section>
+          <Text size="sm" color="secondary" className="truncate">
+            william@shikanime.studio
+          </Text>
+        </div>
+      </div>
+      <Divider />
+      <ul className="flex flex-col py-1">
+        {PREVIEW_ROWS.map((row) => (
+          <li key={row.label} className="flex items-center gap-3 px-4 py-2.5">
+            <span className="bg-accent/10 text-accent flex size-8 items-center justify-center rounded-full">
+              <row.icon size={15} aria-hidden />
+            </span>
+            <Text size="sm" className="flex-1">
+              {row.label}
+            </Text>
+            <ChevronRight size={15} aria-hidden className="text-secondary/40" />
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
 
-        <Card className="w-full text-left" padding={5}>
-          <div className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <Heading level={2}>For applications</Heading>
-              <Text color="secondary">
-                First-party clients authenticate through the standard OAuth 2.1
-                authorization-code flow with OpenID Connect identity tokens.
+function HomePage() {
+  return (
+    <div className="mx-auto w-full max-w-5xl px-4 sm:px-6">
+      <section className="grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:py-24">
+        <div className="flex flex-col items-start gap-5">
+          <span className="bg-accent/10 text-accent flex items-center gap-2 rounded-full py-1 pr-3 pl-1 text-xs font-bold tracking-wide">
+            <span className="bg-accent text-on-accent flex size-6 items-center justify-center rounded-full text-[10px] font-black">
+              S
+            </span>
+            Shikanime Studio
+          </span>
+          <Heading
+            level={1}
+            type="display-1"
+            className="font-display max-w-xl text-balance"
+          >
+            One account that follows you everywhere.
+          </Heading>
+          <Text size="lg" color="secondary" className="max-w-lg">
+            Sign in once and every Shikanime Studio application knows who you
+            are. Your details, your apps, and your security live in one place.
+          </Text>
+          <div className="flex flex-wrap items-center gap-3 pt-1">
+            <Button href="/login" label="Sign in" variant="primary" size="lg" />
+            <Button
+              href="#features"
+              label="See what's inside"
+              variant="secondary"
+              size="lg"
+            />
+          </div>
+        </div>
+        <div className="relative">
+          <AccountPreview />
+        </div>
+      </section>
+
+      <section id="features" className="scroll-mt-20 pb-16">
+        <div className="grid gap-4 sm:grid-cols-3">
+          {FEATURES.map((feature) => (
+            <Card key={feature.title} padding={5} className="h-full">
+              <div className="flex h-full flex-col gap-3">
+                <span className="bg-accent/10 text-accent flex size-10 items-center justify-center rounded-full">
+                  <feature.icon size={18} aria-hidden />
+                </span>
+                <Heading level={2}>{feature.title}</Heading>
+                <Text size="sm" color="secondary">
+                  {feature.body}
+                </Text>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="pb-20">
+        <Card variant="muted" padding={5}>
+          <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
+            <div className="flex flex-col gap-1">
+              <Text weight="semibold">Building on Shikanime Studio?</Text>
+              <Text size="sm" color="secondary">
+                Applications connect through OpenID Connect. The discovery
+                document lists every endpoint.
               </Text>
             </div>
-            <div className="grid gap-3 sm:grid-cols-3">
-              {ENDPOINTS.map((endpoint) => (
-                <div
-                  key={endpoint.name}
-                  className="bg-surface border-border flex flex-col gap-1 rounded-xl border p-4"
-                >
-                  <Text size="sm" weight="semibold">
-                    {endpoint.name}
-                  </Text>
-                  <code className="text-secondary/70 text-xs break-all">
-                    {endpoint.path}
-                  </code>
-                </div>
-              ))}
-            </div>
+            <Button
+              href="/api/auth/.well-known/openid-configuration"
+              label="View configuration"
+              variant="secondary"
+              target="_blank"
+            />
           </div>
         </Card>
-
-        <Card variant="muted" className="w-full" padding={4}>
-          <Text color="secondary" size="sm">
-            <span className="text-secondary font-bold">{userCount}</span>
-            {" "}
-            {userCount === 1 ? "identity" : "identities"}
-            {" "}
-            registered across the fleet.
-          </Text>
-        </Card>
-      </div>
+      </section>
     </div>
   );
 }
