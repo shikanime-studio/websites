@@ -118,9 +118,11 @@ uses the Astryx body token.
 
 ## Pages
 
-- **Signed-out `/`** — hero with a live product mock (gradient cover, C108
-  sticker, photo strip), a "Made for" category-chip strip, lifecycle cards,
-  role split, feature grid, four-step workflow, lilac call to action, footer.
+- **Signed-out `/`** — one centred hero: a short headline, one line of
+  copy, one action, and an abstract collage (coral camera disc, lilac heart
+  sticker, C108 disc, tilted ticket with a 7px ink shadow). A three-word strip
+  (Brief → Shoot → Deliver) and a one-row footer are the only other content.
+  No feature grid, no lifecycle cards, no long copy.
 - **Signed-in `/`** — a horizontally scrollable status filter on mobile, a
   search field, and image-forward commission cards with candy status stickers
   on the thumbnail; empty, no-match, loading and error states included.
