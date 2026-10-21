@@ -15,7 +15,6 @@ const LEADING_QUESTION = /^\?/;
 interface ConsentSearch {
   client_id?: string;
   scope?: string;
-  oauth_query?: string;
 }
 
 function parseConsentSearch(search: Record<string, unknown>): ConsentSearch {
@@ -23,16 +22,12 @@ function parseConsentSearch(search: Record<string, unknown>): ConsentSearch {
   // record, so dot access trips tsc's TS4111.
   const client_id = search["client_id"];
   const scope = search["scope"];
-  const oauth_query = search["oauth_query"];
   const parsed: ConsentSearch = {};
   if (typeof client_id === "string") {
     parsed.client_id = client_id;
   }
   if (typeof scope === "string") {
     parsed.scope = scope;
-  }
-  if (typeof oauth_query === "string") {
-    parsed.oauth_query = oauth_query;
   }
   return parsed;
 }
@@ -97,6 +92,13 @@ function ConsentPage() {
             <Text color="secondary">
               Sign in before approving access.
             </Text>
+            <Button
+              label="Sign in"
+              variant="primary"
+              onClick={() => {
+                window.location.assign(`/login${window.location.search}`);
+              }}
+            />
           </div>
         </Card>
       </div>

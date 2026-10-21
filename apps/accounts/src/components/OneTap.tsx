@@ -16,11 +16,10 @@ export function OneTap({ onError }: OneTapProps) {
     startedRef.current = true;
     authClient.oneTap(
       {
-        // The plugin navigates to `callbackURL` (default `/`) after the
-        // sign-in, discarding the server's OAuth redirect. Returning here
-        // lets the page resume the authorization request with the new
-        // session instead of dropping the user on the landing page.
-        callbackURL: window.location.href,
+        // No `callbackURL`: the OAuth provider answers the callback with
+        // `{redirect, url}` and better-auth's redirect plugin follows it.
+        // Passing one would make the plugin navigate there instead and
+        // drop the authorization request.
         button: {
           container: "[data-one-tap-button]",
           config: {
@@ -33,6 +32,19 @@ export function OneTap({ onError }: OneTapProps) {
         },
       },
       {
+        // Passing fetch options also stops the plugin's own `"/"` hop.
+        // The OAuth provider answers with `{redirect, url}` (already
+        // followed by better-auth's redirect plugin); a plain sign-in has
+        // no redirect, so land on the app instead of staying on /login.
+        onSuccess: (ctx) => {
+          const data = ctx.data as
+            | { redirect?: boolean, url?: string }
+            | undefined;
+          if (data?.redirect === true && typeof data.url === "string") {
+            return;
+          }
+          window.location.assign("/");
+        },
         onError: (ctx) => {
           onError?.(ctx.error.message ?? "Sign-in failed");
         },
