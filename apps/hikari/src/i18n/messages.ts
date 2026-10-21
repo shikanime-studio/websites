@@ -486,13 +486,6 @@ const ja: Record<MessageKey, string> = {
   "notfound.home": "Hikari に戻る",
 };
 
-export const MESSAGES: Record<LanguageCode, Record<MessageKey, string>> = {
-  en,
-  fr,
-  ja,
-};
-
-
 export const CATALOGS: Record<LanguageCode, Record<MessageKey, { defaultMessage: string }>> = {
   en: Object.fromEntries(
     Object.entries(en).map(([key, defaultMessage]) => [key, { defaultMessage }]),

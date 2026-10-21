@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import process from "node:process";
-import { MESSAGES } from "../i18n/messages";
+import { CATALOGS } from "../i18n/messages";
 import {
   calendarEventUrl,
   calendarRange,
@@ -13,19 +13,19 @@ import {
   photoObjectKey,
 } from "./hikari";
 
-const enKeys = Object.keys(MESSAGES.en).sort();
-for (const [code, table] of Object.entries(MESSAGES)) {
-  const entries: Array<[string, string]> = Object.entries(table);
+const enKeys = Object.keys(CATALOGS.en).sort();
+for (const [code, table] of Object.entries(CATALOGS)) {
+  const entries: Array<[string, { defaultMessage: string }]> = Object.entries(table);
   const keys = entries.map(([key]) => key).sort();
   assert.deepEqual(
     keys,
     enKeys,
     `language ${code} must define exactly the English key set`,
   );
-  for (const [key, text] of entries) {
+  for (const [, entry] of entries) {
     assert.ok(
-      text.length > 0,
-      `language ${code} key ${key} must be non-empty`,
+      entry.defaultMessage.length > 0,
+      `language ${code} key must be non-empty`,
     );
   }
 }
