@@ -109,6 +109,7 @@
                     format = pkgs.formats.toml { };
                     settings = {
                       files.extend-exclude = [
+                        "apps/accounts/src/worker-configuration.d.ts"
                         "apps/links/src/worker-configuration.d.ts"
                         "apps/reiya/src/worker-configuration.d.ts"
                         "apps/www/src/worker-configuration.d.ts"
