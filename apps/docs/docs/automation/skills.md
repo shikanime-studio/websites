@@ -45,6 +45,25 @@ On fleet hosts, `machines`/`skills` Nix modules set
 catalog into `~/.hermes/skills` — which is how the agents documented in
 [Automata](./hermes) know the dev loop at all.
 
+## Scripts
+
+Skills that need executable helpers keep them in `scripts/` beside the
+`SKILL.md`, written in Python with `argparse`. The shebang is
+`#!/usr/bin/env nix-shell` with a `#!nix-shell -i python3 -p …` line
+declaring **every runtime dependency** of that script — not just
+`python3` but the external tools it drives (`gh`, `jujutsu`, `git`) — so
+each script is a self-contained, dependency-isolated unit on any Nix
+host. `nix-shell` rather than the new CLI is deliberate: `nix shell`
+has no interpreter (`-i`) mode, and on macOS the `env -S` shebang route
+chokes on the `#` in `nixpkgs#python3` (BSD env reads it as a comment).
+Examples: `sks-curate`'s contrastive
+`scripts/probe.py` (grades a reworked skill body against the unchanged
+assertion set and fails on any regression) and `sks-gc`'s
+`scripts/discover.py` (dry-run GC candidates in a jj repo). The
+exception is single `gh api` + `jq` pipelines, which stay shell — Python
+would add nothing. Scripts are stdlib-only at the Python level; Python
+dependencies beyond the stdlib belong in the repo's Nix tooling instead.
+
 ## CI
 
 The repo runs the org workflow grammar: `commands`, `integration`,
