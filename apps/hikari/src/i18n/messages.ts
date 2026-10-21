@@ -21,12 +21,17 @@ const en = {
 
   "landing.eyebrow": "Cosplay photoshoot commissions",
   "landing.titleTop": "Cosplay shoots,",
-  "landing.titleAccent": "planned properly.",
+  "landing.titleAccent": "minus the chaos.",
   "landing.body":
-    "One workspace for the whole shoot: the request, the place, the time, the photos. Both sides always know what happens next.",
-  "landing.ctaPrimary": "Sign in with Google",
+    "Find your photographer, lock the date, and get the photos — the whole shoot lives in one friendly place.",
+  "landing.ctaPrimary": "Start your shoot",
   "landing.ctaSecondary": "See how it works",
-  "landing.note": "Google sign-in · English, Français, 日本語",
+  "landing.note": "Sign in with Google · English, Français, 日本語",
+  "landing.madeFor": "Made for",
+  "landing.catCosplay": "Cosplayers",
+  "landing.catShooters": "Photographers",
+  "landing.catComiket": "Comiket",
+  "landing.catStudio": "Studio days",
   "landing.previewLabel": "A commission, end to end",
   "landing.previewCommission": "Commission #128",
   "landing.previewTitle": "C108 · Saturday outdoor shoot",
@@ -56,7 +61,7 @@ const en = {
     "The first upload marks delivery and notifies the client.",
 
   "landing.rolesEyebrow": "Two sides",
-  "landing.rolesTitle": "Built for the cosplayer and the photographer.",
+  "landing.rolesTitle": "Made for cosplayers and photographers.",
   "landing.rolesBody":
     "Same commission, two points of view. Nobody has to translate a chat thread into a schedule.",
   "landing.roleClientTitle": "For cosplayers",
@@ -75,7 +80,7 @@ const en = {
   "landing.roleShooter4": "Clients are notified automatically at every step",
 
   "landing.featuresEyebrow": "What is inside",
-  "landing.featuresTitle": "Small app, complete workflow.",
+  "landing.featuresTitle": "All the bits a shoot needs.",
   "landing.featuresBody":
     "No plugins, no spreadsheet, no calendar Tetris. Just the parts a shoot actually needs.",
   "landing.feature1Title": "A board, not a chat thread",
@@ -117,7 +122,7 @@ const en = {
   "landing.ctaTitle": "Your next shoot deserves better than a group chat.",
   "landing.ctaBody":
     "Start with a sign-in. Your first commission takes about a minute.",
-  "landing.ctaButton": "Start a commission",
+  "landing.ctaButton": "Start your shoot",
   "landing.ctaNote": "No card. No setup. Just the shoot.",
 
   "landing.footerTagline":
@@ -262,12 +267,17 @@ const fr: Record<MessageKey, string> = {
 
   "landing.eyebrow": "Commissions photo cosplay",
   "landing.titleTop": "Des shootings cosplay,",
-  "landing.titleAccent": "vraiment planifiés.",
+  "landing.titleAccent": "sans le chaos.",
   "landing.body":
-    "Un seul espace pour toute la séance : la demande, le lieu, l'horaire, les photos. Les deux côtés savent toujours ce qui vient ensuite.",
-  "landing.ctaPrimary": "Se connecter avec Google",
+    "Trouvez votre photographe, fixez la date et recevez les photos — toute la séance au même endroit, sans prise de tête.",
+  "landing.ctaPrimary": "Lancer votre shooting",
   "landing.ctaSecondary": "Voir le déroulé",
   "landing.note": "Connexion Google · English, Français, 日本語",
+  "landing.madeFor": "Pensé pour",
+  "landing.catCosplay": "Cosplayeurs",
+  "landing.catShooters": "Photographes",
+  "landing.catComiket": "Comiket",
+  "landing.catStudio": "Studio",
   "landing.previewLabel": "Une commission, de bout en bout",
   "landing.previewCommission": "Commission n° 128",
   "landing.previewTitle": "C108 · shooting extérieur du samedi",
@@ -297,7 +307,7 @@ const fr: Record<MessageKey, string> = {
     "Le premier envoi marque la livraison et prévient le client.",
 
   "landing.rolesEyebrow": "Deux côtés",
-  "landing.rolesTitle": "Pensé pour le cosplayeur et le photographe.",
+  "landing.rolesTitle": "Pensé pour les cosplayeurs et les photographes.",
   "landing.rolesBody":
     "La même commission, deux points de vue. Personne n'a à traduire un fil de discussion en planning.",
   "landing.roleClientTitle": "Pour les cosplayeurs",
@@ -316,7 +326,7 @@ const fr: Record<MessageKey, string> = {
   "landing.roleShooter4": "Les clients sont prévenus automatiquement à chaque étape",
 
   "landing.featuresEyebrow": "Ce qu'il y a dedans",
-  "landing.featuresTitle": "Une petite app, un flux complet.",
+  "landing.featuresTitle": "Tout ce qu'un shooting demande.",
   "landing.featuresBody":
     "Pas d'extension, pas de tableur, pas de Tetris de calendriers. Juste ce qu'une séance demande.",
   "landing.feature1Title": "Un tableau, pas un fil de messages",
@@ -359,7 +369,7 @@ const fr: Record<MessageKey, string> = {
     "Votre prochaine séance mérite mieux qu'un groupe de discussion.",
   "landing.ctaBody":
     "Commencez par une connexion. Votre première commission prend une minute.",
-  "landing.ctaButton": "Créer une commission",
+  "landing.ctaButton": "Lancer votre shooting",
   "landing.ctaNote": "Sans carte. Sans installation. Juste la séance.",
 
   "landing.footerTagline":
@@ -503,12 +513,17 @@ const ja: Record<MessageKey, string> = {
 
   "landing.eyebrow": "コスプレ撮影の依頼",
   "landing.titleTop": "コスプレ撮影を、",
-  "landing.titleAccent": "きちんと計画。",
+  "landing.titleAccent": "もっと気軽に。",
   "landing.body":
-    "依頼、場所、時間、写真。撮影のすべてをひとつの場所に。どちらも次の一手がいつでも分かります。",
-  "landing.ctaPrimary": "Google でログイン",
+    "撮影者を見つけて、日付を決めて、写真を受け取る。撮影のすべてを、ひとつの場所で。",
+  "landing.ctaPrimary": "撮影をはじめる",
   "landing.ctaSecondary": "流れを見る",
   "landing.note": "Google ログイン · English, Français, 日本語",
+  "landing.madeFor": "こんな人に",
+  "landing.catCosplay": "コスプレイヤー",
+  "landing.catShooters": "撮影者",
+  "landing.catComiket": "コミケ",
+  "landing.catStudio": "スタジオ",
   "landing.previewLabel": "依頼の流れ",
   "landing.previewCommission": "依頼 #128",
   "landing.previewTitle": "C108 · 土曜 屋外撮影",
@@ -538,7 +553,7 @@ const ja: Record<MessageKey, string> = {
     "最初のアップロードで納品となり、依頼者に通知されます。",
 
   "landing.rolesEyebrow": "二人のために",
-  "landing.rolesTitle": "コスプレイヤーと撮影者の両方に。",
+  "landing.rolesTitle": "コスプレイヤーと撮影者のために。",
   "landing.rolesBody":
     "同じ依頼を、二つの視点で。チャットのやり取りを予定表に訳す必要はありません。",
   "landing.roleClientTitle": "コスプレイヤーへ",
@@ -557,7 +572,7 @@ const ja: Record<MessageKey, string> = {
   "landing.roleShooter4": "各段階で依頼者に自動で通知",
 
   "landing.featuresEyebrow": "中身",
-  "landing.featuresTitle": "小さなアプリ、ひと通りの流れ。",
+  "landing.featuresTitle": "撮影に必要なものだけ。",
   "landing.featuresBody":
     "プラグインも表計算もカレンダー崩しも不要。撮影に必要なものだけ。",
   "landing.feature1Title": "チャットではなくボード",
@@ -599,7 +614,7 @@ const ja: Record<MessageKey, string> = {
   "landing.ctaTitle": "次の撮影は、グループチャットより良い場所で。",
   "landing.ctaBody":
     "まずはログインから。最初の依頼は 1 分ほどで作れます。",
-  "landing.ctaButton": "依頼を作る",
+  "landing.ctaButton": "撮影をはじめる",
   "landing.ctaNote": "カード不要。設定不要。撮影だけ。",
 
   "landing.footerTagline":

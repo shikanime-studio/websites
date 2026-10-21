@@ -244,6 +244,14 @@ export function LogOut(props: IconProps) {
   );
 }
 
+export function Heart(props: IconProps) {
+  return (
+    <Svg {...props}>
+      <path d="M12 20s-7.5-4.6-7.5-9.4A4.1 4.1 0 0 1 12 7.7a4.1 4.1 0 0 1 7.5 2.9C19.5 15.4 12 20 12 20Z" />
+    </Svg>
+  );
+}
+
 export function HikariMark({ className }: { className?: string }) {
   return (
     <span
@@ -255,15 +263,17 @@ export function HikariMark({ className }: { className?: string }) {
         justifyContent: "center",
         width: 28,
         height: 28,
-        borderRadius: 9,
-        background: "#ffd21f",
-        color: "#0a1317",
+        borderRadius: 10,
+        background: "#ff6433",
+        color: "#241c18",
         fontFamily:
           '"Hiragino Kaku Gothic ProN", "Yu Gothic", "Noto Sans JP", sans-serif',
         fontSize: 15,
         fontWeight: 700,
         lineHeight: 1,
         flex: "none",
+        transform: "rotate(-4deg)",
+        boxShadow: "0 2px 0 rgba(36, 28, 24, 0.12)",
       }}
     >
       光
