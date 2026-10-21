@@ -1,8 +1,11 @@
+import type * as AsyncResultType from "effect/reactivity/AsyncResult";
+import type { Atom } from "effect/reactivity/Atom";
 import type { ReactNode } from "react";
 import type { CardData } from "../lib/api-client";
-import { useQuery } from "@tanstack/react-query";
 import { Image } from "@unpic/react";
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import { Activity, useState } from "react";
+import { useCardResult } from "../hooks/useCardResult";
 import {
   Card,
   CardBookmark,
@@ -33,24 +36,19 @@ export function GalleryItem({ children }: GalleryItemProps) {
   return <div className="mb-4 break-inside-avoid">{children}</div>;
 }
 
+type CardsAtom = Atom<AsyncResultType.AsyncResult<Array<CardData>, unknown>>;
+
 interface GalleryContentProps {
-  queryKey: Array<string>;
-  queryFn: () => Promise<Array<CardData>>;
-  staleTime?: number;
+  atom: CardsAtom;
   variant?: "default" | "showcase";
 }
 
 export function GalleryContent({
-  queryKey,
-  queryFn,
-  staleTime = 1000 * 60 * 5,
+  atom,
   variant = "default",
 }: GalleryContentProps) {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey,
-    queryFn,
-    staleTime,
-  });
+  const result = useCardResult(atom, "Failed to load gallery");
+  const items = getOrElse(result, () => []);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
   const CardComponent =
@@ -58,14 +56,14 @@ export function GalleryContent({
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         {Array.from({ length: 8 }).map(() => (
           <GalleryItem key={crypto.randomUUID()}>
             <SkeletonCard />
           </GalleryItem>
         ))}
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         {items.length > 0 ? (
           items.map((item) => (
             <GalleryItem key={item.id}>
@@ -122,27 +120,22 @@ export function GalleryContent({
 }
 
 export function ShowcaseGalleryContent({
-  queryKey,
-  queryFn,
-  staleTime = 1000 * 60 * 5,
+  atom,
 }: Omit<GalleryContentProps, "variant">) {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey,
-    queryFn,
-    staleTime,
-  });
+  const result = useCardResult(atom, "Failed to load gallery");
+  const items = getOrElse(result, () => []);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         {Array.from({ length: 8 }).map(() => (
           <GalleryItem key={crypto.randomUUID()}>
             <SkeletonCard />
           </GalleryItem>
         ))}
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         {items.length > 0 ? (
           items.map((item) => (
             <GalleryItem key={item.id}>

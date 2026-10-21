@@ -1,38 +1,49 @@
 import type { ReactNode } from "react";
-import type { LanguageCode, MessageKey } from "./messages";
-import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import type { LanguageCode } from "./messages";
+import { InternationalizationProvider } from "@astryxdesign/core/i18n";
+import { Schema } from "effect";
+import { useCallback, useEffect, useState } from "react";
 import { I18nContext } from "./context";
-import { LANGUAGES, MESSAGES } from "./messages";
+import { CATALOGS, LANGUAGES } from "./messages";
 
 const STORAGE_KEY = "hikari:lang";
+
+const StoredLanguage = Schema.Literals(
+  LANGUAGES.map((language) => language.code) as [
+    LanguageCode,
+    ...Array<LanguageCode>,
+  ],
+);
+
+const decodeStored = Schema.decodeUnknownOption(StoredLanguage);
 
 function detectLanguage(): LanguageCode {
   if (typeof window === "undefined") {
     return "en";
   }
-  const codes = LANGUAGES.map((l) => l.code);
   const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored !== null && codes.includes(stored as LanguageCode)) {
-    return stored as LanguageCode;
+  if (stored !== null) {
+    const fromStorage = decodeStored(stored);
+    if (fromStorage._tag === "Some") {
+      return fromStorage.value;
+    }
   }
   const nav = window.navigator.language.slice(0, 2);
-  return codes.includes(nav as LanguageCode)
-    ? (nav as LanguageCode)
-    : "en";
+  const fromNav = decodeStored(nav);
+  return fromNav._tag === "Some" ? fromNav.value : "en";
 }
 
-
-
+const MESSAGES_BY_LOCALE = {
+  en: CATALOGS.en,
+  fr: CATALOGS.fr,
+  ja: CATALOGS.ja,
+};
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<LanguageCode>(detectLanguage);
+  const [lang, setLang] = useState<LanguageCode>(detectLanguage);
 
-  const setLang = useCallback((next: LanguageCode) => {
-    setLangState(next);
+  const changeLang = useCallback((next: LanguageCode) => {
+    setLang(next);
     window.localStorage.setItem(STORAGE_KEY, next);
   }, []);
 
@@ -40,22 +51,11 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     document.documentElement.lang = lang;
   }, [lang]);
 
-  const t = useCallback(
-    (key: MessageKey, params?: Record<string, string>) => {
-      let text: string = MESSAGES[lang][key];
-      if (params) {
-        for (const [name, value] of Object.entries(params)) {
-          text = text.replaceAll(`{${name}}`, value);
-        }
-      }
-      return text;
-    },
-    [lang],
-  );
-
   return (
-    <I18nContext value={{ lang, setLang, t }}>
-      {children}
-    </I18nContext>
+    <InternationalizationProvider locale={lang} messages={MESSAGES_BY_LOCALE}>
+      <I18nContext value={{ lang, setLang: changeLang }}>
+        {children}
+      </I18nContext>
+    </InternationalizationProvider>
   );
 }

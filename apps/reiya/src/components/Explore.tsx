@@ -1,21 +1,24 @@
 import type { ReactNode } from "react";
+import type { CardData } from "../lib/api-client";
 import { Carousel } from "@astryxdesign/core/Carousel";
 import { Spinner } from "@astryxdesign/core/Spinner";
-import { useQuery } from "@tanstack/react-query";
+import { RegistryProvider } from "@effect/atom-react";
 import { Image } from "@unpic/react";
+
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import { ArrowRight } from "lucide-react";
 import { Activity } from "react";
+import { useCardResult } from "../hooks/useCardResult";
 import {
-  fetchArtists,
-  fetchCharacters,
-  fetchEvents,
-  fetchShowcases,
-} from "../lib/api-client";
+  artistsAtom,
+  charactersAtom,
+  eventsAtom,
+  showcasesAtom,
+} from "../lib/atoms";
 import { EmptyState } from "./EmptyState";
 import { Featured } from "./Featured";
 import { FilterBar, FilterButton } from "./FilterBar";
 import { Gallery, ShowcaseGalleryContent } from "./Gallery";
-import { QueryProvider } from "./QueryProvider";
 import { Tab, TabContent, TabList } from "./TabList";
 
 interface ExploreSectionProps {
@@ -75,15 +78,12 @@ export function ExploreSection({
 }
 
 function ExploreFeaturedContent() {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ["showcases"],
-    queryFn: fetchShowcases,
-    staleTime: 1000 * 60 * 5,
-  });
+  const result = useCardResult(showcasesAtom);
+  const items: Array<CardData> = getOrElse(result, () => []);
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
             className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
@@ -92,7 +92,7 @@ function ExploreFeaturedContent() {
           />
         </div>
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         <Featured items={items} />
       </Activity>
     </>
@@ -101,25 +101,22 @@ function ExploreFeaturedContent() {
 
 export function ExploreFeatured({ className, children }: ExploreSectionProps) {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <ExploreSection className={className ?? ""}>
         {children}
         <ExploreFeaturedContent />
       </ExploreSection>
-    </QueryProvider>
+    </RegistryProvider>
   );
 }
 
 function ExploreArtistsContent() {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ["artists"],
-    queryFn: fetchArtists,
-    staleTime: 1000 * 60 * 5,
-  });
+  const result = useCardResult(artistsAtom);
+  const items: Array<CardData> = getOrElse(result, () => []);
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
             className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
@@ -128,7 +125,7 @@ function ExploreArtistsContent() {
           />
         </div>
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         <Featured items={items} />
       </Activity>
     </>
@@ -137,25 +134,22 @@ function ExploreArtistsContent() {
 
 export function ExploreArtists({ className, children }: ExploreSectionProps) {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <ExploreSection className={className ?? ""}>
         {children}
         <ExploreArtistsContent />
       </ExploreSection>
-    </QueryProvider>
+    </RegistryProvider>
   );
 }
 
 function ExploreCharactersContent() {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey: ["characters"],
-    queryFn: fetchCharacters,
-    staleTime: 1000 * 60 * 5,
-  });
+  const result = useCardResult(charactersAtom);
+  const items: Array<CardData> = getOrElse(result, () => []);
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         <div className="flex justify-center py-12">
           <span
             className="h-8 w-8 animate-spin rounded-full border-2 border-border border-t-accent"
@@ -164,7 +158,7 @@ function ExploreCharactersContent() {
           />
         </div>
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         <Featured items={items} />
       </Activity>
     </>
@@ -176,20 +170,18 @@ export function ExploreCharacters({
   children,
 }: ExploreSectionProps) {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <ExploreSection className={className ?? ""}>
         {children}
         <ExploreCharactersContent />
       </ExploreSection>
-    </QueryProvider>
+    </RegistryProvider>
   );
 }
 
 function ExploreConventionsContent() {
-  const { data: events = [], isLoading } = useQuery({
-    queryKey: ["events"],
-    queryFn: fetchEvents,
-  });
+  const result = useCardResult(eventsAtom);
+  const events: Array<CardData> = getOrElse(result, () => []);
 
   return (
     <ExploreSection>
@@ -221,13 +213,13 @@ function ExploreConventionsContent() {
         )}
       </Carousel>
 
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         <div className="flex h-64 w-full items-center justify-center">
           <Spinner aria-label="Loading" size="lg" />
         </div>
       </Activity>
 
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         {events.length > 0 ? (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             {events.map((event) => {
@@ -280,9 +272,9 @@ function ExploreConventionsContent() {
 
 export function ExploreConventions() {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <ExploreConventionsContent />
-    </QueryProvider>
+    </RegistryProvider>
   );
 }
 
@@ -319,10 +311,7 @@ function ExploreShowcaseContent() {
           </FilterBar>
 
           <Gallery>
-            <ShowcaseGalleryContent
-              queryKey={["showcases"]}
-              queryFn={fetchShowcases}
-            />
+            <ShowcaseGalleryContent atom={showcasesAtom} />
           </Gallery>
         </div>
       </TabContent>
@@ -332,8 +321,8 @@ function ExploreShowcaseContent() {
 
 export function ExploreShowcase() {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <ExploreShowcaseContent />
-    </QueryProvider>
+    </RegistryProvider>
   );
 }

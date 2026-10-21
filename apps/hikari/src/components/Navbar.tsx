@@ -1,6 +1,8 @@
+import { useAtomValue } from "@effect/atom-react";
 import { Link } from "@tanstack/react-router";
-import { useSession } from "../hooks/useSession";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import { useI18n } from "../i18n/useI18n";
+import { sessionAtom } from "../lib/atoms";
 import { HikariMark } from "./icons";
 import { LanguagePicker } from "./LanguagePicker";
 import { LogoutButton } from "./LogoutButton";
@@ -8,7 +10,7 @@ import { NotificationsBell } from "./NotificationsBell";
 import { SignInButton } from "./SignInButton";
 
 export function Navbar() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const { t } = useI18n();
   return (
     <header

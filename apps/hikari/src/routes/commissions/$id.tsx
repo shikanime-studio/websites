@@ -1,11 +1,13 @@
-import type { Commission, PhotoListItem } from "../../lib/types";
+import type { CommissionDetail } from "../../lib/types";
 import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { FileInput } from "@astryxdesign/core/FileInput";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Cause, Effect, Exit } from "effect";
+import { getOrElse, isFailure, isInitial } from "effect/reactivity/AsyncResult";
 import { useState } from "react";
 import {
   ArrowLeft,
@@ -17,8 +19,13 @@ import {
 } from "../../components/icons";
 import { SignInButton } from "../../components/SignInButton";
 import { StatusBadge } from "../../components/StatusBadge";
-import { useSession } from "../../hooks/useSession";
 import { useI18n } from "../../i18n/useI18n";
+import {
+  ApiError,
+  changeCommissionStatus,
+  uploadCommissionPhoto,
+} from "../../lib/api";
+import { commissionAtom, commissionsAtom, sessionAtom } from "../../lib/atoms";
 import { formatShootDate, formatTimestamp } from "../../lib/format";
 import {
   calendarEventUrl,
@@ -32,33 +39,15 @@ export const Route = createFileRoute("/commissions/$id")({
   component: CommissionDetailPage,
 });
 
-type CommissionDetail = Commission & { photos: PhotoListItem[] };
-
-async function fetchCommission(id: string): Promise<CommissionDetail> {
-  const res = await fetch(`/api/commissions/${id}`);
-  if (!res.ok) {
-    throw new Error(`Commission request failed: ${String(res.status)}`);
-  }
-  return (await res.json()) as CommissionDetail;
-}
 
 function CommissionDetailPage() {
   const { id } = Route.useParams();
-  const session = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const { t } = useI18n();
-  const {
-    data: commission,
-    isLoading,
-    isError,
-    refetch,
-  } = useQuery({
-    queryKey: ["commission", id],
-    queryFn: () => fetchCommission(id),
-    enabled: Boolean(session.data),
-    retry: 1,
-  });
+  const result = useAtomValue(commissionAtom(id));
+  const refresh = useAtomRefresh(commissionAtom(id));
 
-  if (!session.data) {
+  if (!session) {
     return (
       <div className="hk-shell py-16">
         <EmptyState
@@ -70,8 +59,7 @@ function CommissionDetailPage() {
       </div>
     );
   }
-
-  if (isLoading) {
+  if (isInitial(result)) {
     return (
       <div className="hk-shell py-12">
         <Card className="h-40 animate-pulse" padding={0}>
@@ -85,16 +73,14 @@ function CommissionDetailPage() {
     );
   }
 
-  if (isError) {
+  if (isFailure(result)) {
     return (
       <div className="hk-shell py-16">
         <EmptyState
           actions={
             <Button
               label={t("home.retry")}
-              onClick={() => {
-                refetch().catch(() => {});
-              }}
+              onClick={refresh}
               variant="secondary"
             />
           }
@@ -106,6 +92,7 @@ function CommissionDetailPage() {
     );
   }
 
+  const commission = result.value;
   if (!commission) {
     return (
       <div className="hk-shell py-16">
@@ -130,7 +117,8 @@ function CommissionDetailPage() {
 }
 
 function CommissionDetailView({ commission }: { commission: CommissionDetail }) {
-  const queryClient = useQueryClient();
+  const refreshCommission = useAtomRefresh(commissionAtom(String(commission.id)));
+  const refreshCommissions = useAtomRefresh(commissionsAtom);
   const { t, lang } = useI18n();
   const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -139,22 +127,20 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     setBusy(true);
     setActionError(null);
     try {
-      const res = await fetch(`/api/commissions/${String(commission.id)}`, {
-        method: "PATCH",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ status: next }),
-      });
-      if (!res.ok) {
-        const payload = (await res.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        setActionError(payload?.error ?? t("detail.statusChangeFailed"));
+      const exit = await Effect.runPromiseExit(
+        changeCommissionStatus(commission.id, next),
+      );
+      if (Exit.isFailure(exit)) {
+        const error = Cause.squash(exit.cause);
+        setActionError(
+          error instanceof ApiError
+            ? error.message
+            : t("detail.statusChangeFailed"),
+        );
         return;
       }
-      await queryClient.invalidateQueries({
-        queryKey: ["commission", String(commission.id)],
-      });
-      await queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      refreshCommission();
+      refreshCommissions();
     } finally {
       setBusy(false);
     }
@@ -169,24 +155,21 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     setActionError(null);
     try {
       for (const file of files) {
-        const form = new FormData();
-        form.append("file", file);
-        const res = await fetch(
-          `/api/commissions/${String(commission.id)}/photos`,
-          { method: "POST", body: form },
+        const exit = await Effect.runPromiseExit(
+          uploadCommissionPhoto(commission.id, file),
         );
-        if (!res.ok) {
-          const payload = (await res.json().catch(() => null)) as {
-            error?: string;
-          } | null;
-          setActionError(payload?.error ?? t("detail.uploadFailed"));
+        if (Exit.isFailure(exit)) {
+          const error = Cause.squash(exit.cause);
+          setActionError(
+            error instanceof ApiError
+              ? error.message
+              : t("detail.uploadFailed"),
+          );
           return;
         }
       }
-      await queryClient.invalidateQueries({
-        queryKey: ["commission", String(commission.id)],
-      });
-      await queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      refreshCommission();
+      refreshCommissions();
     } finally {
       setBusy(false);
     }

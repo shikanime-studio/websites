@@ -1,33 +1,38 @@
-import type {NotificationItem} from "../hooks/useSession";
 import type { MessageKey } from "../i18n/messages";
+import type { NotificationList } from "../lib/types";
 import { Card } from "@astryxdesign/core/Card";
 import { IconButton } from "@astryxdesign/core/IconButton";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { Effect } from "effect";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import { useEffect, useRef, useState } from "react";
-import {
-  markRead,
-  
-  useNotifications
-} from "../hooks/useSession";
 import { useI18n } from "../i18n/useI18n";
+import { markNotificationRead } from "../lib/api";
+import { notificationsAtom } from "../lib/atoms";
 import { Bell, Check } from "./icons";
 
 export function NotificationsBell() {
   const { t } = useI18n();
-  const queryClient = useQueryClient();
-  const { data: notifications } = useNotifications();
+  const refreshNotifications = useAtomRefresh(notificationsAtom);
+
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const unread = (notifications ?? []).filter((item) => !item.isRead);
+  const notifications = getOrElse(useAtomValue(notificationsAtom), () => []);
+  const markRead = (id: number) => {
+    Effect.runPromise(markNotificationRead(id)).catch(() => {});
+  };
+  const unread = notifications.filter((item) => !item.isRead);
 
   useEffect(() => {
     if (!open) {
       return;
     }
     function handlePointerDown(event: PointerEvent) {
+      const target = event.target;
       if (
         containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
+        target instanceof Node &&
+        !containerRef.current.contains(target)
       ) {
         setOpen(false);
       }
@@ -45,9 +50,9 @@ export function NotificationsBell() {
     };
   }, [open]);
 
-  async function markAllRead(items: NotificationItem[]) {
+  async function markAllRead(items: NotificationList) {
     await Promise.all(items.filter((item) => !item.isRead).map((item) => markRead(item.id)));
-    await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+    refreshNotifications();
   }
 
   return (
@@ -115,7 +120,7 @@ export function NotificationsBell() {
                         item.isRead ? "opacity-55" : ""
                       }`}
                       onClick={() => {
-                        markRead(item.id).catch(() => {});
+                        markRead(item.id);
                         setOpen(false);
                       }}
                       type="button"

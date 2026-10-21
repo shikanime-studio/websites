@@ -31,7 +31,7 @@ export function formatShootDate(
   }).format(date);
 }
 
-export function formatTimestamp(value: number, locale: Locale): string {
+export function formatTimestamp(value: Date | number, locale: Locale): string {
   return new Intl.DateTimeFormat(LOCALE_MAP[locale], {
     day: "numeric",
     month: "short",
@@ -50,14 +50,15 @@ const RELATIVE_STEPS: ReadonlyArray<[Intl.RelativeTimeFormatUnit, number]> = [
 ];
 
 export function formatRelative(
-  timestamp: number,
+  timestamp: Date | number,
   locale: Locale,
   now: number = Date.now(),
 ): string {
+  const timestampMs = timestamp instanceof Date ? timestamp.getTime() : timestamp;
   const formatter = new Intl.RelativeTimeFormat(LOCALE_MAP[locale], {
     numeric: "auto",
   });
-  const delta = timestamp - now;
+  const delta = timestampMs - now;
   for (const [unit, ms] of RELATIVE_STEPS) {
     if (Math.abs(delta) >= ms) {
       return formatter.format(Math.round(delta / ms), unit);

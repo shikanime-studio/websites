@@ -11,7 +11,10 @@ export function LanguagePicker() {
       isLabelHidden
       label={t("nav.selectLanguage")}
       onChange={(value) => {
-        setLang(value as typeof lang);
+        const match = LANGUAGES.find((language) => language.code === value);
+        if (match) {
+          setLang(match.code);
+        }
       }}
       options={LANGUAGES.map((language) => ({
         label: language.label,

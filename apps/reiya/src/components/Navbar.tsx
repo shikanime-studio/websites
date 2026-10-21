@@ -1,13 +1,15 @@
 // icons removed to simplify UI and drop react-icons
+import { useAtomValue } from "@effect/atom-react";
 import { Link } from "@tanstack/react-router";
 import { Image } from "@unpic/react";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import Logo from "../assets/logo.png";
-import { useSession } from "../hooks/useSession";
+import { sessionAtom } from "../lib/atoms";
 import { LoginButton } from "./LoginButton";
 import { LogoutButton } from "./LogoutButton";
 
 export function Navbar() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
 
   return (
     <nav className="bg-body border-border fixed top-0 z-50 flex w-full items-center justify-between border-b px-4 lg:px-6">

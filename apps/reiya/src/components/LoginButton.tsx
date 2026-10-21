@@ -1,13 +1,14 @@
 import { Button } from "@astryxdesign/core/Button";
 import { Spinner } from "@astryxdesign/core/Spinner";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useState } from "react";
 import { siGoogle } from "simple-icons";
 import { authClient } from "../lib/auth-client";
-import { useAppToast } from "./Toast";
+import { showToast } from "./Toast";
 
 export function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useAppToast();
+  const toast = showToast(useToast());
 
   const handleSignIn = () => {
     setIsLoading(true);

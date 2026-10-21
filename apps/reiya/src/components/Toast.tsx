@@ -1,22 +1,13 @@
-import { useToast } from "@astryxdesign/core/Toast";
+import type { ToastOptions } from "@astryxdesign/core/Toast";
 
-export interface ToastOptions {
-  type?: "info" | "error";
-  duration?: number;
-}
+const defaults = {
+  type: "error",
+  isAutoHide: true,
+  autoHideDuration: 3000,
+} as const;
 
-/**
- * Imperative toast helper backed by the Astryx toast system.
- * Replaces the former daisyUI `toast` positioning classes.
- */
-export function useAppToast() {
-  const showToast = useToast();
-
-  return (message: string, options: ToastOptions = {}) =>
-    showToast({
-      body: message,
-      type: options.type ?? "error",
-      isAutoHide: true,
-      autoHideDuration: options.duration ?? 3000,
-    });
-}
+/** App toast factory: defaults first, caller overrides win. */
+export const showToast =
+  (toast: (options: ToastOptions) => unknown) =>
+  (body: string, override: Partial<ToastOptions> = {}): unknown =>
+    toast({ ...defaults, ...override, body });

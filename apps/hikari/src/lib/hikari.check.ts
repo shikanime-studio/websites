@@ -14,18 +14,17 @@ import {
 } from "./hikari";
 
 const enKeys = Object.keys(MESSAGES.en).sort();
-for (const [code, table] of Object.entries(
-  MESSAGES as Record<string, Record<string, string>>,
-)) {
-  const keys = Object.keys(table).sort();
+for (const [code, table] of Object.entries(MESSAGES)) {
+  const entries: Array<[string, string]> = Object.entries(table);
+  const keys = entries.map(([key]) => key).sort();
   assert.deepEqual(
     keys,
     enKeys,
     `language ${code} must define exactly the English key set`,
   );
-  for (const key of keys) {
+  for (const [key, text] of entries) {
     assert.ok(
-      (table[key] ?? "").length > 0,
+      text.length > 0,
       `language ${code} key ${key} must be non-empty`,
     );
   }

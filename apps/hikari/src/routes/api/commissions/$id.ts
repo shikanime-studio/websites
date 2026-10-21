@@ -1,14 +1,20 @@
-import type { CommissionStatus } from "../../../schema";
+import type { CommissionStatus } from "../../../lib/hikari";
 import { createFileRoute } from "@tanstack/react-router";
 import { asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { createD1Database } from "../../../lib/db";
-import { canTransition, isCommissionStatus } from "../../../lib/hikari";
+import { canTransition } from "../../../lib/hikari";
 import { getSessionUser } from "../../../lib/session";
 import * as schema from "../../../schema";
 
 const patchSchema = z.object({
-  status: z.string().refine(isCommissionStatus, "Unknown commission status"),
+  status: z.enum([
+    "requested",
+    "accepted",
+    "scheduled",
+    "completed",
+    "delivered",
+  ]),
 });
 
 async function loadCommission(id: number) {
@@ -87,7 +93,7 @@ export const Route = createFileRoute("/api/commissions/$id")({
             { status: 400 },
           );
         }
-        const next = bodyResult.data.status as CommissionStatus;
+        const next: CommissionStatus = bodyResult.data.status;
         if (!canTransition(commission.status, next)) {
           return Response.json(
             {

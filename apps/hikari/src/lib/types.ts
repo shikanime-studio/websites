@@ -1,5 +1,21 @@
 import type { CommissionStatus } from "../schema";
 
+export type { CommissionStatus };
+
+export interface NotificationItem {
+  id: number;
+  userId: string;
+  type: string;
+  title: string;
+  message: string;
+  relatedId: number | null;
+  relatedType: string | null;
+  isRead: boolean | null;
+  createdAt: Date;
+}
+
+export type NotificationList = Array<NotificationItem>;
+
 export interface Commission {
   id: number;
   title: string;
@@ -11,14 +27,20 @@ export interface Commission {
   shootingDate: string | null;
   locationName: string;
   locationQuery: string;
-  deliveryReadyAt: number | null;
-  createdAt: number;
-  updatedAt: number;
+  deliveryReadyAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 }
+
+export type CommissionList = Array<Commission>;
 
 export interface PhotoListItem {
   id: number;
   contentType: string;
   size: number;
-  createdAt: number;
+  createdAt: Date;
+}
+
+export interface CommissionDetail extends Commission {
+  photos: Array<PhotoListItem>;
 }
