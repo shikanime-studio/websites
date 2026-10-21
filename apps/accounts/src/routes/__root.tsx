@@ -62,7 +62,7 @@ function RootComponent() {
         <AstryxTheme theme={neutralTheme} mode="system">
           <div className="flex min-h-screen flex-col">
             <Navbar />
-            <main className="grow pt-16">
+            <main className="grow pt-14">
               <Outlet />
             </main>
             <Footer />

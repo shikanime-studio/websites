@@ -6,11 +6,14 @@ export function Navbar() {
   const { data: session } = useSession();
 
   return (
-    <nav className="bg-body border-border fixed top-0 z-50 flex w-full items-center justify-between border-b px-4 lg:px-6">
+    <nav className="bg-body border-border fixed top-0 z-50 flex h-14 w-full items-center justify-between border-b px-4 lg:px-6">
       <Link
         to="/"
-        className="text-secondary flex items-center gap-2 text-lg font-bold tracking-tight transition-opacity hover:opacity-80"
+        className="text-secondary flex items-center gap-2.5 text-lg font-bold tracking-tight transition-opacity hover:opacity-80"
       >
+        <span className="bg-accent/10 text-accent flex size-7 items-center justify-center rounded-full text-xs font-black">
+          S
+        </span>
         Accounts
       </Link>
       {session?.user
