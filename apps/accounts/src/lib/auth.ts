@@ -5,6 +5,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt, oneTap } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
+import { GOOGLE_CLIENT_ID, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -27,7 +28,7 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
         jwt: {
           // Issuer pathname must match the auth base path so the provider's
           // well-known metadata hooks resolve under /api/auth.
-          issuer: `${import.meta.env.VITE_SITE}/api/auth`,
+          issuer: `${SITE}/api/auth`,
         },
       }),
       oauthProvider({
@@ -42,10 +43,10 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       }),
     ],
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: import.meta.env.VITE_SITE,
+    baseURL: SITE,
     socialProviders: {
       google: {
-        clientId: import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID,
+        clientId: GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
