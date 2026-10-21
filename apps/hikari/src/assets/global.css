@@ -88,7 +88,6 @@
   /* Candy tints: status badges, thumbnails, category dots. */
   --hk-candy-lilac: #d9c2ff;
   --hk-candy-sky: #b9daff;
-  --hk-candy-lime: #c8f56a;
 
   /* Signal: sunny yellow, for current-stage markers and stickers. */
   --hk-signal: light-dark(#ffd84d, #ffd84d);
@@ -270,10 +269,6 @@ body {
   color: var(--hk-ink-soft);
 }
 
-.hk-hairline {
-  border-top: 1px solid var(--hk-line);
-}
-
 .hk-chip {
   display: inline-flex;
   align-items: center;
@@ -343,117 +338,7 @@ body {
 }
 
 /* Category chip, Vgen-style: coloured dot + label. */
-.hk-cat-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 13px 6px 7px;
-  border-radius: 999px;
-  border: 1px solid var(--hk-line);
-  background: var(--hk-surface);
-  color: var(--hk-ink);
-  font-size: 12px;
-  font-weight: 700;
-  box-shadow: var(--hk-shadow-xs);
-  white-space: nowrap;
-}
-
-.hk-cat-dot {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: 999px;
-  color: #241c18;
-}
-
-/* Highlighter marker behind a phrase. */
-.hk-highlight {
-  background-image: linear-gradient(
-    transparent 66%,
-    light-dark(#ffe07a, #7a5a00) 66%
-  );
-  background-repeat: no-repeat;
-  padding-inline: 0.06em;
-  box-decoration-break: clone;
-  -webkit-box-decoration-break: clone;
-}
-
-/* Brand skins for Astryx Button variants that the system does not ship. */
-
-.hk-btn-outline {
-  background-color: var(--hk-surface);
-  border: 1px solid var(--hk-line-strong);
-  color: var(--hk-ink);
-}
-
-.hk-btn-outline:hover {
-  background-color: var(--hk-surface-muted);
-  color: var(--hk-ink);
-}
-
-.hk-btn-signal {
-  background-color: var(--hk-signal);
-  color: #241c18;
-  border: 2px solid #241c18;
-  box-shadow: 0 2px 0 #241c18;
-}
-
-.hk-btn-signal:hover {
-  background-color: #f2c93c;
-  color: #241c18;
-}
-
-.hk-btn-on-ink {
-  background-color: var(--hk-ink);
-  color: var(--hk-canvas);
-  border-color: transparent;
-}
-
-.hk-btn-on-ink:hover {
-  background-color: light-dark(#22313a, #ffffff);
-  color: var(--hk-canvas);
-}
-
-/* Surfaces with texture -------------------------------------------------- */
-
-.hk-grid-texture {
-  background-image: radial-gradient(
-    light-dark(#241c1814, #ffffff12) 1.2px,
-    transparent 1.2px
-  );
-  background-size: 22px 22px;
-  mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
-}
-
-.hk-warm-glow {
-  background:
-    radial-gradient(
-      40rem 26rem at 80% 6%,
-      light-dark(#ff8a5c40, #ff8a5c1f) 0%,
-      transparent 68%
-    ),
-    radial-gradient(
-      34rem 24rem at 8% 26%,
-      light-dark(#c9a7ff33, #c9a7ff1a) 0%,
-      transparent 72%
-    );
-}
-
 /* Motion ----------------------------------------------------------------- */
-
-@keyframes hk-rise {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
 
 @keyframes hk-pulse-dot {
   0%,
@@ -464,22 +349,6 @@ body {
   50% {
     opacity: 0.35;
   }
-}
-
-.hk-rise {
-  animation: hk-rise 700ms var(--hk-ease-out) both;
-}
-
-.hk-delay-1 {
-  animation-delay: 80ms;
-}
-
-.hk-delay-2 {
-  animation-delay: 160ms;
-}
-
-.hk-delay-3 {
-  animation-delay: 240ms;
 }
 
 .hk-live-dot {

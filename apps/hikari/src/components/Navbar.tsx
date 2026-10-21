@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { useSession } from "../hooks/useSession";
 import { useI18n } from "../i18n/useI18n";
 import { HikariMark } from "./icons";
@@ -7,18 +7,9 @@ import { LogoutButton } from "./LogoutButton";
 import { NotificationsBell } from "./NotificationsBell";
 import { SignInButton } from "./SignInButton";
 
-const SECTION_LINKS = [
-  { href: "#product", key: "nav.product" },
-  { href: "#workflow", key: "nav.workflow" },
-  { href: "#roles", key: "nav.roles" },
-] as const;
-
 export function Navbar() {
   const { data: session } = useSession();
   const { t } = useI18n();
-  const pathname = useLocation({ select: (location) => location.pathname });
-  const showSections = !session && pathname === "/";
-
   return (
     <header
       className="border-hairline sticky top-0 z-50 border-b backdrop-blur-xl"
@@ -39,20 +30,6 @@ export function Navbar() {
               Hikari
             </span>
           </Link>
-
-          {showSections ? (
-            <nav className="hidden items-center gap-1 md:flex">
-              {SECTION_LINKS.map((link) => (
-                <a
-                  className="text-ink-soft hover:text-ink hover:bg-[color-mix(in_oklab,var(--hk-ink)_5%,transparent)] rounded-full px-3 py-1.5 text-[13px] font-medium transition-colors"
-                  href={link.href}
-                  key={link.href}
-                >
-                  {t(link.key)}
-                </a>
-              ))}
-            </nav>
-          ) : null}
 
           {session ? (
             <nav className="hidden items-center gap-1 md:flex">

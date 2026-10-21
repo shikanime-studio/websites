@@ -8,9 +8,6 @@ export type LanguageCode = (typeof LANGUAGES)[number]["code"];
 
 const en = {
   "app.description": "Cosplay photoshoot commissions, planned end to end",
-  "nav.product": "Product",
-  "nav.workflow": "Workflow",
-  "nav.roles": "For both sides",
   "nav.commissions": "Commissions",
   "nav.newCommission": "New commission",
   "nav.signIn": "Sign in",
@@ -20,35 +17,18 @@ const en = {
   "nav.selectLanguage": "Select language",
 
   "landing.eyebrow": "Cosplay photoshoot commissions",
-  "landing.titleTop": "Cosplay shoots,",
-  "landing.titleAccent": "minus the chaos.",
+  "landing.titleTop": "Shoots,",
+  "landing.titleAccent": "simplified.",
   "landing.body":
-    "Find your photographer, lock the date, and get the photos — the whole shoot lives in one friendly place.",
-  "landing.ctaPrimary": "Start your shoot",
-  "landing.ctaSecondary": "See how it works",
-  "landing.note": "Sign in with Google · English, Français, 日本語",
-  "landing.madeFor": "Made for",
-  "landing.catCosplay": "Cosplayers",
-  "landing.catShooters": "Photographers",
-  "landing.catComiket": "Comiket",
-  "landing.catStudio": "Studio days",
-  "landing.previewLabel": "A commission, end to end",
+    "Find your photographer. Book the date. Get the photos.",
+  "landing.ctaPrimary": "Start a shoot",
+  "landing.note": "Sign in with Google",
+  "landing.beat1": "Brief",
+  "landing.beat2": "Shoot",
+  "landing.beat3": "Deliver",
   "landing.previewCommission": "Commission #128",
-  "landing.previewTitle": "C108 · Saturday outdoor shoot",
-  "landing.previewCharacter": "Kaguya · Kaguya-sama",
-  "landing.previewDate": "Sat 12 Dec",
-  "landing.previewHall": "East Hall 8",
-  "landing.previewStep": "Step 3 of 5 · Scheduled",
-  "landing.previewPhotos": "12 photos delivered",
-  "landing.previewNotifTitle": "New commission request",
-  "landing.previewNotifBody": "Aoi · golden hour at the pier",
   "landing.previewMap": "Tokyo Big Sight",
-  "landing.previewDelivered": "Photos delivered",
 
-  "landing.pipelineEyebrow": "The lifecycle",
-  "landing.pipelineTitle": "Five stages. No mystery.",
-  "landing.pipelineBody":
-    "A commission only ever moves forward, and both people see the same state at the same time.",
   "landing.stage.requestedBody":
     "The brief lands. The photographer is notified in the app.",
   "landing.stage.acceptedBody":
@@ -60,78 +40,14 @@ const en = {
   "landing.stage.deliveredBody":
     "The first upload marks delivery and notifies the client.",
 
-  "landing.rolesEyebrow": "Two sides",
-  "landing.rolesTitle": "Made for cosplayers and photographers.",
-  "landing.rolesBody":
-    "Same commission, two points of view. Nobody has to translate a chat thread into a schedule.",
-  "landing.roleClientTitle": "For cosplayers",
-  "landing.roleClientBody":
-    "Ask for the shoot you actually want, then watch it happen.",
-  "landing.roleClient1": "Send a brief in under a minute",
-  "landing.roleClient2": "Agree on a real place, with a map on the page",
-  "landing.roleClient3": "Add the shoot to Google Calendar in one tap",
-  "landing.roleClient4": "Download the gallery the moment it is delivered",
-  "landing.roleShooterTitle": "For photographers",
-  "landing.roleShooterBody":
-    "Keep every request, location and delivery in one calm board.",
-  "landing.roleShooter1": "See new requests with the full brief attached",
-  "landing.roleShooter2": "Move a shoot through its stages, one click each",
-  "landing.roleShooter3": "Upload photos straight into delivery",
-  "landing.roleShooter4": "Clients are notified automatically at every step",
 
-  "landing.featuresEyebrow": "What is inside",
-  "landing.featuresTitle": "All the bits a shoot needs.",
-  "landing.featuresBody":
-    "No plugins, no spreadsheet, no calendar Tetris. Just the parts a shoot actually needs.",
-  "landing.feature1Title": "A board, not a chat thread",
-  "landing.feature1Body":
-    "Every commission is grouped by the stage it is in, so the next action is always obvious.",
-  "landing.feature2Title": "Maps without API keys",
-  "landing.feature2Body":
-    "The agreed place renders as a Google Maps embed and opens in Maps when you need directions.",
-  "landing.feature3Title": "One tap to the calendar",
-  "landing.feature3Body":
-    "A Google Calendar render link carries the title, time and venue. No OAuth, no SDK.",
-  "landing.feature4Title": "Delivery built in",
   "landing.feature4Body":
     "JPEG, PNG, WebP or AVIF up to 25 MiB per photo, stored against the commission.",
-  "landing.feature5Title": "Notifications that follow the shoot",
-  "landing.feature5Body":
-    "Request, acceptance, schedule, shoot day and delivery each reach the right person in-app.",
-  "landing.feature6Title": "Three languages, one app",
-  "landing.feature6Body":
-    "English, French and Japanese, switchable from the header and remembered on the device.",
 
-  "landing.stepsEyebrow": "How it works",
-  "landing.stepsTitle": "From first message to final gallery.",
-  "landing.stepsBody":
-    "Four steps, no setup, nothing to install. Sign in and the board is ready.",
-  "landing.step1Title": "Sign in with Google",
-  "landing.step1Body":
-    "One account for both roles. Your name and avatar come from your Google profile.",
-  "landing.step2Title": "Send the brief",
-  "landing.step2Body":
-    "Title, photographer email, character, date, venue and any notes for the shoot.",
-  "landing.step3Title": "Agree on place and time",
-  "landing.step3Body":
-    "The photographer accepts, then the commission moves to scheduled with a map and calendar link.",
-  "landing.step4Title": "Receive the photos",
-  "landing.step4Body":
-    "The first upload marks delivery, notifies you, and the gallery stays attached to the commission.",
 
-  "landing.ctaTitle": "Your next shoot deserves better than a group chat.",
-  "landing.ctaBody":
-    "Start with a sign-in. Your first commission takes about a minute.",
-  "landing.ctaButton": "Start your shoot",
-  "landing.ctaNote": "No card. No setup. Just the shoot.",
 
-  "landing.footerTagline":
-    "A cosplay photoshoot commission planner by Shikanime Studio.",
-  "landing.footerProduct": "Product",
-  "landing.footerBuilt": "Built with",
   "landing.footerDocs": "Documentation",
   "landing.footerRights": "© {year} Shikanime Studio",
-  "landing.footerStatus": "Runs on Cloudflare Workers",
 
   "home.hero": "Cosplay shoots, planned properly.",
   "home.heroBody":
@@ -254,9 +170,6 @@ export type MessageKey = keyof typeof en;
 const fr: Record<MessageKey, string> = {
   "app.description":
     "Commissions de séances photo cosplay, planifiées de bout en bout",
-  "nav.product": "Produit",
-  "nav.workflow": "Déroulé",
-  "nav.roles": "Pour les deux",
   "nav.commissions": "Commissions",
   "nav.newCommission": "Nouvelle commission",
   "nav.signIn": "Connexion",
@@ -266,35 +179,18 @@ const fr: Record<MessageKey, string> = {
   "nav.selectLanguage": "Choisir la langue",
 
   "landing.eyebrow": "Commissions photo cosplay",
-  "landing.titleTop": "Des shootings cosplay,",
-  "landing.titleAccent": "sans le chaos.",
+  "landing.titleTop": "Le shooting,",
+  "landing.titleAccent": "simplifié.",
   "landing.body":
-    "Trouvez votre photographe, fixez la date et recevez les photos — toute la séance au même endroit, sans prise de tête.",
-  "landing.ctaPrimary": "Lancer votre shooting",
-  "landing.ctaSecondary": "Voir le déroulé",
-  "landing.note": "Connexion Google · English, Français, 日本語",
-  "landing.madeFor": "Pensé pour",
-  "landing.catCosplay": "Cosplayeurs",
-  "landing.catShooters": "Photographes",
-  "landing.catComiket": "Comiket",
-  "landing.catStudio": "Studio",
-  "landing.previewLabel": "Une commission, de bout en bout",
+    "Trouvez votre photographe. Fixez la date. Recevez les photos.",
+  "landing.ctaPrimary": "Lancer un shooting",
+  "landing.note": "Connexion avec Google",
+  "landing.beat1": "Brief",
+  "landing.beat2": "Shooting",
+  "landing.beat3": "Livraison",
   "landing.previewCommission": "Commission n° 128",
-  "landing.previewTitle": "C108 · shooting extérieur du samedi",
-  "landing.previewCharacter": "Kaguya · Kaguya-sama",
-  "landing.previewDate": "Sam. 12 déc.",
-  "landing.previewHall": "Hall Est 8",
-  "landing.previewStep": "Étape 3 sur 5 · Planifiée",
-  "landing.previewPhotos": "12 photos livrées",
-  "landing.previewNotifTitle": "Nouvelle demande de commission",
-  "landing.previewNotifBody": "Aoi · heure dorée sur la jetée",
   "landing.previewMap": "Tokyo Big Sight",
-  "landing.previewDelivered": "Photos livrées",
 
-  "landing.pipelineEyebrow": "Le cycle de vie",
-  "landing.pipelineTitle": "Cinq étapes. Aucun flou.",
-  "landing.pipelineBody":
-    "Une commission ne fait qu'avancer, et les deux personnes voient le même état au même moment.",
   "landing.stage.requestedBody":
     "Le brief arrive. Le photographe reçoit une notification dans l'application.",
   "landing.stage.acceptedBody":
@@ -306,79 +202,14 @@ const fr: Record<MessageKey, string> = {
   "landing.stage.deliveredBody":
     "Le premier envoi marque la livraison et prévient le client.",
 
-  "landing.rolesEyebrow": "Deux côtés",
-  "landing.rolesTitle": "Pensé pour les cosplayeurs et les photographes.",
-  "landing.rolesBody":
-    "La même commission, deux points de vue. Personne n'a à traduire un fil de discussion en planning.",
-  "landing.roleClientTitle": "Pour les cosplayeurs",
-  "landing.roleClientBody":
-    "Demandez la séance que vous voulez vraiment, puis regardez-la se réaliser.",
-  "landing.roleClient1": "Envoyez un brief en moins d'une minute",
-  "landing.roleClient2": "Fixez un lieu réel, avec la carte sur la page",
-  "landing.roleClient3": "Ajoutez la séance à Google Calendar en un geste",
-  "landing.roleClient4": "Téléchargez la galerie dès sa livraison",
-  "landing.roleShooterTitle": "Pour les photographes",
-  "landing.roleShooterBody":
-    "Toutes les demandes, les lieux et les livraisons sur un seul tableau calme.",
-  "landing.roleShooter1": "Recevez les demandes avec le brief complet",
-  "landing.roleShooter2": "Faites avancer une séance étape par étape",
-  "landing.roleShooter3": "Envoyez les photos directement en livraison",
-  "landing.roleShooter4": "Les clients sont prévenus automatiquement à chaque étape",
 
-  "landing.featuresEyebrow": "Ce qu'il y a dedans",
-  "landing.featuresTitle": "Tout ce qu'un shooting demande.",
-  "landing.featuresBody":
-    "Pas d'extension, pas de tableur, pas de Tetris de calendriers. Juste ce qu'une séance demande.",
-  "landing.feature1Title": "Un tableau, pas un fil de messages",
-  "landing.feature1Body":
-    "Chaque commission est rangée par étape, donc la prochaine action est toujours évidente.",
-  "landing.feature2Title": "Des cartes sans clé API",
-  "landing.feature2Body":
-    "Le lieu convenu s'affiche en carte Google et s'ouvre dans Maps pour l'itinéraire.",
-  "landing.feature3Title": "Le calendrier en un geste",
-  "landing.feature3Body":
-    "Un lien Google Calendar porte le titre, l'heure et le lieu. Sans OAuth ni SDK.",
-  "landing.feature4Title": "La livraison intégrée",
   "landing.feature4Body":
     "JPEG, PNG, WebP ou AVIF jusqu'à 25 Mio par photo, stockées avec la commission.",
-  "landing.feature5Title": "Des notifications qui suivent la séance",
-  "landing.feature5Body":
-    "Demande, acceptation, planning, jour J et livraison : chacun est prévenu dans l'app.",
-  "landing.feature6Title": "Trois langues, une app",
-  "landing.feature6Body":
-    "Anglais, français et japonais, changeables dans l'en-tête et retenus sur l'appareil.",
 
-  "landing.stepsEyebrow": "Comment ça marche",
-  "landing.stepsTitle": "Du premier message à la galerie finale.",
-  "landing.stepsBody":
-    "Quatre étapes, aucune installation. Connectez-vous et le tableau est prêt.",
-  "landing.step1Title": "Connectez-vous avec Google",
-  "landing.step1Body":
-    "Un compte pour les deux rôles. Nom et avatar viennent de votre profil Google.",
-  "landing.step2Title": "Envoyez le brief",
-  "landing.step2Body":
-    "Titre, e-mail du photographe, personnage, date, lieu et notes pour la séance.",
-  "landing.step3Title": "Convenez du lieu et de l'heure",
-  "landing.step3Body":
-    "Le photographe accepte, puis la commission passe en planifiée avec carte et calendrier.",
-  "landing.step4Title": "Recevez les photos",
-  "landing.step4Body":
-    "Le premier envoi marque la livraison, vous prévient, et la galerie reste attachée à la commission.",
 
-  "landing.ctaTitle":
-    "Votre prochaine séance mérite mieux qu'un groupe de discussion.",
-  "landing.ctaBody":
-    "Commencez par une connexion. Votre première commission prend une minute.",
-  "landing.ctaButton": "Lancer votre shooting",
-  "landing.ctaNote": "Sans carte. Sans installation. Juste la séance.",
 
-  "landing.footerTagline":
-    "Un planificateur de commissions photo cosplay par Shikanime Studio.",
-  "landing.footerProduct": "Produit",
-  "landing.footerBuilt": "Construit avec",
   "landing.footerDocs": "Documentation",
   "landing.footerRights": "© {year} Shikanime Studio",
-  "landing.footerStatus": "Sur Cloudflare Workers",
 
   "home.hero": "Les shootings cosplay, bien planifiés.",
   "home.heroBody":
@@ -500,9 +331,6 @@ const fr: Record<MessageKey, string> = {
 
 const ja: Record<MessageKey, string> = {
   "app.description": "コスプレ撮影の依頼を、最初から最後まで計画",
-  "nav.product": "プロダクト",
-  "nav.workflow": "流れ",
-  "nav.roles": "両側のために",
   "nav.commissions": "撮影依頼",
   "nav.newCommission": "新規依頼",
   "nav.signIn": "ログイン",
@@ -512,35 +340,18 @@ const ja: Record<MessageKey, string> = {
   "nav.selectLanguage": "言語を選ぶ",
 
   "landing.eyebrow": "コスプレ撮影の依頼",
-  "landing.titleTop": "コスプレ撮影を、",
-  "landing.titleAccent": "もっと気軽に。",
+  "landing.titleTop": "撮影を、",
+  "landing.titleAccent": "シンプルに。",
   "landing.body":
-    "撮影者を見つけて、日付を決めて、写真を受け取る。撮影のすべてを、ひとつの場所で。",
+    "撮影者を探す。日付を決める。写真を受け取る。",
   "landing.ctaPrimary": "撮影をはじめる",
-  "landing.ctaSecondary": "流れを見る",
-  "landing.note": "Google ログイン · English, Français, 日本語",
-  "landing.madeFor": "こんな人に",
-  "landing.catCosplay": "コスプレイヤー",
-  "landing.catShooters": "撮影者",
-  "landing.catComiket": "コミケ",
-  "landing.catStudio": "スタジオ",
-  "landing.previewLabel": "依頼の流れ",
+  "landing.note": "Google でログイン",
+  "landing.beat1": "依頼",
+  "landing.beat2": "撮影",
+  "landing.beat3": "納品",
   "landing.previewCommission": "依頼 #128",
-  "landing.previewTitle": "C108 · 土曜 屋外撮影",
-  "landing.previewCharacter": "かぐや · かぐや様は告らせたい",
-  "landing.previewDate": "12月12日（土）",
-  "landing.previewHall": "東 8 ホール",
-  "landing.previewStep": "ステップ 3 / 5 · 撮影決定",
-  "landing.previewPhotos": "12 枚を納品",
-  "landing.previewNotifTitle": "新しい撮影依頼",
-  "landing.previewNotifBody": "あおい · 桟橋で夕暮れ撮影",
   "landing.previewMap": "東京ビッグサイト",
-  "landing.previewDelivered": "写真納品済み",
 
-  "landing.pipelineEyebrow": "依頼のライフサイクル",
-  "landing.pipelineTitle": "5 つの段階。迷いなし。",
-  "landing.pipelineBody":
-    "依頼は前にしか進まず、二人はいつでも同じ状態を見ています。",
   "landing.stage.requestedBody":
     "依頼が届くと、撮影者にアプリ内通知が届きます。",
   "landing.stage.acceptedBody":
@@ -552,78 +363,14 @@ const ja: Record<MessageKey, string> = {
   "landing.stage.deliveredBody":
     "最初のアップロードで納品となり、依頼者に通知されます。",
 
-  "landing.rolesEyebrow": "二人のために",
-  "landing.rolesTitle": "コスプレイヤーと撮影者のために。",
-  "landing.rolesBody":
-    "同じ依頼を、二つの視点で。チャットのやり取りを予定表に訳す必要はありません。",
-  "landing.roleClientTitle": "コスプレイヤーへ",
-  "landing.roleClientBody":
-    "本当に撮りたい撮影を依頼して、そのまま見届けられます。",
-  "landing.roleClient1": "1 分以内に依頼を送れる",
-  "landing.roleClient2": "ページ上の地図で実際の場所を決められる",
-  "landing.roleClient3": "ワンタップで Google カレンダーに追加",
-  "landing.roleClient4": "納品されたその瞬間にギャラリーを保存",
-  "landing.roleShooterTitle": "撮影者へ",
-  "landing.roleShooterBody":
-    "依頼・場所・納品を、ひとつの静かなボードに。",
-  "landing.roleShooter1": "依頼を概要つきで確認できる",
-  "landing.roleShooter2": "ワンクリックで次の段階へ進められる",
-  "landing.roleShooter3": "写真をそのまま納品にアップロード",
-  "landing.roleShooter4": "各段階で依頼者に自動で通知",
 
-  "landing.featuresEyebrow": "中身",
-  "landing.featuresTitle": "撮影に必要なものだけ。",
-  "landing.featuresBody":
-    "プラグインも表計算もカレンダー崩しも不要。撮影に必要なものだけ。",
-  "landing.feature1Title": "チャットではなくボード",
-  "landing.feature1Body":
-    "依頼は今の段階ごとに並ぶので、次にやることがいつも見えます。",
-  "landing.feature2Title": "API キー不要の地図",
-  "landing.feature2Body":
-    "合意した場所は Google マップで表示され、経路は Maps で開けます。",
-  "landing.feature3Title": "カレンダーへワンタップ",
-  "landing.feature3Body":
-    "Google カレンダーのリンクに題名・時刻・場所を載せます。OAuth も SDK も不要。",
-  "landing.feature4Title": "納品まで組み込み",
   "landing.feature4Body":
     "JPEG・PNG・WebP・AVIF を 1 枚 25MiB まで、依頼に紐づけて保存。",
-  "landing.feature5Title": "撮影に寄り添う通知",
-  "landing.feature5Body":
-    "依頼・受諾・日程・当日・納品が、それぞれ適切な相手にアプリ内で届きます。",
-  "landing.feature6Title": "3 言語、ひとつのアプリ",
-  "landing.feature6Body":
-    "英語・フランス語・日本語。ヘッダーで切り替え、端末に記憶されます。",
 
-  "landing.stepsEyebrow": "使い方",
-  "landing.stepsTitle": "最初のひとことから、最後のギャラリーまで。",
-  "landing.stepsBody":
-    "4 ステップ、初期設定なし、インストールなし。ログインすればすぐ使えます。",
-  "landing.step1Title": "Google でログイン",
-  "landing.step1Body":
-    "どちらの役割も同じアカウント。名前とアイコンは Google プロフィールから。",
-  "landing.step2Title": "概要を送る",
-  "landing.step2Body":
-    "題名、撮影者のメール、キャラクター、日時、場所、そしてメモ。",
-  "landing.step3Title": "場所と時間を決める",
-  "landing.step3Body":
-    "撮影者が受諾すると、地図とカレンダーつきで「撮影決定」に進みます。",
-  "landing.step4Title": "写真を受け取る",
-  "landing.step4Body":
-    "最初のアップロードで納品となり通知が届きます。ギャラリーは依頼に残ります。",
 
-  "landing.ctaTitle": "次の撮影は、グループチャットより良い場所で。",
-  "landing.ctaBody":
-    "まずはログインから。最初の依頼は 1 分ほどで作れます。",
-  "landing.ctaButton": "撮影をはじめる",
-  "landing.ctaNote": "カード不要。設定不要。撮影だけ。",
 
-  "landing.footerTagline":
-    "Shikanime Studio によるコスプレ撮影依頼プランナー。",
-  "landing.footerProduct": "プロダクト",
-  "landing.footerBuilt": "使用技術",
   "landing.footerDocs": "ドキュメント",
   "landing.footerRights": "© {year} Shikanime Studio",
-  "landing.footerStatus": "Cloudflare Workers で稼働",
 
   "home.hero": "コスプレ撮影を、きちんと計画。",
   "home.heroBody":
