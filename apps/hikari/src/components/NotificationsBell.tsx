@@ -1,78 +1,175 @@
-import { Button } from "@astryxdesign/core/Button";
-import { useState } from "react";
-import { markRead, useNotifications } from "../hooks/useSession";
+import type {NotificationItem} from "../hooks/useSession";
+import type { MessageKey } from "../i18n/messages";
+import { Card } from "@astryxdesign/core/Card";
+import { IconButton } from "@astryxdesign/core/IconButton";
+import { useQueryClient } from "@tanstack/react-query";
+import { useEffect, useRef, useState } from "react";
+import {
+  markRead,
+  
+  useNotifications
+} from "../hooks/useSession";
 import { useI18n } from "../i18n/useI18n";
+import { Bell, Check } from "./icons";
 
 export function NotificationsBell() {
   const { t } = useI18n();
+  const queryClient = useQueryClient();
   const { data: notifications } = useNotifications();
   const [open, setOpen] = useState(false);
-  const unread = (notifications ?? []).filter((n) => !n.isRead);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const unread = (notifications ?? []).filter((item) => !item.isRead);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    function handlePointerDown(event: PointerEvent) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    }
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open]);
+
+  async function markAllRead(items: NotificationItem[]) {
+    await Promise.all(items.filter((item) => !item.isRead).map((item) => markRead(item.id)));
+    await queryClient.invalidateQueries({ queryKey: ["notifications"] });
+  }
 
   return (
-    <div className="relative">
-      <Button
-        variant="ghost"
-        label={t("nav.notifications")}
-        size="sm"
-        isIconOnly
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-      >
-        🔔
+    <div className="relative" ref={containerRef}>
+      <div className="relative">
+        <IconButton
+          aria-expanded={open}
+          icon={<Bell />}
+          label={t("nav.notifications")}
+          onClick={() => {
+            setOpen((current) => !current);
+          }}
+          size="sm"
+          tooltip={t("nav.notifications")}
+          variant="ghost"
+        />
         {unread.length > 0 ? (
-          <span className="bg-accent text-secondary absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold">
-            {unread.length}
+          <span
+            className="text-ink pointer-events-none absolute top-0 right-0 flex size-4 items-center justify-center rounded-full text-[9px] font-bold"
+            style={{ background: "var(--hk-signal)" }}
+          >
+            {unread.length > 9 ? "9+" : unread.length}
           </span>
         ) : null}
-      </Button>
+      </div>
+
       {open ? (
-        <div className="bg-body border-border absolute right-0 z-50 mt-2 w-80 rounded-xl border p-2 shadow-lg">
+        <Card
+          className="absolute right-0 z-50 mt-2 w-[min(92vw,344px)] overflow-hidden"
+          elevation="med"
+          padding={0}
+        >
+          <div className="border-hairline flex items-center justify-between border-b px-4 py-3">
+            <div>
+              <p className="text-ink text-[13.5px] font-semibold">
+                {t("notif.title")}
+              </p>
+              <p className="text-ink-faint text-[11.5px]">
+                {unread.length > 0
+                  ? t("notif.unread", { count: String(unread.length) })
+                  : t("notif.empty")}
+              </p>
+            </div>
+            {unread.length > 0 ? (
+              <button
+                className="text-brand text-[11.5px] font-semibold hover:underline"
+                onClick={() => {
+                  markAllRead(notifications ?? []).catch(() => {});
+                }}
+                type="button"
+              >
+                {t("notif.markAllRead")}
+              </button>
+            ) : null}
+          </div>
+
           {notifications && notifications.length > 0 ? (
-            <ul className="flex flex-col gap-1">
-              {notifications.slice(0, 8).map((item) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    className={`hover:bg-surface w-full rounded-lg p-2 text-left ${item.isRead ? "opacity-60" : ""}`}
-                    onClick={() => {
-                      markRead(item.id).catch(() => {});
-                      setOpen(false);
-                    }}
-                  >
-                    <span className="text-secondary block text-sm font-semibold">
-                      {isNotificationKey(item.type) ? t(item.type) : item.title}
-                    </span>
-                    <span className="text-secondary/70 block text-xs">
-                      {item.message}
-                    </span>
-                  </button>
-                </li>
-              ))}
+            <ul className="max-h-[320px] overflow-y-auto p-1.5">
+              {notifications.slice(0, 8).map((item) => {
+                const key = notificationKey(item.type);
+                return (
+                  <li key={item.id}>
+                    <button
+                      className={`hover:bg-paper-muted flex w-full items-start gap-2.5 rounded-xl p-2.5 text-left transition-colors ${
+                        item.isRead ? "opacity-55" : ""
+                      }`}
+                      onClick={() => {
+                        markRead(item.id).catch(() => {});
+                        setOpen(false);
+                      }}
+                      type="button"
+                    >
+                      <span
+                        className="mt-1.5 size-1.5 shrink-0 rounded-full"
+                        style={{
+                          background: item.isRead
+                            ? "var(--hk-line-strong)"
+                            : "var(--hk-accent)",
+                        }}
+                      />
+                      <span className="min-w-0">
+                        <span className="text-ink block text-[12.5px] font-semibold">
+                          {key ? t(key) : item.title}
+                        </span>
+                        <span className="text-ink-soft mt-0.5 block truncate text-[11.5px]">
+                          {item.message}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
             </ul>
           ) : (
-            <p className="text-secondary/60 p-4 text-center text-sm">
-              {t("notif.empty")}
-            </p>
+            <div className="px-4 py-8 text-center">
+              <span
+                className="text-ink-soft mx-auto flex size-9 items-center justify-center rounded-full"
+                style={{ background: "var(--hk-surface-muted)" }}
+              >
+                <Check size={16} />
+              </span>
+              <p className="text-ink-soft mt-2 text-[12.5px]">
+                {t("notif.empty")}
+              </p>
+            </div>
           )}
-        </div>
+        </Card>
       ) : null}
     </div>
   );
 }
 
-const NOTIFICATION_KEYS = [
-  "notif.commission_requested",
-  "notif.commission_accepted",
-  "notif.commission_scheduled",
-  "notif.commission_completed",
-  "notif.commission_delivered",
-  "notif.photos_added",
-  "notif.photos_ready",
-] as const;
+const NOTIFICATION_KEYS: Readonly<Record<string, MessageKey>> = {
+  commission_requested: "notif.commission_requested",
+  commission_accepted: "notif.commission_accepted",
+  commission_scheduled: "notif.commission_scheduled",
+  commission_completed: "notif.commission_completed",
+  commission_delivered: "notif.commission_delivered",
+  photos_added: "notif.photos_added",
+  photos_ready: "notif.photos_ready",
+};
 
-type NotificationKey = (typeof NOTIFICATION_KEYS)[number];
-
-function isNotificationKey(type: string): type is NotificationKey {
-  return NOTIFICATION_KEYS.includes(`notif.${type}` as NotificationKey);
+function notificationKey(type: string): MessageKey | null {
+  return NOTIFICATION_KEYS[type] ?? null;
 }
