@@ -99,15 +99,14 @@ Astryx owns the components. The rule of thumb:
 `--_button-radius: 999px` in `global.css` makes Astryx buttons pills without
 forking the Button.
 
-Three brand skins remain, because Astryx ships only primary/secondary/ghost/
-destructive: `.hk-btn-signal` (yellow CTA on the dark band), `.hk-btn-on-ink`
-and `.hk-btn-outline` (the outlined secondary used in the header and on
-secondary actions). They override colour and border only; layout, focus,
+One brand skin remains, because Astryx ships only primary/secondary/ghost/
+destructive: `.hk-btn-outline`, the outlined secondary used in the header and
+on secondary actions. It overrides colour and border only; layout, focus,
 loading and disabled behaviour still come from `Button`.
 
 `global.css` also defines non-component vocabulary: `.hk-shell`, `.hk-display`,
-`.hk-eyebrow`, `.hk-hairline`, `.hk-chip`, the ground textures and the rise
-animation. These live in `@layer components` so Tailwind utilities can still
+`.hk-eyebrow`, `.hk-chip`, the paper textures and the ticket/thumbnail
+treatments. These live in `@layer components` so Tailwind utilities can still
 override them. Moving one out of the layer silently breaks `hidden`, `pl-9` or
 `w-full` on that element.
 
@@ -118,11 +117,14 @@ uses the Astryx body token.
 
 ## Pages
 
-- **Signed-out `/`** — one centred hero: a short headline, one line of
-  copy, one action, and an abstract collage (coral camera disc, lilac heart
-  sticker, C108 disc, tilted ticket with a 7px ink shadow). A three-word strip
-  (Brief → Shoot → Deliver) and a one-row footer are the only other content.
-  No feature grid, no lifecycle cards, no long copy.
+- **Signed-out `/`** — one hero on a paper-textured, warm-glowing canvas,
+  composed as two columns on desktop: the copy (chip, short headline, one line,
+  one action) on the left, the abstract collage (coral camera disc, lilac heart
+  sticker, C108 disc, tilted ticket with a 7px ink shadow) on the right. Below
+  `lg` the columns stack and centre. The hero fills the space between the nav
+  and a one-row footer, which carries the brand, Studio and Documentation
+  links and the copyright. No feature grid, no lifecycle cards, no long copy,
+  no extra bands.
 - **Signed-in `/`** — a horizontally scrollable status filter on mobile, a
   search field, and image-forward commission cards with candy status stickers
   on the thumbnail; empty, no-match, loading and error states included.
