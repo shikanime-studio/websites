@@ -9,4 +9,4 @@ export const SITE
 
 export const GOOGLE_CLIENT_ID
   = import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID
-    ?? "978776659802-e1ltf0b87jfmifqm8vfr2mi79vus7g8u.apps.googleusercontent.com";
+    ?? "822479462122-o330keuviu3urhc4mvfq7k64oo9doser.apps.googleusercontent.com";
