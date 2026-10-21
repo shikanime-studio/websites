@@ -4,11 +4,10 @@ import { useToast } from "@astryxdesign/core/Toast";
 import { useState } from "react";
 import { siGoogle } from "simple-icons";
 import { authClient } from "../lib/auth-client";
-import { showToast } from "./Toast";
 
 export function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const toast = showToast(useToast());
+  const toast = useToast();
 
   const handleSignIn = () => {
     setIsLoading(true);
@@ -18,7 +17,7 @@ export function LoginButton() {
         callbackURL: "/",
       })
       .catch(() => {
-        toast("An error occurred during sign in");
+        toast({ body: "An error occurred during sign in", type: "error" });
         setIsLoading(false);
       })
       .finally(() => {

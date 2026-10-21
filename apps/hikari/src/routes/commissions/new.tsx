@@ -2,6 +2,7 @@ import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { DateTimeInput } from "@astryxdesign/core/DateTimeInput";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { useAtomRefresh } from "@effect/atom-react";
@@ -9,7 +10,6 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
 import { useState } from "react";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
-import { useI18n } from "../../i18n/useI18n";
 import { ApiError, createCommission } from "../../lib/api";
 import { commissionsAtom } from "../../lib/atoms";
 
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/commissions/new")({
 function NewCommissionPage() {
   const navigate = useNavigate();
   const refreshCommissions = useAtomRefresh(commissionsAtom);
-  const { t } = useI18n();
+  const t = useTranslator();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photographerEmail, setPhotographerEmail] = useState("");

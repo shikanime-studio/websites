@@ -4,7 +4,6 @@ import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomValue } from "@effect/atom-react";
 import { isFailure } from "effect/reactivity/AsyncResult";
 import { useEffect } from "react";
-import { showToast } from "../components/Toast";
 
 /** Reads a result atom, toasting once per failure. */
 export function useCardResult<A, E>(
@@ -12,10 +11,10 @@ export function useCardResult<A, E>(
   message = "Failed to load content",
 ): AsyncResult<Array<A>, E> {
   const result = useAtomValue(atom);
-  const toast = showToast(useToast());
+  const toast = useToast();
   useEffect(() => {
     if (isFailure(result)) {
-      toast(message);
+      toast({ body: message, type: "error" });
     }
   }, [result, toast, message]);
   return result;

@@ -13,10 +13,12 @@ export type Locale = keyof typeof LOCALE_MAP;
  */
 export function formatShootDate(
   value: string,
-  locale: Locale,
+  locale: string,
   style: "short" | "long" = "short",
 ): string {
-  const intlLocale = LOCALE_MAP[locale];
+  const intlLocale =
+    Object.entries(LOCALE_MAP).find(([code]) => code === locale)?.[1] ??
+    locale;
   const hasTime = value.includes("T");
   const date = hasTime ? new Date(value) : new Date(`${value}T12:00:00`);
   if (Number.isNaN(date.getTime())) {
@@ -31,8 +33,8 @@ export function formatShootDate(
   }).format(date);
 }
 
-export function formatTimestamp(value: Date | number, locale: Locale): string {
-  return new Intl.DateTimeFormat(LOCALE_MAP[locale], {
+export function formatTimestamp(value: Date | number, locale: string): string {
+  return new Intl.DateTimeFormat(locale, {
     day: "numeric",
     month: "short",
     hour: "2-digit",
@@ -51,11 +53,11 @@ const RELATIVE_STEPS: ReadonlyArray<[Intl.RelativeTimeFormatUnit, number]> = [
 
 export function formatRelative(
   timestamp: Date | number,
-  locale: Locale,
+  locale: string,
   now: number = Date.now(),
 ): string {
   const timestampMs = timestamp instanceof Date ? timestamp.getTime() : timestamp;
-  const formatter = new Intl.RelativeTimeFormat(LOCALE_MAP[locale], {
+  const formatter = new Intl.RelativeTimeFormat(locale, {
     numeric: "auto",
   });
   const delta = timestampMs - now;

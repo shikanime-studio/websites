@@ -176,6 +176,37 @@ export const changeCommissionStatusFn = createServerFn({ method: "POST" })
     return updated[0];
   });
 
+export const getUserPreferences = createServerFn().handler(async () => {
+  const user = await requireUser();
+  const db = createD1Database();
+  const rows = await db
+    .select()
+    .from(schema.userPreferences)
+    .where(eq(schema.userPreferences.userId, user.id))
+    .limit(1);
+  return rows[0] ?? null;
+});
+
+export const setUserPreferences = createServerFn({ method: "POST" })
+  .validator(
+    z.object({
+      locale: z.enum(["en", "fr", "ja"]),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const user = await requireUser();
+    const db = createD1Database();
+    const now = new Date();
+    await db
+      .insert(schema.userPreferences)
+      .values({ userId: user.id, locale: data.locale, updatedAt: now })
+      .onConflictDoUpdate({
+        target: schema.userPreferences.userId,
+        set: { locale: data.locale, updatedAt: now },
+      });
+    return { locale: data.locale };
+  });
+
 export const listNotifications = createServerFn().handler(async () => {
   const user = await requireUser();
   const db = createD1Database();

@@ -1,37 +1,15 @@
 import type { ReactNode } from "react";
-import type { LanguageCode } from "./messages";
+import type { Locale } from "../schema";
 import { InternationalizationProvider } from "@astryxdesign/core/i18n";
-import { Schema } from "effect";
-import { useCallback, useEffect, useState } from "react";
-import { I18nContext } from "./context";
-import { CATALOGS, LANGUAGES } from "./messages";
-
-const STORAGE_KEY = "hikari:lang";
-
-const StoredLanguage = Schema.Literals(
-  LANGUAGES.map((language) => language.code) as [
-    LanguageCode,
-    ...Array<LanguageCode>,
-  ],
-);
-
-const decodeStored = Schema.decodeUnknownOption(StoredLanguage);
-
-function detectLanguage(): LanguageCode {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored !== null) {
-    const fromStorage = decodeStored(stored);
-    if (fromStorage._tag === "Some") {
-      return fromStorage.value;
-    }
-  }
-  const nav = window.navigator.language.slice(0, 2);
-  const fromNav = decodeStored(nav);
-  return fromNav._tag === "Some" ? fromNav.value : "en";
-}
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { useEffect, useSyncExternalStore } from "react";
+import {
+  accountPreferences,
+  currentLocale,
+  preferencesAtom,
+  resolveLocale,
+} from "../lib/preferences";
+import { CATALOGS } from "./messages";
 
 const MESSAGES_BY_LOCALE = {
   en: CATALOGS.en,
@@ -39,23 +17,37 @@ const MESSAGES_BY_LOCALE = {
   ja: CATALOGS.ja,
 };
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<LanguageCode>(detectLanguage);
+function useLocale(): Locale {
+  return useSyncExternalStore(
+    currentLocale.subscribe,
+    currentLocale.get,
+    () => "en" as const,
+  );
+}
 
-  const changeLang = useCallback((next: LanguageCode) => {
-    setLang(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
-  }, []);
+export function I18nProvider({ children }: { children: ReactNode }) {
+  const locale = useLocale();
+  const preferences = useAtomValue(preferencesAtom);
+  const refreshPreferences = useAtomRefresh(preferencesAtom);
+
+  // Account state landing (or sign-in/out refresh) re-resolves the locale.
+  useEffect(() => {
+    const prefs = accountPreferences(preferences);
+    if (prefs !== undefined && resolveLocale(prefs) !== currentLocale.get()) {
+      currentLocale.set(resolveLocale(prefs));
+    }
+  }, [preferences]);
 
   useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
+    refreshPreferences();
+  }, [refreshPreferences]);
 
   return (
-    <InternationalizationProvider locale={lang} messages={MESSAGES_BY_LOCALE}>
-      <I18nContext value={{ lang, setLang: changeLang }}>
-        {children}
-      </I18nContext>
+    <InternationalizationProvider
+      locale={locale}
+      messages={MESSAGES_BY_LOCALE}
+    >
+      {children}
     </InternationalizationProvider>
   );
 }

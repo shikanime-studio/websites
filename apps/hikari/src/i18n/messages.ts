@@ -493,16 +493,14 @@ export const MESSAGES: Record<LanguageCode, Record<MessageKey, string>> = {
 };
 
 
-const toCatalog = (m: Record<MessageKey, string>): Record<string, { defaultMessage: string }> => {
-  const out: Record<string, { defaultMessage: string }> = {};
-  for (const [key, defaultMessage] of Object.entries(m)) {
-    out[key] = { defaultMessage };
-  }
-  return out;
+export const CATALOGS: Record<LanguageCode, Record<MessageKey, { defaultMessage: string }>> = {
+  en: Object.fromEntries(
+    Object.entries(en).map(([key, defaultMessage]) => [key, { defaultMessage }]),
+  ) as Record<MessageKey, { defaultMessage: string }>,
+  fr: Object.fromEntries(
+    Object.entries(fr).map(([key, defaultMessage]) => [key, { defaultMessage }]),
+  ) as Record<MessageKey, { defaultMessage: string }>,
+  ja: Object.fromEntries(
+    Object.entries(ja).map(([key, defaultMessage]) => [key, { defaultMessage }]),
+  ) as Record<MessageKey, { defaultMessage: string }>,
 };
-
-export const CATALOGS = {
-  en: toCatalog(en),
-  fr: toCatalog(fr),
-  ja: toCatalog(ja),
-} as const;

@@ -2,16 +2,18 @@ import type {
   Commission,
   CommissionDetail,
   CommissionList,
-  NotificationList,
+  Locale, NotificationList 
 } from "./types";
 import { Data, Effect } from "effect";
 import {
   changeCommissionStatusFn,
   createCommissionFn,
   getCommission,
+  getUserPreferences,
   listCommissions,
   listNotifications,
   markNotificationReadFn,
+  setUserPreferences,
 } from "./server";
 
 export class ApiError extends Data.TaggedError("ApiError")<{
@@ -82,5 +84,19 @@ export const createCommission = (input: CreateCommissionInput) =>
 
 export const markNotificationRead = (id: number) =>
   fromServerFn(() => markNotificationReadFn({ data: id }));
+
+export interface UserPreferences {
+  locale: Locale | null;
+}
+
+export type UserPreferencesResponse = UserPreferences | null;
+
+export const fetchUserPreferences: Effect.Effect<
+  UserPreferencesResponse,
+  ApiError
+> = fromServerFn(getUserPreferences);
+
+export const saveUserPreferences = (prefs: { locale: Locale }) =>
+  fromServerFn(() => setUserPreferences({ data: { locale: prefs.locale } }));
 
 export type { Commission };

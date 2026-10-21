@@ -1,18 +1,18 @@
 import type { MessageKey } from "../i18n/messages";
 import type { NotificationList } from "../lib/types";
 import { Card } from "@astryxdesign/core/Card";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { Effect } from "effect";
 import { getOrElse } from "effect/reactivity/AsyncResult";
 import { useEffect, useRef, useState } from "react";
-import { useI18n } from "../i18n/useI18n";
 import { markNotificationRead } from "../lib/api";
 import { notificationsAtom } from "../lib/atoms";
 import { Bell, Check } from "./icons";
 
 export function NotificationsBell() {
-  const { t } = useI18n();
+  const t = useTranslator();
   const refreshNotifications = useAtomRefresh(notificationsAtom);
 
   const [open, setOpen] = useState(false);

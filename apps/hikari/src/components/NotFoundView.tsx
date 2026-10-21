@@ -1,9 +1,9 @@
 import { Button } from "@astryxdesign/core/Button";
-import { useI18n } from "../i18n/useI18n";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { ArrowLeft } from "./icons";
 
 export function NotFoundView() {
-  const { t } = useI18n();
+  const t = useTranslator();
 
   return (
     <div className="hk-shell flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">

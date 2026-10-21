@@ -7,6 +7,9 @@ export type CommissionStatus =
   | "completed"
   | "delivered";
 
+/** BCP 47 language codes the app ships catalogs for. */
+export type Locale = "en" | "fr" | "ja";
+
 export const users = sqliteTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -134,6 +137,18 @@ export const rateLimits = sqliteTable("rate_limits", {
   lastRequest: integer("last_request", { mode: "number" }),
 });
 
+export const userPreferences = sqliteTable(
+  "user_preferences",
+  {
+    userId: text("user_id")
+      .notNull()
+      .primaryKey()
+      .references(() => users.id),
+    locale: text("locale").$type<Locale>(),
+    updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
+  },
+);
+
 export interface Schema extends Record<string, unknown> {
   users: typeof users;
   sessions: typeof sessions;
@@ -143,4 +158,5 @@ export interface Schema extends Record<string, unknown> {
   commissionPhotos: typeof commissionPhotos;
   notifications: typeof notifications;
   rateLimits: typeof rateLimits;
+  userPreferences: typeof userPreferences;
 }

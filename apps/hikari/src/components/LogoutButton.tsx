@@ -1,6 +1,6 @@
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { useAtomRefresh } from "@effect/atom-react";
-import { useI18n } from "../i18n/useI18n";
 import {
   commissionsAtom,
   notificationsAtom,
@@ -13,7 +13,7 @@ export function LogoutButton() {
   const refreshSession = useAtomRefresh(sessionAtom);
   const refreshCommissions = useAtomRefresh(commissionsAtom);
   const refreshNotifications = useAtomRefresh(notificationsAtom);
-  const { t } = useI18n();
+  const t = useTranslator();
 
   return (
     <IconButton

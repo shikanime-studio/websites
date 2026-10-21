@@ -1,6 +1,6 @@
-import type { CommissionStatus } from "../schema";
+import type { CommissionStatus, Locale } from "../schema";
 
-export type { CommissionStatus };
+export type { CommissionStatus, Locale };
 
 export interface NotificationItem {
   id: number;

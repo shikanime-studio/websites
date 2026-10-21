@@ -1,7 +1,7 @@
 import type { Commission } from "../lib/types";
 import { Card } from "@astryxdesign/core/Card";
+import { useLocale, useTranslator } from "@astryxdesign/core/i18n";
 import { Link } from "@tanstack/react-router";
-import { useI18n } from "../i18n/useI18n";
 import { formatRelative, formatShootDate } from "../lib/format";
 import { COMMISSION_STATUSES } from "../lib/hikari";
 import { thumbGradient } from "../lib/thumb";
@@ -9,7 +9,8 @@ import { ArrowUpRight, CalendarIcon, Camera, MapPin } from "./icons";
 import { StatusBadge } from "./StatusBadge";
 
 export function CommissionCard({ commission }: { commission: Commission }) {
-  const { t, lang } = useI18n();
+  const t = useTranslator();
+  const lang = useLocale();
   const currentIndex = COMMISSION_STATUSES.indexOf(commission.status);
 
   return (

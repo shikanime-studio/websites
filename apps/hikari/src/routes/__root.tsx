@@ -1,5 +1,6 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Button } from "@astryxdesign/core/Button";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { RegistryProvider } from "@effect/atom-react";
 import {
@@ -13,7 +14,6 @@ import { Alert, HikariMark } from "../components/icons";
 import { Navbar } from "../components/Navbar";
 import { NotFoundView } from "../components/NotFoundView";
 import { I18nProvider } from "../i18n";
-import { useI18n } from "../i18n/useI18n";
 import { hikariTheme } from "../theme/hikari";
 
 export const Route = createRootRoute({
@@ -60,7 +60,7 @@ function RootError({ reset }: ErrorComponentProps) {
 }
 
 function RootErrorPanel({ reset }: { reset: () => void }) {
-  const { t } = useI18n();
+  const t = useTranslator();
   return (
     <div className="hk-shell flex min-h-[70vh] flex-col items-center justify-center py-20 text-center">
       <HikariMark />

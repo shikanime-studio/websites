@@ -1,11 +1,11 @@
-import { useI18n } from "../../i18n/useI18n";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { SiteFooter } from "../Footer";
 import { ArrowRight } from "../icons";
 import { SignInButton } from "../SignInButton";
 import { HeroArt } from "./HeroArt";
 
 export function LandingPage() {
-  const { t } = useI18n();
+  const t = useTranslator();
   const beats = ["landing.beat1", "landing.beat2", "landing.beat3"] as const;
 
   return (

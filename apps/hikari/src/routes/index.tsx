@@ -3,6 +3,7 @@ import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
@@ -12,7 +13,6 @@ import { CommissionCard } from "../components/CommissionCard";
 import { Camera, HikariMark, Plus } from "../components/icons";
 import { LandingPage } from "../components/landing/LandingPage";
 
-import { useI18n } from "../i18n/useI18n";
 import { commissionsAtom, sessionAtom } from "../lib/atoms";
 import { COMMISSION_STATUSES  } from "../lib/hikari";
 
@@ -22,7 +22,7 @@ export const Route = createFileRoute("/")({
 
 function HomePage() {
   const sessionResult = useAtomValue(sessionAtom);
-  const { t } = useI18n();
+  const t = useTranslator();
 
   if (isInitial(sessionResult)) {
     return (
@@ -45,7 +45,7 @@ function HomePage() {
 type Filter = "all" | CommissionStatus;
 
 function CommissionsDashboard() {
-  const { t } = useI18n();
+  const t = useTranslator();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");

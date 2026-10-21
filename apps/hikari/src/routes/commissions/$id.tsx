@@ -4,6 +4,7 @@ import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { FileInput } from "@astryxdesign/core/FileInput";
+import { useLocale, useTranslator } from "@astryxdesign/core/i18n";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
@@ -19,7 +20,6 @@ import {
 } from "../../components/icons";
 import { SignInButton } from "../../components/SignInButton";
 import { StatusBadge } from "../../components/StatusBadge";
-import { useI18n } from "../../i18n/useI18n";
 import {
   ApiError,
   changeCommissionStatus,
@@ -43,7 +43,7 @@ export const Route = createFileRoute("/commissions/$id")({
 function CommissionDetailPage() {
   const { id } = Route.useParams();
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
-  const { t } = useI18n();
+  const t = useTranslator();
   const result = useAtomValue(commissionAtom(id));
   const refresh = useAtomRefresh(commissionAtom(id));
 
@@ -119,7 +119,8 @@ function CommissionDetailPage() {
 function CommissionDetailView({ commission }: { commission: CommissionDetail }) {
   const refreshCommission = useAtomRefresh(commissionAtom(String(commission.id)));
   const refreshCommissions = useAtomRefresh(commissionsAtom);
-  const { t, lang } = useI18n();
+  const t = useTranslator();
+  const lang = useLocale();
   const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
