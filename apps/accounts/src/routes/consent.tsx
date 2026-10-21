@@ -9,15 +9,9 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { AppWindow, Check } from "lucide-react";
 import { useState } from "react";
 import { useSession } from "../hooks/useSession";
+import { describeScope } from "../lib/scopes";
 
 const LEADING_QUESTION = /^\?/;
-
-const SCOPE_LABELS: Record<string, string> = {
-  openid: "Confirm your identity",
-  profile: "Your name and profile picture",
-  email: "Your email address",
-  offline_access: "Stay connected while you're away",
-};
 
 interface ConsentSearch {
   client_id?: string;
@@ -91,7 +85,7 @@ function ConsentPage() {
   const scopes = (scope ?? "").split(" ").filter(Boolean);
   const permissions = scopes.map((value) => ({
     value,
-    label: SCOPE_LABELS[value] ?? value,
+    label: describeScope(value),
   }));
 
   if (!session?.user) {
