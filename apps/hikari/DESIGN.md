@@ -5,23 +5,23 @@ change it without breaking the system.
 
 ## References
 
-Two inputs, deliberately kept separate:
+Three inputs, deliberately kept separate:
 
 - **Astryx** (`@astryxdesign/core`, Meta's design system) is the component
   layer. Button, IconButton, Card, Badge, TextInput, TextArea, DateTimeInput,
   FileInput, Banner, EmptyState and Selector all come from it, and every
-  semantic token (`--color-text-primary`, `--color-background-surface`,
-  `--radius-container`, …) is Astryx's. The app extends the neutral theme in
+  semantic token is Astryx's. The app extends the neutral theme in
   `src/theme/hikari.ts` with `defineTheme({ extends: neutralTheme })`: palette,
   radii and typography are theme tokens, not per-component overrides.
 - **ImaCoCoS** (`https://omiomi79.github.io/imacocos/`), the app's original
-  inspiration, supplies the material feel: warm paper canvas (`#f4f3ee` in the
-  original), hairline rules, mono micro-labels, and a single signal yellow
-  (`#ffd21f`).
+  inspiration, supplies the warm paper ground and the signal yellow.
+- **Ko-fi, Vgen and booth.pm** set the tone: Ko-fi's coral/lilac/sky palette,
+  Vgen's image-forward commission cards with candy "OPEN" badges and pill
+  controls, booth.pm's chunky coloured tags on a light canvas.
 
-The result is Meta-platform structure (white surfaces, pill actions, feed-style
-cards, one blue action colour) on CoCoS paper — built with Astryx components,
-not a parallel component kit.
+The result is a friendly marketplace surface — cream paper, white cards, vivid
+thumbnails, sticker status badges — built from Astryx components rather than a
+parallel component kit.
 
 ## Palette
 
@@ -30,49 +30,56 @@ app follows `data-theme` without a second stylesheet.
 
 | Token                | Light     | Dark      | Used for                        |
 | -------------------- | --------- | --------- | ------------------------------- |
-| `--hk-canvas`        | `#f5f4ef` | `#0a0c0e` | Page background                 |
-| `--hk-surface`       | `#fffefb` | `#14171a` | Cards, header, sheets           |
-| `--hk-surface-muted` | `#eeede6` | `#1c2024` | Inset panels, icon tiles        |
-| `--hk-ink`           | `#0a1317` | `#f4f3ee` | Primary text                    |
-| `--hk-ink-soft`      | `#4e606f` | `#a7b0b8` | Secondary text                  |
-| `--hk-ink-faint`     | `#636e79` | `#78838d` | Metadata, eyebrows              |
-| `--hk-line`          | `#e3e1d7` | `#262b30` | Hairlines                       |
-| `--hk-line-strong`   | `#cfccc0` | `#384047` | Input borders, active hairlines |
-| `--hk-accent`        | `#0064e0` | `#4d9fff` | Primary action, links, focus    |
-| `--hk-signal`        | `#ffd21f` | `#ffd21f` | Brand mark, "current stage"     |
+| `--hk-canvas`        | `#fff8f0` | `#171110` | Page background                 |
+| `--hk-surface`       | `#ffffff` | `#211a17` | Cards, header, sheets           |
+| `--hk-surface-muted` | `#fff1e4` | `#2a211c` | Inset panels, icon tiles        |
+| `--hk-ink`           | `#241c18` | `#fff4e9` | Primary text                    |
+| `--hk-ink-soft`      | `#6f6058` | `#cdbdb2` | Secondary text                  |
+| `--hk-ink-faint`     | `#7a6659` | `#9a8a7f` | Metadata, labels                |
+| `--hk-line`          | `#f2e2d3` | `#3a2c24` | Hairlines                       |
+| `--hk-line-strong`   | `#e4cdba` | `#4a382d` | Input borders, active hairlines |
+| `--hk-accent`        | `#ff6433` | `#ff7a4d` | Primary action fills            |
+| `--hk-accent-ink`    | `#c43d10` | `#ffb59a` | Links, focus ring, small text   |
+| `--hk-signal`        | `#ffd84d` | `#ffd84d` | Stickers, current stage         |
+
+Candy tints for status and thumbnails: lilac `#d9c2ff`, sky `#b9daff`, lemon
+`#c8f56a`, coral `#ff6433`. They are set as Astryx Badge hue
+tokens in the theme, so status chips are solid stickers readable on any
+thumbnail.
 
 Rules of thumb:
 
-- Blue is the **only** action colour. If it is clickable and primary, it is
-  blue; everything else is ink, surface, or hairline.
-- Yellow is a **signal**, not a surface. It marks the brand, the current step
-  in a pipeline, and the single highlight per screen. Never put body text on
-  it except `#0a1317`.
-- Status colours are semantic and paired with a dot, so colour is never the
-  only carrier of meaning.
-
-Contrast was checked against WCAG AA for the text pairs actually used
-(`ink-faint` was darkened from `#7d8b96` to `#636e79` to reach 4.7:1 on the
-canvas).
+- Coral is the **action** fill. Buttons use ink on coral, never white —
+  `#241c18` on `#ff6433` is about 5.7:1, white would fail. Small coral text
+  and the focus ring use `--hk-accent-ink` (`#c43d10`), because the fill
+  coral only reaches 2.8:1 on paper.
+- Candy colours are for **status, thumbnails and category dots**, always with
+  ink text. They are never body-text backgrounds.
+- Colour is never the only carrier: every badge keeps its label, every stage
+  keeps its name.
+- Thumbnails are deterministic decorative gradients (one source in
+  `src/lib/thumb.ts`) with a dotted texture, not fake photos.
 
 ## Type
 
-- **Display**: Bricolage Grotesque Variable, 300–600, tracking `-0.035em`,
-  line-height `0.98`. Used for h1/h2 and card titles only.
-- **UI**: the platform UI stack (`-apple-system`, `Segoe UI`, Roboto). No
-  webfont download for body copy, so first paint stays fast.
-- **Mono**: `ui-monospace` for eyebrows, counts, and metadata. Uppercase
-  eyebrows carry `0.16em` tracking.
+- **Display**: Bricolage Grotesque Variable, weight 600, tracking `-0.03em`,
+  line-height `1`. Used for h1/h2 and card titles.
+- **UI**: the rounded system stack (`ui-rounded`, SF Pro Rounded, Hiragino
+  Maru Gothic) — friendly without a webfont download.
+- **Labels**: bold, normal-case 12px in the UI face. The old mono uppercase
+  eyebrow is gone; mono is reserved for IDs, timestamps and code.
 
-Three weights only: 300 (display contrast), 400 (body), 600 (titles and
-actions). Nothing at 700+.
+Weights: 300 display contrast, 400 body, 600 titles, 700 labels, 800 sticker
+and avatar glyphs. No 800+ headings.
 
 ## Layout
 
 - `max-width: 1200px`, gutters 20px mobile / 40px desktop (`.hk-shell`).
-- Cards use 18–24px radii; controls are pills at 999px; inputs are 12px.
+- Cards use 26px radii; inputs 14px; actions are pills at 999px.
+- Soft warm shadows (`--hk-shadow-*`), no hard borders on cards except a
+  hairline.
 - Sections breathe at `py-20` mobile / `py-28` desktop.
-- The landing page is full-bleed sections; the app pages are shell-contained.
+- The landing page is full-bleed sections; app pages are shell-contained.
 
 ## Component layer
 
@@ -111,10 +118,12 @@ uses the Astryx body token.
 
 ## Pages
 
-- **Signed-out `/`** — hero with a live product mock, lifecycle strip, role
-  split, feature grid, four-step workflow, closing call to action, footer.
-- **Signed-in `/`** — pipeline summary tiles, search + status filter, a card
-  grid keyed by stage, plus empty, no-match, loading, and error states.
+- **Signed-out `/`** — hero with a live product mock (gradient cover, C108
+  sticker, photo strip), a "Made for" category-chip strip, lifecycle cards,
+  role split, feature grid, four-step workflow, lilac call to action, footer.
+- **Signed-in `/`** — a horizontally scrollable status filter on mobile, a
+  search field, and image-forward commission cards with candy status stickers
+  on the thumbnail; empty, no-match, loading and error states included.
 - **`/commissions/$id`** — brief, photo delivery, a five-step progress rail,
   next-stage actions, map embed, calendar details.
 - **`/commissions/new`** — two-column form with a "what happens next" aside.
@@ -148,8 +157,9 @@ fields, and dark mode.
 
 The change is confined to `apps/hikari/src` plus `public/icon.svg` and this
 file. No dependency was added: every component used was already in
-`@astryxdesign/core`. `git checkout -- apps/hikari` restores the previous UI; there are no API,
-schema, or dependency changes, so no migration or data rollback is needed.
+`@astryxdesign/core`. `git checkout -- apps/hikari` restores the previous
+UI; there are no API, schema, or dependency changes, so no migration or
+data rollback is needed.
 
 ## Known limits
 

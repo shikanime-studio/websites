@@ -1,12 +1,14 @@
 /*
  * Hikari design tokens.
  *
- * Two references meet here:
+ * Three references meet here:
  * - Astryx (Meta's design system) supplies the semantic token contract and
  *   the component layer. Its neutral theme is deliberately colourless, so the
  *   palette below re-points those tokens at Hikari's own values.
- * - ImaCoCoS, the original inspiration, supplies the warm paper canvas, the
- *   hairline rules, the mono micro-labels and the signal yellow.
+ * - ImaCoCoS, the original inspiration, supplies the warm paper ground and
+ *   the signal yellow.
+ * - Ko-fi, Vgen and booth.pm supply the candy palette, the chunky tags and
+ *   the rounded, sticker-friendly shapes.
  *
  * Layer order: reset → theme → base → astryx-base → astryx-theme → components
  * → utilities. Token overrides live unlayered at the bottom so they win over
@@ -25,8 +27,9 @@
 
 @theme inline {
   --font-sans:
-    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
-    Arial, "Noto Sans", sans-serif;
+    ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
   --font-display:
     "Bricolage Grotesque Variable", -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, sans-serif;
@@ -42,10 +45,9 @@
   --color-ink-faint: var(--hk-ink-faint);
   --color-hairline: var(--hk-line);
   --color-hairline-strong: var(--hk-line-strong);
-  --color-brand: var(--hk-accent);
+  --color-brand: var(--hk-accent-ink);
   --color-brand-soft: var(--hk-accent-soft);
   --color-signal: var(--hk-signal);
-  --color-signal-soft: var(--hk-signal-soft);
   --color-signal-ink: var(--hk-signal-ink);
   --color-positive: var(--hk-success);
   --color-positive-soft: var(--hk-success-soft);
@@ -60,60 +62,67 @@
  * ------------------------------------------------------------------------- */
 
 :root {
-  /* Surfaces: warm paper, one step off pure white — the ImaCoCoS canvas. */
-  --hk-canvas: light-dark(#f5f4ef, #0a0c0e);
-  --hk-surface: light-dark(#fffefb, #14171a);
-  --hk-surface-muted: light-dark(#eeede6, #1c2024);
-  --hk-surface-raised: light-dark(#ffffff, #191d21);
+  /* Surfaces: warm cream paper, like a desk covered in prints. */
+  --hk-canvas: light-dark(#fff8f0, #171110);
+  --hk-surface: light-dark(#ffffff, #211a17);
+  --hk-surface-muted: light-dark(#fff1e4, #2a211c);
+  --hk-surface-raised: light-dark(#ffffff, #26201c);
 
-  /* Ink: Meta's near-black and secondary slate, warmed by a neutral cast. */
-  --hk-ink: light-dark(#0a1317, #f4f3ee);
-  --hk-ink-soft: light-dark(#4e606f, #a7b0b8);
-  --hk-ink-faint: light-dark(#636e79, #78838d);
+  /* Ink: warm near-black, not slate. */
+  --hk-ink: light-dark(#241c18, #fff4e9);
+  --hk-ink-soft: light-dark(#6f6058, #cdbdb2);
+  --hk-ink-faint: light-dark(#7a6659, #9a8a7f);
 
-  /* Rules: hairlines, not borders. */
-  --hk-line: light-dark(#e3e1d7, #262b30);
-  --hk-line-strong: light-dark(#cfccc0, #384047);
+  /* Rules: soft warm hairlines. */
+  --hk-line: light-dark(#f2e2d3, #3a2c24);
+  --hk-line-strong: light-dark(#e4cdba, #4a382d);
 
-  /* Brand action: Meta platform blue. Reserved for primary actions + links. */
-  --hk-accent: light-dark(#0064e0, #4d9fff);
-  --hk-accent-soft: light-dark(#e8f1ff, #16283f);
+  /* Action: Ko-fi coral. Ink text on coral keeps it readable and playful. */
+  --hk-accent: light-dark(#ff6433, #ff7a4d);
+  --hk-accent-soft: light-dark(#ffe4d8, #3a1e14);
 
-  /* Signal: the ImaCoCoS yellow. Used sparingly — brand mark, highlights. */
-  --hk-signal: light-dark(#ffd21f, #ffd21f);
-  --hk-signal-soft: light-dark(#fff4c4, #332a08);
+  /* Text-safe coral for links and focus; the fill coral is too light for
+   * small text on the canvas (2.8:1). */
+  --hk-accent-ink: light-dark(#c43d10, #ffb59a);
+
+  /* Candy tints: status badges, thumbnails, category dots. */
+  --hk-candy-lilac: #d9c2ff;
+  --hk-candy-sky: #b9daff;
+  --hk-candy-lime: #c8f56a;
+
+  /* Signal: sunny yellow, for current-stage markers and stickers. */
+  --hk-signal: light-dark(#ffd84d, #ffd84d);
   --hk-signal-ink: light-dark(#4a3a00, #ffe9a3);
 
   /* Status */
-  --hk-success: light-dark(#0b7a3b, #6ed99a);
-  --hk-success-soft: light-dark(#e4f5e9, #10291b);
-  --hk-danger: light-dark(#bf3529, #ff9d92);
-  --hk-danger-soft: light-dark(#fbeae7, #2e1512);
-  --hk-warning: light-dark(#8a5b00, #f0c96a);
-  --hk-warning-soft: light-dark(#fff1cd, #302509);
-  --hk-neutral: light-dark(#00000010, #ffffff14);
+  --hk-success: light-dark(#1f7a4a, #7ee0a6);
+  --hk-success-soft: light-dark(#e4f7ec, #12291d);
+  --hk-danger: light-dark(#d6402f, #ff9a8a);
+  --hk-danger-soft: light-dark(#fde7e3, #33130f);
+  --hk-warning: light-dark(#a96a00, #ffc46b);
+  --hk-warning-soft: light-dark(#fff0c8, #33240a);
+  --hk-neutral: light-dark(#241c180d, #ffffff14);
 
-  /* Elevation: soft, paper-like, never heavy. */
-  --hk-shadow-xs: 0 1px 2px light-dark(#0a131708, #00000040);
+  /* Elevation: warm and soft, like paper on a table. */
+  --hk-shadow-xs: 0 1px 2px light-dark(#5a37230a, #00000040);
   --hk-shadow-sm:
-    0 1px 2px light-dark(#0a13170a, #00000040),
-    0 4px 12px -4px light-dark(#0a13170f, #00000059);
+    0 2px 4px light-dark(#5a372308, #00000040),
+    0 6px 16px -6px light-dark(#5a372314, #00000059);
   --hk-shadow-md:
-    0 2px 4px light-dark(#0a131708, #00000047),
-    0 18px 40px -18px light-dark(#0a131726, #000000a6);
+    0 4px 10px -2px light-dark(#5a37230f, #00000047),
+    0 18px 40px -18px light-dark(#5a372326, #000000a6);
   --hk-shadow-lg:
-    0 4px 8px light-dark(#0a13170a, #00000052),
-    0 40px 80px -32px light-dark(#0a131733, #000000bf);
+    0 6px 12px -4px light-dark(#5a372312, #00000052),
+    0 36px 70px -28px light-dark(#5a372333, #000000bf);
 
-  /* Radius scale: cards are generous, controls are pills. */
-  --hk-radius-xs: 8px;
-  --hk-radius-sm: 12px;
-  --hk-radius-md: 18px;
-  --hk-radius-lg: 24px;
-  --hk-radius-xl: 32px;
+  /* Radius scale: chunky and friendly. */
+  --hk-radius-xs: 10px;
+  --hk-radius-sm: 14px;
+  --hk-radius-md: 20px;
+  --hk-radius-lg: 26px;
+  --hk-radius-xl: 34px;
 
-  /* Astryx button radius override: the brand uses pill actions. The Button
-   * component reads var(--_button-radius, var(--radius-element)). */
+  /* Astryx button radius override: every action is a pill. */
   --_button-radius: 999px;
 
   --hk-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -137,13 +146,13 @@
   --color-text-primary: var(--hk-ink);
   --color-text-secondary: var(--hk-ink-soft);
   --color-text-disabled: var(--hk-ink-faint);
-  --color-text-accent: var(--hk-accent);
+  --color-text-accent: var(--hk-accent-ink);
   --color-icon-primary: var(--hk-ink);
   --color-icon-secondary: var(--hk-ink-soft);
 
   --color-accent: var(--hk-accent);
   --color-accent-muted: var(--hk-accent-soft);
-  --color-on-accent: light-dark(#ffffff, #06101d);
+  --color-on-accent: #241c18;
   --color-neutral: var(--hk-neutral);
   --color-tint-hover: light-dark(#000000, #ffffff);
 
@@ -155,13 +164,13 @@
   --color-on-success: light-dark(#ffffff, #06130c);
   --color-warning: var(--hk-warning);
   --color-warning-muted: var(--hk-warning-soft);
-  --color-on-warning: light-dark(#ffffff, #1c1403);
+  --color-on-warning: #241c18;
   --color-error: var(--hk-danger);
   --color-error-muted: var(--hk-danger-soft);
   --color-on-error: light-dark(#ffffff, #220d0a);
 
-  --color-skeleton: light-dark(#e9e7dd, #232830);
-  --color-shadow: light-dark(#0a13171a, #00000066);
+  --color-skeleton: light-dark(#ffe9d8, #33261f);
+  --color-shadow: light-dark(#5a37231a, #00000066);
 
   --font-family-heading: var(--font-display);
   --font-family-body: var(--font-sans);
@@ -194,11 +203,11 @@ body {
 
 ::selection {
   background: var(--hk-signal);
-  color: #0a1317;
+  color: #241c18;
 }
 
 :where(a, button, [role="button"], input, textarea, select, summary):focus-visible {
-  outline: 2px solid var(--hk-accent);
+  outline: 2px solid var(--hk-accent-ink);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -243,8 +252,8 @@ body {
 .hk-display {
   font-family: var(--font-display);
   font-weight: 600;
-  letter-spacing: -0.035em;
-  line-height: 0.98;
+  letter-spacing: -0.03em;
+  line-height: 1;
   text-wrap: balance;
 }
 
@@ -253,12 +262,12 @@ body {
 }
 
 .hk-eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--hk-ink-faint);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--hk-ink-soft);
 }
 
 .hk-hairline {
@@ -280,6 +289,97 @@ body {
   white-space: nowrap;
 }
 
+/* Sticker: a candy badge that looks peeled off a print. */
+.hk-sticker {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 2px solid var(--hk-surface);
+  background: var(--hk-signal);
+  color: #241c18;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: var(--hk-shadow-sm);
+  transform: rotate(-3deg);
+  white-space: nowrap;
+}
+
+/* Thumbnail: the image-forward top of a commission card. */
+.hk-thumb {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #ffd84d 0%, #ff8a5c 58%, #ff6433 100%);
+}
+
+.hk-thumb::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(
+    rgba(255, 255, 255, 0.3) 1.5px,
+    transparent 1.5px
+  );
+  background-size: 18px 18px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* Round avatar/initial bubble. */
+.hk-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 2px solid var(--hk-surface);
+  background: var(--hk-surface-muted);
+  color: var(--hk-ink);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* Category chip, Vgen-style: coloured dot + label. */
+.hk-cat-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 13px 6px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--hk-line);
+  background: var(--hk-surface);
+  color: var(--hk-ink);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: var(--hk-shadow-xs);
+  white-space: nowrap;
+}
+
+.hk-cat-dot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  color: #241c18;
+}
+
+/* Highlighter marker behind a phrase. */
+.hk-highlight {
+  background-image: linear-gradient(
+    transparent 66%,
+    light-dark(#ffe07a, #7a5a00) 66%
+  );
+  background-repeat: no-repeat;
+  padding-inline: 0.06em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
 /* Brand skins for Astryx Button variants that the system does not ship. */
 
 .hk-btn-outline {
@@ -295,13 +395,14 @@ body {
 
 .hk-btn-signal {
   background-color: var(--hk-signal);
-  color: #0a1317;
-  border-color: transparent;
+  color: #241c18;
+  border: 2px solid #241c18;
+  box-shadow: 0 2px 0 #241c18;
 }
 
 .hk-btn-signal:hover {
-  background-color: #f5c400;
-  color: #0a1317;
+  background-color: #f2c93c;
+  color: #241c18;
 }
 
 .hk-btn-on-ink {
@@ -318,24 +419,25 @@ body {
 /* Surfaces with texture -------------------------------------------------- */
 
 .hk-grid-texture {
-  background-image:
-    linear-gradient(to right, light-dark(#0a131708, #ffffff08) 1px, transparent 1px),
-    linear-gradient(to bottom, light-dark(#0a131708, #ffffff08) 1px, transparent 1px);
-  background-size: 56px 56px;
-  mask-image: radial-gradient(circle at 50% 40%, #000 0%, transparent 72%);
+  background-image: radial-gradient(
+    light-dark(#241c1814, #ffffff12) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
 }
 
 .hk-warm-glow {
   background:
     radial-gradient(
-      42rem 28rem at 78% 8%,
-      light-dark(#ffd21f2e, #ffd21f14) 0%,
-      transparent 66%
+      40rem 26rem at 80% 6%,
+      light-dark(#ff8a5c40, #ff8a5c1f) 0%,
+      transparent 68%
     ),
     radial-gradient(
-      36rem 24rem at 12% 22%,
-      light-dark(#0064e012, #4d9fff14) 0%,
-      transparent 70%
+      34rem 24rem at 8% 26%,
+      light-dark(#c9a7ff33, #c9a7ff1a) 0%,
+      transparent 72%
     );
 }
 

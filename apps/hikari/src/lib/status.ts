@@ -1,11 +1,11 @@
 import type { CommissionStatus } from "./hikari";
 
-/** Astryx Badge variant per lifecycle stage. */
+/** Astryx Badge variant per lifecycle stage, tuned to candy colours. */
 export const STATUS_BADGE_VARIANT = {
-  requested: "gray",
+  requested: "purple",
   accepted: "blue",
   scheduled: "yellow",
-  completed: "purple",
+  completed: "orange",
   delivered: "green",
 } as const satisfies Record<CommissionStatus, string>;
 

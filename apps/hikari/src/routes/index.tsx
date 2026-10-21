@@ -117,8 +117,9 @@ function CommissionsDashboard() {
         />
       </header>
 
-      <div className="mt-8 flex flex-wrap items-center gap-2">
+      <div className="-mx-5 mt-8 flex items-center gap-2 overflow-x-auto px-5 py-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0">
         <Button
+          className="shrink-0"
           label={`${t("home.filterAll")} · ${String(commissions.length)}`}
           onClick={() => {
             setFilter("all");
@@ -128,6 +129,7 @@ function CommissionsDashboard() {
         />
         {COMMISSION_STATUSES.map((status) => (
           <Button
+            className="shrink-0"
             key={status}
             label={`${t(`status.${status}`)} · ${String(counts[status])}`}
             onClick={() => {
@@ -200,7 +202,14 @@ function CommissionsDashboard() {
             }
             description={t("home.emptyBody")}
             headingLevel={2}
-            icon={<Camera />}
+            icon={
+              <span
+                className="flex size-14 items-center justify-center rounded-full"
+                style={{ background: "var(--hk-accent-soft)", color: "var(--hk-accent-ink)" }}
+              >
+                <Camera size={24} />
+              </span>
+            }
             title={t("home.emptyTitle")}
           />
         </div>

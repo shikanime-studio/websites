@@ -29,8 +29,8 @@ export const Route = createRootRoute({
         content:
           "Request a cosplay photoshoot, agree on place and time, receive the photos, and follow every stage in one workspace.",
       },
-      { name: "theme-color", content: "#f5f4ef", media: "(prefers-color-scheme: light)" },
-      { name: "theme-color", content: "#0a0c0e", media: "(prefers-color-scheme: dark)" },
+      { name: "theme-color", content: "#fff8f0", media: "(prefers-color-scheme: light)" },
+      { name: "theme-color", content: "#171110", media: "(prefers-color-scheme: dark)" },
       { property: "og:title", content: "Hikari — cosplay photoshoot commissions" },
       {
         property: "og:description",

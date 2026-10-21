@@ -50,7 +50,9 @@ export function LandingPage() {
               <span className="hk-display-light text-ink-soft block">
                 {t("landing.titleTop")}
               </span>
-              <span className="mt-1 block">{t("landing.titleAccent")}</span>
+              <span className="mt-1 block">
+                <span className="hk-highlight">{t("landing.titleAccent")}</span>
+              </span>
             </h1>
 
             <p className="text-ink-soft mt-6 max-w-[47ch] text-[16px] leading-[1.65]">
@@ -79,21 +81,34 @@ export function LandingPage() {
         </div>
 
         <div className="border-hairline border-t">
-          <div className="hk-shell flex flex-wrap items-center gap-x-8 gap-y-2 py-4">
-            {[
-              t("landing.feature2Title"),
-              t("landing.feature3Title"),
-              t("landing.feature4Title"),
-              t("landing.feature6Title"),
-            ].map((item) => (
-              <span
-                className="text-ink-faint flex items-center gap-2 text-[12px] font-medium"
-                key={item}
-              >
-                <Check size={13} className="opacity-60" />
-                {item}
+          <div className="hk-shell flex flex-wrap items-center gap-2 py-4">
+            <span className="text-ink-faint mr-1 text-[12px] font-bold">
+              {t("landing.madeFor")}
+            </span>
+            <span className="hk-cat-chip">
+              <span className="hk-cat-dot" style={{ background: "var(--hk-accent)" }}>
+                <Sparkle size={12} />
               </span>
-            ))}
+              {t("landing.catCosplay")}
+            </span>
+            <span className="hk-cat-chip">
+              <span className="hk-cat-dot" style={{ background: "var(--hk-candy-lilac)" }}>
+                <Camera size={12} />
+              </span>
+              {t("landing.catShooters")}
+            </span>
+            <span className="hk-cat-chip">
+              <span className="hk-cat-dot" style={{ background: "var(--hk-candy-sky)" }}>
+                <MapPin size={12} />
+              </span>
+              {t("landing.catComiket")}
+            </span>
+            <span className="hk-cat-chip">
+              <span className="hk-cat-dot" style={{ background: "var(--hk-candy-lime)" }}>
+                <CalendarIcon size={12} />
+              </span>
+              {t("landing.catStudio")}
+            </span>
           </div>
         </div>
       </section>
@@ -271,7 +286,7 @@ export function LandingPage() {
       <section className="hk-shell py-20 md:py-28" id="start">
         <div
           className="relative overflow-hidden rounded-[30px] px-7 py-14 md:px-14 md:py-20"
-          style={{ background: "var(--hk-ink)", color: "var(--hk-canvas)" }}
+          style={{ background: "var(--hk-candy-lilac)", color: "#241c18" }}
         >
           <div
             aria-hidden="true"
@@ -282,8 +297,8 @@ export function LandingPage() {
               fontSize: 240,
               fontWeight: 700,
               lineHeight: 1,
-              color: "var(--hk-signal)",
-              opacity: 0.11,
+              color: "#ff6433",
+              opacity: 0.16,
             }}
           >
             光
@@ -295,9 +310,7 @@ export function LandingPage() {
           />
 
           <div className="relative max-w-3xl">
-            <p className="hk-eyebrow" style={{ color: "var(--hk-signal)" }}>
-              Hikari
-            </p>
+            <p className="text-[12px] font-extrabold">Hikari</p>
             <h2 className="hk-display mt-4 text-[clamp(2rem,4.4vw,3.3rem)] text-inherit">
               {t("landing.ctaTitle")}
             </h2>
@@ -310,7 +323,7 @@ export function LandingPage() {
                 variant="signal"
                 className="w-full sm:w-auto"
               />
-              <span className="text-[12px] text-inherit opacity-60">
+              <span className="text-[12px] text-inherit opacity-80">
                 {t("landing.ctaNote")}
               </span>
             </div>

@@ -376,14 +376,14 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
                               ? "transparent"
                               : "var(--hk-line-strong)",
                           background: done
-                            ? "var(--hk-ink)"
+                            ? "var(--hk-accent)"
                             : current
                               ? "var(--hk-signal)"
                               : "transparent",
                           color: done
-                            ? "var(--hk-canvas)"
+                            ? "#241c18"
                             : current
-                              ? "#0a1317"
+                              ? "#241c18"
                               : "var(--hk-ink-faint)",
                         }}
                       >
@@ -400,7 +400,7 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
                           className="my-1 w-px flex-1"
                           style={{
                             background: done
-                              ? "var(--hk-ink)"
+                              ? "var(--hk-accent)"
                               : "var(--hk-line)",
                             minHeight: 18,
                           }}
