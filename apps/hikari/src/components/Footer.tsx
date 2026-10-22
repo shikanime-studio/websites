@@ -1,8 +1,8 @@
-import { useI18n } from "../i18n/useI18n";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { HikariMark } from "./icons";
 
 export function SiteFooter() {
-  const { t } = useI18n();
+  const t = useTranslator();
   const year = String(new Date().getFullYear());
 
   return (

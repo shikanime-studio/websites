@@ -1,12 +1,12 @@
 import { Button } from "@astryxdesign/core/Button";
+import { useToast } from "@astryxdesign/core/Toast";
 import { LogOut } from "lucide-react";
 import { useState } from "react";
 import { authClient } from "../lib/auth-client";
-import { useAppToast } from "./Toast";
 
 export function LogoutButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const toast = useAppToast();
+  const toast = useToast();
 
   const handleLogout = () => {
     setIsLoading(true);
@@ -19,7 +19,7 @@ export function LogoutButton() {
         },
       })
       .catch(() => {
-        toast("Failed to logout");
+        toast({ body: "Failed to logout", type: "error" });
       })
       .finally(() => {
         setIsLoading(false);

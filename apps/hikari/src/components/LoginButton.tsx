@@ -1,13 +1,13 @@
 import { Button } from "@astryxdesign/core/Button";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { useState } from "react";
 import { siGoogle } from "simple-icons";
-import { useI18n } from "../i18n/useI18n";
 import { authClient } from "../lib/auth-client";
 
 export function LoginButton() {
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useI18n();
+  const t = useTranslator();
 
   return (
     <Button

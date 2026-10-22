@@ -1,7 +1,8 @@
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import { Button } from "@astryxdesign/core/Button";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { RegistryProvider } from "@effect/atom-react";
 import {
   createRootRoute,
   HeadContent,
@@ -13,10 +14,7 @@ import { Alert, HikariMark } from "../components/icons";
 import { Navbar } from "../components/Navbar";
 import { NotFoundView } from "../components/NotFoundView";
 import { I18nProvider } from "../i18n";
-import { useI18n } from "../i18n/useI18n";
 import { hikariTheme } from "../theme/hikari";
-
-const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
   head: () => ({
@@ -62,7 +60,7 @@ function RootError({ reset }: ErrorComponentProps) {
 }
 
 function RootErrorPanel({ reset }: { reset: () => void }) {
-  const { t } = useI18n();
+  const t = useTranslator();
   return (
     <div className="hk-shell flex min-h-[70vh] flex-col items-center justify-center py-20 text-center">
       <HikariMark />
@@ -97,7 +95,7 @@ function RootErrorPanel({ reset }: { reset: () => void }) {
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <RegistryProvider>
       <AstryxTheme mode="system" theme={hikariTheme}>
         <I18nProvider>
           <div className="flex min-h-dvh flex-col">
@@ -108,7 +106,7 @@ function RootComponent() {
           </div>
         </I18nProvider>
       </AstryxTheme>
-    </QueryClientProvider>
+    </RegistryProvider>
   );
 }
 

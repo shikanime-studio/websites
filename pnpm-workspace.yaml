@@ -107,6 +107,8 @@ catalogs:
     "@types/wicg-file-system-access": ^2023.10.7
     "@webgpu/types": ^0.1.72
     typescript: ^5.9.3
+  conflicts_runtime_4_0_0mrc_116:
+    effect: 4.0.0-rc.118
 engineStrict: true
 ignoredBuiltDependencies:
   - "@prisma/engines"
@@ -150,6 +152,7 @@ trustPolicyExclude:
   - semver@6.3.1
 catalog:
   "@astryxdesign/core": ^0.5.2
+  "@effect/atom-react": 4.0.0-rc.118
   "@astryxdesign/theme-neutral": ^0.5.2
   "@docusaurus/core": 3.10.2
   "@docusaurus/module-type-aliases": 3.10.2

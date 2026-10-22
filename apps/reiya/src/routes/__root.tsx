@@ -1,8 +1,7 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
+import { RegistryProvider } from "@effect/atom-react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
   createRootRoute,
   HeadContent,
@@ -14,8 +13,6 @@ import appCss from "../assets/global.css?url";
 import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { OneTap } from "../components/OneTap";
-
-const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
   head: () => ({
@@ -78,7 +75,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <RegistryProvider>
       <AstryxTheme theme={neutralTheme} mode="system">
         <Outlet />
         <TanStackDevtools
@@ -86,11 +83,6 @@ function RootComponent() {
             position: "bottom-right",
           }}
           plugins={[
-            {
-              name: "TanStack Query",
-              render: <ReactQueryDevtoolsPanel />,
-              defaultOpen: true,
-            },
             {
               name: "TanStack Router",
               render: <TanStackRouterDevtoolsPanel />,
@@ -100,7 +92,7 @@ function RootComponent() {
         />
       </AstryxTheme>
       <OneTap />
-    </QueryClientProvider>
+    </RegistryProvider>
   );
 }
 

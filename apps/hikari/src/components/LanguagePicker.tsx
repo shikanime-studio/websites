@@ -1,17 +1,27 @@
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { Selector } from "@astryxdesign/core/Selector";
+import { useSyncExternalStore } from "react";
 import { LANGUAGES } from "../i18n/messages";
-import { useI18n } from "../i18n/useI18n";
+import { currentLocale } from "../lib/preferences";
 import { Globe } from "./icons";
 
 export function LanguagePicker() {
-  const { lang, setLang, t } = useI18n();
+  const t = useTranslator();
+  const lang = useSyncExternalStore(
+    currentLocale.subscribe,
+    currentLocale.get,
+    () => "en" as const,
+  );
 
   return (
     <Selector
       isLabelHidden
       label={t("nav.selectLanguage")}
       onChange={(value) => {
-        setLang(value as typeof lang);
+        const match = LANGUAGES.find((language) => language.code === value);
+        if (match) {
+          currentLocale.set(match.code);
+        }
       }}
       options={LANGUAGES.map((language) => ({
         label: language.label,

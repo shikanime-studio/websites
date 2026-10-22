@@ -1,45 +1,45 @@
+import { RegistryProvider } from "@effect/atom-react";
 import {
-  fetchArtists,
-  fetchCharacters,
-  fetchEvents,
-  fetchMerchs,
-} from "../lib/api-client";
+  artistsAtom,
+  charactersAtom,
+  eventsAtom,
+  merchsAtom,
+} from "../lib/atoms";
 import { GalleryContent } from "./Gallery";
-import { QueryProvider } from "./QueryProvider";
 import { Tab, TabContent, TabList } from "./TabList";
 
 export function Following() {
   return (
-    <QueryProvider>
+    <RegistryProvider>
       <TabList defaultTab="merchs">
         <Tab name="following_tabs" value="merchs">
           Merchs
         </Tab>
         <TabContent value="merchs">
-          <GalleryContent queryKey={["merchs"]} queryFn={fetchMerchs} />
+          <GalleryContent atom={merchsAtom} />
         </TabContent>
 
         <Tab name="following_tabs" value="events">
           Events
         </Tab>
         <TabContent value="events">
-          <GalleryContent queryKey={["events"]} queryFn={fetchEvents} />
+          <GalleryContent atom={eventsAtom} />
         </TabContent>
 
         <Tab name="following_tabs" value="artists">
           Artists
         </Tab>
         <TabContent value="artists">
-          <GalleryContent queryKey={["artists"]} queryFn={fetchArtists} />
+          <GalleryContent atom={artistsAtom} />
         </TabContent>
 
         <Tab name="following_tabs" value="characters">
           Characters
         </Tab>
         <TabContent value="characters">
-          <GalleryContent queryKey={["characters"]} queryFn={fetchCharacters} />
+          <GalleryContent atom={charactersAtom} />
         </TabContent>
       </TabList>
-    </QueryProvider>
+    </RegistryProvider>
   );
 }

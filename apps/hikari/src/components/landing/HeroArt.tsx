@@ -1,4 +1,4 @@
-import { useI18n } from "../../i18n/useI18n";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { CANDY_GRADIENTS } from "../../lib/thumb";
 import { Camera, Heart, Sparkle } from "../icons";
 
@@ -6,7 +6,7 @@ const INK = "#241c18";
 const OUTLINE = "var(--hk-ink)";
 
 export function HeroArt() {
-  const { t } = useI18n();
+  const t = useTranslator();
 
   return (
     <div

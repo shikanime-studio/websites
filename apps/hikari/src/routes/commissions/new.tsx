@@ -2,13 +2,16 @@ import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { DateTimeInput } from "@astryxdesign/core/DateTimeInput";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
-import { useQueryClient } from "@tanstack/react-query";
+import { useAtomRefresh } from "@effect/atom-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Cause, Effect, Exit } from "effect";
 import { useState } from "react";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
-import { useI18n } from "../../i18n/useI18n";
+import { ApiError, createCommission } from "../../lib/api";
+import { commissionsAtom } from "../../lib/atoms";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
 
@@ -18,8 +21,8 @@ export const Route = createFileRoute("/commissions/new")({
 
 function NewCommissionPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-  const { t } = useI18n();
+  const refreshCommissions = useAtomRefresh(commissionsAtom);
+  const t = useTranslator();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [photographerEmail, setPhotographerEmail] = useState("");
@@ -45,10 +48,8 @@ function NewCommissionPage() {
     }
     setSubmitting(true);
     try {
-      const res = await fetch("/api/commissions", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
+      const exit = await Effect.runPromiseExit(
+        createCommission({
           title,
           description,
           photographerEmail,
@@ -57,19 +58,18 @@ function NewCommissionPage() {
           locationName,
           locationQuery: locationName,
         }),
-      });
-      if (!res.ok) {
-        const payload = (await res.json().catch(() => null)) as {
-          error?: string;
-        } | null;
-        setError(payload?.error ?? t("form.createFailed"));
+      );
+      if (Exit.isFailure(exit)) {
+        const error = Cause.squash(exit.cause);
+        setError(
+          error instanceof ApiError ? error.message : t("form.createFailed"),
+        );
         return;
       }
-      const commission = (await res.json()) as { id: number };
-      await queryClient.invalidateQueries({ queryKey: ["commissions"] });
+      refreshCommissions();
       await navigate({
         to: "/commissions/$id",
-        params: { id: String(commission.id) },
+        params: { id: String(exit.value.id) },
       });
     } catch {
       setError(t("form.createFailed"));

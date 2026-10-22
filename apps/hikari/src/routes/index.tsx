@@ -1,37 +1,30 @@
 import type {CommissionStatus} from "../lib/hikari";
-import type { Commission } from "../lib/types";
 import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextInput } from "@astryxdesign/core/TextInput";
-import { useQuery } from "@tanstack/react-query";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { getOrElse, isFailure, isInitial } from "effect/reactivity/AsyncResult";
 import { useState } from "react";
 import { CommissionCard } from "../components/CommissionCard";
 import { Camera, HikariMark, Plus } from "../components/icons";
 import { LandingPage } from "../components/landing/LandingPage";
-import { useSession } from "../hooks/useSession";
-import { useI18n } from "../i18n/useI18n";
+
+import { commissionsAtom, sessionAtom } from "../lib/atoms";
 import { COMMISSION_STATUSES  } from "../lib/hikari";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-async function fetchCommissions(): Promise<Commission[]> {
-  const res = await fetch("/api/commissions");
-  if (!res.ok) {
-    throw new Error(`Commissions request failed: ${String(res.status)}`);
-  }
-  return (await res.json()) as Commission[];
-}
-
 function HomePage() {
-  const session = useSession();
-  const { t } = useI18n();
+  const sessionResult = useAtomValue(sessionAtom);
+  const t = useTranslator();
 
-  if (session.isLoading) {
+  if (isInitial(sessionResult)) {
     return (
       <div className="hk-shell flex min-h-[62vh] flex-col items-center justify-center gap-3">
         <span className="hk-live-dot" style={{ opacity: 0.9 }}>
@@ -42,7 +35,7 @@ function HomePage() {
     );
   }
 
-  if (!session.data) {
+  if (!getOrElse(sessionResult, () => null)) {
     return <LandingPage />;
   }
 
@@ -52,17 +45,13 @@ function HomePage() {
 type Filter = "all" | CommissionStatus;
 
 function CommissionsDashboard() {
-  const { t } = useI18n();
+  const t = useTranslator();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
-  const { data, isError, isLoading, refetch } = useQuery({
-    queryKey: ["commissions"],
-    queryFn: fetchCommissions,
-    retry: 1,
-  });
-
-  const commissions = data ?? [];
+  const result = useAtomValue(commissionsAtom);
+  const refetch = useAtomRefresh(commissionsAtom);
+  const commissions = getOrElse(result, () => []);
   const normalizedQuery = query.trim().toLowerCase();
   const filtered = commissions.filter((commission) => {
     const matchesStatus = filter === "all" || commission.status === filter;
@@ -158,7 +147,7 @@ function CommissionsDashboard() {
         </p>
       </div>
 
-      {isError ? (
+      {isFailure(result) ? (
         <div className="mt-6">
           <Banner
             description={t("home.errorBody")}
@@ -166,9 +155,7 @@ function CommissionsDashboard() {
               <Button
                 className="hk-btn-outline"
                 label={t("home.retry")}
-                onClick={() => {
-                  refetch().catch(() => {});
-                }}
+                onClick={refetch}
                 size="sm"
                 variant="secondary"
               />
@@ -179,7 +166,7 @@ function CommissionsDashboard() {
         </div>
       ) : null}
 
-      {isLoading ? (
+      {isInitial(result) ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2, 3, 4, 5].map((index) => (
             <Card className="h-[248px] animate-pulse" key={index} padding={5}>
@@ -189,7 +176,7 @@ function CommissionsDashboard() {
         </div>
       ) : null}
 
-      {!isLoading && !isError && commissions.length === 0 ? (
+      {!isInitial(result) && !isFailure(result) && commissions.length === 0 ? (
         <div className="mt-6">
           <EmptyState
             actions={
@@ -215,8 +202,8 @@ function CommissionsDashboard() {
         </div>
       ) : null}
 
-      {!isLoading &&
-      !isError &&
+      {!isInitial(result) &&
+      !isFailure(result) &&
       commissions.length > 0 &&
       filtered.length === 0 ? (
         <div className="mt-6">
@@ -239,7 +226,7 @@ function CommissionsDashboard() {
         </div>
       ) : null}
 
-      {!isLoading && !isError && filtered.length > 0 ? (
+      {!isInitial(result) && !isFailure(result) && filtered.length > 0 ? (
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((commission) => (
             <CommissionCard commission={commission} key={commission.id} />

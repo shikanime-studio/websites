@@ -1,6 +1,17 @@
 import type { CommissionStatus } from "../schema";
+import { Schema } from "effect";
 
 export type { CommissionStatus };
+
+const CommissionStatusSchema = Schema.Literals([
+  "requested",
+  "accepted",
+  "scheduled",
+  "completed",
+  "delivered",
+]);
+
+const decodeStatus = Schema.decodeUnknownOption(CommissionStatusSchema);
 
 export const COMMISSION_STATUSES: ReadonlyArray<CommissionStatus> = [
   "requested",
@@ -34,7 +45,7 @@ export function nextStatuses(
 }
 
 export function isCommissionStatus(value: string): value is CommissionStatus {
-  return (COMMISSION_STATUSES as ReadonlyArray<string>).includes(value);
+  return decodeStatus(value)._tag === "Some";
 }
 
 export const STATUS_LABELS: Readonly<Record<CommissionStatus, string>> = {

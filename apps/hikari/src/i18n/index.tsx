@@ -1,61 +1,53 @@
 import type { ReactNode } from "react";
-import type { LanguageCode, MessageKey } from "./messages";
+import type { Locale } from "../schema";
+import { InternationalizationProvider } from "@astryxdesign/core/i18n";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { useEffect, useSyncExternalStore } from "react";
 import {
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
-import { I18nContext } from "./context";
-import { LANGUAGES, MESSAGES } from "./messages";
+  accountPreferences,
+  currentLocale,
+  preferencesAtom,
+  resolveLocale,
+} from "../lib/preferences";
+import { CATALOGS } from "./messages";
 
-const STORAGE_KEY = "hikari:lang";
+const MESSAGES_BY_LOCALE = {
+  en: CATALOGS.en,
+  fr: CATALOGS.fr,
+  ja: CATALOGS.ja,
+};
 
-function detectLanguage(): LanguageCode {
-  if (typeof window === "undefined") {
-    return "en";
-  }
-  const codes = LANGUAGES.map((l) => l.code);
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored !== null && codes.includes(stored as LanguageCode)) {
-    return stored as LanguageCode;
-  }
-  const nav = window.navigator.language.slice(0, 2);
-  return codes.includes(nav as LanguageCode)
-    ? (nav as LanguageCode)
-    : "en";
+function useLocale(): Locale {
+  return useSyncExternalStore(
+    currentLocale.subscribe,
+    currentLocale.get,
+    () => "en" as const,
+  );
 }
 
-
-
-
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<LanguageCode>(detectLanguage);
+  const locale = useLocale();
+  const preferences = useAtomValue(preferencesAtom);
+  const refreshPreferences = useAtomRefresh(preferencesAtom);
 
-  const setLang = useCallback((next: LanguageCode) => {
-    setLangState(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
-  }, []);
+  // Account state landing (or sign-in/out refresh) re-resolves the locale.
+  useEffect(() => {
+    const prefs = accountPreferences(preferences);
+    if (prefs !== undefined && resolveLocale(prefs) !== currentLocale.get()) {
+      currentLocale.set(resolveLocale(prefs));
+    }
+  }, [preferences]);
 
   useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-
-  const t = useCallback(
-    (key: MessageKey, params?: Record<string, string>) => {
-      let text: string = MESSAGES[lang][key];
-      if (params) {
-        for (const [name, value] of Object.entries(params)) {
-          text = text.replaceAll(`{${name}}`, value);
-        }
-      }
-      return text;
-    },
-    [lang],
-  );
+    refreshPreferences();
+  }, [refreshPreferences]);
 
   return (
-    <I18nContext value={{ lang, setLang, t }}>
+    <InternationalizationProvider
+      locale={locale}
+      messages={MESSAGES_BY_LOCALE}
+    >
       {children}
-    </I18nContext>
+    </InternationalizationProvider>
   );
 }

@@ -1,6 +1,8 @@
+import { useTranslator } from "@astryxdesign/core/i18n";
+import { useAtomValue } from "@effect/atom-react";
 import { Link } from "@tanstack/react-router";
-import { useSession } from "../hooks/useSession";
-import { useI18n } from "../i18n/useI18n";
+import { getOrElse } from "effect/reactivity/AsyncResult";
+import { sessionAtom } from "../lib/atoms";
 import { HikariMark } from "./icons";
 import { LanguagePicker } from "./LanguagePicker";
 import { LogoutButton } from "./LogoutButton";
@@ -8,8 +10,8 @@ import { NotificationsBell } from "./NotificationsBell";
 import { SignInButton } from "./SignInButton";
 
 export function Navbar() {
-  const { data: session } = useSession();
-  const { t } = useI18n();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
+  const t = useTranslator();
   return (
     <header
       className="border-hairline sticky top-0 z-50 border-b backdrop-blur-xl"

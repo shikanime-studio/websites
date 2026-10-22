@@ -1,10 +1,10 @@
-import { useI18n } from "../../i18n/useI18n";
+import { useTranslator } from "@astryxdesign/core/i18n";
 import { SiteFooter } from "../Footer";
 import { SignInButton } from "../SignInButton";
 import { HeroArt } from "./HeroArt";
 
 export function LandingPage() {
-  const { t } = useI18n();
+  const t = useTranslator();
 
   return (
     <>
