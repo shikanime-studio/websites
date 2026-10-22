@@ -30,23 +30,19 @@ Each route carries a short triage or review prompt and runs with the
 
 Jobs live in VCS: `hermesHomeFiles."cron/jobs.json"` in the automata
 profile, all delivering locally to the Hermes log. Schedules sit in a
-00:00–02:45 UTC night window, staggered in 15-minute steps, so triage
-writes land while the European working day is asleep.
+00:00–03:00 UTC night window on 15-minute boundaries, so triage writes
+land while the European working day is asleep.
 
 | Job | Schedule | Scope |
 |---|---|---|
-| `daily-grafana-alert-triage` | `0 0 * * *` | Firing alerts on the nishir fleet. |
-| `daily-flux-failure-triage` | `15 0 * * *` | Flux Kustomizations and HelmReleases with `Ready=False`. |
-| `daily-github-actions-failure-triage` | `30 0 * * *` | CI failures across both studios orgs and cloud-pi-native. |
-| `daily-documentation-sync` | `45 0 * * *` | docs.shikanime.studio claims verified against manifests and live cluster state; drift filed in this repo, small factual fixes fastlaned. |
-| `weekly-a2a-cluster-efficiency-audit` | `0 1 * * 1` | Efficiency proposals from A2A peers; top 3 filed as issues. |
-| `daily-security-audit` | `15 1 * * *` | Code-scanning, secret-scanning, and Dependabot alerts. |
+| `daily-docs-sync` | `45 0 * * *` | Recent org changes mirrored into the per-repo GitHub wikis, then docs.shikanime.studio claims verified against manifests and live cluster state; drift filed in this repo, small factual fixes fastlaned. |
+| `weekly-fleet-efficiency-audit` | `0 1 * * 1` | Efficiency proposals from A2A peers; top 3 filed as issues in `shikanime-labs/manifests`. |
+| `daily-fleet-health-audit` | `15 1 * * *` | Every `sks-audit` surface over the whole fleet and all three orgs: security alerts, perimeter redteam, CI failures, firing alerts, Flux health, Kubernetes warning events. |
 | `daily-github-triage` | `30 1 * * *` | Labels, assignment, and first replies on open issues and PRs. |
 | `daily-github-cleanup` | `45 1 * * *` | Deletion of fully-merged branches idle 7 days or more. |
 | `daily-github-notification-sweep` | `0 2 * * *` | Unread GitHub notifications, answered as `yorha-operator`. |
-| `daily-security-redteam` | `15 2 * * *` | Offensive probe for both studios orgs; re-verifies previously found attack paths before hunting new ones. |
-| `daily-renovate-landing` | `30 2 * * *` | Landing pass over open renovate PRs. |
-| `daily-kubernetes-events-triage` | `45 2 * * *` | Kubernetes warning events, grouped and deduplicated. |
+| `daily-renovate-landing` | `30 2 * * *` | Landing pass over open renovate PRs across the three orgs. |
+| `monthly-sdlc-efficiency-audit` | `0 3 1 * *` | Monthly SDLC efficiency audit over the `sks-audit` SDLC surface: census, untriaged scan, review and merge latency. |
 
 The issue-filing jobs share one contract:
 
