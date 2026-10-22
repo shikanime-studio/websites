@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { oneTap } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
+import { GOOGLE_CLIENT_ID, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -17,10 +18,10 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
     }),
     plugins: [oneTap()],
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: import.meta.env.VITE_SITE,
+    baseURL: SITE,
     socialProviders: {
       google: {
-        clientId: import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID,
+        clientId: GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
