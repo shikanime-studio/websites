@@ -1,0 +1,30 @@
+@import "@fontsource-variable/bricolage-grotesque";
+
+/* Astryx layer order: reset → component styles → theme tokens → Tailwind bridge → utilities */
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "@astryxdesign/core/reset.css";
+@import "@astryxdesign/core/astryx.css";
+@import "@astryxdesign/theme-neutral/theme.css";
+@import "@astryxdesign/core/tailwind-theme.css";
+@import "tailwindcss/utilities.css" layer(utilities);
+
+html {
+  font-family: var(--font-family-body);
+}
+
+.font-display {
+  font-family: "Bricolage Grotesque Variable", var(--font-family-body);
+  letter-spacing: -0.02em;
+}
+
+/* Consumer-facing brand accent, layered over the neutral theme. */
+[data-astryx-theme="neutral"] {
+  --color-accent: light-dark(#0a66ff, #7aa9ff);
+  --color-accent-muted: light-dark(#e9f1ff, #16233a);
+  --color-text-accent: light-dark(#0b5bd3, #9dc2ff);
+  --color-icon-accent: light-dark(#0a66ff, #9dc2ff);
+  --color-on-accent: light-dark(#ffffff, #0b1220);
+}

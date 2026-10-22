@@ -12,7 +12,7 @@ const env = z
   .parse(process.env);
 
 export default defineConfig({
-  testDir: "./tests",
+  testDir: "./e2e",
   use: {
     baseURL: "http://localhost:3000",
   },

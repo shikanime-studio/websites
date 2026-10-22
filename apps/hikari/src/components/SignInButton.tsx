@@ -4,20 +4,16 @@ import { useState } from "react";
 import { siGoogle } from "simple-icons";
 import { authClient } from "../lib/auth-client";
 
-type Variant = "primary" | "ink" | "signal" | "secondary" | "ghost";
+type Variant = "primary" | "secondary" | "ghost";
 
 const ASTRYX_VARIANT = {
   primary: "primary",
-  ink: "primary",
-  signal: "primary",
   secondary: "secondary",
   ghost: "ghost",
 } as const;
 
 const SKIN: Record<Variant, string> = {
   primary: "",
-  ink: "hk-btn-on-ink",
-  signal: "hk-btn-signal",
   secondary: "hk-btn-outline",
   ghost: "",
 };

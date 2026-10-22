@@ -6,15 +6,18 @@
     "build": "docusaurus build",
     "clear": "docusaurus clear",
     "deploy": "wrangler deploy",
-    "dev": "docusaurus dev",
+    "dev": "docusaurus start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "docusaurus build && wrangler dev",
     "serve": "docusaurus serve",
-    "start": "docusaurus dev",
+    "start": "docusaurus start",
     "types": "wrangler types src/worker-configuration.d.ts",
     "upload": "wrangler versions upload",
-    "write-heading-ids": "docusaurus write-heading-ids"
+    "write-heading-ids": "docusaurus write-heading-ids",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@docusaurus/core": "catalog:runtime",
@@ -32,8 +35,12 @@
     "@docusaurus/module-type-aliases": "catalog:runtime",
     "@docusaurus/tsconfig": "catalog:runtime",
     "@docusaurus/types": "catalog:runtime",
+    "@playwright/test": "catalog:test",
+    "@testing-library/jest-dom": "catalog:test",
     "eslint": "catalog:lint",
+    "jsdom": "catalog:test",
     "typescript": "catalog:types",
+    "vitest": "catalog:test",
     "wrangler": "catalog:infra"
   }
 }

@@ -21,15 +21,6 @@ function Svg({ size = 20, children, ...props }: IconProps) {
   );
 }
 
-export function ArrowRight(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="M4 12h15" />
-      <path d="m13 6 6 6-6 6" />
-    </Svg>
-  );
-}
-
 export function ArrowLeft(props: IconProps) {
   return (
     <Svg {...props}>

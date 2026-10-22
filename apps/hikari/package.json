@@ -15,9 +15,12 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite dev",
-    "test": "tsx src/lib/hikari.check.ts",
+    "test": "vitest run",
     "types": "wrangler types src/worker-configuration.d.ts",
-    "upload": "wrangler versions upload"
+    "upload": "wrangler versions upload",
+    "check:fixtures": "tsx src/lib/hikari.check.ts",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astryxdesign/core": "catalog:",
@@ -43,7 +46,12 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@e18e/eslint-plugin": "catalog:lint",
+    "@playwright/test": "catalog:test",
     "@tanstack/eslint-plugin-router": "catalog:lint",
+    "@testing-library/dom": "catalog:test",
+    "@testing-library/jest-dom": "catalog:test",
+    "@testing-library/react": "catalog:test",
+    "@testing-library/user-event": "catalog:test",
     "@tsconfig/node-lts": "catalog:types",
     "@tsconfig/node-ts": "catalog:types",
     "@tsconfig/strictest": "catalog:types",
@@ -58,9 +66,11 @@
     "eslint-plugin-jsx-a11y": "catalog:lint",
     "eslint-plugin-react-hooks": "catalog:lint",
     "eslint-plugin-react-refresh": "catalog:lint",
+    "jsdom": "catalog:test",
     "tsx": "catalog:script",
     "typescript": "catalog:types",
     "vite": "catalog:build",
+    "vitest": "catalog:test",
     "wrangler": "catalog:infra"
   },
   "engines": {

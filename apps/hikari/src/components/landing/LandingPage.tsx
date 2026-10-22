@@ -1,67 +1,54 @@
 import { useTranslator } from "@astryxdesign/core/i18n";
 import { SiteFooter } from "../Footer";
-import { ArrowRight } from "../icons";
 import { SignInButton } from "../SignInButton";
 import { HeroArt } from "./HeroArt";
 
 export function LandingPage() {
   const t = useTranslator();
-  const beats = ["landing.beat1", "landing.beat2", "landing.beat3"] as const;
 
   return (
     <>
-      <section className="relative overflow-hidden">
+      <section className="relative flex grow items-center overflow-hidden">
         <div
           aria-hidden="true"
           className="hk-grid-texture pointer-events-none absolute inset-0 opacity-60"
         />
         <div
           aria-hidden="true"
-          className="hk-warm-glow pointer-events-none absolute inset-x-0 top-0 h-[420px]"
+          className="hk-warm-glow pointer-events-none absolute inset-x-0 top-0 h-[520px]"
         />
 
-        <div className="hk-shell relative pt-14 text-center md:pt-20">
-          <span className="hk-chip">
-            <span
-              className="size-1.5 rounded-full"
-              style={{ background: "var(--hk-signal)" }}
-            />
-            {t("landing.eyebrow")}
-          </span>
+        <div className="hk-shell relative grid items-center gap-7 pt-8 pb-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:pt-14 lg:pb-16">
+          <div className="text-center lg:text-left">
+            <span className="hk-chip">
+              <span
+                className="size-1.5 rounded-full"
+                style={{ background: "var(--hk-signal)" }}
+              />
+              {t("landing.eyebrow")}
+            </span>
 
-          <h1 className="hk-display mx-auto mt-6 max-w-[13ch] text-[clamp(3.4rem,10vw,7rem)]">
-            <span className="block">{t("landing.titleTop")}</span>
-            <span className="block">{t("landing.titleAccent")}</span>
-          </h1>
+            <h1 className="hk-display mt-6 text-[clamp(3.2rem,7vw,5.6rem)]">
+              <span className="block">{t("landing.titleTop")}</span>
+              <span className="block">{t("landing.titleAccent")}</span>
+            </h1>
 
-          <p className="hk-display-light text-ink-soft mx-auto mt-6 max-w-[32rem] text-[16px] leading-relaxed font-medium text-balance">
-            {t("landing.body")}
-          </p>
+            <p className="hk-display-light text-ink-soft mx-auto mt-5 max-w-[30rem] lg:mt-6 text-[16.5px] leading-relaxed font-medium text-balance lg:mx-0">
+              {t("landing.body")}
+            </p>
 
-          <div className="mt-8 flex justify-center">
-            <SignInButton label={t("landing.ctaPrimary")} />
+            <div className="mt-7 flex flex-col items-center gap-3 lg:mt-8 lg:items-start">
+              <SignInButton label={t("landing.ctaPrimary")} size="lg" />
+              <p className="text-ink-faint text-[12px] font-medium">
+                {t("landing.note")}
+              </p>
+            </div>
           </div>
-          <p className="text-ink-faint mt-3 text-[12px] font-medium">
-            {t("landing.note")}
-          </p>
-        </div>
 
-        <div className="hk-shell relative pt-10 pb-16 md:pt-14 md:pb-24">
-          <HeroArt />
+          <div className="mx-auto w-full max-w-[360px] sm:max-w-[420px] lg:max-w-none">
+            <HeroArt />
+          </div>
         </div>
-      </section>
-
-      <section className="border-hairline bg-[var(--hk-surface)] border-t">
-        <ol className="hk-shell flex flex-wrap items-center justify-center gap-x-3 gap-y-2 py-5">
-          {beats.map((beat, index) => (
-            <li className="flex items-center gap-3" key={beat}>
-              <span className="text-[13px] font-extrabold">{t(beat)}</span>
-              {index < beats.length - 1 ? (
-                <ArrowRight className="text-ink-faint" size={14} />
-              ) : null}
-            </li>
-          ))}
-        </ol>
       </section>
 
       <SiteFooter />

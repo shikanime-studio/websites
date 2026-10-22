@@ -23,9 +23,6 @@ const en = {
     "Find your photographer. Book the date. Get the photos.",
   "landing.ctaPrimary": "Start a shoot",
   "landing.note": "Sign in with Google",
-  "landing.beat1": "Brief",
-  "landing.beat2": "Shoot",
-  "landing.beat3": "Deliver",
   "landing.previewCommission": "Commission #128",
   "landing.previewMap": "Tokyo Big Sight",
 
@@ -185,9 +182,6 @@ const fr: Record<MessageKey, string> = {
     "Trouvez votre photographe. Fixez la date. Recevez les photos.",
   "landing.ctaPrimary": "Lancer un shooting",
   "landing.note": "Connexion avec Google",
-  "landing.beat1": "Brief",
-  "landing.beat2": "Shooting",
-  "landing.beat3": "Livraison",
   "landing.previewCommission": "Commission n° 128",
   "landing.previewMap": "Tokyo Big Sight",
 
@@ -346,9 +340,6 @@ const ja: Record<MessageKey, string> = {
     "撮影者を探す。日付を決める。写真を受け取る。",
   "landing.ctaPrimary": "撮影をはじめる",
   "landing.note": "Google でログイン",
-  "landing.beat1": "依頼",
-  "landing.beat2": "撮影",
-  "landing.beat3": "納品",
   "landing.previewCommission": "依頼 #128",
   "landing.previewMap": "東京ビッグサイト",
 

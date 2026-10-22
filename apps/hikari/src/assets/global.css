@@ -337,7 +337,44 @@ body {
   font-weight: 800;
 }
 
-/* Category chip, Vgen-style: coloured dot + label. */
+/* Brand skins for Astryx Button variants that the system does not ship. */
+
+.hk-btn-outline {
+  background-color: var(--hk-surface);
+  border: 1px solid var(--hk-line-strong);
+  color: var(--hk-ink);
+}
+
+.hk-btn-outline:hover {
+  background-color: var(--hk-surface-muted);
+  color: var(--hk-ink);
+}
+
+/* Surfaces with texture -------------------------------------------------- */
+
+.hk-grid-texture {
+  background-image: radial-gradient(
+    light-dark(#241c1814, #ffffff12) 1.2px,
+    transparent 1.2px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
+}
+
+.hk-warm-glow {
+  background:
+    radial-gradient(
+      40rem 26rem at 80% 6%,
+      light-dark(#ff8a5c40, #ff8a5c1f) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      34rem 24rem at 8% 26%,
+      light-dark(#c9a7ff33, #c9a7ff1a) 0%,
+      transparent 72%
+    );
+}
+
 /* Motion ----------------------------------------------------------------- */
 
 @keyframes hk-pulse-dot {
