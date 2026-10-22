@@ -94,7 +94,10 @@ export const currentLocale = {
   get: (): Locale => activeLocale,
   set(next: Locale): void {
     activeLocale = next;
-    document.documentElement.lang = next;
+    // The module-level resolve below runs during SSR, where there is no DOM.
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = next;
+    }
     for (const listener of localeListeners) {
       listener(next);
     }

@@ -41,12 +41,12 @@ catalogs:
     '@astryxdesign/theme-neutral':
       specifier: ^0.5.2
       version: 0.5.2
-    '@effect/atom-react':
-      specifier: 4.0.0-rc.118
-      version: 4.0.0-rc.118
     '@better-auth/oauth-provider':
       specifier: ^1.7.2
       version: 1.7.12
+    '@effect/atom-react':
+      specifier: 4.0.0-rc.118
+      version: 4.0.0-rc.118
     '@stylexjs/stylex':
       specifier: ^0.19.0
       version: 0.19.0
@@ -17010,7 +17010,7 @@ snapshots:
   '@tailwindcss/node@4.3.3':
     dependencies:
       '@jridgewell/remapping': 2.3.5
-      enhanced-resolve: 5.24.5
+      enhanced-resolve: 5.26.0
       jiti: 2.7.0
       lightningcss: 1.32.0
       magic-string: 0.30.21

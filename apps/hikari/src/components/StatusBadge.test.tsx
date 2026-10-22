@@ -1,14 +1,18 @@
+import { InternationalizationProvider } from "@astryxdesign/core/i18n";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { I18nProvider } from "../i18n";
+import { CATALOGS } from "../i18n/messages";
 import { StatusBadge } from "./StatusBadge";
 
 describe("status badge", () => {
   it("shows the human label for the commission stage", () => {
     render(
-      <I18nProvider>
+      <InternationalizationProvider
+        locale="en"
+        messages={{ en: CATALOGS.en }}
+      >
         <StatusBadge status="delivered" />
-      </I18nProvider>,
+      </InternationalizationProvider>,
     );
 
     expect(screen.getByText("Photos delivered")).toBeInTheDocument();
