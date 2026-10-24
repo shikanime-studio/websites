@@ -1,10 +1,4 @@
-import { createContext, use, useMemo } from "react";
-
-export function useGPUSupport() {
-  return useMemo(() => {
-    return typeof navigator !== "undefined" && "gpu" in navigator;
-  }, []);
-}
+import { createContext, use } from "react";
 
 export interface GPUContextType {
   device: GPUDevice | null;
