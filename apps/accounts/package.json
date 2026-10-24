@@ -20,7 +20,9 @@
     "upload": "wrangler versions upload",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "db:migrate:local": "wrangler d1 migrations apply accounts --local",
+    "pretest:e2e": "node scripts/ensure-dev-vars.mjs"
   },
   "dependencies": {
     "@astryxdesign/core": "catalog:",

@@ -41,17 +41,8 @@ function LoginPage() {
             )
             : null}
           <OneTap onError={setError} />
-          <Text size="sm" color="secondary" className="text-balance">
-            Your Google account is only used to confirm it's you. We never post
-            anything on your behalf.
-          </Text>
         </div>
       </Card>
-      <Text size="sm" color="secondary" className="mt-6 text-center">
-        <Link to="/" className="hover:text-foreground font-medium transition-colors">
-          Learn about your account
-        </Link>
-      </Text>
     </div>
   );
 }
