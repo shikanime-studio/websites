@@ -291,13 +291,15 @@ function ExploreShowcaseContent() {
 
   return (
     <TabList defaultTab="Merch Findings">
-      <Tab value="Featured Artists & Circles" name="showcase_tabs">
+      {(tab) => (
+        <>
+      <Tab active={tab.value === "Featured Artists & Circles"} name="showcase_tabs" onSelect={tab.select} value="Featured Artists & Circles">
         Featured Artists & Circles
       </Tab>
-      <Tab value="Merch Findings" name="showcase_tabs">
+      <Tab active={tab.value === "Merch Findings"} name="showcase_tabs" onSelect={tab.select} value="Merch Findings">
         Merch Findings
       </Tab>
-      <TabContent value="Merch Findings">
+      <TabContent active={tab.value === "Merch Findings"}>
         <div className="flex flex-col gap-6">
           <FilterBar>
             <FilterButton label="Category" hasDropdown />
@@ -315,6 +317,8 @@ function ExploreShowcaseContent() {
           </Gallery>
         </div>
       </TabContent>
+        </>
+      )}
     </TabList>
   );
 }

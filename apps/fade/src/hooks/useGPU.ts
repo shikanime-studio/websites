@@ -1,18 +1,23 @@
-import { createContext, use } from "react";
+import { useAtomSuspense, useAtomValue } from "@effect/atom-react";
+import {
+  gpuAdapterAtom,
+  gpuDeviceAtom,
+  gpuFormatAtom,
+  gpuSupportedAtom,
+} from "../lib/gpu-graph";
 
-export interface GPUContextType {
+export interface GPUState {
   device: GPUDevice | null;
   adapter: GPUAdapter | null;
   format: GPUTextureFormat | null;
   isSupported: boolean;
 }
 
-export const GPUContext = createContext<GPUContextType | null>(null);
-
-export function useGPU() {
-  const context = use(GPUContext);
-  if (!context) {
-    throw new Error("useGPU must be used within a GPUProvider");
-  }
-  return context;
+export function useGPU(): GPUState {
+  return {
+    adapter: useAtomSuspense(gpuAdapterAtom).value,
+    device: useAtomSuspense(gpuDeviceAtom).value,
+    format: useAtomSuspense(gpuFormatAtom).value,
+    isSupported: useAtomValue(gpuSupportedAtom),
+  };
 }
