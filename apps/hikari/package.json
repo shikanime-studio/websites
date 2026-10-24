@@ -36,7 +36,7 @@
     "@vitejs/plugin-react": "catalog:build",
     "better-auth": "catalog:runtime",
     "drizzle-orm": "catalog:runtime",
-    "effect": "catalog:conflicts_runtime_4_0_0mrc_116",
+    "effect": "catalog:",
     "react": "catalog:runtime",
     "react-dom": "catalog:runtime",
     "simple-icons": "catalog:runtime",

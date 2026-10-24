@@ -1,7 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { and, eq } from "drizzle-orm";
-import { z } from "zod";
 import {
   oauthAccessTokens,
   oauthClients,
@@ -108,4 +107,3 @@ export const revokeClientAccess = createServerFn()
       );
   });
 
-export const clientIdSchema = z.string().min(1);

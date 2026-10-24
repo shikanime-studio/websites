@@ -30,10 +30,6 @@ catalogs:
     lightningcss:
       specifier: ^1.33.0
       version: 1.33.0
-  conflicts_runtime_4_0_0mrc_116:
-    effect:
-      specifier: 4.0.0-rc.118
-      version: 4.0.0-rc.118
   default:
     '@astryxdesign/core':
       specifier: ^0.5.2
@@ -50,6 +46,9 @@ catalogs:
     '@stylexjs/stylex':
       specifier: ^0.19.0
       version: 0.19.0
+    effect:
+      specifier: 4.0.0-rc.118
+      version: 4.0.0-rc.118
   format:
     prettier-plugin-astro:
       specifier: ^0.14.1
@@ -68,9 +67,6 @@ catalogs:
     '@eslint-react/eslint-plugin':
       specifier: ^2.13.0
       version: 2.13.0
-    '@tanstack/eslint-plugin-query':
-      specifier: ^5.102.8
-      version: 5.102.8
     '@tanstack/eslint-plugin-router':
       specifier: ^1.162.0
       version: 1.162.0
@@ -360,7 +356,7 @@ importers:
         specifier: catalog:runtime
         version: 0.45.2(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(typescript@5.9.3))(@types/better-sqlite3@7.6.13)(better-sqlite3@12.11.1)(kysely@0.29.5)(mysql2@3.15.3)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))
       effect:
-        specifier: catalog:conflicts_runtime_4_0_0mrc_116
+        specifier: 'catalog:'
         version: 4.0.0-rc.118
       lucide-react:
         specifier: catalog:runtime
@@ -393,9 +389,6 @@ importers:
       '@tanstack/devtools-vite':
         specifier: catalog:build
         version: 0.5.5(vite@7.3.7(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))
-      '@tanstack/eslint-plugin-query':
-        specifier: catalog:lint
-        version: 5.102.8(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
       '@tanstack/eslint-plugin-router':
         specifier: catalog:lint
         version: 1.162.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -584,7 +577,7 @@ importers:
         specifier: catalog:runtime
         version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       effect:
-        specifier: catalog:conflicts_runtime_4_0_0mrc_116
+        specifier: 'catalog:'
         version: 4.0.0-rc.118
       file-type:
         specifier: catalog:runtime
@@ -626,9 +619,6 @@ importers:
       '@tanstack/devtools-vite':
         specifier: catalog:build
         version: 0.5.5(vite@7.3.7(@types/node@22.20.1)(jiti@2.7.0)(lightningcss@1.33.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.0))
-      '@tanstack/eslint-plugin-query':
-        specifier: catalog:lint
-        version: 5.102.8(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
       '@tanstack/eslint-plugin-router':
         specifier: catalog:lint
         version: 1.162.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
@@ -762,7 +752,7 @@ importers:
         specifier: catalog:runtime
         version: 0.45.2(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(typescript@5.9.3))(@types/better-sqlite3@7.6.13)(better-sqlite3@12.11.1)(kysely@0.29.5)(mysql2@3.15.3)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))
       effect:
-        specifier: catalog:conflicts_runtime_4_0_0mrc_116
+        specifier: 'catalog:'
         version: 4.0.0-rc.118
       react:
         specifier: catalog:runtime
@@ -1013,7 +1003,7 @@ importers:
         specifier: catalog:runtime
         version: 0.3.1(drizzle-orm@0.45.2(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@prisma/client@7.4.2(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3))(typescript@5.9.3))(@types/better-sqlite3@7.6.13)(better-sqlite3@12.11.1)(kysely@0.29.5)(mysql2@3.15.3)(postgres@3.4.7)(prisma@7.4.2(@types/react@19.2.18)(better-sqlite3@12.11.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(typescript@5.9.3)))
       effect:
-        specifier: catalog:conflicts_runtime_4_0_0mrc_116
+        specifier: 'catalog:'
         version: 4.0.0-rc.118
       lucide-react:
         specifier: catalog:runtime
@@ -5117,15 +5107,6 @@ packages:
     hasBin: true
     peerDependencies:
       solid-js: '>=1.9.7'
-
-  '@tanstack/eslint-plugin-query@5.102.8':
-    resolution: {integrity: sha512-zRjG2PL3zvoqnsSNJFyfX5Mo+OwRwTbLERwZVO3oNQQn82V949INwaLrprzsOW/ivuow7gASeAUUC24xH7kwSQ==}
-    peerDependencies:
-      eslint: ^8.57.0 || ^9.0.0 || ^10.0.0
-      typescript: ^5.6.0 || ^6.0.0 || ^7.0.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   '@tanstack/eslint-plugin-router@1.162.0':
     resolution: {integrity: sha512-0mv+5fOnWXeorh6zd3VyHVfpejIzc7+z68Ts0CQMDzMiwjM5rvea46fyl2m50zx5JFennsu7RO/QJAfnqkKJXw==}
@@ -17101,15 +17082,6 @@ snapshots:
       - bufferutil
       - csstype
       - utf-8-validate
-
-  '@tanstack/eslint-plugin-query@5.102.8(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)':
-    dependencies:
-      '@typescript-eslint/utils': 8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
-      eslint: 9.39.5(jiti@2.7.0)
-    optionalDependencies:
-      typescript: 5.9.3
-    transitivePeerDependencies:
-      - supports-color
 
   '@tanstack/eslint-plugin-router@1.162.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:

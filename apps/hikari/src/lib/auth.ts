@@ -62,4 +62,3 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
   });
 }
 
-export type Auth = ReturnType<typeof createAuth>;

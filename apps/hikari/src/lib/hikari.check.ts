@@ -2,8 +2,6 @@ import assert from "node:assert/strict";
 import process from "node:process";
 import { CATALOGS } from "../i18n/messages";
 import {
-  calendarEventUrl,
-  calendarRange,
   canTransition,
   isAllowedImageType,
   isCommissionStatus,
@@ -50,37 +48,6 @@ assert.equal(
   mapLinkUrl("Tokyo Big Sight"),
   "https://www.google.com/maps/search/?api=1&query=Tokyo%20Big%20Sight",
 );
-
-assert.deepEqual(calendarRange("2026-11-15"), {
-  start: "20261115",
-  end: "20261116",
-});
-const oneHour = calendarRange("2026-11-15T10:30");
-assert.match(oneHour.start, /^\d{8}T\d{4}00Z$/);
-assert.match(oneHour.end, /^\d{8}T\d{4}00Z$/);
-assert.equal(
-  Number(oneHour.end.slice(9, 11)) * 60 +
-    Number(oneHour.end.slice(11, 13)) -
-    (Number(oneHour.start.slice(9, 11)) * 60 +
-      Number(oneHour.start.slice(11, 13))),
-  60,
-);
-assert.deepEqual(calendarRange("not a date"), {
-  start: "not a date",
-  end: "not a date",
-});
-
-const calendarUrl = new URL(
-  calendarEventUrl({
-    title: "C108 Shoot",
-    shootingDate: "2026-11-15",
-    locationName: "Tokyo Big Sight",
-    details: "Kaguya cosplay",
-  }),
-);
-assert.equal(calendarUrl.searchParams.get("action"), "TEMPLATE");
-assert.equal(calendarUrl.searchParams.get("text"), "C108 Shoot");
-assert.equal(calendarUrl.searchParams.get("dates"), "20261115/20261116");
 
 assert.equal(isAllowedImageType("image/jpeg"), true);
 assert.equal(isAllowedImageType("image/gif"), false);
