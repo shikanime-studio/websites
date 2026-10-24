@@ -1,10 +1,10 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap } from "better-auth/plugins";
+import { genericOAuth, oneTap } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
-import { GOOGLE_CLIENT_ID, SITE } from "./config";
+import { ACCOUNTS_SITE, GOOGLE_CLIENT_ID, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -16,9 +16,29 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       },
       usePlural: true,
     }),
-    plugins: [oneTap()],
+    plugins: [
+      oneTap(),
+      genericOAuth({
+        config: [
+          {
+            providerId: "accounts",
+            discoveryUrl: `${ACCOUNTS_SITE}/api/auth/.well-known/openid-configuration`,
+            clientId: "reiya",
+            clientSecret: env.ACCOUNTS_CLIENT_SECRET,
+            scopes: ["openid", "profile", "email"],
+            pkce: true,
+          },
+        ],
+      }),
+    ],
     secret: env.BETTER_AUTH_SECRET,
     baseURL: SITE,
+    account: {
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["accounts"],
+      },
+    },
     socialProviders: {
       google: {
         clientId: GOOGLE_CLIENT_ID,
