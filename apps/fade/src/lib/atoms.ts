@@ -6,6 +6,28 @@ import { make } from "effect/reactivity/Atom";
 type Result<A> = AsyncResult<A, null>;
 
 const roots = new WeakMap<object, Map<string, Atom<Result<unknown>>>>();
+const derived = new WeakMap<object, Map<string, Atom<unknown>>>();
+
+/** One derived atom per object identity and namespace. */
+export function cachedAtom<A>(
+  key: object | null,
+  namespace: string,
+  build: () => Atom<A>,
+  fallback: Atom<A>,
+): Atom<A> {
+  if (!key) return fallback;
+  let byNamespace = derived.get(key);
+  if (!byNamespace) {
+    byNamespace = new Map();
+    derived.set(key, byNamespace);
+  }
+  let atom = byNamespace.get(namespace) as Atom<A> | undefined;
+  if (!atom) {
+    atom = build();
+    byNamespace.set(namespace, atom);
+  }
+  return atom;
+}
 
 /**
  * Stable atom per object identity: GPU adapters, files and directory handles

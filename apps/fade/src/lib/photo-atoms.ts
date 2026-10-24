@@ -1,10 +1,20 @@
 import type { ExifDataView, ExifTagEntry } from "./exif";
 import type { FileItem } from "./fs";
-import { nullableAtom } from "./atoms";
+import { Effect } from "effect";
+import { make } from "effect/reactivity/Atom";
+import { cachedAtom, emptyAtom, nullableAtom } from "./atoms";
 import { scanDirectory } from "./fs";
+import { gpuDeviceAtom } from "./gpu-graph";
+import { computeHistogram } from "./histogram";
 import { createImageDataView } from "./img";
+import {
+  histogramComputePipelineAtom,
+  histogramNormalizePipelineAtom,
+  thumbnailPipelineAtom,
+} from "./pipelines";
 import { DimensionsTagId, RafDataView } from "./raf";
 import { createRawImageDataView } from "./raw";
+import { renderThumbnail } from "./thumbnail";
 
 /** File handle -> File. */
 export const fileAtom = (item: FileItem | null) =>
@@ -12,21 +22,32 @@ export const fileAtom = (item: FileItem | null) =>
     item ? await item.handle.getFile() : null,
   );
 
-/** File -> viewable blob; Fujifilm RAF exposes its embedded JPEG. */
-export const previewAtom = (item: FileItem | null, file: File | null) =>
-  nullableAtom(file, "preview", async () => {
-    if (!file) return null;
+/** File -> viewable blob; Fujifilm RAF exposes its embedded JPEG. Depends on fileAtom. */
+export const previewAtom = (item: FileItem | null) =>
+  cachedAtom(
+    item,
+    "preview",
+    () =>
+      make((get) =>
+        Effect.gen(function* () {
+          const file = yield* get.result(fileAtom(item));
+          if (!file) return null;
 
-    if (item?.mimeType === "image/x-fujifilm-raf") {
-      const buffer = await file.arrayBuffer();
-      const view = new RafDataView(buffer);
-      const jpgView = view.getJpegImage();
-      if (!jpgView) return null;
-      return new Blob([jpgView as unknown as BlobPart], { type: "image/jpeg" });
-    }
+          if (item?.mimeType === "image/x-fujifilm-raf") {
+            const buffer = yield* Effect.tryPromise(() => file.arrayBuffer());
+            const view = new RafDataView(buffer);
+            const jpgView = view.getJpegImage();
+            if (!jpgView) return null;
+            return new Blob([jpgView as unknown as BlobPart], {
+              type: "image/jpeg",
+            });
+          }
 
-    return file;
-  });
+          return file;
+        }),
+      ),
+    emptyAtom as never,
+  );
 
 /** Camera metadata for the info panel. */
 export const exifAtom = (item: FileItem | null) =>
@@ -70,7 +91,9 @@ export const rawImageAtom = (item: FileItem | null) =>
     const header = view.getCfaHeader();
     if (!header) return null;
     const tags = header.getTagEntries();
-    const dimEntry = tags.find((tag) => tag.tagId === (DimensionsTagId as number));
+    const dimEntry = tags.find(
+      (tag) => tag.tagId === (DimensionsTagId as number),
+    );
 
     let width = 0;
     let height = 0;
@@ -82,6 +105,81 @@ export const rawImageAtom = (item: FileItem | null) =>
 
     return { width, height, data };
   });
+
+/** Blob -> rendered WebP thumbnail. Depends on preview, device and pipeline. */
+export const thumbnailAtom = (
+  item: FileItem | null,
+  width: number,
+  height: number,
+  quality: number,
+) =>
+  cachedAtom(
+    item,
+    `thumbnail:${String(width)}x${String(height)}:${String(quality)}`,
+    () =>
+      make((get) =>
+        Effect.gen(function* () {
+          const blob = yield* get.result(previewAtom(item));
+          const device = yield* get.result(gpuDeviceAtom);
+          const pipeline = yield* get.result(thumbnailPipelineAtom);
+          if (
+            !device ||
+            !pipeline ||
+            !blob ||
+            (!blob.type.startsWith("image/") &&
+              item?.mimeType !== "image/x-fujifilm-raf")
+          ) {
+            return null;
+          }
+          return yield* Effect.tryPromise(() =>
+            renderThumbnail({
+              device,
+              pipeline,
+              blob,
+              fileItem: item,
+              width,
+              height,
+              quality,
+            }),
+          );
+        }),
+      ),
+    emptyAtom as never,
+  );
+
+/** Image -> 256-bin channel histograms. Depends on the GPU graph. */
+export const histogramAtom = (image: HTMLImageElement | null) =>
+  cachedAtom(
+    image,
+    "histogram",
+    () =>
+      make((get) =>
+        Effect.gen(function* () {
+          const device = yield* get.result(gpuDeviceAtom);
+          const computePipeline = yield* get.result(histogramComputePipelineAtom);
+          const normalizePipeline = yield* get.result(
+            histogramNormalizePipelineAtom,
+          );
+          if (!image || !device || !computePipeline || !normalizePipeline) {
+            return null;
+          }
+          const imageKey = {
+            src: image.currentSrc || image.src,
+            width: image.naturalWidth,
+            height: image.naturalHeight,
+          };
+          return yield* Effect.tryPromise(() =>
+            computeHistogram({
+              device,
+              computePipeline,
+              normalizePipeline,
+              imageKey,
+            }),
+          );
+        }),
+      ),
+    emptyAtom as never,
+  );
 
 /** Directory handle -> the gallery listing. */
 export const galleryAtom = (handle: FileSystemDirectoryHandle | null) =>

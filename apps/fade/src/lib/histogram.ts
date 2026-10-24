@@ -1,3 +1,9 @@
+export interface Bins {
+  r: number[];
+  g: number[];
+  b: number[];
+}
+
 export interface HistogramInput {
   device: GPUDevice | null;
   computePipeline: GPUComputePipeline | null;

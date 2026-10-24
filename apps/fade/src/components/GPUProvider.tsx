@@ -1,22 +1,22 @@
 import type { ReactNode } from "react";
-import { useAtomRefresh, useAtomSuspense } from "@effect/atom-react";
+import { useAtomRefresh, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import { useEffect, useMemo } from "react";
-import { GPUContext, useGPUSupport } from "../hooks/useGPU";
-import { gpuAdapterAtom, gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-atoms";
+import { GPUContext } from "../hooks/useGPU";
+import {
+  gpuAdapterAtom,
+  gpuDeviceAtom,
+  gpuFormatAtom,
+  gpuSupportedAtom,
+} from "../lib/gpu-graph";
 
 export function GPUProvider({ children }: { children: ReactNode }) {
-  const isSupported = useGPUSupport();
+  const isSupported = useAtomValue(gpuSupportedAtom);
 
-  const adapterAtom = gpuAdapterAtom(isSupported);
-  const adapter = useAtomSuspense(adapterAtom).value;
+  const adapter = useAtomSuspense(gpuAdapterAtom).value;
+  const device = useAtomSuspense(gpuDeviceAtom).value;
+  const format = useAtomSuspense(gpuFormatAtom).value;
 
-  const deviceAtom = gpuDeviceAtom(adapter);
-  const device = useAtomSuspense(deviceAtom).value;
-
-  const formatAtom = gpuFormatAtom(device);
-  const format = useAtomSuspense(formatAtom).value;
-
-  const refreshDevice = useAtomRefresh(deviceAtom);
+  const refreshDevice = useAtomRefresh(gpuDeviceAtom);
 
   useEffect(() => {
     if (!device) return;
