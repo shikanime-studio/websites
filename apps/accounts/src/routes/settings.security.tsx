@@ -32,6 +32,22 @@ interface AuthorizedClient {
   authorizedAt: string | null;
 }
 
+/** D1 may hand JSON columns back as strings; never trust the shape. */
+function normalizeScopes(value: unknown): string[] {
+  const parsed = typeof value === "string"
+    ? (() => {
+      try {
+        return JSON.parse(value) as unknown;
+      } catch {
+        return [];
+      }
+    })()
+    : value;
+  return Array.isArray(parsed)
+    ? parsed.filter((scope): scope is string => typeof scope === "string")
+    : [];
+}
+
 const listAuthorizedClients = createServerFn().handler(
   async (): Promise<AuthorizedClient[]> => {
     const request = getRequest();
@@ -57,7 +73,7 @@ const listAuthorizedClients = createServerFn().handler(
     return rows.map((row) => ({
       clientId: row.clientId,
       name: row.name,
-      scopes: row.scopes ?? [],
+      scopes: normalizeScopes(row.scopes),
       authorizedAt: row.authorizedAt
         ? row.authorizedAt.toISOString()
         : null,

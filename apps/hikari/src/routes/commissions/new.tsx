@@ -1,3 +1,4 @@
+import type { LocationValue } from "../../components/LocationField";
 import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
@@ -10,6 +11,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
 import { useState } from "react";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
+import { LocationField } from "../../components/LocationField";
 import { ApiError, createCommission } from "../../lib/api";
 import { commissionsAtom } from "../../lib/atoms";
 import { parseInviteeInput } from "../../lib/sharing";
@@ -29,7 +31,7 @@ function NewCommissionPage() {
   const [photographerEmail, setPhotographerEmail] = useState("");
   const [characterName, setCharacterName] = useState("");
   const [shootingDate, setShootingDate] = useState("");
-  const [locationName, setLocationName] = useState("");
+  const [location, setLocation] = useState<LocationValue>({ text: "", place: null });
   const [inviteesRaw, setInviteesRaw] = useState("");
   const [timezone, setTimezone] = useState("Europe/Paris");
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +51,10 @@ function NewCommissionPage() {
     if (title.trim().length === 0 || !isEmailValid) {
       return;
     }
+    if (location.text.trim().length > 0 && !location.place) {
+      setError("Pick a location from the suggestions so the map and calendar are accurate.");
+      return;
+    }
     const parsedInvitees = parseInviteeInput(inviteesRaw);
     if (parsedInvitees.invalid.length > 0) {
       setError(
@@ -65,8 +71,10 @@ function NewCommissionPage() {
           photographerEmail,
           characterName,
           shootingDate: shootingDate ? shootingDate.slice(0, 16) : undefined,
-          locationName,
-          locationQuery: locationName,
+          locationName: location.place?.label ?? "",
+          locationQuery: location.place?.label ?? "",
+          locationLat: location.place?.lat ?? undefined,
+          locationLng: location.place?.lon ?? undefined,
           timezone,
           invitees: parsedInvitees.invitees,
         }),
@@ -160,16 +168,7 @@ function NewCommissionPage() {
                     placeholder={t("form.fieldDate")}
                     value={shootingDate as never}
                   />
-                  <TextInput
-                    isOptional
-                    label={t("form.fieldLocation")}
-                    size="lg"
-                    onChange={(value) => {
-                      setLocationName(value);
-                    }}
-                    placeholder={t("form.fieldLocationPlaceholder")}
-                    value={locationName}
-                  />
+                  <LocationField value={location} onChange={setLocation} />
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-[1fr_1.4fr]">

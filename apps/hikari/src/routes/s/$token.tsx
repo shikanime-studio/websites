@@ -48,6 +48,10 @@ function SharedShootPage() {
     photoCount: recap.photos.length,
   });
   const shareUrl = `${SITE}/s/${recap.shareToken}`;
+  const mapQuery =
+    recap.locationLat !== null && recap.locationLng !== null
+      ? `${String(recap.locationLat)},${String(recap.locationLng)}`
+      : recap.locationQuery;
   const calendarUrl = recap.shootingDate
     ? shareCalendarUrl({
         title: recap.title,
@@ -92,7 +96,7 @@ function SharedShootPage() {
               {recap.locationQuery ? (
                 <a
                   className="hover:underline"
-                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(recap.locationQuery)}`}
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(mapQuery)}`}
                   rel="noopener noreferrer"
                   target="_blank"
                 >

@@ -23,6 +23,8 @@ const createSchema = z.object({
     .optional(),
   locationName: z.string().trim().max(200).default(""),
   locationQuery: z.string().trim().max(300).default(""),
+  locationLat: z.number().finite().min(-90).max(90).optional(),
+  locationLng: z.number().finite().min(-180).max(180).optional(),
   timezone: z.string().trim().min(1).max(64).default("Europe/Paris"),
   invitees: z
     .array(
@@ -123,6 +125,8 @@ export const createCommissionFn = createServerFn({ method: "POST" })
         timezone: input.timezone,
         locationName: input.locationName,
         locationQuery: input.locationQuery,
+        locationLat: input.locationLat ?? null,
+        locationLng: input.locationLng ?? null,
         shareToken: createShareToken(),
         invitees: serializeInvitees(input.invitees),
         createdAt: now,
@@ -191,6 +195,8 @@ export const getSharedCommission = createServerFn()
       timezone: commission.timezone,
       locationName: commission.locationName,
       locationQuery: commission.locationQuery,
+      locationLat: commission.locationLat,
+      locationLng: commission.locationLng,
       shareToken: commission.shareToken,
       invitees: parseInvitees(commission.invitees),
       photographerName: photographer[0]?.name ?? "Shikanime Studio",

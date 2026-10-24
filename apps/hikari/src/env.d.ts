@@ -5,6 +5,7 @@ declare namespace Cloudflare {
     BETTER_AUTH_SECRET: string;
     GOOGLE_CLIENT_SECRET: string;
     ACCOUNTS_CLIENT_SECRET: string;
+    GOOGLE_MAPS_API_KEY?: string;
   }
 }
 

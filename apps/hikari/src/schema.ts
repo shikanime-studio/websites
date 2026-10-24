@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
+import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export type CommissionStatus =
   | "requested"
@@ -85,6 +85,8 @@ export const commissions = sqliteTable(
     timezone: text("timezone").notNull().default("Europe/Paris"),
     locationName: text("location_name").notNull().default(""),
     locationQuery: text("location_query").notNull().default(""),
+    locationLat: real("location_lat"),
+    locationLng: real("location_lng"),
     shareToken: text("share_token").notNull(),
     invitees: text("invitees").notNull().default("[]"),
     deliveryReadyAt: integer("delivery_ready_at", { mode: "timestamp" }),

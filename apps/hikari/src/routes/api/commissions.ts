@@ -21,6 +21,8 @@ const createSchema = z.object({
     .optional(),
   locationName: z.string().trim().max(200).default(""),
   locationQuery: z.string().trim().max(300).default(""),
+  locationLat: z.number().finite().min(-90).max(90).optional(),
+  locationLng: z.number().finite().min(-180).max(180).optional(),
   timezone: z.string().trim().min(1).max(64).default("Europe/Paris"),
   invitees: z
     .array(
@@ -96,6 +98,8 @@ export const Route = createFileRoute("/api/commissions")({
             timezone: input.timezone,
             locationName: input.locationName,
             locationQuery: input.locationQuery,
+            locationLat: input.locationLat ?? null,
+            locationLng: input.locationLng ?? null,
             shareToken: createShareToken(),
             invitees: serializeInvitees(input.invitees),
             createdAt: now,

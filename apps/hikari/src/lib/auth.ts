@@ -36,6 +36,9 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
             clientSecret: env.ACCOUNTS_CLIENT_SECRET,
             scopes: ["openid", "profile", "email"],
             pkce: true,
+            // The Accounts Center session is the studio identity: signing out of
+            // one app must not end it everywhere.
+            disableProviderLogout: true,
           },
         ],
       }),
