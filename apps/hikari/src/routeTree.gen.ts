@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as R404RouteImport } from './routes/404'
 import { Route as ApiCommissionsRouteImport } from './routes/api/commissions'
 import { Route as ApiNotificationsRouteImport } from './routes/api/notifications'
+import { Route as ApiPlacesRouteImport } from './routes/api/places'
 import { Route as CommissionsIdRouteImport } from './routes/commissions/$id'
 import { Route as CommissionsNewRouteImport } from './routes/commissions/new'
 import { Route as STokenRouteImport } from './routes/s/$token'
@@ -43,6 +44,11 @@ const ApiCommissionsRoute = ApiCommissionsRouteImport.update({
 const ApiNotificationsRoute = ApiNotificationsRouteImport.update({
   id: '/api/notifications',
   path: '/api/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlacesRoute = ApiPlacesRouteImport.update({
+  id: '/api/places',
+  path: '/api/places',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommissionsIdRoute = CommissionsIdRouteImport.update({
@@ -108,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/404': typeof R404Route
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
+  '/api/places': typeof ApiPlacesRoute
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
   '/s/$token': typeof STokenRoute
@@ -125,6 +132,7 @@ export interface FileRoutesByTo {
   '/404': typeof R404Route
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
+  '/api/places': typeof ApiPlacesRoute
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
   '/s/$token': typeof STokenRoute
@@ -143,6 +151,7 @@ export interface FileRoutesById {
   '/404': typeof R404Route
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
+  '/api/places': typeof ApiPlacesRoute
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
   '/s/$token': typeof STokenRoute
@@ -162,6 +171,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/api/commissions'
     | '/api/notifications'
+    | '/api/places'
     | '/commissions/$id'
     | '/commissions/new'
     | '/s/$token'
@@ -179,6 +189,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/api/commissions'
     | '/api/notifications'
+    | '/api/places'
     | '/commissions/$id'
     | '/commissions/new'
     | '/s/$token'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/404'
     | '/api/commissions'
     | '/api/notifications'
+    | '/api/places'
     | '/commissions/$id'
     | '/commissions/new'
     | '/s/$token'
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   R404Route: typeof R404Route
   ApiCommissionsRoute: typeof ApiCommissionsRouteWithChildren
   ApiNotificationsRoute: typeof ApiNotificationsRouteWithChildren
+  ApiPlacesRoute: typeof ApiPlacesRoute
   CommissionsIdRoute: typeof CommissionsIdRoute
   CommissionsNewRoute: typeof CommissionsNewRoute
   STokenRoute: typeof STokenRoute
@@ -250,6 +263,13 @@ declare module '@tanstack/react-router' {
       path: '/api/notifications'
       fullPath: '/api/notifications'
       preLoaderRoute: typeof ApiNotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/places': {
+      id: '/api/places'
+      path: '/api/places'
+      fullPath: '/api/places'
+      preLoaderRoute: typeof ApiPlacesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/commissions/$id': {
@@ -396,6 +416,7 @@ const rootRouteChildren: RootRouteChildren = {
   R404Route: R404Route,
   ApiCommissionsRoute: ApiCommissionsRouteWithChildren,
   ApiNotificationsRoute: ApiNotificationsRouteWithChildren,
+  ApiPlacesRoute: ApiPlacesRoute,
   CommissionsIdRoute: CommissionsIdRoute,
   CommissionsNewRoute: CommissionsNewRoute,
   STokenRoute: STokenRoute,

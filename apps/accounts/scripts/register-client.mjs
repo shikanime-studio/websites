@@ -40,6 +40,7 @@ const hashed = createHash("sha256")
   .update(secret)
   .digest("base64url");
 const now = Math.floor(Date.now() / 1000);
+const postLogout = redirects.map((uri) => new URL(uri).origin);
 const json = (value) => `'${JSON.stringify(value)}'`;
 const text = (value) => `'${String(value).replaceAll("'", "''")}'`;
 
@@ -48,18 +49,21 @@ INSERT INTO oauth_client (
   id, client_id, client_secret, disabled, skip_consent, subject_type,
   scopes, redirect_uris, post_logout_redirect_uris, created_at, updated_at,
   name, uri, application_type, token_endpoint_auth_method, grant_types,
-  response_types, require_pkce
+  response_types, require_pkce, enable_end_session, post_logout_redirect_uris
 ) VALUES (
   ${text(`client-${clientId}`)}, ${text(clientId)}, ${text(hashed)}, 0, 0,
   ${text("public")}, ${json(["openid", "profile", "email", "offline_access"])},
   ${json(redirects)}, ${json([])}, ${now}, ${now}, ${text(name)},
   ${text(`https://${clientId}.shikanime.studio`)}, ${text("web")},
   ${text("client_secret_post")},
-  ${json(["authorization_code", "refresh_token"])}, ${json(["code"])}, 0
+  ${json(["authorization_code", "refresh_token"])}, ${json(["code"])}, 0, 1,
+  ${json(postLogout)}
 )
 ON CONFLICT(client_id) DO UPDATE SET
   client_secret = excluded.client_secret,
   redirect_uris = excluded.redirect_uris,
+  enable_end_session = 1,
+  post_logout_redirect_uris = excluded.post_logout_redirect_uris,
   updated_at = excluded.updated_at;
 `.trim();
 

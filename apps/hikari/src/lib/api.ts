@@ -77,6 +77,8 @@ export interface CreateCommissionInput {
   shootingDate?: string | undefined;
   locationName: string;
   locationQuery: string;
+  locationLat?: number | undefined;
+  locationLng?: number | undefined;
   timezone: string;
   invitees: Array<{ name: string; email: string }>;
 }
