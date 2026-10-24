@@ -42,6 +42,11 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
         refreshTokenExpiresIn: 2_592_000,
       }),
     ],
+    // Playwright needs a way to become a real user without Google. The
+    // provider is compiled out of production builds.
+    ...(import.meta.env.DEV
+      ? { emailAndPassword: { enabled: true } }
+      : {}),
     secret: env.BETTER_AUTH_SECRET,
     baseURL: SITE,
     socialProviders: {

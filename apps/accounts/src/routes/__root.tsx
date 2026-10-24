@@ -8,7 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import appCss from "../assets/global.css?url";
-import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
 import { NotFound } from "../components/NotFound";
 import { queryClient } from "../lib/query-client";
@@ -61,7 +60,6 @@ function RootComponent() {
           <main className="grow pt-14">
             <Outlet />
           </main>
-          <Footer />
         </div>
       </AstryxTheme>
     </QueryClientProvider>

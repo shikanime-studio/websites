@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { authClient } from "../lib/auth-client";
+import { oneTapDestination } from "../lib/one-tap";
 
 interface OneTapProps {
   onError?: (message: string) => void;
@@ -32,18 +33,13 @@ export function OneTap({ onError }: OneTapProps) {
         },
       },
       {
-        // Passing fetch options also stops the plugin's own `"/"` hop.
-        // The OAuth provider answers with `{redirect, url}` (already
-        // followed by better-auth's redirect plugin); a plain sign-in has
-        // no redirect, so land on the app instead of staying on /login.
+        // Passing fetch options also stops the plugin's own `"/"` hop, and
+        // the one-tap client does not run the redirect plugin, so follow the
+        // provider's continuation (or open the account center) here.
         onSuccess: (ctx) => {
-          const data = ctx.data as
-            | { redirect?: boolean, url?: string }
-            | undefined;
-          if (data?.redirect === true && typeof data.url === "string") {
-            return;
-          }
-          window.location.assign("/");
+          window.location.assign(
+            oneTapDestination(ctx.data as { redirect?: boolean, url?: string } | undefined),
+          );
         },
         onError: (ctx) => {
           onError?.(ctx.error.message ?? "Sign-in failed");

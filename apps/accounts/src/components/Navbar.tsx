@@ -1,10 +1,12 @@
 import { Avatar } from "@astryxdesign/core/Avatar";
 import { Button } from "@astryxdesign/core/Button";
-import { Link } from "@tanstack/react-router";
+import { Link, useMatchRoute } from "@tanstack/react-router";
 import { useSession } from "../hooks/useSession";
 
 export function Navbar() {
   const { data: session } = useSession();
+  const matchRoute = useMatchRoute();
+  const onLogin = Boolean(matchRoute({ to: "/login" }));
 
   return (
     <header className="bg-body/85 border-border fixed top-0 z-50 w-full border-b backdrop-blur">
@@ -34,6 +36,8 @@ export function Navbar() {
               </span>
             </Link>
           )
+          : onLogin
+          ? null
           : (
             <Button href="/login" label="Sign in" variant="primary" size="sm" />
           )}

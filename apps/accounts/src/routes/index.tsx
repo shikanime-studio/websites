@@ -160,25 +160,6 @@ function HomePage() {
         </div>
       </section>
 
-      <section className="pb-20">
-        <Card variant="muted" padding={5}>
-          <div className="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center">
-            <div className="flex flex-col gap-1">
-              <Text weight="semibold">Building on Shikanime Studio?</Text>
-              <Text size="sm" color="secondary">
-                Applications connect through OpenID Connect. The discovery
-                document lists every endpoint.
-              </Text>
-            </div>
-            <Button
-              href="/api/auth/.well-known/openid-configuration"
-              label="View configuration"
-              variant="secondary"
-              target="_blank"
-            />
-          </div>
-        </Card>
-      </section>
     </div>
   );
 }

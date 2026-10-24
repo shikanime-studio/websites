@@ -14,7 +14,7 @@ export default defineConfig({
     trace: "on-first-retry",
   },
   webServer: {
-    command: "pnpm dev --port 3101 --strictPort",
+    command: "pnpm db:migrate:local && pnpm dev --port 3101 --strictPort",
     url: baseURL,
     reuseExistingServer: !CI,
     env: {
