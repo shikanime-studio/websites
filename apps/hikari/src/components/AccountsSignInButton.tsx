@@ -30,7 +30,7 @@ export function AccountsSignInButton({
           });
       }}
       icon={
-        <span className="flex size-4 items-center justify-center rounded-[4px] bg-current text-[9px] font-black text-[var(--hk-surface)]">
+        <span className="flex size-4 items-center justify-center rounded-[4px] border border-current text-[9px] font-black">
           S
         </span>
       }
