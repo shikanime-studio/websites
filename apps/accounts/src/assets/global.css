@@ -20,11 +20,31 @@ html {
   letter-spacing: -0.02em;
 }
 
-/* Consumer-facing brand accent, layered over the neutral theme. */
+/* Consumer-facing brand accent, layered over the neutral theme. Orange is the
+   Shikanime Studio signature: it carries calls to action, links and the mark,
+   while the surfaces stay warm neutral so the accent never has to shout. */
 [data-astryx-theme="neutral"] {
-  --color-accent: light-dark(#0a66ff, #7aa9ff);
-  --color-accent-muted: light-dark(#e9f1ff, #16233a);
-  --color-text-accent: light-dark(#0b5bd3, #9dc2ff);
-  --color-icon-accent: light-dark(#0a66ff, #9dc2ff);
-  --color-on-accent: light-dark(#ffffff, #0b1220);
+  --color-accent: light-dark(#cc4c0c, #ff9a5c);
+  --color-accent-muted: light-dark(#fdeee3, #2c1a0f);
+  --color-text-accent: light-dark(#b8430a, #ffb083);
+  --color-icon-accent: light-dark(#cc4c0c, #ffb083);
+  --color-on-accent: light-dark(#ffffff, #2a1206);
+}
+
+:root {
+  --studio-brand: #cc4c0c;
+  --studio-brand-soft: #fdeee3;
+  --studio-cream: light-dark(#faf6f0, #171512);
+  --studio-ink: light-dark(#1c1b19, #f4f1ec);
+}
+
+/* The active Accounts Center destination reads as a filled pill, the way
+   Meta's own center marks the current section. */
+.nav-pill-active {
+  background: light-dark(#2f2f2f, #f2efea);
+  color: light-dark(#ffffff, #171512);
+}
+
+::selection {
+  background: light-dark(#fbd9c2, #5a2d12);
 }

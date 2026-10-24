@@ -51,7 +51,7 @@ test("a signed-in user lands in the account center", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByText(email).first()).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "Personal details" }),
+    page.getByRole("heading", { name: "Profiles and personal details" }),
   ).toBeVisible();
 });
 

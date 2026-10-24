@@ -2,7 +2,6 @@ import { Badge } from "@astryxdesign/core/Badge";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
-import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -109,6 +108,11 @@ const revokeClientAccess = createServerFn()
       );
   });
 
+const PROVIDER_LABELS: Record<string, string> = {
+  google: "Google",
+  credential: "Email and password",
+};
+
 const BROWSERS: Array<[RegExp, string]> = [
   [/Edg\/[\d.]+/, "Edge"],
   [/OPR\/[\d.]+/, "Opera"],
@@ -201,10 +205,10 @@ function SecuritySettingsPage() {
           Accounts Center
         </Link>
         <div className="flex flex-col gap-2">
-          <Heading level={1} type="display-2" className="font-display">
+          <h1 className="font-display text-[26px] leading-tight font-semibold">
             Password and security
-          </Heading>
-          <Text color="secondary">
+          </h1>
+          <Text size="sm" color="secondary">
             Review the devices and apps that can reach your account.
           </Text>
         </div>
@@ -248,7 +252,7 @@ function SecuritySettingsPage() {
                     Current session
                   </Text>
                 </div>
-                <Badge variant="info" label="Active now" />
+                <Badge variant="neutral" label="Active now" />
               </li>
               {otherSessions.map((item) => (
                 <li
@@ -358,13 +362,17 @@ function SecuritySettingsPage() {
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             <Text weight="semibold">How you sign in</Text>
             <Text size="sm" color="secondary">
-              Your password and sign-in checks are managed by Google.
+              Sign-in checks are handled by the provider below.
             </Text>
             <div className="flex flex-wrap gap-2">
               {(accounts.data ?? []).length === 0
                 ? <Badge variant="neutral" label="Google" />
                 : (accounts.data ?? []).map((item) => (
-                  <Badge key={item.id} variant="info" label={item.providerId} />
+                  <Badge
+                    key={item.id}
+                    variant="neutral"
+                    label={PROVIDER_LABELS[item.providerId] ?? item.providerId}
+                  />
                 ))}
             </div>
           </div>
