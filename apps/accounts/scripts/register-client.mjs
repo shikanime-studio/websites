@@ -12,6 +12,7 @@
 import { execFileSync } from "node:child_process";
 import { createHash, randomBytes } from "node:crypto";
 import { writeFileSync } from "node:fs";
+import process from "node:process";
 
 const args = process.argv.slice(2);
 const read = (flag) => {
