@@ -43,18 +43,18 @@ export function LoginButton() {
       </Button>
       <Button
         variant="ghost"
-        label="SIGN IN WITH GOOGLE"
+        label="GOOGLE"
         size="sm"
+        icon={
+          <svg aria-hidden className="h-3.5 w-3.5" viewBox="0 0 24 24">
+            <path d={siGoogle.path} />
+          </svg>
+        }
         onClick={() => {
           signIn("google");
         }}
         isDisabled={pending !== null}
-      >
-        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24">
-          <path d={siGoogle.path} />
-        </svg>
-        GOOGLE
-      </Button>
+      />
     </div>
   );
 }
