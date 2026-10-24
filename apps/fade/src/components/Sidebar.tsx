@@ -8,6 +8,7 @@ import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList"
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { Text } from "@astryxdesign/core/Text";
+import { useAtomSuspense } from "@effect/atom-react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -17,8 +18,6 @@ import {
   Sun,
 } from "lucide-react";
 import { Activity, Suspense } from "react";
-import { useExif } from "../hooks/useExif";
-import { useFile } from "../hooks/useFile";
 import { useGallery } from "../hooks/useGallery";
 import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
@@ -33,6 +32,7 @@ import {
   ModelTagId,
 } from "../lib/exif";
 import { formatBytes } from "../lib/intl";
+import { exifAtom, fileAtom } from "../lib/photo-atoms";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
 
@@ -313,7 +313,7 @@ function Slider({
 
 function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
-  const { file } = useFile(fileItem);
+  const file = useAtomSuspense(fileAtom(fileItem)).value;
   const { image } = useImageInfo();
 
   if (!file) return null;
@@ -361,7 +361,7 @@ function GeneralSection({ fileItem }: { fileItem: FileItem }) {
 }
 
 function CameraSection({ fileItem }: { fileItem: FileItem }) {
-  const exifData = useExif(fileItem);
+  const exifData = useAtomSuspense(exifAtom(fileItem)).value;
 
   if (!exifData || exifData.length === 0) return null;
 

@@ -1,8 +1,9 @@
 import type { FileItem } from "../lib/fs";
+import { useAtomSuspense } from "@effect/atom-react";
 import { useRef } from "react";
 import { useLighting } from "../hooks/useLighting";
-import { useRawImage } from "../hooks/useRawImage";
 import { useRawImageRender } from "../hooks/useRawImageRender";
+import { rawImageAtom } from "../lib/photo-atoms";
 
 interface RawImageRenderProps {
   fileItem?: FileItem | undefined;
@@ -15,7 +16,7 @@ export function RawImageRender({
   className,
   onDoubleClick,
 }: RawImageRenderProps) {
-  const rawData = useRawImage(fileItem ?? null);
+  const rawData = useAtomSuspense(rawImageAtom(fileItem ?? null)).value;
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lighting = useLighting();
 
