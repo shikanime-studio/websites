@@ -1,9 +1,10 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { genericOAuth } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
-import { GOOGLE_CLIENT_ID, SITE } from "./config";
+import { ACCOUNTS_SITE, GOOGLE_CLIENT_ID, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -17,6 +18,28 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
     }),
     secret: env.BETTER_AUTH_SECRET,
     baseURL: SITE,
+    // Signing in through the Accounts Center reuses the existing row when the
+    // email matches, so commissions keep pointing at the same person.
+    account: {
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["accounts"],
+      },
+    },
+    plugins: [
+      genericOAuth({
+        config: [
+          {
+            providerId: "accounts",
+            discoveryUrl: `${ACCOUNTS_SITE}/api/auth/.well-known/openid-configuration`,
+            clientId: "hikari",
+            clientSecret: env.ACCOUNTS_CLIENT_SECRET,
+            scopes: ["openid", "profile", "email"],
+            pkce: true,
+          },
+        ],
+      }),
+    ],
     socialProviders: {
       google: {
         clientId: GOOGLE_CLIENT_ID,

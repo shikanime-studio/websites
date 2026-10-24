@@ -1,4 +1,5 @@
 import { useTranslator } from "@astryxdesign/core/i18n";
+import { AccountsSignInButton } from "../AccountsSignInButton";
 import { SiteFooter } from "../Footer";
 import {
   CalendarIcon,
@@ -56,10 +57,15 @@ export function LandingPage() {
               {t("landing.body")}
             </p>
 
-            <div className="mt-7 flex flex-col items-center gap-3 lg:mt-8 lg:items-start">
-              <SignInButton label={t("landing.ctaPrimary")} size="lg" />
+            <div className="mt-7 flex flex-col items-center gap-2.5 lg:mt-8 lg:items-start">
+              <AccountsSignInButton />
+              <SignInButton
+                label="Continue with Google"
+                size="sm"
+                variant="ghost"
+              />
               <p className="text-ink-faint text-[12px] font-medium">
-                {t("landing.note")}
+                One studio account. Google stays as a fallback.
               </p>
             </div>
           </div>
@@ -130,7 +136,7 @@ export function LandingPage() {
               ))}
             </ul>
             <div className="mt-7">
-              <SignInButton label={t("landing.ctaPrimary")} size="lg" />
+              <AccountsSignInButton />
             </div>
           </div>
 
@@ -205,8 +211,13 @@ export function LandingPage() {
           <p className="text-ink-soft max-w-md text-[13.5px] leading-relaxed">
             {t("landing.closingBody")}
           </p>
-          <div className="mt-2">
-            <SignInButton label={t("landing.ctaPrimary")} size="lg" />
+          <div className="mt-2 flex flex-col items-center gap-2">
+            <AccountsSignInButton />
+            <SignInButton
+              label="Continue with Google"
+              size="sm"
+              variant="ghost"
+            />
           </div>
         </div>
       </section>
