@@ -77,7 +77,7 @@ function RootComponent() {
   return (
     <RegistryProvider>
       <AstryxTheme theme={neutralTheme} mode="system">
-        <Outlet />
+        <RootLayout />
         <TanStackDevtools
           config={{
             position: "bottom-right",
@@ -110,7 +110,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function RootLayout() {
+function RootLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />

@@ -6,49 +6,55 @@ import { siGoogle } from "simple-icons";
 import { authClient } from "../lib/auth-client";
 
 export function LoginButton() {
-  const [isLoading, setIsLoading] = useState(false);
+  const [pending, setPending] = useState<"accounts" | "google" | null>(null);
   const toast = useToast();
 
-  const handleSignIn = () => {
-    setIsLoading(true);
+  const signIn = (provider: "accounts" | "google") => {
+    setPending(provider);
     authClient.signIn
-      .social({
-        provider: "google",
-        callbackURL: "/",
-      })
+      .social({ provider, callbackURL: "/" })
       .catch(() => {
         toast({ body: "An error occurred during sign in", type: "error" });
-        setIsLoading(false);
+        setPending(null);
       })
       .finally(() => {
-        setIsLoading(false);
+        setPending(null);
       });
   };
 
   return (
-    <>
+    <div className="flex items-center gap-2">
       <Button
-        variant="secondary"
-        label="Sign in with Google"
+        variant="primary"
+        label={pending === "accounts" ? "SIGNING IN" : "SIGN IN WITH STUDIO"}
         onClick={() => {
-          handleSignIn();
+          signIn("accounts");
         }}
-        isDisabled={isLoading}
+        isDisabled={pending !== null}
       >
-        {isLoading ? (
+        {pending === "accounts" ? (
           <>
             <Spinner size="sm" shade="inherit" aria-label="Signing in" />
             SIGNING IN
           </>
         ) : (
-          <>
-            <svg className="h-4 w-4" viewBox="0 0 24 24">
-              <path d={siGoogle.path} />
-            </svg>
-            SIGN IN
-          </>
+          <>SIGN IN WITH STUDIO</>
         )}
       </Button>
-    </>
+      <Button
+        variant="ghost"
+        label="SIGN IN WITH GOOGLE"
+        size="sm"
+        onClick={() => {
+          signIn("google");
+        }}
+        isDisabled={pending !== null}
+      >
+        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24">
+          <path d={siGoogle.path} />
+        </svg>
+        GOOGLE
+      </Button>
+    </div>
   );
 }
