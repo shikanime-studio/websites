@@ -9,6 +9,7 @@ import {
   changeCommissionStatusFn,
   createCommissionFn,
   getCommission,
+  getSessionFn,
   getUserPreferences,
   listCommissions,
   listNotifications,
@@ -30,8 +31,7 @@ const fromServerFn = <A>(run: () => Promise<A>): Effect.Effect<A, ApiError> =>
       }),
   });
 
-/** Session is resolved server-side per request; the client atom stays null. */
-export const fetchSession: Effect.Effect<null, never> = Effect.succeed(null);
+export const fetchSession = fromServerFn(getSessionFn);
 
 export const fetchNotifications: Effect.Effect<NotificationList, ApiError> =
   fromServerFn(listNotifications);

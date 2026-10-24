@@ -45,6 +45,10 @@ const requireUser = async () => {
   return user;
 };
 
+export const getSessionFn = createServerFn().handler(async () => {
+  return getSessionUser(getRequest());
+});
+
 export const listCommissions = createServerFn().handler(async () => {
   const user = await requireUser();
   const db = createD1Database();
