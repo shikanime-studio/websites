@@ -47,22 +47,6 @@ export function Check(props: IconProps) {
   );
 }
 
-export function ChevronDown(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="m6 9 6 6 6-6" />
-    </Svg>
-  );
-}
-
-export function ChevronRight(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="m9 6 6 6-6 6" />
-    </Svg>
-  );
-}
-
 export function CalendarIcon(props: IconProps) {
   return (
     <Svg {...props}>
@@ -191,27 +175,6 @@ export function Alert(props: IconProps) {
       <circle cx="12" cy="12" r="8.5" />
       <path d="M12 7.8v5" />
       <path d="M12 16.3h.01" />
-    </Svg>
-  );
-}
-
-export function Layers(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <path d="m12 3 8.5 4.6L12 12.2 3.5 7.6 12 3Z" />
-      <path d="m3.5 12.4 8.5 4.6 8.5-4.6" />
-      <path d="m3.5 16.8 8.5 4.6 8.5-4.6" />
-    </Svg>
-  );
-}
-
-export function Grid(props: IconProps) {
-  return (
-    <Svg {...props}>
-      <rect height="7" rx="2" width="7" x="3.5" y="3.5" />
-      <rect height="7" rx="2" width="7" x="13.5" y="3.5" />
-      <rect height="7" rx="2" width="7" x="3.5" y="13.5" />
-      <rect height="7" rx="2" width="7" x="13.5" y="13.5" />
     </Svg>
   );
 }
