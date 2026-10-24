@@ -1,10 +1,9 @@
 import type { ReactNode } from "react";
 import { useAtomSuspense } from "@effect/atom-react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useState } from "react";
 import { GalleryContext } from "../hooks/useGallery";
 import { useKeymap } from "../hooks/useKeymap";
-import { nullableAtom } from "../lib/atoms";
-import { scanDirectory } from "../lib/fs";
+import { galleryAtom } from "../lib/photo-atoms";
 
 export function GalleryProvider({
   children,
@@ -15,14 +14,7 @@ export function GalleryProvider({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const atom = useMemo(
-    () =>
-      nullableAtom(handle, "gallery", async () =>
-        handle ? scanDirectory(handle) : [],
-      ),
-    [handle],
-  );
-  const files = useAtomSuspense(atom).value ?? [];
+  const files = useAtomSuspense(galleryAtom(handle)).value ?? [];
 
   const selectFile = useCallback(
     (index: number) => {
