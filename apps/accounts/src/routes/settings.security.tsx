@@ -3,130 +3,28 @@ import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
-import { and, eq } from "drizzle-orm";
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import {
   ArrowLeft,
   KeyRound,
   MonitorSmartphone,
   SquareArrowOutUpRight,
 } from "lucide-react";
+import { useState } from "react";
 import { useSession } from "../hooks/useSession";
-import { createAuth } from "../lib/auth";
-import { authClient } from "../lib/auth-client";
-import { createD1Database } from "../lib/db";
 import {
-  oauthAccessTokens,
-  oauthClients,
-  oauthConsents,
-  oauthRefreshTokens,
-} from "../schema";
-
-interface AuthorizedClient {
-  clientId: string;
-  name: string | null;
-  scopes: string[];
-  authorizedAt: string | null;
-}
-
-/** D1 may hand JSON columns back as strings; never trust the shape. */
-function normalizeScopes(value: unknown): string[] {
-  const parsed = typeof value === "string"
-    ? (() => {
-      try {
-        return JSON.parse(value) as unknown;
-      } catch {
-        return [];
-      }
-    })()
-    : value;
-  return Array.isArray(parsed)
-    ? parsed.filter((scope): scope is string => typeof scope === "string")
-    : [];
-}
-
-const listAuthorizedClients = createServerFn().handler(
-  async (): Promise<AuthorizedClient[]> => {
-    const request = getRequest();
-    const db = createD1Database();
-    const auth = createAuth(db);
-    const session = await auth.api.getSession({ headers: request.headers });
-    if (!session?.user) {
-      return [];
-    }
-    const rows = await db
-      .select({
-        clientId: oauthConsents.clientId,
-        name: oauthClients.name,
-        scopes: oauthConsents.scopes,
-        authorizedAt: oauthConsents.createdAt,
-      })
-      .from(oauthConsents)
-      .innerJoin(
-        oauthClients,
-        eq(oauthClients.clientId, oauthConsents.clientId),
-      )
-      .where(eq(oauthConsents.userId, session.user.id));
-    return rows.map((row) => ({
-      clientId: row.clientId,
-      name: row.name,
-      scopes: normalizeScopes(row.scopes),
-      authorizedAt: row.authorizedAt
-        ? row.authorizedAt.toISOString()
-        : null,
-    }));
-  },
-);
-
-const revokeClientAccess = createServerFn()
-  .validator((input: unknown): string => {
-    if (typeof input !== "string" || input.length === 0) {
-      throw new Error("clientId is required");
-    }
-    return input;
-  })
-  .handler(async ({ data }) => {
-    const clientId = data;
-    const request = getRequest();
-    const db = createD1Database();
-    const auth = createAuth(db);
-    const session = await auth.api.getSession({ headers: request.headers });
-    if (!session?.user) {
-      throw new Error("Unauthorized");
-    }
-    const userId = session.user.id;
-    await db
-      .delete(oauthAccessTokens)
-      .where(
-        and(
-          eq(oauthAccessTokens.userId, userId),
-          eq(oauthAccessTokens.clientId, clientId),
-        ),
-      );
-    await db
-      .delete(oauthRefreshTokens)
-      .where(
-        and(
-          eq(oauthRefreshTokens.userId, userId),
-          eq(oauthRefreshTokens.clientId, clientId),
-        ),
-      );
-    await db
-      .delete(oauthConsents)
-      .where(
-        and(
-          eq(oauthConsents.userId, userId),
-          eq(oauthConsents.clientId, clientId),
-        ),
-      );
-  });
+  accountsAtom,
+  authorizedClientsAtom,
+  sessionsAtom,
+} from "../lib/atoms";
+import { authClient } from "../lib/auth-client";
+import { revokeClientAccess } from "../lib/oauth-clients";
 
 const PROVIDER_LABELS: Record<string, string> = {
   google: "Google",
-  credential: "Email and password",
+  credential: "Email …word",
 };
 
 const BROWSERS: Array<[RegExp, string]> = [
@@ -150,50 +48,38 @@ export const Route = createFileRoute("/settings/security")({
 });
 
 function SecuritySettingsPage() {
-  const queryClient = useQueryClient();
   const { data: session } = useSession();
   const currentSessionId = session?.session?.id ?? null;
+  const sessionsResult = useAtomValue(sessionsAtom);
+  const accountsResult = useAtomValue(accountsAtom);
+  const clientsResult = useAtomValue(authorizedClientsAtom);
+  const refreshSessions = useAtomRefresh(sessionsAtom);
+  const refreshClients = useAtomRefresh(authorizedClientsAtom);
+  const sessions = { data: getOrElse(sessionsResult, () => []), isLoading: isInitial(sessionsResult) };
+  const accounts = { data: getOrElse(accountsResult, () => []) };
+  const clients = { data: getOrElse(clientsResult, () => []), isLoading: isInitial(clientsResult) };
+  const [signingOut, setSigningOut] = useState(false);
+  const [revoking, setRevoking] = useState<string | null>(null);
 
-  const sessions = useQuery({
-    queryKey: ["auth", "sessions"],
-    queryFn: async () => {
-      const { data } = await authClient.listSessions();
-      return data ?? [];
-    },
-    retry: false,
-  });
+  async function signOutOthers() {
+    setSigningOut(true);
+    try {
+      await authClient.revokeOtherSessions();
+      refreshSessions();
+    } finally {
+      setSigningOut(false);
+    }
+  }
 
-  const accounts = useQuery({
-    queryKey: ["auth", "accounts"],
-    queryFn: async () => {
-      const { data } = await authClient.listAccounts();
-      return data ?? [];
-    },
-    retry: false,
-  });
-
-  const clients = useQuery({
-    queryKey: ["auth", "clients"],
-    queryFn: () => listAuthorizedClients(),
-    retry: false,
-  });
-
-  const signOutOthers = useMutation({
-    mutationFn: async () => {
-      const { error } = await authClient.revokeOtherSessions();
-      if (error) {
-        throw new Error(error.message ?? "Failed to sign out devices");
-      }
-    },
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["auth"] }),
-  });
-
-  const revokeClient = useMutation({
-    mutationFn: (clientId: string) => revokeClientAccess({ data: clientId }),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["auth", "clients"] }),
-  });
+  async function revokeClient(clientId: string) {
+    setRevoking(clientId);
+    try {
+      await revokeClientAccess({ data: clientId });
+      refreshClients();
+    } finally {
+      setRevoking(null);
+    }
+  }
 
   function describeSessionDevice(userAgent: string | null | undefined): string {
     const ua = userAgent ?? "";
@@ -249,8 +135,8 @@ function SecuritySettingsPage() {
                     label="Sign out other devices"
                     variant="secondary"
                     size="sm"
-                    isDisabled={signOutOthers.isPending}
-                    onClick={() => signOutOthers.mutate()}
+                    isDisabled={signingOut}
+                    onClick={() => { void signOutOthers(); }}
                   />
                 )
                 : null}
@@ -345,8 +231,8 @@ function SecuritySettingsPage() {
                           label="Remove access"
                           variant="secondary"
                           size="sm"
-                          isDisabled={revokeClient.isPending}
-                          onClick={() => revokeClient.mutate(client.clientId)}
+                          isDisabled={revoking === client.clientId}
+                          onClick={() => { void revokeClient(client.clientId); }}
                         />
                       </div>
                       {client.scopes.length > 0

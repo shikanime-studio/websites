@@ -4,7 +4,6 @@ import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
-import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { AppWindow, Check } from "lucide-react";
 import { useState } from "react";
@@ -45,8 +44,12 @@ function ConsentPage() {
   const { data: session } = useSession();
   const [error, setError] = useState<string | null>(null);
 
-  const consent = useMutation({
-    mutationFn: async (accept: boolean) => {
+  const [pending, setPending] = useState(false);
+
+  async function decide(accept: boolean) {
+    setPending(true);
+    setError(null);
+    try {
       // The consent page's own query string is the signed authorization
       // request; the provider verifies its signature before recording the
       // decision, so forward it verbatim.
@@ -58,10 +61,7 @@ function ConsentPage() {
         method: "POST",
         headers: { "content-type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({
-          accept,
-          oauth_query: oauthQuery,
-        }),
+        body: JSON.stringify({ accept, oauth_query: oauthQuery }),
       });
       if (!res.ok) {
         throw new Error(`Consent failed (${res.status})`);
@@ -74,13 +74,12 @@ function ConsentPage() {
       if (target.protocol !== "https:" && target.protocol !== "http:") {
         throw new Error("Unsafe redirect target");
       }
-      return target.toString();
-    },
-    onSuccess: (redirectUri) => {
-      window.location.assign(redirectUri);
-    },
-    onError: (err: Error) => setError(err.message),
-  });
+      window.location.assign(target.toString());
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Consent failed");
+      setPending(false);
+    }
+  }
 
   const scopes = (scope ?? "").split(" ").filter(Boolean);
   const permissions = scopes.map((value) => ({
@@ -176,14 +175,14 @@ function ConsentPage() {
             <Button
               label="Allow"
               variant="primary"
-              isDisabled={consent.isPending}
-              onClick={() => consent.mutate(true)}
+              isDisabled={pending}
+              onClick={() => { void decide(true); }}
             />
             <Button
               label="Not now"
               variant="secondary"
-              isDisabled={consent.isPending}
-              onClick={() => consent.mutate(false)}
+              isDisabled={pending}
+              onClick={() => { void decide(false); }}
             />
           </div>
         </div>

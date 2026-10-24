@@ -1,5 +1,6 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtomSuspense } from "@effect/atom-react";
 import { useMemo } from "react";
+import { emptyAtom, queryAtom } from "../lib/atoms";
 import histogramShader from "../shaders/histogram.wgsl?raw";
 import { useGPU } from "./useGPU";
 
@@ -62,15 +63,9 @@ export function useHistogram(image: HTMLImageElement | null) {
       }
     : null;
 
-  const { data } = useSuspenseQuery({
-    queryKey: [
-      "histogram",
-      imageKey,
-      !!device,
-      !!computePipeline,
-      !!normalizePipeline,
-    ],
-    queryFn: async () => {
+  const atom = useMemo(
+    () => (image
+      ? queryAtom("histogram", [image], async () => {
       if (!device || !computePipeline || !normalizePipeline || !imageKey)
         return null;
       const response = await fetch(imageKey.src);
@@ -177,9 +172,11 @@ export function useHistogram(image: HTMLImageElement | null) {
         if (readBuffer) readBuffer.destroy();
         if (texture) texture.destroy();
       }
-    },
-    staleTime: Infinity,
-  });
+    })
+      : emptyAtom),
+    [image, image?.currentSrc, image?.naturalWidth, image?.naturalHeight],
+  );
+  const data = useAtomSuspense(atom).value;
 
   return data;
 }

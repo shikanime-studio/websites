@@ -1,6 +1,6 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { RegistryProvider } from "@effect/atom-react";
 import {
   createRootRoute,
   HeadContent,
@@ -11,7 +11,6 @@ import {
 import appCss from "../assets/global.css?url";
 import { Navbar } from "../components/Navbar";
 import { NotFound } from "../components/NotFound";
-import { queryClient } from "../lib/query-client";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -60,16 +59,16 @@ function RootComponent() {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <RegistryProvider>
       <AstryxTheme theme={neutralTheme} mode="system">
-        <div className="flex min-h-screen flex-col">
-          {inCenter ? null : <Navbar />}
-          <main className={inCenter ? "grow" : "grow pt-14"}>
-            <Outlet />
-          </main>
+      <div className="flex min-h-screen flex-col">
+        {inCenter ? null : <Navbar />}
+        <main className={inCenter ? "grow" : "grow pt-14"}>
+          <Outlet />
+        </main>
         </div>
       </AstryxTheme>
-    </QueryClientProvider>
+    </RegistryProvider>
   );
 }
 

@@ -1,31 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
-import { authClient } from "../lib/auth-client";
+import { useAtomValue } from "@effect/atom-react";
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
+import { sessionAtom } from "../lib/atoms";
 
-export interface SessionUser {
-  name: string;
-  email: string;
-  emailVerified: boolean;
-  image?: string | null | undefined;
-}
+export type { SessionData, SessionUser } from "../lib/atoms";
 
-export interface SessionData {
-  user?: SessionUser;
-  session?: {
-    id?: string;
-  };
-}
-
+/** Same shape the screens already consume: `{ data, isLoading }`. */
 export function useSession() {
-  return useQuery({
-    queryKey: ["auth", "session"],
-    queryFn: async (): Promise<SessionData | null> => {
-      const { data, error } = await authClient.getSession();
-      if (error) {
-        return null;
-      }
-      return data ?? null;
-    },
-    staleTime: 1000 * 60,
-    retry: false,
-  });
+  const result = useAtomValue(sessionAtom);
+  return {
+    data: getOrElse(result, () => null),
+    isLoading: isInitial(result),
+  };
 }

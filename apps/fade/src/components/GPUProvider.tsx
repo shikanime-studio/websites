@@ -1,76 +1,68 @@
 import type { ReactNode } from "react";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useAtomRefresh, useAtomSuspense } from "@effect/atom-react";
+import { useEffect, useMemo } from "react";
 import { GPUContext, useGPUSupport } from "../hooks/useGPU";
+import { nullableAtom, queryAtom } from "../lib/atoms";
+
+const SUPPORTED_KEYS = { yes: {}, no: {} } as const;
 
 export function GPUProvider({ children }: { children: ReactNode }) {
-  const queryClient = useQueryClient();
   const isSupported = useGPUSupport();
 
-  const { data: adapter } = useSuspenseQuery({
-    queryKey: ["gpu", "adapter", isSupported],
-    queryFn: async () => {
-      if (!isSupported) {
-        console.warn("GPU not supported");
-        return null;
-      }
-      return await navigator.gpu.requestAdapter();
-    },
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const adapterAtom = useMemo(
+    () =>
+      queryAtom<GPUAdapter | null>(
+        "gpu:adapter",
+        [SUPPORTED_KEYS[isSupported ? "yes" : "no"]],
+        async () => {
+          if (!isSupported) {
+            console.warn("GPU not supported");
+            return null;
+          }
+          return await navigator.gpu.requestAdapter();
+        },
+      ),
+    [isSupported],
+  );
+  const adapter = useAtomSuspense(adapterAtom).value;
 
-  const { data: device } = useSuspenseQuery({
-    queryKey: ["gpu", "device", adapter],
-    queryFn: async () => {
-      if (!adapter) return null;
-      return await adapter.requestDevice();
-    },
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const deviceAtom = useMemo(
+    () =>
+      nullableAtom<GPUDevice>(adapter, "gpu:device", async () =>
+        adapter ? adapter.requestDevice() : null,
+      ),
+    [adapter],
+  );
+  const device = useAtomSuspense(deviceAtom).value;
 
-  const { data: format } = useSuspenseQuery({
-    queryKey: ["gpu", "format", device],
-    queryFn: () => {
-      if (!device) return null;
-      return navigator.gpu.getPreferredCanvasFormat();
-    },
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchOnWindowFocus: false,
-    retry: false,
-  });
+  const formatAtom = useMemo(
+    () =>
+      nullableAtom<GPUTextureFormat>(device, "gpu:format", async () =>
+        device ? navigator.gpu.getPreferredCanvasFormat() : null,
+      ),
+    [device],
+  );
+  const format = useAtomSuspense(formatAtom).value;
+
+  const refreshDevice = useAtomRefresh(deviceAtom);
 
   useEffect(() => {
     if (!device) return;
 
     const onLost = (info: GPUDeviceLostInfo) => {
       console.error(`GPU device lost: ${info.reason}`);
-      return queryClient.invalidateQueries({
-        queryKey: ["gpu", "device", adapter],
-      });
+      refreshDevice();
     };
 
     device.lost.then(onLost).catch(() => {
       console.error("GPU device lost unexpectedly");
     });
-  }, [device, queryClient, adapter]);
+  }, [device, refreshDevice]);
 
-  return (
-    <GPUContext
-      value={{
-        device,
-        adapter,
-        format,
-        isSupported,
-      }}
-    >
-      {children}
-    </GPUContext>
+  const value = useMemo(
+    () => ({ adapter, device, format, isSupported }),
+    [adapter, device, format, isSupported],
   );
+
+  return <GPUContext value={value}>{children}</GPUContext>;
 }

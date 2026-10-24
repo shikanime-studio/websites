@@ -1,8 +1,6 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { TanStackDevtools } from "@tanstack/react-devtools";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
   ClientOnly,
   createRootRoute,
@@ -15,8 +13,6 @@ import appCss from "../assets/global.css?url";
 import { MixpanelProvider } from "../components/MixpanelProvider";
 import { ThemeProvider } from "../components/ThemeProvider";
 import { useTheme } from "../hooks/useTheme";
-
-const queryClient = new QueryClient();
 
 export const Route = createRootRoute({
   head: () => ({
@@ -45,8 +41,7 @@ export const Route = createRootRoute({
 
 function RootComponent() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <MixpanelProvider
+    <MixpanelProvider
         token={import.meta.env.VITE_MIXPANEL_TOKEN}
         config={{
           autocapture: true,
@@ -60,7 +55,6 @@ function RootComponent() {
           </ThemeProvider>
         </ClientOnly>
       </MixpanelProvider>
-    </QueryClientProvider>
   );
 }
 
@@ -75,11 +69,6 @@ function AstryxSurface() {
           position: "bottom-right",
         }}
         plugins={[
-          {
-            name: "TanStack Query",
-            render: <ReactQueryDevtoolsPanel />,
-            defaultOpen: true,
-          },
           {
             name: "TanStack Router",
             render: <TanStackRouterDevtoolsPanel />,
