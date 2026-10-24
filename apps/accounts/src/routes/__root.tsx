@@ -6,6 +6,7 @@ import {
   HeadContent,
   Outlet,
   Scripts,
+  useRouterState,
 } from "@tanstack/react-router";
 import appCss from "../assets/global.css?url";
 import { Navbar } from "../components/Navbar";
@@ -31,7 +32,7 @@ export const Route = createRootRoute({
       },
       {
         name: "theme-color",
-        content: "#f5f5f5",
+        content: "#faf6f0",
       },
     ],
     links: [
@@ -52,12 +53,18 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  // The Accounts Center runs without the marketing chrome, the way an account
+  // hub should: the sidebar is the navigation.
+  const inCenter = useRouterState({
+    select: (state) => state.location.pathname.startsWith("/settings"),
+  });
+
   return (
     <QueryClientProvider client={queryClient}>
       <AstryxTheme theme={neutralTheme} mode="system">
         <div className="flex min-h-screen flex-col">
-          <Navbar />
-          <main className="grow pt-14">
+          {inCenter ? null : <Navbar />}
+          <main className={inCenter ? "grow" : "grow pt-14"}>
             <Outlet />
           </main>
         </div>

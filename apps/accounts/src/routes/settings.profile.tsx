@@ -3,7 +3,6 @@ import { Badge } from "@astryxdesign/core/Badge";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
-import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -48,10 +47,10 @@ function ProfileSettingsPage() {
           Accounts Center
         </Link>
         <div className="flex flex-col gap-2">
-          <Heading level={1} type="display-2" className="font-display">
+          <h1 className="font-display text-[26px] leading-tight font-semibold">
             Personal details
-          </Heading>
-          <Text color="secondary">
+          </h1>
+          <Text size="sm" color="secondary">
             This is how you appear across Shikanime Studio applications.
           </Text>
         </div>

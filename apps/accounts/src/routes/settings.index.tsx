@@ -1,178 +1,181 @@
 import type { LucideIcon } from "lucide-react";
-import type { ReactNode } from "react";
 import { Avatar } from "@astryxdesign/core/Avatar";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
-import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ChevronRight,
-  LogOut,
-  Mail,
+  MonitorSmartphone,
   ShieldCheck,
-  Smartphone,
   SquareArrowOutUpRight,
-  UserRound,
 } from "lucide-react";
 import { useSession } from "../hooks/useSession";
-import { authClient } from "../lib/auth-client";
+import { STUDIO_APPS } from "../lib/apps";
 
 export const Route = createFileRoute("/settings/")({
   component: AccountsCenterPage,
 });
 
-interface RowProps {
-  icon: LucideIcon;
+interface DetailRowProps {
   label: string;
-  description: string;
-  to?: "/settings/profile" | "/settings/security";
+  value: string;
+  to: "/settings/profile" | "/settings/security";
+  icon?: LucideIcon;
 }
 
-function RowIcon({ icon: Icon }: { icon: LucideIcon }) {
-  return (
-    <span className="bg-accent/10 text-accent flex size-10 shrink-0 items-center justify-center rounded-full">
-      <Icon size={18} aria-hidden />
-    </span>
-  );
-}
-
-function SettingsRow({ icon, label, description, to }: RowProps) {
-  const row = (
-    <div className="flex items-center gap-4 px-4 py-3.5 sm:px-5">
-      <RowIcon icon={icon} />
-      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <Text weight="medium">{label}</Text>
-        <Text size="sm" color="secondary" className="truncate">
-          {description}
-        </Text>
-      </div>
-      <ChevronRight size={18} aria-hidden className="text-secondary/50 shrink-0" />
-    </div>
-  );
-
-  if (!to) {
-    return row;
-  }
-
+function DetailRow({ label, value, to, icon: Icon }: DetailRowProps) {
   return (
     <Link
       to={to}
-      className="hover:bg-body focus-visible:ring-accent/40 block transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
+      className="hover:bg-surface focus-visible:ring-accent/40 flex items-center gap-3 px-4 py-3 transition-colors focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
     >
-      {row}
+      {Icon ? <Icon size={18} aria-hidden className="text-secondary shrink-0" /> : null}
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <Text size="sm" weight="semibold">
+          {label}
+        </Text>
+        <Text size="sm" color="secondary" className="truncate">
+          {value}
+        </Text>
+      </span>
+      <ChevronRight size={18} aria-hidden className="text-secondary/70 shrink-0" />
     </Link>
   );
 }
 
-function SectionLabel({ children }: { children: ReactNode }) {
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
   return (
-    <h2 className="text-secondary px-1 pb-2 text-xs font-bold tracking-wider uppercase">
+    <section className="flex flex-col gap-2">
+      <h2 className="text-[15px] font-semibold">{title}</h2>
       {children}
-    </h2>
+    </section>
   );
 }
 
 function AccountsCenterPage() {
   const { data: session } = useSession();
-
-  async function handleSignOut() {
-    await authClient.signOut();
-    window.location.assign("/");
-  }
+  const name = session?.user?.name ?? "Your account";
+  const email = session?.user?.email ?? "";
 
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-8 pb-16">
       <header className="flex flex-col gap-2">
-        <Heading level={1} type="display-2" className="font-display">
-          Accounts Center
-        </Heading>
-        <Text size="lg" color="secondary">
-          Your details, security, and connected apps — all in one place.
+        <h1 className="font-display text-[26px] leading-tight font-semibold">
+          Profiles and personal details
+        </h1>
+        <Text size="sm" color="secondary" className="max-w-xl">
+          Review the profiles and personal details you have added to this
+          Accounts Center.
         </Text>
       </header>
 
-      <Card padding={0} className="overflow-hidden">
-        <div className="flex items-center gap-4 px-5 py-5">
-          <Avatar
-            name={session?.user?.name ?? session?.user?.email ?? "User"}
-            src={session?.user?.image ?? ""}
-            size="lg"
-          />
-          <div className="flex min-w-0 flex-col gap-1">
-            <Text size="lg" weight="semibold">
-              {session?.user?.name ?? "Your account"}
-            </Text>
-            <Text size="sm" color="secondary">
-              {session?.user?.email ?? ""}
-            </Text>
-          </div>
-        </div>
-      </Card>
-
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Personal details</SectionLabel>
+      <Section title="Profiles">
         <Card padding={0} className="overflow-hidden">
-          <SettingsRow
-            icon={UserRound}
-            label="Name"
-            description={session?.user?.name ?? "Add your name"}
+          <Link
             to="/settings/profile"
-          />
-          <Divider className="ml-[4.25rem]" />
-          <SettingsRow
-            icon={Mail}
-            label="Email"
-            description={session?.user?.email ?? "Add your email"}
-            to="/settings/profile"
-          />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Password and security</SectionLabel>
-        <Card padding={0} className="overflow-hidden">
-          <SettingsRow
-            icon={ShieldCheck}
-            label="Sign-in and security"
-            description="How you sign in"
-            to="/settings/security"
-          />
-          <Divider className="ml-[4.25rem]" />
-          <SettingsRow
-            icon={Smartphone}
-            label="Where you're signed in"
-            description="Active sessions"
-            to="/settings/security"
-          />
-          <Divider className="ml-[4.25rem]" />
-          <SettingsRow
-            icon={SquareArrowOutUpRight}
-            label="Apps and websites"
-            description="Connected apps"
-            to="/settings/security"
-          />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <SectionLabel>Your account</SectionLabel>
-        <Card padding={0} className="overflow-hidden">
-          <button
-            type="button"
-            onClick={handleSignOut}
-            className="hover:bg-body flex w-full items-center gap-4 px-4 py-4 text-left transition-colors"
+            className="hover:bg-surface flex items-center gap-3 px-4 py-3.5 transition-colors"
           >
-            <RowIcon icon={LogOut} />
-            <span className="flex flex-col">
-              <Text weight="medium">Sign out</Text>
-              <Text size="sm" color="secondary">
-                Sign out of this device
+            <Avatar name={name} src={session?.user?.image ?? ""} size="md" />
+            <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <Text size="sm" weight="semibold" className="truncate">
+                {name}
+              </Text>
+              <Text size="sm" color="secondary" className="truncate">
+                {email}
               </Text>
             </span>
-          </button>
+            <ChevronRight
+              size={18}
+              aria-hidden
+              className="text-secondary/70 shrink-0"
+            />
+          </Link>
+          <Divider />
+          <Link
+            to="/settings/profile"
+            className="text-text-accent block px-4 py-3 text-sm font-semibold hover:underline"
+          >
+            Edit profile
+          </Link>
         </Card>
-      </section>
+      </Section>
+
+      <Section title="Personal details">
+        <Card padding={0} className="overflow-hidden">
+          <DetailRow
+            label="Contact info"
+            value={email || "Add your email"}
+            to="/settings/profile"
+          />
+          <Divider />
+          <DetailRow
+            label="Name"
+            value={name}
+            to="/settings/profile"
+          />
+        </Card>
+      </Section>
+
+      <Section title="Password and security">
+        <Card padding={0} className="overflow-hidden">
+          <DetailRow
+            icon={ShieldCheck}
+            label="Sign-in and security"
+            value="How you sign in to your account"
+            to="/settings/security"
+          />
+          <Divider />
+          <DetailRow
+            icon={MonitorSmartphone}
+            label="Where you're signed in"
+            value="Devices and active sessions"
+            to="/settings/security"
+          />
+          <Divider />
+          <DetailRow
+            icon={SquareArrowOutUpRight}
+            label="Apps and websites"
+            value="Apps that can use your account"
+            to="/settings/security"
+          />
+        </Card>
+      </Section>
+
+      <Section title="More from Shikanime Studio">
+        <div className="grid gap-3 sm:grid-cols-2">
+          {STUDIO_APPS.map((app) => (
+            <a
+              key={app.name}
+              href={app.href}
+              className="border-border hover:bg-surface focus-visible:ring-accent/40 flex items-center gap-3 rounded-xl border p-3 transition-colors focus-visible:ring-2 focus-visible:outline-none"
+            >
+              <span className="bg-accent-muted text-text-accent flex size-10 shrink-0 items-center justify-center rounded-lg text-sm font-black">
+                {app.name.slice(0, 1)}
+              </span>
+              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+                <Text size="sm" weight="semibold">
+                  {app.name}
+                </Text>
+                <Text size="sm" color="secondary" className="truncate">
+                  {app.tagline}
+                </Text>
+              </span>
+              <SquareArrowOutUpRight
+                size={15}
+                aria-hidden
+                className="text-secondary/60 shrink-0"
+              />
+            </a>
+          ))}
+        </div>
+      </Section>
     </div>
   );
 }
