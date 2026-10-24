@@ -6,6 +6,7 @@ import * as schema from "../schema";
 import { createD1Database } from "./db";
 import { canTransition, isCommissionStatus } from "./hikari";
 import { getSessionUser } from "./session";
+import { createShareToken, parseInvitees, serializeInvitees } from "./sharing";
 
 const createSchema = z.object({
   title: z.string().trim().min(1).max(120),
@@ -22,7 +23,19 @@ const createSchema = z.object({
     .optional(),
   locationName: z.string().trim().max(200).default(""),
   locationQuery: z.string().trim().max(300).default(""),
+  timezone: z.string().trim().min(1).max(64).default("Europe/Paris"),
+  invitees: z
+    .array(
+      z.object({
+        name: z.string().trim().max(80).default(""),
+        email: z.string().trim().toLowerCase().email(),
+      }),
+    )
+    .max(20)
+    .default([]),
 });
+
+const SHARE_TOKEN_PATTERN = /^[a-f0-9]{24}$/;
 
 const requireUser = async () => {
   const user = await getSessionUser(getRequest());
@@ -103,8 +116,11 @@ export const createCommissionFn = createServerFn({ method: "POST" })
         clientId: user.id,
         characterName: input.characterName,
         shootingDate: input.shootingDate ?? null,
+        timezone: input.timezone,
         locationName: input.locationName,
         locationQuery: input.locationQuery,
+        shareToken: createShareToken(),
+        invitees: serializeInvitees(input.invitees),
         createdAt: now,
         updatedAt: now,
       })
@@ -123,6 +139,60 @@ export const createCommissionFn = createServerFn({ method: "POST" })
       createdAt: now,
     });
     return commission;
+  });
+
+/**
+ * Public recap: anyone holding the token sees the shoot, never the account.
+ * The token is the capability; no session is involved.
+ */
+export const getSharedCommission = createServerFn()
+  .validator((token: string) => z.string().regex(SHARE_TOKEN_PATTERN).parse(token))
+  .handler(async ({ data: token }) => {
+    const db = createD1Database();
+    const rows = await db
+      .select()
+      .from(schema.commissions)
+      .where(eq(schema.commissions.shareToken, token))
+      .limit(1);
+    const commission = rows[0];
+    if (!commission) {
+      return null;
+    }
+    const photos = await db
+      .select({
+        id: schema.commissionPhotos.id,
+        contentType: schema.commissionPhotos.contentType,
+        size: schema.commissionPhotos.size,
+      })
+      .from(schema.commissionPhotos)
+      .where(eq(schema.commissionPhotos.commissionId, commission.id))
+      .orderBy(asc(schema.commissionPhotos.id));
+    const photographer = await db
+      .select({ name: schema.users.name })
+      .from(schema.users)
+      .where(eq(schema.users.id, commission.photographerId))
+      .limit(1);
+    const client = await db
+      .select({ name: schema.users.name })
+      .from(schema.users)
+      .where(eq(schema.users.id, commission.clientId))
+      .limit(1);
+    return {
+      id: commission.id,
+      title: commission.title,
+      description: commission.description,
+      status: commission.status,
+      characterName: commission.characterName,
+      shootingDate: commission.shootingDate,
+      timezone: commission.timezone,
+      locationName: commission.locationName,
+      locationQuery: commission.locationQuery,
+      shareToken: commission.shareToken,
+      invitees: parseInvitees(commission.invitees),
+      photographerName: photographer[0]?.name ?? "Shikanime Studio",
+      clientName: client[0]?.name ?? "Client",
+      photos,
+    };
   });
 
 export const changeCommissionStatusFn = createServerFn({ method: "POST" })

@@ -26,14 +26,16 @@ import {
   uploadCommissionPhoto,
 } from "../../lib/api";
 import { commissionAtom, commissionsAtom, sessionAtom } from "../../lib/atoms";
+import { SITE } from "../../lib/config";
 import { formatShootDate, formatTimestamp } from "../../lib/format";
 import {
-  calendarEventUrl,
+
   COMMISSION_STATUSES,
   mapEmbedUrl,
   mapLinkUrl,
   nextStatuses,
 } from "../../lib/hikari";
+import { parseInvitees, shareCalendarUrl } from "../../lib/sharing";
 
 export const Route = createFileRoute("/commissions/$id")({
   component: CommissionDetailPage,
@@ -176,14 +178,20 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     }
   }
 
+  const invitees = parseInvitees(commission.invitees ?? "[]");
+  const shareUrl = `${SITE}/s/${commission.shareToken}`;
   const calendarUrl = commission.shootingDate
-    ? calendarEventUrl({
+    ? shareCalendarUrl({
         title: commission.title,
+        details: commission.description || commission.characterName,
+        location: commission.locationName || commission.locationQuery,
         shootingDate: commission.shootingDate,
-        locationName: commission.locationName,
-        details: commission.characterName,
+        timeZone: commission.timezone ?? "Europe/Paris",
+        invitees,
+        url: shareUrl,
       })
     : null;
+  const [copied, setCopied] = useState(false);
 
   const currentStatusIndex = COMMISSION_STATUSES.indexOf(commission.status);
   const followingStatuses = nextStatuses(commission.status);
@@ -462,6 +470,59 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
               />
             </Card>
           ) : null}
+
+          <Card padding={6}>
+            <p className="hk-eyebrow">Share with the shoot</p>
+            <p className="text-ink-soft mt-2 text-[12px] leading-snug">
+              A private recap with the date, place, crew and every preview as
+              it lands. No account needed.
+            </p>
+            <div className="mt-3 flex flex-col gap-2">
+              <input
+                className="border-hairline text-ink-soft w-full rounded-lg border bg-transparent px-3 py-2 text-[11.5px]"
+                readOnly
+                value={shareUrl}
+              />
+              <div className="flex gap-2">
+                <Button
+                  label={copied ? "Copied" : "Copy link"}
+                  onClick={() => {
+                    void navigator.clipboard.writeText(shareUrl).then(() => {
+                      setCopied(true);
+                    });
+                  }}
+                  size="sm"
+                  variant="secondary"
+                />
+                <Button
+                  href={shareUrl}
+                  label="Open recap"
+                  rel="noopener noreferrer"
+                  size="sm"
+                  target="_blank"
+                  variant="ghost"
+                />
+              </div>
+            </div>
+            {invitees.length > 0 ? (
+              <ul className="mt-4 flex flex-col gap-1.5">
+                {invitees.map((invitee) => (
+                  <li
+                    className="text-ink-soft flex items-center gap-2 text-[11.5px]"
+                    key={invitee.email}
+                  >
+                    <span className="bg-ink-faint/20 inline-block size-1.5 rounded-full" />
+                    {invitee.name ? `${invitee.name} · ` : ""}
+                    {invitee.email}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-ink-faint mt-3 text-[11px]">
+                No helpers or models invited yet.
+              </p>
+            )}
+          </Card>
 
           <Card padding={6}>
             <p className="hk-eyebrow">{t("detail.calendar")}</p>

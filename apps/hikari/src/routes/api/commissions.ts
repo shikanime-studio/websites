@@ -3,6 +3,7 @@ import { desc, eq, or } from "drizzle-orm";
 import { z } from "zod";
 import { createD1Database } from "../../lib/db";
 import { getSessionUser } from "../../lib/session";
+import { createShareToken, serializeInvitees } from "../../lib/sharing";
 import * as schema from "../../schema";
 
 const createSchema = z.object({
@@ -20,6 +21,16 @@ const createSchema = z.object({
     .optional(),
   locationName: z.string().trim().max(200).default(""),
   locationQuery: z.string().trim().max(300).default(""),
+  timezone: z.string().trim().min(1).max(64).default("Europe/Paris"),
+  invitees: z
+    .array(
+      z.object({
+        name: z.string().trim().max(80).default(""),
+        email: z.string().trim().toLowerCase().email(),
+      }),
+    )
+    .max(20)
+    .default([]),
 });
 
 export const Route = createFileRoute("/api/commissions")({
@@ -82,8 +93,11 @@ export const Route = createFileRoute("/api/commissions")({
             clientId: user.id,
             characterName: input.characterName,
             shootingDate: input.shootingDate ?? null,
+            timezone: input.timezone,
             locationName: input.locationName,
             locationQuery: input.locationQuery,
+            shareToken: createShareToken(),
+            invitees: serializeInvitees(input.invitees),
             createdAt: now,
             updatedAt: now,
           })

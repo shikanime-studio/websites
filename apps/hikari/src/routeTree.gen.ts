@@ -15,11 +15,15 @@ import { Route as ApiCommissionsRouteImport } from './routes/api/commissions'
 import { Route as ApiNotificationsRouteImport } from './routes/api/notifications'
 import { Route as CommissionsIdRouteImport } from './routes/commissions/$id'
 import { Route as CommissionsNewRouteImport } from './routes/commissions/new'
+import { Route as STokenRouteImport } from './routes/s/$token'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 import { Route as ApiCommissionsIdRouteImport } from './routes/api/commissions/$id'
 import { Route as ApiCommissionsIdPhotosRouteImport } from './routes/api/commissions/$id/photos'
 import { Route as ApiNotificationsIdReadRouteImport } from './routes/api/notifications/$id/read'
+import { Route as ApiShareTokenCalendarRouteImport } from './routes/api/share/$token/calendar'
+import { Route as ApiShareTokenPhotosRouteImport } from './routes/api/share/$token/photos'
 import { Route as ApiCommissionsIdPhotosPhotoIdRouteImport } from './routes/api/commissions/$id/photos/$photoId'
+import { Route as ApiShareTokenPhotosPhotoIdRouteImport } from './routes/api/share/$token/photos/$photoId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -51,6 +55,11 @@ const CommissionsNewRoute = CommissionsNewRouteImport.update({
   path: '/commissions/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const STokenRoute = STokenRouteImport.update({
+  id: '/s/$token',
+  path: '/s/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiAuthSplatRoute = ApiAuthSplatRouteImport.update({
   id: '/api/auth/$',
   path: '/api/auth/$',
@@ -71,11 +80,27 @@ const ApiNotificationsIdReadRoute = ApiNotificationsIdReadRouteImport.update({
   path: '/$id/read',
   getParentRoute: () => ApiNotificationsRoute,
 } as any)
+const ApiShareTokenCalendarRoute = ApiShareTokenCalendarRouteImport.update({
+  id: '/api/share/$token/calendar',
+  path: '/api/share/$token/calendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiShareTokenPhotosRoute = ApiShareTokenPhotosRouteImport.update({
+  id: '/api/share/$token/photos',
+  path: '/api/share/$token/photos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiCommissionsIdPhotosPhotoIdRoute =
   ApiCommissionsIdPhotosPhotoIdRouteImport.update({
     id: '/$photoId',
     path: '/$photoId',
     getParentRoute: () => ApiCommissionsIdPhotosRoute,
+  } as any)
+const ApiShareTokenPhotosPhotoIdRoute =
+  ApiShareTokenPhotosPhotoIdRouteImport.update({
+    id: '/$photoId',
+    path: '/$photoId',
+    getParentRoute: () => ApiShareTokenPhotosRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -85,11 +110,15 @@ export interface FileRoutesByFullPath {
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
+  '/s/$token': typeof STokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/commissions/$id': typeof ApiCommissionsIdRouteWithChildren
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
+  '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
+  '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -98,11 +127,15 @@ export interface FileRoutesByTo {
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
+  '/s/$token': typeof STokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/commissions/$id': typeof ApiCommissionsIdRouteWithChildren
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
+  '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
+  '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -112,11 +145,15 @@ export interface FileRoutesById {
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/commissions/$id': typeof CommissionsIdRoute
   '/commissions/new': typeof CommissionsNewRoute
+  '/s/$token': typeof STokenRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
   '/api/commissions/$id': typeof ApiCommissionsIdRouteWithChildren
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
+  '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
+  '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,11 +164,15 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/commissions/$id'
     | '/commissions/new'
+    | '/s/$token'
     | '/api/auth/$'
     | '/api/commissions/$id'
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
+    | '/api/share/$token/calendar'
+    | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
+    | '/api/share/$token/photos/$photoId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -140,11 +181,15 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/commissions/$id'
     | '/commissions/new'
+    | '/s/$token'
     | '/api/auth/$'
     | '/api/commissions/$id'
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
+    | '/api/share/$token/calendar'
+    | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
+    | '/api/share/$token/photos/$photoId'
   id:
     | '__root__'
     | '/'
@@ -153,11 +198,15 @@ export interface FileRouteTypes {
     | '/api/notifications'
     | '/commissions/$id'
     | '/commissions/new'
+    | '/s/$token'
     | '/api/auth/$'
     | '/api/commissions/$id'
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
+    | '/api/share/$token/calendar'
+    | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
+    | '/api/share/$token/photos/$photoId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -167,7 +216,10 @@ export interface RootRouteChildren {
   ApiNotificationsRoute: typeof ApiNotificationsRouteWithChildren
   CommissionsIdRoute: typeof CommissionsIdRoute
   CommissionsNewRoute: typeof CommissionsNewRoute
+  STokenRoute: typeof STokenRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
+  ApiShareTokenCalendarRoute: typeof ApiShareTokenCalendarRoute
+  ApiShareTokenPhotosRoute: typeof ApiShareTokenPhotosRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -214,6 +266,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CommissionsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/s/$token': {
+      id: '/s/$token'
+      path: '/s/$token'
+      fullPath: '/s/$token'
+      preLoaderRoute: typeof STokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/auth/$': {
       id: '/api/auth/$'
       path: '/api/auth/$'
@@ -242,12 +301,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiNotificationsIdReadRouteImport
       parentRoute: typeof ApiNotificationsRoute
     }
+    '/api/share/$token/calendar': {
+      id: '/api/share/$token/calendar'
+      path: '/api/share/$token/calendar'
+      fullPath: '/api/share/$token/calendar'
+      preLoaderRoute: typeof ApiShareTokenCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/share/$token/photos': {
+      id: '/api/share/$token/photos'
+      path: '/api/share/$token/photos'
+      fullPath: '/api/share/$token/photos'
+      preLoaderRoute: typeof ApiShareTokenPhotosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/commissions/$id/photos/$photoId': {
       id: '/api/commissions/$id/photos/$photoId'
       path: '/$photoId'
       fullPath: '/api/commissions/$id/photos/$photoId'
       preLoaderRoute: typeof ApiCommissionsIdPhotosPhotoIdRouteImport
       parentRoute: typeof ApiCommissionsIdPhotosRoute
+    }
+    '/api/share/$token/photos/$photoId': {
+      id: '/api/share/$token/photos/$photoId'
+      path: '/$photoId'
+      fullPath: '/api/share/$token/photos/$photoId'
+      preLoaderRoute: typeof ApiShareTokenPhotosPhotoIdRouteImport
+      parentRoute: typeof ApiShareTokenPhotosRoute
     }
   }
 }
@@ -300,6 +380,17 @@ const ApiNotificationsRouteChildren: ApiNotificationsRouteChildren = {
 const ApiNotificationsRouteWithChildren =
   ApiNotificationsRoute._addFileChildren(ApiNotificationsRouteChildren)
 
+interface ApiShareTokenPhotosRouteChildren {
+  ApiShareTokenPhotosPhotoIdRoute: typeof ApiShareTokenPhotosPhotoIdRoute
+}
+
+const ApiShareTokenPhotosRouteChildren: ApiShareTokenPhotosRouteChildren = {
+  ApiShareTokenPhotosPhotoIdRoute: ApiShareTokenPhotosPhotoIdRoute,
+}
+
+const ApiShareTokenPhotosRouteWithChildren =
+  ApiShareTokenPhotosRoute._addFileChildren(ApiShareTokenPhotosRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R404Route: R404Route,
@@ -307,7 +398,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiNotificationsRoute: ApiNotificationsRouteWithChildren,
   CommissionsIdRoute: CommissionsIdRoute,
   CommissionsNewRoute: CommissionsNewRoute,
+  STokenRoute: STokenRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
+  ApiShareTokenCalendarRoute: ApiShareTokenCalendarRoute,
+  ApiShareTokenPhotosRoute: ApiShareTokenPhotosRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

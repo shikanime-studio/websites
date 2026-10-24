@@ -77,6 +77,8 @@ export interface CreateCommissionInput {
   shootingDate?: string | undefined;
   locationName: string;
   locationQuery: string;
+  timezone: string;
+  invitees: Array<{ name: string; email: string }>;
 }
 
 export const createCommission = (input: CreateCommissionInput) =>

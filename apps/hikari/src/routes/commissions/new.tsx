@@ -12,6 +12,7 @@ import { useState } from "react";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
 import { ApiError, createCommission } from "../../lib/api";
 import { commissionsAtom } from "../../lib/atoms";
+import { parseInviteeInput } from "../../lib/sharing";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
 
@@ -29,6 +30,8 @@ function NewCommissionPage() {
   const [characterName, setCharacterName] = useState("");
   const [shootingDate, setShootingDate] = useState("");
   const [locationName, setLocationName] = useState("");
+  const [inviteesRaw, setInviteesRaw] = useState("");
+  const [timezone, setTimezone] = useState("Europe/Paris");
   const [error, setError] = useState<string | null>(null);
   const [attempted, setAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -46,6 +49,13 @@ function NewCommissionPage() {
     if (title.trim().length === 0 || !isEmailValid) {
       return;
     }
+    const parsedInvitees = parseInviteeInput(inviteesRaw);
+    if (parsedInvitees.invalid.length > 0) {
+      setError(
+        `Check these invites: ${parsedInvitees.invalid.join(", ")}. Use "Name <email>" or a bare email.`,
+      );
+      return;
+    }
     setSubmitting(true);
     try {
       const exit = await Effect.runPromiseExit(
@@ -57,6 +67,8 @@ function NewCommissionPage() {
           shootingDate: shootingDate ? shootingDate.slice(0, 16) : undefined,
           locationName,
           locationQuery: locationName,
+          timezone,
+          invitees: parsedInvitees.invitees,
         }),
       );
       if (Exit.isFailure(exit)) {
@@ -157,6 +169,25 @@ function NewCommissionPage() {
                     }}
                     placeholder={t("form.fieldLocationPlaceholder")}
                     value={locationName}
+                  />
+                </div>
+
+                <div className="grid gap-5 sm:grid-cols-[1fr_1.4fr]">
+                  <TextInput
+                    description="IANA name, e.g. Europe/Paris"
+                    label="Timezone"
+                    size="lg"
+                    onChange={setTimezone}
+                    value={timezone}
+                  />
+                  <TextArea
+                    description={'One per line: "Aiko <aiko@example.com>" or a bare email.'}
+                    isOptional
+                    label="Invite helpers, models and crew"
+                    onChange={setInviteesRaw}
+                    placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
+                    rows={3}
+                    value={inviteesRaw}
                   />
                 </div>
               </div>

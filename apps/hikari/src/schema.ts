@@ -1,4 +1,4 @@
-import { index, integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export type CommissionStatus =
   | "requested"
@@ -82,8 +82,11 @@ export const commissions = sqliteTable(
       .references(() => users.id),
     characterName: text("character_name").notNull().default(""),
     shootingDate: text("shooting_date"),
+    timezone: text("timezone").notNull().default("Europe/Paris"),
     locationName: text("location_name").notNull().default(""),
     locationQuery: text("location_query").notNull().default(""),
+    shareToken: text("share_token").notNull(),
+    invitees: text("invitees").notNull().default("[]"),
     deliveryReadyAt: integer("delivery_ready_at", { mode: "timestamp" }),
     createdAt: integer("created_at", { mode: "timestamp" }).notNull(),
     updatedAt: integer("updated_at", { mode: "timestamp" }).notNull(),
@@ -91,6 +94,7 @@ export const commissions = sqliteTable(
   (t) => [
     index("commissions_photographer_idx").on(t.photographerId),
     index("commissions_client_idx").on(t.clientId),
+    uniqueIndex("commissions_share_token_idx").on(t.shareToken),
   ],
 );
 
