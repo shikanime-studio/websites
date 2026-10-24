@@ -4,10 +4,12 @@ import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
+import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import { AppWindow, Check } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "../hooks/useSession";
+import { sessionAtom } from "../lib/atoms";
 import { describeScope } from "../lib/scopes";
 
 const LEADING_QUESTION = /^\?/;
@@ -41,7 +43,7 @@ function ConsentPage() {
   const { client_id: clientId, scope } = useSearch({
     from: "/consent",
   });
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const [error, setError] = useState<string | null>(null);
 
   const [pending, setPending] = useState(false);

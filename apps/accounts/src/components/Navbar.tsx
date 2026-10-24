@@ -1,10 +1,12 @@
 import { Avatar } from "@astryxdesign/core/Avatar";
 import { Button } from "@astryxdesign/core/Button";
+import { useAtomValue } from "@effect/atom-react";
 import { Link, useMatchRoute } from "@tanstack/react-router";
-import { useSession } from "../hooks/useSession";
+import { getOrElse } from "effect/reactivity/AsyncResult";
+import { sessionAtom } from "../lib/atoms";
 
 export function Navbar() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const matchRoute = useMatchRoute();
   const onLogin = Boolean(matchRoute({ to: "/login" }));
 

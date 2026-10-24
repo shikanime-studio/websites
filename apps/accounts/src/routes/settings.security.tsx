@@ -5,7 +5,7 @@ import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
+import { getOrElse, isInitial  } from "effect/reactivity/AsyncResult";
 import {
   ArrowLeft,
   KeyRound,
@@ -13,12 +13,10 @@ import {
   SquareArrowOutUpRight,
 } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "../hooks/useSession";
-import {
-  accountsAtom,
+import { accountsAtom,
   authorizedClientsAtom,
-  sessionsAtom,
-} from "../lib/atoms";
+  sessionAtom,
+  sessionsAtom } from "../lib/atoms";
 import { authClient } from "../lib/auth-client";
 import { revokeClientAccess } from "../lib/oauth-clients";
 
@@ -48,7 +46,7 @@ export const Route = createFileRoute("/settings/security")({
 });
 
 function SecuritySettingsPage() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const currentSessionId = session?.session?.id ?? null;
   const sessionsResult = useAtomValue(sessionsAtom);
   const accountsResult = useAtomValue(accountsAtom);

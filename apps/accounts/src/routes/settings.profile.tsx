@@ -5,10 +5,12 @@ import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
 import { TextInput } from "@astryxdesign/core/TextInput";
+import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import { ArrowLeft, Mail } from "lucide-react";
 import { useState } from "react";
-import { useSession } from "../hooks/useSession";
+import { sessionAtom } from "../lib/atoms";
 import { authClient } from "../lib/auth-client";
 
 export const Route = createFileRoute("/settings/profile")({
@@ -16,7 +18,7 @@ export const Route = createFileRoute("/settings/profile")({
 });
 
 function ProfileSettingsPage() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const userName = session?.user?.name ?? "";
   const [draft, setDraft] = useState<string | null>(null);
   const name = draft ?? userName;
