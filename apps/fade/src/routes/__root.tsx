@@ -11,7 +11,6 @@ import {
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../assets/global.css?url";
 import { MixpanelProvider } from "../components/MixpanelProvider";
-import { ThemeProvider } from "../components/ThemeProvider";
 import { useTheme } from "../hooks/useTheme";
 
 export const Route = createRootRoute({
@@ -50,9 +49,7 @@ function RootComponent() {
         }}
       >
         <ClientOnly>
-          <ThemeProvider>
-            <AstryxSurface />
-          </ThemeProvider>
+          <AstryxSurface />
         </ClientOnly>
       </MixpanelProvider>
   );

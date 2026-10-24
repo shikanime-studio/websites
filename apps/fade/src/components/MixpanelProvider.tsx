@@ -1,6 +1,9 @@
 import type { Config } from "mixpanel-browser";
 import type { ReactNode } from "react";
-import { MixpanelContext, useMixpanelInstance } from "../hooks/useMixpanel";
+import { useAtomSet } from "@effect/atom-react";
+import { useEffect } from "react";
+import { initMixpanel } from "../hooks/useMixpanel";
+import { mixpanelInstanceAtom } from "../lib/ui-atoms";
 
 interface MixpanelProviderProps {
   children: ReactNode;
@@ -15,7 +18,14 @@ export function MixpanelProvider({
   config,
   name,
 }: MixpanelProviderProps) {
-  const value = useMixpanelInstance(token, config, name);
+  const setInstance = useAtomSet(mixpanelInstanceAtom);
+  const configKey = JSON.stringify(config ?? {});
 
-  return <MixpanelContext value={value}>{children}</MixpanelContext>;
+  useEffect(() => {
+    setInstance(initMixpanel(token, config, name));
+    // The config object is a literal at the call site; its shape is the key.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token, name, configKey, setInstance]);
+
+  return <>{children}</>;
 }

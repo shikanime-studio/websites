@@ -1,31 +1,21 @@
 import type { Config, Mixpanel } from "mixpanel-browser";
+import { useAtomValue } from "@effect/atom-react";
 import mixpanel from "mixpanel-browser";
-import { createContext, use, useMemo } from "react";
+import { mixpanelInstanceAtom } from "../lib/ui-atoms";
 
-export interface MixpanelContextValue {
-  instance?: Mixpanel;
+export function useMixpanel(): Mixpanel {
+  const instance = useAtomValue(mixpanelInstanceAtom);
+  return instance ?? mixpanel;
 }
 
-export const MixpanelContext = createContext<MixpanelContextValue | null>(null);
-
-export function useMixpanel() {
-  const context = use(MixpanelContext);
-  if (!context?.instance) {
-    return mixpanel;
-  }
-  return context.instance;
-}
-
-export function useMixpanelInstance(
+export function initMixpanel(
   token: string,
   config?: Partial<Config>,
   name?: string,
-) {
-  return useMemo(() => {
-    if (!name) {
-      mixpanel.init(token, config ?? {});
-      return {};
-    }
-    return { instance: mixpanel.init(token, config ?? {}, name) };
-  }, [token, config, name]);
+): Mixpanel {
+  if (!name) {
+    mixpanel.init(token, config ?? {});
+    return mixpanel;
+  }
+  return mixpanel.init(token, config ?? {}, name) as Mixpanel;
 }

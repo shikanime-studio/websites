@@ -12,33 +12,37 @@ export function Following() {
   return (
     <RegistryProvider>
       <TabList defaultTab="merchs">
-        <Tab name="following_tabs" value="merchs">
+        {(tab) => (
+          <>
+        <Tab active={tab.value === "merchs"} name="following_tabs" onSelect={tab.select} value="merchs">
           Merchs
         </Tab>
-        <TabContent value="merchs">
+        <TabContent active={tab.value === "merchs"}>
           <GalleryContent atom={merchsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="events">
+        <Tab active={tab.value === "events"} name="following_tabs" onSelect={tab.select} value="events">
           Events
         </Tab>
-        <TabContent value="events">
+        <TabContent active={tab.value === "events"}>
           <GalleryContent atom={eventsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="artists">
+        <Tab active={tab.value === "artists"} name="following_tabs" onSelect={tab.select} value="artists">
           Artists
         </Tab>
-        <TabContent value="artists">
+        <TabContent active={tab.value === "artists"}>
           <GalleryContent atom={artistsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="characters">
+        <Tab active={tab.value === "characters"} name="following_tabs" onSelect={tab.select} value="characters">
           Characters
         </Tab>
-        <TabContent value="characters">
+        <TabContent active={tab.value === "characters"}>
           <GalleryContent atom={charactersAtom} />
         </TabContent>
+          </>
+        )}
       </TabList>
     </RegistryProvider>
   );
