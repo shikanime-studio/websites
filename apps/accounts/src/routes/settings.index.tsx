@@ -3,15 +3,17 @@ import { Avatar } from "@astryxdesign/core/Avatar";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
+import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import {
   ChevronRight,
   MonitorSmartphone,
   ShieldCheck,
   SquareArrowOutUpRight,
 } from "lucide-react";
-import { useSession } from "../hooks/useSession";
 import { STUDIO_APPS } from "../lib/apps";
+import { sessionAtom } from "../lib/atoms";
 
 export const Route = createFileRoute("/settings/")({
   component: AccountsCenterPage,
@@ -60,7 +62,7 @@ function Section({
 }
 
 function AccountsCenterPage() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const name = session?.user?.name ?? "Your account";
   const email = session?.user?.email ?? "";
 

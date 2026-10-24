@@ -1,17 +1,19 @@
 import { Card } from "@astryxdesign/core/Card";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
+import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import { useState } from "react";
 import { OneTap } from "../components/OneTap";
-import { useSession } from "../hooks/useSession";
+import { sessionAtom } from "../lib/atoms";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
 function LoginPage() {
-  const { data: session } = useSession();
+  const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const [error, setError] = useState<string | null>(null);
 
   if (session?.user) {
