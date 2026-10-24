@@ -160,6 +160,23 @@ const en = {
   "notfound.title": "This page does not exist.",
   "notfound.body": "Head back to your commissions.",
   "notfound.home": "Back to Hikari",
+
+  "landing.howTitle": "How it works",
+  "landing.howHeading": "From first message to final files.",
+  "landing.shareEyebrow": "The shared link",
+  "landing.step1Title": "Tell us the shoot",
+  "landing.step1Body": "Idea, character, references. Two minutes, one form.",
+  "landing.step2Title": "Lock the date",
+  "landing.step2Body": "Pick a time and place. Everyone gets a calendar invite.",
+  "landing.step3Title": "Follow the edit",
+  "landing.step3Body": "One private link shows progress, previews and the final files.",
+  "landing.shareTitle": "One link for the whole shoot.",
+  "landing.shareBody": "Send it to your model, your helpers, your client. They see the date, the place, the crew and every preview as it lands. No account needed.",
+  "landing.sharePoint1": "Calendar-ready date, time and address",
+  "landing.sharePoint2": "Progress from booking to delivery",
+  "landing.sharePoint3": "A private gallery that fills up",
+  "landing.closingTitle": "Ready when you are.",
+  "landing.closingBody": "Bring the idea. We will handle the date, the place and the photos.",
 } as const;
 
 export type MessageKey = keyof typeof en;
@@ -321,6 +338,23 @@ const fr: Record<MessageKey, string> = {
   "notfound.title": "Cette page n'existe pas.",
   "notfound.body": "Retournez à vos commissions.",
   "notfound.home": "Retour à Hikari",
+
+  "landing.howTitle": "Comment ça marche",
+  "landing.howHeading": "Du premier message aux fichiers finaux.",
+  "landing.shareEyebrow": "Le lien partagé",
+  "landing.step1Title": "Racontez la séance",
+  "landing.step1Body": "Idée, personnage, références. Deux minutes, un formulaire.",
+  "landing.step2Title": "Fixez la date",
+  "landing.step2Body": "Choisissez l'heure et le lieu. Chacun reçoit l'invitation calendrier.",
+  "landing.step3Title": "Suivez le montage",
+  "landing.step3Body": "Un lien privé montre l'avancement, les aperçus et les fichiers finaux.",
+  "landing.shareTitle": "Un lien pour toute la séance.",
+  "landing.shareBody": "Envoyez-le au modèle, aux assistants, au client. Ils voient la date, le lieu, l'équipe et chaque aperçu dès qu'il arrive. Sans compte.",
+  "landing.sharePoint1": "Date, heure et adresse prêtes pour le calendrier",
+  "landing.sharePoint2": "L'avancement, de la réservation à la livraison",
+  "landing.sharePoint3": "Une galerie privée qui se remplit",
+  "landing.closingTitle": "Quand vous voulez.",
+  "landing.closingBody": "Apportez l'idée. On s'occupe de la date, du lieu et des photos.",
 };
 
 const ja: Record<MessageKey, string> = {
@@ -475,6 +509,23 @@ const ja: Record<MessageKey, string> = {
   "notfound.title": "このページは存在しません。",
   "notfound.body": "依頼の一覧に戻りましょう。",
   "notfound.home": "Hikari に戻る",
+
+  "landing.howTitle": "流れ",
+  "landing.howHeading": "最初のメッセージから完成データまで。",
+  "landing.shareEyebrow": "共有リンク",
+  "landing.step1Title": "撮影を伝える",
+  "landing.step1Body": "アイデア、キャラクター、参考資料。フォームは2分で完了。",
+  "landing.step2Title": "日程を決める",
+  "landing.step2Body": "時間と場所を選ぶと、全員にカレンダー招待が届きます。",
+  "landing.step3Title": "編集を追う",
+  "landing.step3Body": "プライベートリンクで進捗、プレビュー、完成データを確認。",
+  "landing.shareTitle": "撮影のすべてを、1つのリンクで。",
+  "landing.shareBody": "モデル、ヘルパー、クライアントに送るだけ。日時、場所、参加者、届いたプレビューが見られます。アカウント不要。",
+  "landing.sharePoint1": "カレンダー登録できる日時と住所",
+  "landing.sharePoint2": "予約から納品までの進捗",
+  "landing.sharePoint3": "少しずつ増えるプライベートギャラリー",
+  "landing.closingTitle": "いつでもどうぞ。",
+  "landing.closingBody": "アイデアをお持ちください。日程、場所、写真はこちらで。",
 };
 
 export const CATALOGS: Record<LanguageCode, Record<MessageKey, { defaultMessage: string }>> = {

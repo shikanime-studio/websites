@@ -25,6 +25,9 @@ export interface Commission {
   clientId: string;
   characterName: string;
   shootingDate: string | null;
+  timezone: string;
+  shareToken: string;
+  invitees: string;
   locationName: string;
   locationQuery: string;
   deliveryReadyAt: Date | null;
