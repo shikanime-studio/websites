@@ -1,15 +1,17 @@
 import type { FileItem } from "../lib/fs";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtomSuspense } from "@effect/atom-react";
+import { useMemo } from "react";
+import { nullableAtom } from "../lib/atoms";
 
 export function useFile(fileItem: FileItem | null) {
-  const { data: file } = useSuspenseQuery({
-    queryKey: ["file", fileItem],
-    queryFn: async () => {
-      if (!fileItem) return null;
-      return await fileItem.handle.getFile();
-    },
-    staleTime: Infinity,
-  });
+  const atom = useMemo(
+    () =>
+      nullableAtom(fileItem, "file", async () =>
+        fileItem ? await fileItem.handle.getFile() : null,
+      ),
+    [fileItem],
+  );
+  const file = useAtomSuspense(atom).value;
 
   return { file };
 }

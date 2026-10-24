@@ -15,7 +15,7 @@ export function RawImageRender({
   className,
   onDoubleClick,
 }: RawImageRenderProps) {
-  const { data: rawData } = useRawImage(fileItem ?? null);
+  const rawData = useRawImage(fileItem ?? null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const lighting = useLighting();
 

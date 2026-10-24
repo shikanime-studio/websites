@@ -1,8 +1,9 @@
 import type { ReactNode } from "react";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { useCallback, useState } from "react";
+import { useAtomSuspense } from "@effect/atom-react";
+import { useCallback, useMemo, useState } from "react";
 import { GalleryContext } from "../hooks/useGallery";
 import { useKeymap } from "../hooks/useKeymap";
+import { nullableAtom } from "../lib/atoms";
 import { scanDirectory } from "../lib/fs";
 
 export function GalleryProvider({
@@ -14,15 +15,14 @@ export function GalleryProvider({
 }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { data: files } = useSuspenseQuery({
-    queryKey: ["gallery", handle],
-    queryFn: async () => {
-      if (!handle) return [];
-      return scanDirectory(handle);
-    },
-    staleTime: Infinity,
-    refetchOnWindowFocus: false,
-  });
+  const atom = useMemo(
+    () =>
+      nullableAtom(handle, "gallery", async () =>
+        handle ? scanDirectory(handle) : [],
+      ),
+    [handle],
+  );
+  const files = useAtomSuspense(atom).value ?? [];
 
   const selectFile = useCallback(
     (index: number) => {

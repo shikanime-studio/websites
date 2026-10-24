@@ -1,6 +1,7 @@
 import type { FileItem } from "../lib/fs";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useAtomSuspense } from "@effect/atom-react";
 import { useMemo } from "react";
+import { nullableAtom } from "../lib/atoms";
 import thumbnailShader from "../shaders/thumbnail.wgsl?raw";
 import { useGPU } from "./useGPU";
 import { usePreview } from "./usePreview";
@@ -47,18 +48,8 @@ export function useThumbnail(
   const { blob } = usePreview(fileItem);
   const pipeline = useThumbnailPipeline();
 
-  const { data: url } = useSuspenseQuery({
-    queryKey: [
-      "thumbnail",
-      fileItem,
-      blob,
-      width,
-      height,
-      quality,
-      !!device,
-      !!pipeline,
-    ],
-    queryFn: async () => {
+  const atom = useMemo(
+    () => nullableAtom(blob, `thumbnail:${String(width)}x${String(height)}:${String(quality)}`, async () => {
       if (
         !device ||
         !pipeline ||
@@ -210,9 +201,10 @@ export function useThumbnail(
         readBuffer?.destroy();
         uniformBuffer?.destroy();
       }
-    },
-    staleTime: Infinity,
-  });
+    }),
+    [blob, width, height, quality],
+  );
+  const url = useAtomSuspense(atom).value;
 
   return { url };
 }
