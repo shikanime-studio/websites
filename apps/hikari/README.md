@@ -8,11 +8,11 @@ crew follow everything on one private link. Inspired by
 
 ### Who uses it
 
-| Role | What they do |
-| ----- | ------------ |
-| Photographer | runs the board: accepts requests, schedules, advances status, uploads photos, shares the recap |
-| Cosplayer (client) | requests the shoot, agrees the date and place, follows progress to delivery |
-| Crew (models, helpers) | receive the calendar invite and open the recap link |
+| Role                   | What they do                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------------- |
+| Photographer           | runs the board: accepts requests, schedules, advances status, uploads photos, shares the recap |
+| Cosplayer (client)     | requests the shoot, agrees the date and place, follows progress to delivery                    |
+| Crew (models, helpers) | receive the calendar invite and open the recap link                                            |
 
 **Live:** <https://hikari.shikanime.studio>
 
