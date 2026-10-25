@@ -17,24 +17,24 @@ merch drops, with a following feed for signed-in visitors.
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| UI | React 19 + TanStack Router/Start (SSR) + Astryx design system (`neutral` theme) |
-| State | Effect atoms; gallery reads suspend on atoms with explicit inline skeletons |
-| Data | D1 (Drizzle ORM) — makers, characters, items, events; seedable |
-| Auth | better-auth: Accounts Center generic OAuth, Google social, passkey plugin |
-| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin` |
+| Layer   | Choice                                                                          |
+| ------- | ------------------------------------------------------------------------------- |
+| UI      | React 19 + TanStack Router/Start (SSR) + Astryx design system (`neutral` theme) |
+| State   | Effect atoms; gallery reads suspend on atoms with explicit inline skeletons     |
+| Data    | D1 (Drizzle ORM) — makers, characters, items, events; seedable                  |
+| Auth    | better-auth: Accounts Center generic OAuth, Google social, passkey plugin       |
+| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin`                                |
 
 ## Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | landing |
-| `/explore` | merch findings + featured artists & circles tabs |
-| `/following` | personalised feed (requires sign-in) |
-| `/privacy-notices` | privacy page |
-| `/user/*` | account screens |
-| `/api/*` | data + auth endpoints |
+| Route              | Purpose                                          |
+| ------------------ | ------------------------------------------------ |
+| `/`                | landing                                          |
+| `/explore`         | merch findings + featured artists & circles tabs |
+| `/following`       | personalised feed (requires sign-in)             |
+| `/privacy-notices` | privacy page                                     |
+| `/user/*`          | account screens                                  |
+| `/api/*`           | data + auth endpoints                            |
 
 ## Develop
 
@@ -62,13 +62,13 @@ Sign-in needs the accounts dev server on 3101
 
 ## Environment
 
-| Name | Where | Purpose |
-|---|---|---|
-| `BETTER_AUTH_SECRET` | secret / `.dev.vars` | session signing |
-| `GOOGLE_CLIENT_SECRET` | secret / `.dev.vars` | Google fallback provider |
-| `ACCOUNTS_CLIENT_SECRET` | secret / `.dev.vars` | Accounts Center OAuth client |
-| `VITE_SITE` | build env | canonical origin |
-| `VITE_ACCOUNTS_SITE` | build env | accounts origin for discovery |
+| Name                     | Where                | Purpose                       |
+| ------------------------ | -------------------- | ----------------------------- |
+| `BETTER_AUTH_SECRET`     | secret / `.dev.vars` | session signing               |
+| `GOOGLE_CLIENT_SECRET`   | secret / `.dev.vars` | Google fallback provider      |
+| `ACCOUNTS_CLIENT_SECRET` | secret / `.dev.vars` | Accounts Center OAuth client  |
+| `VITE_SITE`              | build env            | canonical origin              |
+| `VITE_ACCOUNTS_SITE`     | build env            | accounts origin for discovery |
 
 ## Data model (D1)
 

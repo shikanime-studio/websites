@@ -27,26 +27,26 @@ with D1 as the store, so an app never talks to Google directly.
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| UI | React 19 + TanStack Router/Start (SSR) + Astryx design system (`neutral` theme, studio-orange accent) |
-| State | Effect atoms (`@effect/atom-react`) — session, sessions list, linked providers, authorized clients |
-| Auth | better-auth with Google social + OAuth provider plugin |
-| Data | D1 (Drizzle ORM), migration `0000_huge_jean_grey` |
-| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin` |
+| Layer   | Choice                                                                                                |
+| ------- | ----------------------------------------------------------------------------------------------------- |
+| UI      | React 19 + TanStack Router/Start (SSR) + Astryx design system (`neutral` theme, studio-orange accent) |
+| State   | Effect atoms (`@effect/atom-react`) — session, sessions list, linked providers, authorized clients    |
+| Auth    | better-auth with Google social + OAuth provider plugin                                                |
+| Data    | D1 (Drizzle ORM), migration `0000_huge_jean_grey`                                                     |
+| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin`                                                      |
 
 ## Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | signed-out landing (hero + account preview); signed-in redirects to `/settings` |
-| `/login` | One Tap sign-in |
-| `/settings` | Accounts Center hub (profiles, personal details, security summary) |
-| `/settings/profile` | display name editor |
-| `/settings/security` | sessions, linked providers, authorized clients + revoke |
-| `/consent` | OAuth consent (requires `oauth_query`) |
-| `/api/auth/*` | better-auth endpoints |
-| `*` | branded 404 |
+| Route                | Purpose                                                                         |
+| -------------------- | ------------------------------------------------------------------------------- |
+| `/`                  | signed-out landing (hero + account preview); signed-in redirects to `/settings` |
+| `/login`             | One Tap sign-in                                                                 |
+| `/settings`          | Accounts Center hub (profiles, personal details, security summary)              |
+| `/settings/profile`  | display name editor                                                             |
+| `/settings/security` | sessions, linked providers, authorized clients + revoke                         |
+| `/consent`           | OAuth consent (requires `oauth_query`)                                          |
+| `/api/auth/*`        | better-auth endpoints                                                           |
+| `*`                  | branded 404                                                                     |
 
 ## Develop
 
@@ -70,11 +70,11 @@ to it in dev.
 
 ## Secrets
 
-| Name | Where | Purpose |
-|---|---|---|
-| `BETTER_AUTH_SECRET` | Worker secret / `.dev.vars` | session signing |
-| `GOOGLE_CLIENT_SECRET` | Worker secret / `.dev.vars` | Google social provider |
-| OAuth client secrets | files under `~/.config/shikanime/` (never in the repo) | per-app confidential clients |
+| Name                   | Where                                                  | Purpose                      |
+| ---------------------- | ------------------------------------------------------ | ---------------------------- |
+| `BETTER_AUTH_SECRET`   | Worker secret / `.dev.vars`                            | session signing              |
+| `GOOGLE_CLIENT_SECRET` | Worker secret / `.dev.vars`                            | Google social provider       |
+| OAuth client secrets   | files under `~/.config/shikanime/` (never in the repo) | per-app confidential clients |
 
 Register or rotate a client:
 

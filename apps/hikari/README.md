@@ -21,8 +21,7 @@ Inspired by [ImaCoCoS](https://omiomi79.github.io/imacocos/).
   token is the capability. Date and time in the commission timezone,
   place with a map link, crew, an honest progress timeline (Booked →
   Scheduled → Shoot day → Processing → Preview → Delivery), and the
-  gallery served through token-scoped endpoints only. Unknown tokens
-  404.
+  gallery served through token-scoped endpoints only. Unknown tokens 404.
 - **Identity**: signs in through the Accounts Center (generic OAuth,
   account linking by verified email) with Google as fallback.
 - **Landing** (`/`): explains the service in one screen — three steps,
@@ -30,25 +29,25 @@ Inspired by [ImaCoCoS](https://omiomi79.github.io/imacocos/).
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| UI | React 19 + TanStack Router/Start (SSR) + Astryx design system with bespoke `--hk-*` warm tokens |
-| State | Effect atoms (`@effect/atom-react`); async flows are `Effect.gen` with `Effect.ensuring` for busy flags; errors surface through the shared Astryx toast stack |
-| Data | D1 (Drizzle ORM), R2 bucket `PHOTOS` for uploads |
-| i18n | `src/i18n/messages.ts` (en/fr/ja), `useTranslator` |
-| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin` |
+| Layer   | Choice                                                                                                                                                        |
+| ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| UI      | React 19 + TanStack Router/Start (SSR) + Astryx design system with bespoke `--hk-*` warm tokens                                                               |
+| State   | Effect atoms (`@effect/atom-react`); async flows are `Effect.gen` with `Effect.ensuring` for busy flags; errors surface through the shared Astryx toast stack |
+| Data    | D1 (Drizzle ORM), R2 bucket `PHOTOS` for uploads                                                                                                              |
+| i18n    | `src/i18n/messages.ts` (en/fr/ja), `useTranslator`                                                                                                            |
+| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin`                                                                                                              |
 
 ## Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | landing (signed-out) or commissions board (signed-in) |
-| `/commissions/new` | booking form with location autocomplete + invitees |
-| `/commissions/$id` | detail: status, share link, calendar, uploads |
-| `/s/$token` | public recap + gallery |
-| `/api/commissions`, `/api/commissions/$id/photos[/$photoId]` | authenticated API |
-| `/api/share/$token/[photos|calendar]` | token-scoped public endpoints |
-| `/api/places` | place autocomplete proxy (Google or OSM) |
+| Route                                                        | Purpose                                               |
+| ------------------------------------------------------------ | ----------------------------------------------------- |
+| `/`                                                          | landing (signed-out) or commissions board (signed-in) |
+| `/commissions/new`                                           | booking form with location autocomplete + invitees    |
+| `/commissions/$id`                                           | detail: status, share link, calendar, uploads         |
+| `/s/$token`                                                  | public recap + gallery                                |
+| `/api/commissions`, `/api/commissions/$id/photos[/$photoId]` | authenticated API                                     |
+| `/api/share/$token/[photos                                   | calendar]`                                            | token-scoped public endpoints |
+| `/api/places`                                                | place autocomplete proxy (Google or OSM)              |
 
 ## Develop
 
@@ -71,14 +70,14 @@ redirect for client `hikari`, and `ACCOUNTS_CLIENT_SECRET` in
 
 ## Environment
 
-| Name | Where | Purpose |
-|---|---|---|
-| `BETTER_AUTH_SECRET` | secret / `.dev.vars` | session signing |
-| `GOOGLE_CLIENT_SECRET` | secret / `.dev.vars` | Google fallback provider |
-| `ACCOUNTS_CLIENT_SECRET` | secret / `.dev.vars` | Accounts Center OAuth client |
-| `GOOGLE_MAPS_API_KEY` | secret (optional) | Places autocomplete; OSM otherwise |
-| `VITE_SITE` | build env | canonical origin baked into the bundle |
-| `VITE_ACCOUNTS_SITE` | build env | accounts origin for discovery (dev: 3101) |
+| Name                     | Where                | Purpose                                   |
+| ------------------------ | -------------------- | ----------------------------------------- |
+| `BETTER_AUTH_SECRET`     | secret / `.dev.vars` | session signing                           |
+| `GOOGLE_CLIENT_SECRET`   | secret / `.dev.vars` | Google fallback provider                  |
+| `ACCOUNTS_CLIENT_SECRET` | secret / `.dev.vars` | Accounts Center OAuth client              |
+| `GOOGLE_MAPS_API_KEY`    | secret (optional)    | Places autocomplete; OSM otherwise        |
+| `VITE_SITE`              | build env            | canonical origin baked into the bundle    |
+| `VITE_ACCOUNTS_SITE`     | build env            | accounts origin for discovery (dev: 3101) |
 
 ## Data model (D1)
 

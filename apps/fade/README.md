@@ -21,14 +21,14 @@ browser's GPU. Open a directory from disk; nothing is uploaded.
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| UI | React 19 + TanStack Router/Start (SPA-ish, SSR shell) + Astryx design system |
-| GPU | Raw WebGPU: compute pipelines for histogram, render pipeline for thumbnails and lighting |
-| State | Effect atoms as a derived graph — support → adapter → device → format → pipelines → thumbnail/histogram; the device atom owns lost-device recovery and destruction |
-| Local data | `@tanstack/react-db` collection persists the theme preference |
-| Analytics | Mixpanel (initialised in `MixpanelProvider`, instance in an atom) |
-| Runtime | Cloudflare Workers via `@cloudflare/vite-plugin` |
+| Layer      | Choice                                                                                                                                                             |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| UI         | React 19 + TanStack Router/Start (SPA-ish, SSR shell) + Astryx design system                                                                                       |
+| GPU        | Raw WebGPU: compute pipelines for histogram, render pipeline for thumbnails and lighting                                                                           |
+| State      | Effect atoms as a derived graph — support → adapter → device → format → pipelines → thumbnail/histogram; the device atom owns lost-device recovery and destruction |
+| Local data | `@tanstack/react-db` collection persists the theme preference                                                                                                      |
+| Analytics  | Mixpanel (initialised in `MixpanelProvider`, instance in an atom)                                                                                                  |
+| Runtime    | Cloudflare Workers via `@cloudflare/vite-plugin`                                                                                                                   |
 
 ## Architecture notes
 
@@ -47,9 +47,9 @@ browser's GPU. Open a directory from disk; nothing is uploaded.
 
 ## Routes
 
-| Route | Purpose |
-|---|---|
-| `/` | the editor (single-page; `?modal=settings|fullscreen`) |
+| Route | Purpose                                   |
+| ----- | ----------------------------------------- |
+| `/`   | the editor (single page; modal via the `modal` query param) |
 
 ## Develop
 
