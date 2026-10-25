@@ -1,22 +1,32 @@
 # Hikari
 
-Cosplay photoshoot commission planner. A client describes a shoot, picks
-a date, time and a validated place, invites the crew, and follows the
-whole thing — progress, previews, delivery — on one private link.
-Inspired by [ImaCoCoS](https://omiomi79.github.io/imacocos/).
+The photographer's console for cosplay shoots. Cosplayers commission a
+session through a short form; the photographer accepts, schedules the
+date and place, shoots, and delivers — while the client and the invited
+crew follow everything on one private link. Inspired by
+[ImaCoCoS](https://omiomi79.github.io/imacocos/).
+
+**Who uses it**
+
+| Role | What they do |
+| ----- | ------------ |
+| Photographer | runs the board: accepts requests, schedules, advances status, uploads photos, shares the recap |
+| Cosplayer (client) | requests the shoot, agrees the date and place, follows progress to delivery |
+| Crew (models, helpers) | receive the calendar invite and open the recap link |
 
 **Live:** https://hikari.shikanime.studio
 
 ## What it does
 
-- **Book** (`/commissions/new`): title, character, date/time with
+- **Request** (`/commissions/new`, client): title, character, date/time with
   timezone, a place picked from autocomplete (Google Places when
   `GOOGLE_MAPS_API_KEY` is set, OpenStreetMap otherwise — free text is
   rejected so the map and calendar are always real), invitees as
   `Name <email>` lines.
-- **Track** (`/commissions/$id`): status board, photo upload (stored in
-  R2), Google Calendar link and `.ics` download carrying guests and the
-  address, and the private share link.
+- **Run** (`/commissions/$id`, photographer): accept, advance status,
+  upload photos to R2, copy the share link, and hand over the Google
+  Calendar link and `.ics` carrying guests and the address. The client
+  sees the same page read-only.
 - **Share** (`/s/<token>`): public recap, no session required — the
   token is the capability. Date and time in the commission timezone,
   place with a map link, crew, an honest progress timeline (Booked →
