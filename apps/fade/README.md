@@ -47,8 +47,8 @@ browser's GPU. Open a directory from disk; nothing is uploaded.
 
 ## Routes
 
-| Route | Purpose                                   |
-| ----- | ----------------------------------------- |
+| Route | Purpose                                                     |
+| ----- | ----------------------------------------------------------- |
 | `/`   | the editor (single page; modal via the `modal` query param) |
 
 ## Develop
