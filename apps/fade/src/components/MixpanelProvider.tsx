@@ -1,8 +1,8 @@
-import type { Config } from "mixpanel-browser";
+import type { Config, Mixpanel } from "mixpanel-browser";
 import type { ReactNode } from "react";
 import { useAtomSet } from "@effect/atom-react";
+import mixpanel from "mixpanel-browser";
 import { useEffect } from "react";
-import { initMixpanel } from "../hooks/useMixpanel";
 import { mixpanelInstanceAtom } from "../lib/ui-atoms";
 
 interface MixpanelProviderProps {
@@ -10,6 +10,18 @@ interface MixpanelProviderProps {
   token: string;
   config?: Partial<Config>;
   name?: string;
+}
+
+function initMixpanel(
+  token: string,
+  config?: Partial<Config>,
+  name?: string,
+): Mixpanel {
+  if (!name) {
+    mixpanel.init(token, config ?? {});
+    return mixpanel;
+  }
+  return mixpanel.init(token, config ?? {}, name) as Mixpanel;
 }
 
 export function MixpanelProvider({

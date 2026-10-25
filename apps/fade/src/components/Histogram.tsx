@@ -1,8 +1,8 @@
 import { Spinner } from "@astryxdesign/core/Spinner";
-import { useAtomSuspense } from "@effect/atom-react";
+import { useAtomSuspense, useAtomValue  } from "@effect/atom-react";
 import { Suspense } from "react";
-import { useImageInfo } from "../hooks/useImageInfo";
 import { histogramAtom } from "../lib/photo-atoms";
+import { imageElementAtom } from "../lib/ui-atoms";
 
 interface HistogramProps {
   className?: string;
@@ -67,7 +67,7 @@ function HistogramContent({
 }
 
 export function Histogram({ className = "" }: HistogramProps) {
-  const { image } = useImageInfo();
+  const image = useAtomValue(imageElementAtom);
 
   if (!image) return null;
 

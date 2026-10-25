@@ -8,7 +8,7 @@ import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList"
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { Text } from "@astryxdesign/core/Text";
-import { useAtomSuspense } from "@effect/atom-react";
+import { useAtomSuspense, useAtomValue  } from "@effect/atom-react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import { Activity, Suspense } from "react";
 import { useGallery } from "../hooks/useGallery";
-import { useImageInfo } from "../hooks/useImageInfo";
 import { useLighting } from "../hooks/useLighting";
 import { settingsCollection } from "../lib/db";
 import {
@@ -33,6 +32,7 @@ import {
 } from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { exifAtom, fileAtom } from "../lib/photo-atoms";
+import { imageElementAtom } from "../lib/ui-atoms";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
 
@@ -314,7 +314,7 @@ function Slider({
 function GeneralSection({ fileItem }: { fileItem: FileItem }) {
   const { handle } = fileItem;
   const file = useAtomSuspense(fileAtom(fileItem)).value;
-  const { image } = useImageInfo();
+  const image = useAtomValue(imageElementAtom);
 
   if (!file) return null;
 

@@ -1,11 +1,11 @@
 import type { FileItem } from "../lib/fs";
 import { Spinner } from "@astryxdesign/core/Spinner";
-import { useAtomSuspense } from "@effect/atom-react";
+import { useAtom, useAtomSuspense  } from "@effect/atom-react";
 import { useEffect, useState } from "react";
-import { useImageInfo } from "../hooks/useImageInfo";
 import { useModal } from "../hooks/useModal";
 import { useObjectUrl } from "../hooks/useObjectUrl";
 import { fileAtom } from "../lib/photo-atoms";
+import { imageElementAtom } from "../lib/ui-atoms";
 import { FileIcon } from "./FileIcon";
 import { FullscreenModal } from "./FullscreenModal";
 import { FullscreenNavigation } from "./FullscreenNavigation";
@@ -18,7 +18,7 @@ interface ImageViewerProps {
 export function ImageViewer({ fileItem }: ImageViewerProps) {
   const file = useAtomSuspense(fileAtom(fileItem ?? null)).value;
   const { url } = useObjectUrl(file ?? null);
-  const { setImage } = useImageInfo();
+  const setImage = useAtom(imageElementAtom)[1];
   const { modal, setModal } = useModal();
   const [loadedImage, setLoadedImage] = useState<HTMLImageElement | null>(null);
   const [prevUrl, setPrevUrl] = useState<string | null>(null);

@@ -28,6 +28,15 @@ export const gpuDeviceAtom = make((get) =>
       catch: () => null,
     });
     if (device) {
+      // A lost device is a graph event: refresh this atom so a replacement
+      // is requested, and record why for anyone reading the last loss.
+      yield* Effect.forkScoped(
+        Effect.gen(function* () {
+          yield* Effect.tryPromise(() => device.lost);
+          get.setSelf(null);
+          get.refresh(gpuDeviceAtom);
+        }),
+      );
       get.addFinalizer(() => {
         device.destroy();
       });
@@ -35,6 +44,7 @@ export const gpuDeviceAtom = make((get) =>
     return device;
   }),
 );
+
 
 export const gpuFormatAtom = make((get) =>
   Effect.gen(function* () {
