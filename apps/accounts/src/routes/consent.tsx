@@ -6,6 +6,7 @@ import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
 import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { Cause, Effect, Exit } from "effect";
 import { getOrElse } from "effect/reactivity/AsyncResult";
 import { AppWindow, Check } from "lucide-react";
 import { useState } from "react";
@@ -51,35 +52,49 @@ function ConsentPage() {
   async function decide(accept: boolean) {
     setPending(true);
     setError(null);
-    try {
+
+    const program = Effect.gen(function* () {
       // The consent page's own query string is the signed authorization
       // request; the provider verifies its signature before recording the
       // decision, so forward it verbatim.
       const oauthQuery = window.location.search.replace(LEADING_QUESTION, "");
       if (!oauthQuery) {
-        throw new Error("Missing authorization request");
+        return yield* Effect.fail(new Error("Missing authorization request"));
       }
-      const res = await fetch("/api/auth/oauth2/consent", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ accept, oauth_query: oauthQuery }),
+      const res = yield* Effect.tryPromise({
+        try: () =>
+          fetch("/api/auth/oauth2/consent", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ accept, oauth_query: oauthQuery }),
+          }),
+        catch: () => new Error("Consent request failed"),
       });
       if (!res.ok) {
-        throw new Error(`Consent failed (${res.status})`);
+        return yield* Effect.fail(new Error(`Consent failed (${res.status})`));
       }
-      const body = (await res.json()) as { redirect?: boolean; url?: string };
+      const body = yield* Effect.tryPromise({
+        try: () =>
+          res.json() as Promise<{ redirect?: boolean; url?: string }>,
+        catch: () => new Error("Invalid consent response"),
+      });
       if (body.redirect !== true || typeof body.url !== "string") {
-        throw new Error("Missing redirect target");
+        return yield* Effect.fail(new Error("Missing redirect target"));
       }
       const target = new URL(body.url, window.location.origin);
       if (target.protocol !== "https:" && target.protocol !== "http:") {
-        throw new Error("Unsafe redirect target");
+        return yield* Effect.fail(new Error("Unsafe redirect target"));
       }
       window.location.assign(target.toString());
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Consent failed");
-      setPending(false);
+    });
+
+    const exit = await Effect.runPromiseExit(
+      program.pipe(Effect.ensuring(Effect.sync(() => setPending(false)))),
+    );
+    if (Exit.isFailure(exit)) {
+      const error = Cause.squash(exit.cause);
+      setError(error instanceof Error ? error.message : "Consent failed");
     }
   }
 
