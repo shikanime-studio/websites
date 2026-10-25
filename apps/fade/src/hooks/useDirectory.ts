@@ -34,7 +34,7 @@ export function useDirectory() {
       body: "Failed to open that directory. Try a different one.",
       type: "error",
     });
-  }, [isSupported, setHandle]);
+  }, [isSupported, setHandle, toast]);
 
   return { handle, select, isSupported };
 }
