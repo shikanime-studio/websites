@@ -4,17 +4,17 @@ import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
 import { useToast } from "@astryxdesign/core/Toast";
-import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { useAtomRefresh, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Effect } from "effect";
-import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
+import { getOrElse } from "effect/reactivity/AsyncResult";
 import {
   ArrowLeft,
   KeyRound,
   MonitorSmartphone,
   SquareArrowOutUpRight,
 } from "lucide-react";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { accountsAtom,
   authorizedClientsAtom,
   sessionAtom,
@@ -50,15 +50,12 @@ export const Route = createFileRoute("/settings/security")({
 function SecuritySettingsPage() {
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const currentSessionId = session?.session?.id ?? null;
-  const sessionsResult = useAtomValue(sessionsAtom);
-  const accountsResult = useAtomValue(accountsAtom);
-  const clientsResult = useAtomValue(authorizedClientsAtom);
   const refreshSessions = useAtomRefresh(sessionsAtom);
   const toast = useToast();
   const refreshClients = useAtomRefresh(authorizedClientsAtom);
-  const sessions = { data: getOrElse(sessionsResult, () => []), isLoading: isInitial(sessionsResult) };
-  const accounts = { data: getOrElse(accountsResult, () => []) };
-  const clients = { data: getOrElse(clientsResult, () => []), isLoading: isInitial(clientsResult) };
+  const sessions = useAtomSuspense(sessionsAtom).value;
+  const accounts = useAtomSuspense(accountsAtom).value;
+  const clients = useAtomSuspense(authorizedClientsAtom).value;
   const [signingOut, setSigningOut] = useState(false);
   const [revoking, setRevoking] = useState<string | null>(null);
 
@@ -116,10 +113,10 @@ function SecuritySettingsPage() {
     return "Unknown device";
   }
 
-  const otherSessions = (sessions.data ?? []).filter(
+  const otherSessions = (sessions ?? []).filter(
     (item) => item.id !== currentSessionId,
   );
-  const authorizedClients = clients.data ?? [];
+  const authorizedClients = clients ?? [];
 
   return (
     <div className="flex flex-col gap-6">
@@ -141,6 +138,11 @@ function SecuritySettingsPage() {
         </div>
       </div>
 
+      <Suspense
+        fallback={
+          <Card className="h-40 animate-pulse" padding={0} />
+        }
+      >
       <Card padding={0} className="overflow-hidden">
         <div className="flex items-start gap-4 px-5 py-5">
           <span className="bg-accent/10 text-accent mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full">
@@ -217,7 +219,7 @@ function SecuritySettingsPage() {
               </Text>
             </div>
 
-            {clients.isLoading ? null : authorizedClients.length === 0
+            {authorizedClients.length === 0
               ? (
                 <div className="bg-body flex flex-col gap-1 rounded-xl px-4 py-3">
                   <Text size="sm" weight="medium">
@@ -292,9 +294,9 @@ function SecuritySettingsPage() {
               Sign-in checks are handled by the provider below.
             </Text>
             <div className="flex flex-wrap gap-2">
-              {(accounts.data ?? []).length === 0
+              {(accounts ?? []).length === 0
                 ? <Badge variant="neutral" label="Google" />
-                : (accounts.data ?? []).map((item) => (
+                : (accounts ?? []).map((item) => (
                   <Badge
                     key={item.id}
                     variant="neutral"
@@ -305,6 +307,7 @@ function SecuritySettingsPage() {
           </div>
         </div>
       </Card>
+      </Suspense>
     </div>
   );
 }

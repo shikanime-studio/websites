@@ -5,11 +5,11 @@ import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { FileInput } from "@astryxdesign/core/FileInput";
 import { useLocale, useTranslator } from "@astryxdesign/core/i18n";
 import { useToast } from "@astryxdesign/core/Toast";
-import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { useAtomRefresh, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
-import { getOrElse, isFailure, isInitial } from "effect/reactivity/AsyncResult";
-import { useState } from "react";
+import { getOrElse, isFailure } from "effect/reactivity/AsyncResult";
+import { Suspense, useState } from "react";
 import {
   ArrowLeft,
   CalendarIcon,
@@ -46,8 +46,7 @@ function CommissionDetailPage() {
   const { id } = Route.useParams();
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const t = useTranslator();
-  const result = useAtomValue(commissionAtom(id));
-  const refresh = useAtomRefresh(commissionAtom(id));
+
 
   if (!session) {
     return (
@@ -61,20 +60,37 @@ function CommissionDetailPage() {
       </div>
     );
   }
-  if (isInitial(result)) {
-    return (
-      <div className="hk-shell py-12">
-        <Card className="h-40 animate-pulse" padding={0}>
-          <span className="sr-only">{t("home.loading")}</span>
-        </Card>
-        <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
-          <Card className="h-72 animate-pulse" padding={0} />
-          <Card className="h-72 animate-pulse" padding={0} />
-        </div>
-      </div>
-    );
-  }
 
+  return (
+    <Suspense fallback={<DetailSkeleton t={t} />}>
+      <CommissionDetailView id={id} t={t} />
+    </Suspense>
+  );
+}
+
+function DetailSkeleton({ t }: { t: (key: any) => string }) {
+  return (
+    <div className="hk-shell py-12">
+      <Card className="h-40 animate-pulse" padding={0}>
+        <span className="sr-only">{t("home.loading")}</span>
+      </Card>
+      <div className="mt-6 grid gap-6 lg:grid-cols-[1.5fr_1fr]">
+        <Card className="h-72 animate-pulse" padding={0} />
+        <Card className="h-72 animate-pulse" padding={0} />
+      </div>
+    </div>
+  );
+}
+
+function CommissionDetailView({
+  id,
+  t,
+}: {
+  id: string;
+  t: (key: any) => string;
+}) {
+  const refresh = useAtomRefresh(commissionAtom(id));
+  const result = useAtomSuspense(commissionAtom(id), { includeFailure: true });
   if (isFailure(result)) {
     return (
       <div className="hk-shell py-16">
@@ -95,30 +111,11 @@ function CommissionDetailPage() {
   }
 
   const commission = result.value;
-  if (!commission) {
-    return (
-      <div className="hk-shell py-16">
-        <EmptyState
-          actions={
-            <Button
-              href="/"
-              icon={<ArrowLeft />}
-              label={t("detail.allCommissions")}
-              variant="secondary"
-            />
-          }
-          description={t("detail.notFoundBody")}
-          headingLevel={1}
-          title={t("detail.notFound")}
-        />
-      </div>
-    );
-  }
 
-  return <CommissionDetailView commission={commission} />;
+  return <CommissionDetailBody commission={commission} />;
 }
 
-function CommissionDetailView({ commission }: { commission: CommissionDetail }) {
+function CommissionDetailBody({ commission }: { commission: CommissionDetail }) {
   const refreshCommission = useAtomRefresh(commissionAtom(String(commission.id)));
   const refreshCommissions = useAtomRefresh(commissionsAtom);
   const t = useTranslator();
