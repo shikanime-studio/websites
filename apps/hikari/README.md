@@ -6,7 +6,7 @@ date and place, shoots, and delivers — while the client and the invited
 crew follow everything on one private link. Inspired by
 [ImaCoCoS](https://omiomi79.github.io/imacocos/).
 
-**Who uses it**
+### Who uses it
 
 | Role | What they do |
 | ----- | ------------ |
@@ -14,7 +14,7 @@ crew follow everything on one private link. Inspired by
 | Cosplayer (client) | requests the shoot, agrees the date and place, follows progress to delivery |
 | Crew (models, helpers) | receive the calendar invite and open the recap link |
 
-**Live:** https://hikari.shikanime.studio
+**Live:** <https://hikari.shikanime.studio>
 
 ## What it does
 
