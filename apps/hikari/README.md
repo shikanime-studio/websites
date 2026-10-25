@@ -46,7 +46,7 @@ Inspired by [ImaCoCoS](https://omiomi79.github.io/imacocos/).
 | `/commissions/$id`                                           | detail: status, share link, calendar, uploads         |
 | `/s/$token`                                                  | public recap + gallery                                |
 | `/api/commissions`, `/api/commissions/$id/photos[/$photoId]` | authenticated API                                     |
-| `/api/share/$token/[photos                                   | calendar]`                                            | token-scoped public endpoints |
+| `/api/share/$token/photos`, `/api/share/$token/calendar`     | token-scoped public endpoints                         |
 | `/api/places`                                                | place autocomplete proxy (Google or OSM)              |
 
 ## Develop
