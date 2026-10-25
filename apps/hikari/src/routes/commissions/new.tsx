@@ -63,38 +63,39 @@ function NewCommissionPage() {
       return;
     }
     setSubmitting(true);
-    try {
-      const exit = await Effect.runPromiseExit(
-        createCommission({
-          title,
-          description,
-          photographerEmail,
-          characterName,
-          shootingDate: shootingDate ? shootingDate.slice(0, 16) : undefined,
-          locationName: location.place?.label ?? "",
-          locationQuery: location.place?.label ?? "",
-          locationLat: location.place?.lat ?? undefined,
-          locationLng: location.place?.lon ?? undefined,
-          timezone,
-          invitees: parsedInvitees.invitees,
-        }),
-      );
-      if (Exit.isFailure(exit)) {
-        const error = Cause.squash(exit.cause);
-        setError(
-          error instanceof ApiError ? error.message : t("form.createFailed"),
-        );
-        return;
-      }
-      refreshCommissions();
-      await navigate({
-        to: "/commissions/$id",
-        params: { id: String(exit.value.id) },
+    const program = Effect.gen(function* () {
+      const commission = yield* createCommission({
+        title,
+        description,
+        photographerEmail,
+        characterName,
+        shootingDate: shootingDate ? shootingDate.slice(0, 16) : undefined,
+        locationName: location.place?.label ?? "",
+        locationQuery: location.place?.label ?? "",
+        locationLat: location.place?.lat ?? undefined,
+        locationLng: location.place?.lon ?? undefined,
+        timezone,
+        invitees: parsedInvitees.invitees,
       });
-    } catch {
-      setError(t("form.createFailed"));
-    } finally {
-      setSubmitting(false);
+      yield* Effect.sync(() => {
+        refreshCommissions();
+      });
+      yield* Effect.tryPromise({
+        try: () =>
+          navigate({
+            to: "/commissions/$id",
+            params: { id: String(commission.id) },
+          }),
+        catch: () => new ApiError({ message: t("form.createFailed") }),
+      });
+    }).pipe(Effect.ensuring(Effect.sync(() => setSubmitting(false))));
+
+    const exit = await Effect.runPromiseExit(program);
+    if (Exit.isFailure(exit)) {
+      const error = Cause.squash(exit.cause);
+      setError(
+        error instanceof ApiError ? error.message : t("form.createFailed"),
+      );
     }
   }
 

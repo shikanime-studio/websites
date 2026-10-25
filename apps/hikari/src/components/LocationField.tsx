@@ -1,5 +1,6 @@
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { TextInput } from "@astryxdesign/core/TextInput";
+import { Effect } from "effect";
 import { useEffect, useRef, useState } from "react";
 
 export interface SelectedPlace {
@@ -78,16 +79,19 @@ export function LocationField({
     setResults([]);
     let resolved = place;
     if (place.lat === null && place.placeId) {
-      try {
-        const response = await fetch(
-          `/api/places?placeId=${encodeURIComponent(place.placeId)}`,
-        );
-        const body = (await response.json()) as { place?: SelectedPlace };
-        if (body.place) {
-          resolved = body.place;
-        }
-      } catch {
-        // keep the label from the suggestion
+      const details = await Effect.runPromise(
+        Effect.tryPromise({
+          try: async () => {
+            const response = await fetch(
+              `/api/places?placeId=${encodeURIComponent(place.placeId ?? "")}`,
+            );
+            return (await response.json()) as { place?: SelectedPlace };
+          },
+          catch: () => ({}) as { place?: SelectedPlace },
+        }),
+      );
+      if (details.place) {
+        resolved = details.place;
       }
     }
     onChange({ text: resolved.label, place: resolved });

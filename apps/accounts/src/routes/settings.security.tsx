@@ -5,7 +5,8 @@ import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { getOrElse, isInitial  } from "effect/reactivity/AsyncResult";
+import { Effect } from "effect";
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import {
   ArrowLeft,
   KeyRound,
@@ -61,22 +62,30 @@ function SecuritySettingsPage() {
 
   async function signOutOthers() {
     setSigningOut(true);
-    try {
-      await authClient.revokeOtherSessions();
-      refreshSessions();
-    } finally {
-      setSigningOut(false);
-    }
+    const program = Effect.gen(function* () {
+      yield* Effect.tryPromise({
+        try: () => authClient.revokeOtherSessions(),
+        catch: () => null,
+      });
+      yield* Effect.sync(() => {
+        refreshSessions();
+      });
+    }).pipe(Effect.ensuring(Effect.sync(() => setSigningOut(false))));
+    await Effect.runPromise(program);
   }
 
   async function revokeClient(clientId: string) {
     setRevoking(clientId);
-    try {
-      await revokeClientAccess({ data: clientId });
-      refreshClients();
-    } finally {
-      setRevoking(null);
-    }
+    const program = Effect.gen(function* () {
+      yield* Effect.tryPromise({
+        try: () => revokeClientAccess({ data: clientId }),
+        catch: () => null,
+      });
+      yield* Effect.sync(() => {
+        refreshClients();
+      });
+    }).pipe(Effect.ensuring(Effect.sync(() => setRevoking(null))));
+    await Effect.runPromise(program);
   }
 
   function describeSessionDevice(userAgent: string | null | undefined): string {

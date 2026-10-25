@@ -129,24 +129,22 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
   async function changeStatus(next: string) {
     setBusy(true);
     setActionError(null);
-    try {
-      const exit = await Effect.runPromiseExit(
-        changeCommissionStatus(commission.id, next),
+    const exit = await Effect.runPromiseExit(
+      changeCommissionStatus(commission.id, next).pipe(
+        Effect.ensuring(Effect.sync(() => setBusy(false))),
+      ),
+    );
+    if (Exit.isFailure(exit)) {
+      const error = Cause.squash(exit.cause);
+      setActionError(
+        error instanceof ApiError
+          ? error.message
+          : t("detail.statusChangeFailed"),
       );
-      if (Exit.isFailure(exit)) {
-        const error = Cause.squash(exit.cause);
-        setActionError(
-          error instanceof ApiError
-            ? error.message
-            : t("detail.statusChangeFailed"),
-        );
-        return;
-      }
-      refreshCommission();
-      refreshCommissions();
-    } finally {
-      setBusy(false);
+      return;
     }
+    refreshCommission();
+    refreshCommissions();
   }
 
   async function uploadPhotos(input: File | File[] | null) {
@@ -156,25 +154,22 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     }
     setBusy(true);
     setActionError(null);
-    try {
+    const program = Effect.gen(function* () {
       for (const file of files) {
-        const exit = await Effect.runPromiseExit(
-          uploadCommissionPhoto(commission.id, file),
-        );
-        if (Exit.isFailure(exit)) {
-          const error = Cause.squash(exit.cause);
-          setActionError(
-            error instanceof ApiError
-              ? error.message
-              : t("detail.uploadFailed"),
-          );
-          return;
-        }
+        yield* uploadCommissionPhoto(commission.id, file);
       }
-      refreshCommission();
-      refreshCommissions();
-    } finally {
-      setBusy(false);
+      yield* Effect.sync(() => {
+        refreshCommission();
+        refreshCommissions();
+      });
+    }).pipe(Effect.ensuring(Effect.sync(() => setBusy(false))));
+
+    const exit = await Effect.runPromiseExit(program);
+    if (Exit.isFailure(exit)) {
+      const error = Cause.squash(exit.cause);
+      setActionError(
+        error instanceof ApiError ? error.message : t("detail.uploadFailed"),
+      );
     }
   }
 
