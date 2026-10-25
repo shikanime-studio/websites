@@ -4,6 +4,7 @@ import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Heading } from "@astryxdesign/core/Heading";
 import { Text } from "@astryxdesign/core/Text";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
@@ -45,13 +46,12 @@ function ConsentPage() {
     from: "/consent",
   });
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
-  const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   const [pending, setPending] = useState(false);
 
   async function decide(accept: boolean) {
     setPending(true);
-    setError(null);
 
     const program = Effect.gen(function* () {
       // The consent page's own query string is the signed authorization
@@ -94,7 +94,10 @@ function ConsentPage() {
     );
     if (Exit.isFailure(exit)) {
       const error = Cause.squash(exit.cause);
-      setError(error instanceof Error ? error.message : "Consent failed");
+      toast({
+        body: error instanceof Error ? error.message : "Consent failed",
+        type: "error",
+      });
     }
   }
 
@@ -175,14 +178,6 @@ function ConsentPage() {
                   </li>
                 ))}
               </ul>
-            )
-            : null}
-
-          {error
-            ? (
-              <Text color="accent" size="sm" weight="semibold" role="alert">
-                {error}
-              </Text>
             )
             : null}
 

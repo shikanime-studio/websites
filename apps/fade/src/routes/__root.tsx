@@ -1,4 +1,5 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
+import { ToastViewport } from "@astryxdesign/core/Toast";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
@@ -50,6 +51,7 @@ function RootComponent() {
       >
         <ClientOnly>
           <AstryxSurface />
+          <ToastViewport position="bottomEnd" maxVisible={4} />
         </ClientOnly>
       </MixpanelProvider>
   );

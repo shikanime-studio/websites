@@ -1,4 +1,5 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
+import { ToastViewport } from "@astryxdesign/core/Toast";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { RegistryProvider } from "@effect/atom-react";
 import { TanStackDevtools } from "@tanstack/react-devtools";
@@ -77,6 +78,7 @@ function RootComponent() {
   return (
     <RegistryProvider>
       <AstryxTheme theme={neutralTheme} mode="system">
+        <ToastViewport position="bottomEnd" maxVisible={4} />
         <RootLayout />
         <TanStackDevtools
           config={{

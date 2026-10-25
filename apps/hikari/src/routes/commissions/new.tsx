@@ -1,11 +1,11 @@
 import type { LocationValue } from "../../components/LocationField";
-import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { DateTimeInput } from "@astryxdesign/core/DateTimeInput";
 import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomRefresh } from "@effect/atom-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
@@ -25,6 +25,7 @@ export const Route = createFileRoute("/commissions/new")({
 function NewCommissionPage() {
   const navigate = useNavigate();
   const refreshCommissions = useAtomRefresh(commissionsAtom);
+  const toast = useToast();
   const t = useTranslator();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -34,7 +35,6 @@ function NewCommissionPage() {
   const [location, setLocation] = useState<LocationValue>({ text: "", place: null });
   const [inviteesRaw, setInviteesRaw] = useState("");
   const [timezone, setTimezone] = useState("Europe/Paris");
-  const [error, setError] = useState<string | null>(null);
   const [attempted, setAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -47,19 +47,22 @@ function NewCommissionPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setAttempted(true);
-    setError(null);
     if (title.trim().length === 0 || !isEmailValid) {
       return;
     }
     if (location.text.trim().length > 0 && !location.place) {
-      setError("Pick a location from the suggestions so the map and calendar are accurate.");
+      toast({
+        body: "Pick a location from the suggestions so the map and calendar are accurate.",
+        type: "error",
+      });
       return;
     }
     const parsedInvitees = parseInviteeInput(inviteesRaw);
     if (parsedInvitees.invalid.length > 0) {
-      setError(
-        `Check these invites: ${parsedInvitees.invalid.join(", ")}. Use "Name <email>" or a bare email.`,
-      );
+      toast({
+        body: `Check these invites: ${parsedInvitees.invalid.join(", ")}.`,
+        type: "error",
+      });
       return;
     }
     setSubmitting(true);
@@ -93,9 +96,10 @@ function NewCommissionPage() {
     const exit = await Effect.runPromiseExit(program);
     if (Exit.isFailure(exit)) {
       const error = Cause.squash(exit.cause);
-      setError(
-        error instanceof ApiError ? error.message : t("form.createFailed"),
-      );
+      toast({
+        body: error instanceof ApiError ? error.message : t("form.createFailed"),
+        type: "error",
+      });
     }
   }
 
@@ -223,12 +227,6 @@ function NewCommissionPage() {
                 </div>
               </fieldset>
             </div>
-
-            {error ? (
-              <div className="mt-6">
-                <Banner status="error" title={error} />
-              </div>
-            ) : null}
 
             <div className="border-hairline mt-8 flex flex-col-reverse gap-2 border-t pt-5 sm:flex-row sm:justify-end">
               <Button
