@@ -3,6 +3,7 @@ import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { Divider } from "@astryxdesign/core/Divider";
 import { Text } from "@astryxdesign/core/Text";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Effect } from "effect";
@@ -53,6 +54,7 @@ function SecuritySettingsPage() {
   const accountsResult = useAtomValue(accountsAtom);
   const clientsResult = useAtomValue(authorizedClientsAtom);
   const refreshSessions = useAtomRefresh(sessionsAtom);
+  const toast = useToast();
   const refreshClients = useAtomRefresh(authorizedClientsAtom);
   const sessions = { data: getOrElse(sessionsResult, () => []), isLoading: isInitial(sessionsResult) };
   const accounts = { data: getOrElse(accountsResult, () => []) };
@@ -65,7 +67,15 @@ function SecuritySettingsPage() {
     const program = Effect.gen(function* () {
       yield* Effect.tryPromise({
         try: () => authClient.revokeOtherSessions(),
-        catch: () => null,
+        catch: (error) => {
+          toast({
+            body: error instanceof Error
+              ? error.message
+              : "Failed to sign out other devices",
+            type: "error",
+          });
+          return null;
+        },
       });
       yield* Effect.sync(() => {
         refreshSessions();
@@ -79,7 +89,15 @@ function SecuritySettingsPage() {
     const program = Effect.gen(function* () {
       yield* Effect.tryPromise({
         try: () => revokeClientAccess({ data: clientId }),
-        catch: () => null,
+        catch: (error) => {
+          toast({
+            body: error instanceof Error
+              ? error.message
+              : "Failed to revoke access",
+            type: "error",
+          });
+          return null;
+        },
       });
       yield* Effect.sync(() => {
         refreshClients();

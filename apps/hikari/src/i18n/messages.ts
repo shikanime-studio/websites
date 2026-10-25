@@ -161,6 +161,9 @@ const en = {
   "notfound.body": "Head back to your commissions.",
   "notfound.home": "Back to Hikari",
 
+  "detail.statusUpdated": "Status updated",
+  "detail.uploaded": "Photos uploaded",
+
   "landing.howTitle": "How it works",
   "landing.howHeading": "From first message to final files.",
   "landing.shareEyebrow": "The shared link",
@@ -339,6 +342,9 @@ const fr: Record<MessageKey, string> = {
   "notfound.body": "Retournez à vos commissions.",
   "notfound.home": "Retour à Hikari",
 
+  "detail.statusUpdated": "Statut mis à jour",
+  "detail.uploaded": "Photos envoyées",
+
   "landing.howTitle": "Comment ça marche",
   "landing.howHeading": "Du premier message aux fichiers finaux.",
   "landing.shareEyebrow": "Le lien partagé",
@@ -509,6 +515,9 @@ const ja: Record<MessageKey, string> = {
   "notfound.title": "このページは存在しません。",
   "notfound.body": "依頼の一覧に戻りましょう。",
   "notfound.home": "Hikari に戻る",
+
+  "detail.statusUpdated": "ステータスを更新しました",
+  "detail.uploaded": "写真をアップロードしました",
 
   "landing.howTitle": "流れ",
   "landing.howHeading": "最初のメッセージから完成データまで。",

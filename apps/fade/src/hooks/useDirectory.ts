@@ -1,9 +1,11 @@
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtom, useAtomSet } from "@effect/atom-react";
 import { Cause, Effect, Exit } from "effect";
 import { useCallback } from "react";
 import { directoryHandleAtom } from "../lib/ui-atoms";
 
 export function useDirectory() {
+  const toast = useToast();
   const handle = useAtom(directoryHandleAtom)[0];
   const setHandle = useAtomSet(directoryHandleAtom);
   const isSupported
@@ -28,9 +30,10 @@ export function useDirectory() {
     if (error instanceof Error && error.name === "AbortError") {
       return;
     }
-    console.error(
-      "Failed to open directory. Please try again or choose a different one.",
-    );
+    toast({
+      body: "Failed to open that directory. Try a different one.",
+      type: "error",
+    });
   }, [isSupported, setHandle]);
 
   return { handle, select, isSupported };

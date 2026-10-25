@@ -1,4 +1,6 @@
-import { useAtomSuspense, useAtomValue } from "@effect/atom-react";
+import { useToast } from "@astryxdesign/core/Toast";
+import { useAtomRefresh, useAtomSuspense, useAtomValue } from "@effect/atom-react";
+import { useEffect } from "react";
 import {
   gpuAdapterAtom,
   gpuDeviceAtom,
@@ -14,10 +16,25 @@ export interface GPUState {
 }
 
 export function useGPU(): GPUState {
+  const device = useAtomSuspense(gpuDeviceAtom).value;
+  const refreshDevice = useAtomRefresh(gpuDeviceAtom);
+  const toast = useToast();
+
+  useEffect(() => {
+    if (!device) return;
+    const onLost = () => {
+      toast({ body: "The graphics device was lost. Retrying…", type: "error" });
+      refreshDevice();
+    };
+    void device.lost.then(onLost).catch(() => {
+      toast({ body: "The graphics device was lost unexpectedly.", type: "error" });
+    });
+  }, [device, refreshDevice, toast]);
+
   return {
     adapter: useAtomSuspense(gpuAdapterAtom).value,
-    device: useAtomSuspense(gpuDeviceAtom).value,
     format: useAtomSuspense(gpuFormatAtom).value,
     isSupported: useAtomValue(gpuSupportedAtom),
+    device,
   };
 }

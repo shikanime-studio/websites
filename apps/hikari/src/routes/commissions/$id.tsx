@@ -1,10 +1,10 @@
 import type { CommissionDetail } from "../../lib/types";
-import { Banner } from "@astryxdesign/core/Banner";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { FileInput } from "@astryxdesign/core/FileInput";
 import { useLocale, useTranslator } from "@astryxdesign/core/i18n";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
@@ -123,12 +123,11 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
   const refreshCommissions = useAtomRefresh(commissionsAtom);
   const t = useTranslator();
   const lang = useLocale();
-  const [actionError, setActionError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const toast = useToast();
 
   async function changeStatus(next: string) {
     setBusy(true);
-    setActionError(null);
     const exit = await Effect.runPromiseExit(
       changeCommissionStatus(commission.id, next).pipe(
         Effect.ensuring(Effect.sync(() => setBusy(false))),
@@ -136,13 +135,15 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     );
     if (Exit.isFailure(exit)) {
       const error = Cause.squash(exit.cause);
-      setActionError(
-        error instanceof ApiError
+      toast({
+        body: error instanceof ApiError
           ? error.message
           : t("detail.statusChangeFailed"),
-      );
+        type: "error",
+      });
       return;
     }
+    toast({ body: t("detail.statusUpdated"), type: "info" });
     refreshCommission();
     refreshCommissions();
   }
@@ -153,7 +154,6 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
       return;
     }
     setBusy(true);
-    setActionError(null);
     const program = Effect.gen(function* () {
       for (const file of files) {
         yield* uploadCommissionPhoto(commission.id, file);
@@ -167,10 +167,13 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
     const exit = await Effect.runPromiseExit(program);
     if (Exit.isFailure(exit)) {
       const error = Cause.squash(exit.cause);
-      setActionError(
-        error instanceof ApiError ? error.message : t("detail.uploadFailed"),
-      );
+      toast({
+        body: error instanceof ApiError ? error.message : t("detail.uploadFailed"),
+        type: "error",
+      });
+      return;
     }
+    toast({ body: t("detail.uploaded"), type: "info" });
   }
 
   const invitees = parseInvitees(commission.invitees ?? "[]");
@@ -331,11 +334,6 @@ function CommissionDetailView({ commission }: { commission: CommissionDetail }) 
               />
             </div>
 
-            {actionError ? (
-              <div className="mt-4">
-                <Banner status="error" title={actionError} />
-              </div>
-            ) : null}
           </Card>
         </div>
 
