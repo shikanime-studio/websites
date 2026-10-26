@@ -1,4 +1,6 @@
+import type { CastDraft } from "../../components/CastEditor";
 import type { LocationValue } from "../../components/LocationField";
+import type { CharacterEntry } from "../../lib/cast";
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { DateTimeInput } from "@astryxdesign/core/DateTimeInput";
@@ -9,11 +11,14 @@ import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomRefresh } from "@effect/atom-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { CastEditor } from "../../components/CastEditor";
+import { CharacterPicker } from "../../components/CharacterPicker";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
 import { LocationField } from "../../components/LocationField";
 import { ApiError, createCommission } from "../../lib/api";
 import { commissionsAtom } from "../../lib/atoms";
+import { normalizeCast, normalizeCharacters } from "../../lib/cast";
 import { parseInviteeInput } from "../../lib/sharing";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@][^\s.@]*\.[^\s@]+$/;
@@ -31,14 +36,29 @@ function NewCommissionPage() {
   const [description, setDescription] = useState("");
   const [photographerEmail, setPhotographerEmail] = useState("");
   const [characterName, setCharacterName] = useState("");
+  const [characters, setCharacters] = useState<CharacterEntry[]>([]);
+  const [cast, setCast] = useState<CastDraft[]>([]);
   const [shootingDate, setShootingDate] = useState("");
   const [location, setLocation] = useState<LocationValue>({ text: "", place: null });
   const [inviteesRaw, setInviteesRaw] = useState("");
+  // Rendered on the server first, so start from the studio default and adopt
+  // the device zone once we are in the browser; otherwise SSR and hydration
+  // disagree on the first paint.
   const [timezone, setTimezone] = useState("Europe/Paris");
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      const detected = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      if (detected) setTimezone(detected);
+    });
+    return () => {
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   const [attempted, setAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const isEmailValid = EMAIL_PATTERN.test(photographerEmail);
+  const hasEmail = photographerEmail.trim().length > 0;
+  const isEmailValid = !hasEmail || EMAIL_PATTERN.test(photographerEmail);
   const titleError =
     attempted && title.trim().length === 0 ? t("form.fieldRequired") : undefined;
   const emailError =
@@ -70,8 +90,10 @@ function NewCommissionPage() {
       const commission = yield* createCommission({
         title,
         description,
-        photographerEmail,
+        ...(hasEmail ? { photographerEmail } : {}),
         characterName,
+        characters: normalizeCharacters(characters),
+        cast: normalizeCast(cast),
         shootingDate: shootingDate ? shootingDate.slice(0, 16) : undefined,
         locationName: location.place?.label ?? "",
         locationQuery: location.place?.label ?? "",
@@ -146,8 +168,8 @@ function NewCommissionPage() {
                   value={title}
                 />
                 <TextInput
-                  description={t("form.fieldPhotographerHint")}
-                  isRequired
+                  description="Optional. Leave it blank to run the shoot yourself and invite the photographer by link later."
+                  isOptional
                   label={t("form.fieldPhotographer")}
                   size="lg"
                   onChange={(value) => {
@@ -177,17 +199,31 @@ function NewCommissionPage() {
                 </div>
 
                 <div className="grid gap-5 sm:grid-cols-[1fr_1.4fr]">
-                  <TextInput
-                    description="IANA name, e.g. Europe/Paris"
-                    label="Timezone"
-                    size="lg"
-                    onChange={setTimezone}
-                    value={timezone}
-                  />
+                  <div className="flex flex-col gap-1.5">
+                    <TextInput
+                      description="Detected from this device — change it if the shoot is elsewhere."
+                      label="Timezone"
+                      size="lg"
+                      onChange={setTimezone}
+                      value={timezone}
+                    />
+                    <button
+                      className="text-accent w-fit text-[11px] font-medium hover:underline"
+                      onClick={() => {
+                        setTimezone(
+                          Intl.DateTimeFormat().resolvedOptions().timeZone
+                          || "Europe/Paris",
+                        );
+                      }}
+                      type="button"
+                    >
+                      Use my device timezone
+                    </button>
+                  </div>
                   <TextArea
-                    description={'One per line: "Aiko <aiko@example.com>" or a bare email.'}
+                    description="Only used for the calendar invitations. Access is granted by link, not by these addresses."
                     isOptional
-                    label="Invite helpers, models and crew"
+                    label="Calendar guests"
                     onChange={setInviteesRaw}
                     placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
                     rows={3}
@@ -197,22 +233,40 @@ function NewCommissionPage() {
               </div>
             </fieldset>
 
-            <div className="border-hairline mt-8 border-t pt-6">
+            <div className="border-border mt-8 border-t pt-6">
               <fieldset className="border-0 p-0">
                 <legend className="hk-eyebrow mb-4">
                   {t("form.sectionBrief")}
                 </legend>
                 <div className="flex flex-col gap-5">
-                  <TextInput
-                    isOptional
-                    label={t("form.fieldCharacter")}
-                    size="lg"
-                    onChange={(value) => {
-                      setCharacterName(value);
+                  <CharacterPicker
+                    onChange={(next) => {
+                      setCharacters(next);
+                      // Legacy summary column caps at 120 characters; the
+                      // structured list below is the real value.
+                      setCharacterName(
+                        next
+                          .map((entry) =>
+                            entry.series
+                              ? `${entry.name} — ${entry.series}`
+                              : entry.name)
+                          .join(", ")
+                          .slice(0, 120),
+                      );
                     }}
-                    placeholder={t("form.fieldCharacterPlaceholder")}
-                    value={characterName}
+                    value={characters}
                   />
+
+                  <div className="flex flex-col gap-2">
+                    <p className="hk-eyebrow">Cast</p>
+                    <p className="text-secondary text-[12px] leading-relaxed">
+                      A group shoot can have several photographers and
+                      cosplayers. People without an account can still be listed
+                      by name; invites add the ones who join.
+                    </p>
+                    <CastEditor onChange={setCast} value={cast} />
+                  </div>
+
                   <TextArea
                     isOptional
                     label={t("form.fieldNotes")}

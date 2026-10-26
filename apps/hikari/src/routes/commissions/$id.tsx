@@ -18,6 +18,7 @@ import {
   MapPin,
   Sparkle,
 } from "../../components/icons";
+import { InvitePanel } from "../../components/InvitePanel";
 import { SignInButton } from "../../components/SignInButton";
 import { StatusBadge } from "../../components/StatusBadge";
 import {
@@ -26,6 +27,7 @@ import {
   uploadCommissionPhoto,
 } from "../../lib/api";
 import { commissionAtom, commissionsAtom, sessionAtom } from "../../lib/atoms";
+import { ROLE_LABELS } from "../../lib/cast";
 import { SITE } from "../../lib/config";
 import { formatShootDate, formatTimestamp } from "../../lib/format";
 import {
@@ -212,7 +214,14 @@ function CommissionDetailBody({ commission }: { commission: CommissionDetail }) 
           <div className="text-ink-soft mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[12.5px]">
             <span className="flex items-center gap-1.5">
               <Sparkle className="text-ink-faint" size={14} />
-              {commission.characterName || t("detail.characterTbd")}
+              {commission.characters.length > 0
+                ? commission.characters
+                  .map((character) =>
+                    character.series
+                      ? `${character.name} (${character.series})`
+                      : character.name)
+                  .join(", ")
+                : commission.characterName || t("detail.characterTbd")}
             </span>
             <span className="flex items-center gap-1.5">
               <CalendarIcon className="text-ink-faint" size={14} />
@@ -462,6 +471,91 @@ function CommissionDetailBody({ commission }: { commission: CommissionDetail }) 
           ) : null}
 
           <Card padding={6}>
+            <p className="hk-eyebrow">Cast</p>
+            {commission.cast.length > 0 ? (
+              <ul className="mt-3 flex flex-col gap-2.5">
+                {(["photographer", "cosplayer", "assistant"] as const).map(
+                  (role) => {
+                    const people = commission.cast.filter(
+                      (member) => member.role === role,
+                    );
+                    if (people.length === 0) return null;
+                    return (
+                      <li key={role}>
+                        <p className="text-secondary/70 text-[10px] tracking-[0.08em] uppercase">
+                          {ROLE_LABELS[role]}
+                          {people.length > 1 ? ` · ${String(people.length)}` : ""}
+                        </p>
+                        <ul className="mt-1 flex flex-col gap-1">
+                          {people.map((member) => (
+                            <li
+                              className="text-primary text-[12.5px]"
+                              key={String(member.id)}
+                            >
+                              {member.name}
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                    );
+                  },
+                )}
+              </ul>
+            ) : (
+              <p className="text-secondary/70 mt-3 text-[11px]">
+                Nobody on the call sheet yet.
+              </p>
+            )}
+            {commission.attendees.length > 0 ? (
+              <>
+                <p className="hk-eyebrow mt-4">Joined by link</p>
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {commission.attendees.map((attendee) => (
+                    <li
+                      className="text-secondary flex items-center gap-2 text-[11.5px]"
+                      key={String(attendee.id)}
+                    >
+                      <span className="bg-accent inline-block size-1.5 rounded-full" />
+                      {attendee.name}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+            {invitees.length > 0 ? (
+              <>
+                <p className="hk-eyebrow mt-4">Calendar guests</p>
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {invitees.map((invitee) => (
+                    <li
+                      className="text-secondary flex items-center gap-2 text-[11.5px]"
+                      key={invitee.email}
+                    >
+                      <span className="bg-secondary/30 inline-block size-1.5 rounded-full" />
+                      {invitee.name ? `${invitee.name} · ` : ""}
+                      {invitee.email}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </Card>
+
+          <Card padding={6}>
+            <p className="hk-eyebrow">Invitation links</p>
+            <div className="mt-3">
+              <InvitePanel
+                commissionId={commission.id}
+                invites={commission.invites}
+                onChanged={() => {
+                  refreshCommission();
+                }}
+                shareToken={commission.shareToken}
+              />
+            </div>
+          </Card>
+
+          <Card padding={6}>
             <p className="hk-eyebrow">Share with the shoot</p>
             <p className="text-ink-soft mt-2 text-[12px] leading-snug">
               A private recap with the date, place, crew and every preview as
@@ -494,41 +588,6 @@ function CommissionDetailBody({ commission }: { commission: CommissionDetail }) 
                 />
               </div>
             </div>
-            {invitees.length > 0 ? (
-              <ul className="mt-4 flex flex-col gap-1.5">
-                {invitees.map((invitee) => (
-                  <li
-                    className="text-ink-soft flex items-center gap-2 text-[11.5px]"
-                    key={invitee.email}
-                  >
-                    <span className="bg-ink-faint/20 inline-block size-1.5 rounded-full" />
-                    {invitee.name ? `${invitee.name} · ` : ""}
-                    {invitee.email}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-ink-faint mt-3 text-[11px]">
-                No helpers or models invited yet.
-              </p>
-            )}
-            {commission.attendees.length > 0 ? (
-              <>
-                <p className="hk-eyebrow mt-4">Joined via invite</p>
-                <ul className="mt-2 flex flex-col gap-1.5">
-                  {commission.attendees.map((attendee) => (
-                    <li
-                      className="text-ink-soft flex items-center gap-2 text-[11.5px]"
-                      key={String(attendee.id)}
-                    >
-                      <span className="bg-accent inline-block size-1.5 rounded-full" />
-                      {attendee.name ? `${attendee.name} · ` : ""}
-                      {attendee.email}
-                    </li>
-                  ))}
-                </ul>
-              </>
-            ) : null}
           </Card>
 
           <Card padding={6}>

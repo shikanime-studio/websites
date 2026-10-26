@@ -18,15 +18,22 @@ crew follow everything on one private link. Inspired by
 
 ## What it does
 
-- **Request** (`/commissions/new`, client): title, character, date/time with
-  timezone, a place picked from autocomplete (Google Places when
-  `GOOGLE_MAPS_API_KEY` is set, OpenStreetMap otherwise — free text is
-  rejected so the map and calendar are always real), invitees as
-  `Name <email>` lines.
+- **Request** (`/commissions/new`, client): title, one or more characters
+  (name + series), date/time with a timezone detected from the device, a
+  place picked from autocomplete (Google Places when `GOOGLE_MAPS_API_KEY`
+  is set, OpenStreetMap otherwise — free text is rejected so the map and
+  calendar are always real), a cast of photographers, cosplayers and
+  assistants for group shoots, and calendar guests as `Name <email>`
+  lines.
 - **Run** (`/commissions/$id`, photographer): accept, advance status,
   upload photos to R2, copy the share link, and hand over the Google
   Calendar link and `.ics` carrying guests and the address. The client
-  sees the same page read-only.
+  sees the same page read-only; cast members see it read-only too.
+- **Cast and invites** (`/commissions/$id`): the call sheet groups people
+  by role. "Invitation links" mints a per-role URL
+  (`/s/<share>?invite=<token>`, optional expiry, revocable) instead of
+  looking accounts up by username; accepting adds the signed-in person to
+  the cast and the shoot then shows up on their board.
 - **Share** (`/s/<token>`): public recap, no session required — the
   token is the capability. Date and time in the commission timezone,
   place with a map link, crew, an honest progress timeline (Booked →
@@ -94,7 +101,11 @@ redirect for client `hikari`, and `ACCOUNTS_CLIENT_SECRET` in
 `commissions` (title, description, status, photographer/client ids,
 character, shooting date + timezone, validated location name/query/
 lat/lng, unique `share_token`, `invitees` JSON) and
-`commission_photos` (object key, content type, size). Migrations in
+`commission_photos` (object key, content type, size).
+`series` + `characters` are a global catalog upserted from the form;
+`commission_characters` is what a shoot photographs; `commission_cast`
+holds the call sheet (role, optional user, free-text name) and
+`commission_invites` the revocable per-role links. Migrations in
 `migrations/`; generate new ones with drizzle-kit.
 
 ## Design system

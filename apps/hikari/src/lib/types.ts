@@ -1,6 +1,6 @@
-import type { CommissionStatus, Locale } from "../schema";
+import type { CommissionRole, CommissionStatus, Locale } from "../schema";
 
-export type { CommissionStatus, Locale };
+export type { CommissionRole, CommissionStatus, Locale };
 
 export interface NotificationItem {
   id: number;
@@ -44,9 +44,36 @@ export interface PhotoListItem {
   createdAt: Date;
 }
 
+export interface CharacterRef {
+  id: number;
+  name: string;
+  series: string | null;
+}
+
+export interface CastMember {
+  id: number;
+  role: CommissionRole;
+  name: string;
+}
+
+export interface InviteLink {
+  id: number;
+  commissionId: number;
+  token: string;
+  role: CommissionRole;
+  label: string;
+  expiresAt: Date | null;
+  revokedAt: Date | null;
+  createdBy: string;
+  createdAt: Date;
+}
+
 export interface CommissionDetail extends Commission {
   photos: Array<PhotoListItem>;
   attendees: Array<{ id: number; name: string; email: string }>;
+  characters: Array<CharacterRef>;
+  cast: Array<CastMember>;
+  invites: Array<InviteLink>;
 }
 
 export interface PublicProfile {

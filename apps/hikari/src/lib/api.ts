@@ -8,12 +8,16 @@ import { Data, Effect } from "effect";
 import {
   changeCommissionStatusFn,
   createCommissionFn,
+  createInviteFn,
   getCommission,
   getSessionFn,
   getUserPreferences,
+  joinByInviteFn,
   listCommissions,
   listNotifications,
   markNotificationReadFn,
+  revokeInviteFn,
+  searchCharactersFn,
   setUserPreferences,
 } from "./server";
 
@@ -72,8 +76,11 @@ export const uploadCommissionPhoto = (id: number, file: File) => {
 export interface CreateCommissionInput {
   title: string;
   description: string;
-  photographerEmail: string;
+  /** Optional: without it the creator leads the shoot until an invite lands. */
+  photographerEmail?: string;
   characterName: string;
+  characters: Array<{ name: string; series: string }>;
+  cast: Array<{ role: "photographer" | "cosplayer" | "assistant"; name: string }>;
   shootingDate?: string | undefined;
   locationName: string;
   locationQuery: string;
@@ -85,6 +92,22 @@ export interface CreateCommissionInput {
 
 export const createCommission = (input: CreateCommissionInput) =>
   fromServerFn(() => createCommissionFn({ data: input }));
+
+export const searchCharacters = (query: string) =>
+  fromServerFn(() => searchCharactersFn({ data: query }));
+
+export const createInvite = (input: {
+  commissionId: number;
+  role: "photographer" | "cosplayer" | "assistant";
+  label?: string;
+  days?: number;
+}) => fromServerFn(() => createInviteFn({ data: input }));
+
+export const revokeInvite = (commissionId: number, inviteId: number) =>
+  fromServerFn(() => revokeInviteFn({ data: { commissionId, inviteId } }));
+
+export const joinByInvite = (shareToken: string, inviteToken: string) =>
+  fromServerFn(() => joinByInviteFn({ data: { shareToken, inviteToken } }));
 
 export const markNotificationRead = (id: number) =>
   fromServerFn(() => markNotificationReadFn({ data: id }));
