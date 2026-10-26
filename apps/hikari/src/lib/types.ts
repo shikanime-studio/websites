@@ -46,4 +46,5 @@ export interface PhotoListItem {
 
 export interface CommissionDetail extends Commission {
   photos: Array<PhotoListItem>;
+  attendees: Array<{ id: number; name: string; email: string }>;
 }

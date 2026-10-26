@@ -1,6 +1,9 @@
 import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
+import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { isFailure, isInitial } from "effect/reactivity/AsyncResult";
+import { useState } from "react";
 import {
   CalendarIcon,
   Camera,
@@ -10,8 +13,10 @@ import {
   MapPin,
   Users,
 } from "../../components/icons";
+import { sessionAtom } from "../../lib/atoms";
+import { authClient } from "../../lib/auth-client";
 import { SITE } from "../../lib/config";
-import { getSharedCommission } from "../../lib/server";
+import { getSharedCommission, joinSharedCommission } from "../../lib/server";
 import {
   formatShootingDate,
   progressStages,
@@ -205,19 +210,34 @@ function SharedShootPage() {
                 label={`${recap.photographerName} · photographer`}
               />
               <PersonRow email="" label={`${recap.clientName} · client`} />
-              {invitees.map((invitee) => (
+              {recap.attendees.map((attendee) => (
                 <PersonRow
-                  email={invitee.email}
-                  key={invitee.email}
-                  label={invitee.name || invitee.email}
+                  email={attendee.email}
+                  key={String(attendee.id)}
+                  label={`${attendee.name} · joined`}
                 />
               ))}
+              {invitees
+                .filter(
+                  (invitee) =>
+                    !recap.attendees.some(
+                      (attendee) => attendee.email === invitee.email,
+                    ),
+                )
+                .map((invitee) => (
+                  <PersonRow
+                    email={invitee.email}
+                    key={invitee.email}
+                    label={invitee.name || invitee.email}
+                  />
+                ))}
             </ul>
-            {invitees.length === 0 ? (
+            {invitees.length === 0 && recap.attendees.length === 0 ? (
               <p className="text-ink-faint mt-3 flex items-center gap-1.5 text-[11.5px]">
                 <Users size={13} /> No helpers or models invited yet.
               </p>
             ) : null}
+            <JoinControls recap={recap} />
           </Card>
         </div>
       </div>
@@ -304,5 +324,74 @@ function StatusPill({ status }: { status: string }) {
     <span className="hk-eyebrow rounded-full border border-[var(--hk-hairline,#e7e0d6)] px-3 py-1.5 text-[10px]">
       {label}
     </span>
+  );
+}
+
+function JoinControls({
+  recap,
+}: {
+  recap: Awaited<ReturnType<typeof getSharedCommission>> & {};
+}) {
+  const session = useAtomValue(sessionAtom);
+  const user = isInitial(session) || isFailure(session) ? null : session.value;
+  const joined = user
+    ? recap.attendees.some((attendee) => attendee.email === user.email)
+    : false;
+  const [joining, setJoining] = useState(false);
+  const [failed, setFailed] = useState(false);
+
+  if (joined) {
+    return (
+      <p className="text-ink-soft mt-4 flex items-center gap-1.5 text-[12px]">
+        <Check size={13} /> You are on the crew list.
+      </p>
+    );
+  }
+  if (!user) {
+    return (
+      <div className="mt-4 flex flex-col gap-2">
+        <p className="text-ink-soft text-[12px]">
+          Invited to this shoot? Sign in to join the crew list.
+        </p>
+        <Button
+          clickAction={() => {
+            void authClient.signIn.social({
+              provider: "accounts",
+              callbackURL: `/s/${recap.shareToken}`,
+            });
+          }}
+          label="Sign in to join"
+          size="sm"
+          variant="secondary"
+        />
+      </div>
+    );
+  }
+  return (
+    <div className="mt-4 flex flex-col gap-2">
+      <Button
+        isDisabled={joining}
+        label={joining ? "Joining…" : failed ? "Try again" : "Join the shoot"}
+        onClick={() => {
+          setJoining(true);
+          setFailed(false);
+          joinSharedCommission({ data: recap.shareToken })
+            .then(() => {
+              window.location.reload();
+            })
+            .catch(() => {
+              setJoining(false);
+              setFailed(true);
+            });
+        }}
+        size="sm"
+        variant="primary"
+      />
+      {failed ? (
+        <p className="text-ink-faint text-[11px]">
+          Could not join. Try again in a moment.
+        </p>
+      ) : null}
+    </div>
   );
 }
