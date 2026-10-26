@@ -196,6 +196,29 @@ export const userPreferences = sqliteTable(
   },
 );
 
+export const photographerProfiles = sqliteTable(
+  "photographer_profiles",
+  {
+    userId: text("user_id")
+      .notNull()
+      .primaryKey()
+      .references(() => users.id),
+    slug: text("slug").notNull(),
+    headline: text("headline").notNull().default(""),
+    bio: text("bio").notNull().default(""),
+    location: text("location").notNull().default(""),
+    instagram: text("instagram").notNull().default(""),
+    links: text("links").notNull().default("[]"),
+    acceptRequests: integer("accept_requests", { mode: "boolean" })
+      .notNull()
+      .default(true),
+    updatedAt: integer("updated_at", { mode: "timestamp" })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [uniqueIndex("photographer_profiles_slug_idx").on(t.slug)],
+);
+
 export interface Schema extends Record<string, unknown> {
   users: typeof users;
   sessions: typeof sessions;
@@ -208,4 +231,5 @@ export interface Schema extends Record<string, unknown> {
   notifications: typeof notifications;
   rateLimits: typeof rateLimits;
   userPreferences: typeof userPreferences;
+  photographerProfiles: typeof photographerProfiles;
 }

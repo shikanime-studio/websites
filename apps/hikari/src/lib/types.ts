@@ -48,3 +48,32 @@ export interface CommissionDetail extends Commission {
   photos: Array<PhotoListItem>;
   attendees: Array<{ id: number; name: string; email: string }>;
 }
+
+export interface PublicProfile {
+  name: string;
+  image: string | null;
+  slug: string;
+  headline: string;
+  bio: string;
+  location: string;
+  instagram: string;
+  links: Array<{ label: string; url: string }>;
+  acceptRequests: boolean;
+  plans: Array<{
+    id: number;
+    title: string;
+    characterName: string;
+    shootingDate: string | null;
+    timezone: string;
+    locationName: string;
+    status: string;
+  }>;
+  past: Array<{
+    id: number;
+    title: string;
+    characterName: string;
+    shootingDate: string | null;
+    locationName: string;
+    photoCount: number;
+  }>;
+}

@@ -9,7 +9,6 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect } from "react";
 import appCss from "../assets/global.css?url";
 import { Alert, HikariMark } from "../components/icons";
 import { Navbar } from "../components/Navbar";
@@ -118,19 +117,9 @@ function RootComponent() {
   );
 }
 
-function RootDocument({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
-    if (!("serviceWorker" in navigator)) return;
-    const register = () => {
-      void navigator.serviceWorker.register("/sw.js").catch(() => {});
-    };
-    if (document.readyState === "complete") {
-      register();
-    } else {
-      window.addEventListener("load", register, { once: true });
-    }
-  }, []);
+const SW_REGISTER = `if("serviceWorker" in navigator){addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js").catch(()=>{})})}`;
 
+function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html data-astryx-theme="neutral" lang="en">
       <head>
@@ -139,6 +128,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <script dangerouslySetInnerHTML={{ __html: SW_REGISTER }} />
       </body>
     </html>
   );
