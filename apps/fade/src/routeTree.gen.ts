@@ -10,33 +10,89 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ApiStudioCallbackRouteImport } from './routes/api/studio/callback'
+import { Route as ApiStudioLoginRouteImport } from './routes/api/studio/login'
+import { Route as ApiStudioLogoutRouteImport } from './routes/api/studio/logout'
+import { Route as ApiStudioSessionRouteImport } from './routes/api/studio/session'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiStudioCallbackRoute = ApiStudioCallbackRouteImport.update({
+  id: '/api/studio/callback',
+  path: '/api/studio/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStudioLoginRoute = ApiStudioLoginRouteImport.update({
+  id: '/api/studio/login',
+  path: '/api/studio/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStudioLogoutRoute = ApiStudioLogoutRouteImport.update({
+  id: '/api/studio/logout',
+  path: '/api/studio/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiStudioSessionRoute = ApiStudioSessionRouteImport.update({
+  id: '/api/studio/session',
+  path: '/api/studio/session',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/api/studio/callback': typeof ApiStudioCallbackRoute
+  '/api/studio/login': typeof ApiStudioLoginRoute
+  '/api/studio/logout': typeof ApiStudioLogoutRoute
+  '/api/studio/session': typeof ApiStudioSessionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/api/studio/callback': typeof ApiStudioCallbackRoute
+  '/api/studio/login': typeof ApiStudioLoginRoute
+  '/api/studio/logout': typeof ApiStudioLogoutRoute
+  '/api/studio/session': typeof ApiStudioSessionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/api/studio/callback': typeof ApiStudioCallbackRoute
+  '/api/studio/login': typeof ApiStudioLoginRoute
+  '/api/studio/logout': typeof ApiStudioLogoutRoute
+  '/api/studio/session': typeof ApiStudioSessionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/api/studio/callback'
+    | '/api/studio/login'
+    | '/api/studio/logout'
+    | '/api/studio/session'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/api/studio/callback'
+    | '/api/studio/login'
+    | '/api/studio/logout'
+    | '/api/studio/session'
+  id:
+    | '__root__'
+    | '/'
+    | '/api/studio/callback'
+    | '/api/studio/login'
+    | '/api/studio/logout'
+    | '/api/studio/session'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ApiStudioCallbackRoute: typeof ApiStudioCallbackRoute
+  ApiStudioLoginRoute: typeof ApiStudioLoginRoute
+  ApiStudioLogoutRoute: typeof ApiStudioLogoutRoute
+  ApiStudioSessionRoute: typeof ApiStudioSessionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +104,43 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/studio/callback': {
+      id: '/api/studio/callback'
+      path: '/api/studio/callback'
+      fullPath: '/api/studio/callback'
+      preLoaderRoute: typeof ApiStudioCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/studio/login': {
+      id: '/api/studio/login'
+      path: '/api/studio/login'
+      fullPath: '/api/studio/login'
+      preLoaderRoute: typeof ApiStudioLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/studio/logout': {
+      id: '/api/studio/logout'
+      path: '/api/studio/logout'
+      fullPath: '/api/studio/logout'
+      preLoaderRoute: typeof ApiStudioLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/studio/session': {
+      id: '/api/studio/session'
+      path: '/api/studio/session'
+      fullPath: '/api/studio/session'
+      preLoaderRoute: typeof ApiStudioSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ApiStudioCallbackRoute: ApiStudioCallbackRoute,
+  ApiStudioLoginRoute: ApiStudioLoginRoute,
+  ApiStudioLogoutRoute: ApiStudioLogoutRoute,
+  ApiStudioSessionRoute: ApiStudioSessionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

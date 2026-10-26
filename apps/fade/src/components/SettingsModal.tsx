@@ -1,4 +1,5 @@
 import {
+  Avatar,
   Button,
   Dialog,
   DialogHeader,
@@ -9,9 +10,17 @@ import {
   SegmentedControlItem,
   Text,
 } from "@astryxdesign/core";
+import { useAtomValue } from "@effect/atom-react";
 import { ClientOnly } from "@tanstack/react-router";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { getOrElse } from "effect/reactivity/AsyncResult";
+import { LogIn, LogOut, Monitor, Moon, Sun } from "lucide-react";
 import { useTheme } from "../hooks/useTheme";
+import {
+  signInWithStudio,
+  signOutOfStudio,
+  studioInitials,
+  studioSessionAtom,
+} from "../lib/studio";
 
 interface SettingsModalProps {
   open: boolean;
@@ -28,6 +37,7 @@ export function SettingsModal(props: SettingsModalProps) {
 
 function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
   const { theme, setTheme } = useTheme();
+  const studioUser = getOrElse(useAtomValue(studioSessionAtom), () => null);
 
   return (
     <Dialog isOpen={isOpen} onOpenChange={(open) => (open ? null : onClose())}>
@@ -92,6 +102,60 @@ function SettingsModalContent({ open: isOpen, onClose }: SettingsModalProps) {
                 )}
               </div>
             </div>
+            <Text
+              type="label"
+              className="text-secondary border-border mt-6 mb-3 border-b pb-2 uppercase opacity-70"
+            >
+              Studio account
+            </Text>
+
+            {studioUser
+              ? (
+                <div className="mb-2 flex items-center justify-between gap-4">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <Avatar
+                      name={studioInitials(studioUser)}
+                      size="md"
+                      src={studioUser.image ?? ""}
+                    />
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate font-medium">
+                        {studioUser.name}
+                      </span>
+                      <span className="text-secondary truncate text-xs opacity-80">
+                        {studioUser.email}
+                      </span>
+                    </div>
+                  </div>
+                  <Button
+                    icon={<LogOut className="h-4 w-4" />}
+                    label="Sign out"
+                    onClick={() => {
+                      void signOutOfStudio();
+                    }}
+                    size="sm"
+                    variant="ghost"
+                  />
+                </div>
+              )
+              : (
+                <div className="mb-2 flex items-center justify-between gap-4">
+                  <div>
+                    <span className="font-medium">Not signed in</span>
+                    <p className="text-secondary mt-0.5 text-xs opacity-80">
+                      Sign in with your Shikanime Studio account. Fade never
+                      uploads your photos.
+                    </p>
+                  </div>
+                  <Button
+                    icon={<LogIn className="h-4 w-4" />}
+                    label="Sign in"
+                    onClick={signInWithStudio}
+                    size="sm"
+                    variant="secondary"
+                  />
+                </div>
+              )}
           </LayoutContent>
         }
         footer={

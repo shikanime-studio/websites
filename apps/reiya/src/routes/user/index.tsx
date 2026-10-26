@@ -1,7 +1,15 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { Avatar } from "@astryxdesign/core/Avatar";
+import { Button } from "@astryxdesign/core/Button";
+import { Card } from "@astryxdesign/core/Card";
+import { useToast } from "@astryxdesign/core/Toast";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
+import { SquareArrowOutUpRight } from "lucide-react";
+import { PageShell } from "../../components/PageShell";
 import { createAuth } from "../../lib/auth";
+import { authClient } from "../../lib/auth-client";
+import { ACCOUNTS_SITE } from "../../lib/config";
 import { createD1Database } from "../../lib/db";
 
 interface SessionUser {
@@ -36,79 +44,91 @@ export const Route = createFileRoute("/user/")({
 
 function UserPage() {
   const user = Route.useLoaderData();
+  const toast = useToast();
+
+  const signOut = () => {
+    authClient
+      .signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            window.location.href = "/";
+          },
+        },
+      })
+      .catch(() => {
+        toast({ body: "Failed to sign out", type: "error" });
+      });
+  };
 
   return (
-    <div className="flex flex-col gap-4">
-      <h1 className="text-secondary text-3xl font-bold">User Settings</h1>
+    <PageShell className="max-w-2xl">
+      <div className="flex flex-col gap-1">
+        <h1 className="font-display text-secondary text-2xl font-semibold tracking-tight">
+          Your account
+        </h1>
+        <p className="text-secondary/70 text-sm">
+          Reiya reads your identity from the Shikanime Studio Accounts Center.
+        </p>
+      </div>
 
-      {user ? (
-        <div className="bg-card border-border bg-body max-w-2xl rounded-lg border shadow-xl">
-          <div className="flex flex-col gap-4 p-6">
+      {user
+        ? (
+          <Card className="flex flex-col gap-6">
             <div className="flex items-center gap-4">
-              <div className="overflow-hidden rounded-full">
-                <div className="w-24 rounded-full">
-                  <img
-                    src={
-                      user.image ||
-                      `https://ui-avatars.com/api/?name=${user.name}`
-                    }
-                    alt={user.name}
-                    width={96}
-                    height={96}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </div>
-              <div>
-                <h2 className="text-secondary text-2xl font-bold">
+              <Avatar
+                name={user.name}
+                size="lg"
+                src={user.image ?? ""}
+              />
+              <div className="flex min-w-0 flex-col">
+                <span className="text-secondary truncate text-lg font-semibold">
                   {user.name}
-                </h2>
-                <p className="text-secondary/70">{user.email}</p>
+                </span>
+                <span className="text-secondary/70 truncate text-sm">
+                  {user.email}
+                </span>
               </div>
             </div>
 
-            <div className="border-border border-t" />
+            <div className="border-border flex flex-col gap-3 border-t pt-5">
+              <Button
+                href={`${ACCOUNTS_SITE}/settings/profile`}
+                icon={<SquareArrowOutUpRight className="size-4" />}
+                label="Manage profile and security"
+                variant="secondary"
+              />
+              <Button
+                label="Sign out of Reiya"
+                onClick={signOut}
+                variant="ghost"
+              />
+              <p className="text-secondary/60 text-xs">
+                Signing out here ends the Reiya session only. Your Accounts
+                Center session stays alive for the other studio apps.
+              </p>
+            </div>
+          </Card>
+        )
+        : (
+          <Card className="flex flex-col items-start gap-4">
+            <p className="text-secondary text-sm">
+              You are not signed in. Sign in with your studio account to follow
+              artists and keep your lists in sync.
+            </p>
+            <Button
+              href="/"
+              label="Back to the gallery"
+              variant="secondary"
+            />
+          </Card>
+        )}
 
-            <div className="flex w-full flex-col gap-2">
-              <label
-                className="text-secondary text-sm font-medium"
-                htmlFor="user-name"
-              >
-                Name
-              </label>
-              <input
-                id="user-name"
-                type="text"
-                value={user.name}
-                className="border-border bg-surface w-full rounded-md border px-3 py-2"
-                disabled
-              />
-            </div>
-            <div className="flex w-full flex-col gap-2">
-              <label
-                className="text-secondary text-sm font-medium"
-                htmlFor="user-email"
-              >
-                Email
-              </label>
-              <input
-                id="user-email"
-                type="text"
-                value={user.email}
-                className="border-border bg-surface w-full rounded-md border px-3 py-2"
-                disabled
-              />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div
-          role="alert"
-          className="border-warning bg-warning-muted text-on-warning rounded-md border px-4 py-3"
-        >
-          <span>You need to be logged in to view this page.</span>
-        </div>
-      )}
-    </div>
+      <Link
+        className="text-secondary/60 hover:text-secondary text-xs transition-colors"
+        to="/privacy-notices"
+      >
+        How Reiya handles your data
+      </Link>
+    </PageShell>
   );
 }

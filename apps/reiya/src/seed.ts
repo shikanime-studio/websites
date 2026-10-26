@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import process from "node:process";
 import { faker } from "@faker-js/faker";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -334,6 +335,9 @@ async function main() {
   const tempDir = os.tmpdir();
   const seedFile = path.join(tempDir, `seed-${Date.now()}.sql`);
   fs.writeFileSync(seedFile, outputSql);
+  // `pnpm db:seed` captures stdout to find the file it must execute, so this
+  // one line *is* the program's output.
+  process.stdout.write(`${seedFile}\n`);
 }
 
 main().catch(console.error);

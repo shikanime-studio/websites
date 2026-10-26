@@ -15,17 +15,17 @@ async function setRangeValue(locator: Locator, value: number) {
   // nearest whole-step value with Arrow presses (step 0.01/0.05).
   await locator.press("Home");
   for (let i = 0; i < 200 && i < 100; i += 1) {
-    // eslint-disable-next-line no-await-in-loop
+     
     const now = Number(await locator.getAttribute("aria-valuenow"));
     if (Math.abs(now - value) < 1e-9) break;
-    // eslint-disable-next-line no-await-in-loop
+     
     if (now < value) {
-      // eslint-disable-next-line no-await-in-loop
+       
       await locator.press(
         value - now >= 0.5 ? "PageUp" : "ArrowRight",
       );
     } else {
-      // eslint-disable-next-line no-await-in-loop
+       
       await locator.press(
         now - value >= 0.5 ? "PageDown" : "ArrowLeft",
       );

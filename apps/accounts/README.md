@@ -85,6 +85,20 @@ node scripts/register-client.mjs --id hikari --name Hikari \
   --out ~/.config/shikanime/hikari-accounts-client.json --remote
 ```
 
+`--redirect` replaces the whole URI set: pass every origin the app serves.
+
+The studio apps and the OAuth clients they own:
+
+| App    | Client id | Callback                      | Notes                                   |
+| ------ | --------- | ----------------------------- | --------------------------------------- |
+| Hikari | `hikari`  | `/api/auth/callback/accounts` | better-auth generic OAuth               |
+| Reiya  | `reiya`   | `/api/auth/callback/accounts` | Accounts only — no Google, no passwords |
+| Fade   | `fade`    | `/api/studio/callback`        | Confidential client, PKCE, no database  |
+
+Fade has no D1 database: its callback exchanges the code, reads
+`oauth2/userinfo`, and keeps a signed cookie. The Worker secrets are
+`ACCOUNTS_CLIENT_SECRET` and `STUDIO_SESSION_SECRET`.
+
 ## Data model (D1)
 
 better-auth tables (`user`, `session`, `account`, `verification`) plus

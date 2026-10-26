@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createD1Database } from "../../lib/db";
-import { getRecentItems } from "../../lib/items";
+import { getRecentItems, normalizeImages } from "../../lib/items";
 
 export const Route = createFileRoute("/api/showcases")({
   server: {
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/showcases")({
         const showcases = items.map((item) => ({
           id: item.id,
           title: item.name,
-          images: item.imageUrls,
+          images: normalizeImages(item.imageUrls),
           artist: {
             name: item.maker?.name ?? "Unknown Artist",
             avatar: item.maker?.avatarImageUrl
@@ -35,6 +35,7 @@ export const Route = createFileRoute("/api/showcases")({
             ? "OPEN"
             : "CLOSED") as "OPEN" | "CLOSED" | "WAITLIST",
           price: item.priceRange ?? undefined,
+          href: `/items/${String(item.id)}`,
         }));
 
         return Response.json(showcases);

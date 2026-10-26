@@ -46,7 +46,6 @@
     "lucide-react": "catalog:runtime",
     "react": "catalog:runtime",
     "react-dom": "catalog:runtime",
-    "simple-icons": "catalog:runtime",
     "tailwindcss": "catalog:runtime",
     "usehooks-ts": "catalog:runtime",
     "zod": "catalog:runtime"
