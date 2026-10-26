@@ -44,7 +44,7 @@ merch drops, with a following feed for signed-in visitors.
 
 ```sh
 pnpm install            # repo root
-pnpm dev -- --port 3103 # accounts dev must be on 3101
+pnpm dev -- --port 3103 # matches the dev origin baked into config.ts
 pnpm check              # tsc --noEmit
 pnpm lint               # eslint
 pnpm test               # unit (Vitest)

@@ -3,7 +3,7 @@
 export const SITE
   = import.meta.env.VITE_SITE
     ?? (import.meta.env.DEV
-      ? "http://localhost:5173"
+      ? "http://localhost:3103"
       : "https://reiya.shikanime.studio");
 
 export const ACCOUNTS_SITE
