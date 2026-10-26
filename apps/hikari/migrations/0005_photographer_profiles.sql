@@ -11,4 +11,5 @@ CREATE TABLE `photographer_profiles` (
   FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
 );
 --> statement-breakpoint
-CREATE UNIQUE INDEX `photographer_profiles_slug_idx` ON `photographer_profiles` (`slug`);
+CREATE UNIQUE INDEX `photographer_profiles_slug_idx`
+  ON `photographer_profiles` (`slug`);
