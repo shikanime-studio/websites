@@ -4,6 +4,7 @@ import { Card } from "@astryxdesign/core/Card";
 import { useTranslator } from "@astryxdesign/core/i18n";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
+import { useNavigate } from "@tanstack/react-router";
 import { Effect } from "effect";
 import { getOrElse } from "effect/reactivity/AsyncResult";
 import { useEffect, useRef, useState } from "react";
@@ -13,6 +14,7 @@ import { Bell, Check } from "./icons";
 
 export function NotificationsBell() {
   const t = useTranslator();
+  const navigate = useNavigate();
   const refreshNotifications = useAtomRefresh(notificationsAtom);
 
   const [open, setOpen] = useState(false);
@@ -60,6 +62,7 @@ export function NotificationsBell() {
       <div className="relative">
         <IconButton
           aria-expanded={open}
+          aria-label={t("nav.notifications")}
           icon={<Bell />}
           label={t("nav.notifications")}
           onClick={() => {
@@ -122,6 +125,12 @@ export function NotificationsBell() {
                       onClick={() => {
                         markRead(item.id);
                         setOpen(false);
+                        if (item.relatedId !== null) {
+                          void navigate({
+                            to: "/commissions/$id",
+                            params: { id: String(item.relatedId) },
+                          });
+                        }
                       }}
                       type="button"
                     >

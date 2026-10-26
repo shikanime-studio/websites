@@ -4,7 +4,7 @@
 export const SITE
   = import.meta.env.VITE_SITE
     ?? (import.meta.env.DEV
-      ? "http://localhost:5173"
+      ? "http://localhost:3101"
       : "https://accounts.shikanime.studio");
 
 export const GOOGLE_CLIENT_ID
