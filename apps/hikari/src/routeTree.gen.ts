@@ -22,6 +22,7 @@ import { Route as ApiCommissionsIdRouteImport } from './routes/api/commissions/$
 import { Route as ApiCommissionsIdPhotosRouteImport } from './routes/api/commissions/$id/photos'
 import { Route as ApiNotificationsIdReadRouteImport } from './routes/api/notifications/$id/read'
 import { Route as ApiShareTokenCalendarRouteImport } from './routes/api/share/$token/calendar'
+import { Route as ApiShareTokenLocationRouteImport } from './routes/api/share/$token/location'
 import { Route as ApiShareTokenPhotosRouteImport } from './routes/api/share/$token/photos'
 import { Route as ApiCommissionsIdPhotosPhotoIdRouteImport } from './routes/api/commissions/$id/photos/$photoId'
 import { Route as ApiShareTokenPhotosPhotoIdRouteImport } from './routes/api/share/$token/photos/$photoId'
@@ -91,6 +92,11 @@ const ApiShareTokenCalendarRoute = ApiShareTokenCalendarRouteImport.update({
   path: '/api/share/$token/calendar',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiShareTokenLocationRoute = ApiShareTokenLocationRouteImport.update({
+  id: '/api/share/$token/location',
+  path: '/api/share/$token/location',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiShareTokenPhotosRoute = ApiShareTokenPhotosRouteImport.update({
   id: '/api/share/$token/photos',
   path: '/api/share/$token/photos',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
   '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/location': typeof ApiShareTokenLocationRoute
   '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
   '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
   '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/location': typeof ApiShareTokenLocationRoute
   '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
   '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/api/commissions/$id/photos': typeof ApiCommissionsIdPhotosRouteWithChildren
   '/api/notifications/$id/read': typeof ApiNotificationsIdReadRoute
   '/api/share/$token/calendar': typeof ApiShareTokenCalendarRoute
+  '/api/share/$token/location': typeof ApiShareTokenLocationRoute
   '/api/share/$token/photos': typeof ApiShareTokenPhotosRouteWithChildren
   '/api/commissions/$id/photos/$photoId': typeof ApiCommissionsIdPhotosPhotoIdRoute
   '/api/share/$token/photos/$photoId': typeof ApiShareTokenPhotosPhotoIdRoute
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
     | '/api/share/$token/calendar'
+    | '/api/share/$token/location'
     | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
     | '/api/share/$token/photos/$photoId'
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
     | '/api/share/$token/calendar'
+    | '/api/share/$token/location'
     | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
     | '/api/share/$token/photos/$photoId'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/api/commissions/$id/photos'
     | '/api/notifications/$id/read'
     | '/api/share/$token/calendar'
+    | '/api/share/$token/location'
     | '/api/share/$token/photos'
     | '/api/commissions/$id/photos/$photoId'
     | '/api/share/$token/photos/$photoId'
@@ -232,6 +244,7 @@ export interface RootRouteChildren {
   STokenRoute: typeof STokenRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
   ApiShareTokenCalendarRoute: typeof ApiShareTokenCalendarRoute
+  ApiShareTokenLocationRoute: typeof ApiShareTokenLocationRoute
   ApiShareTokenPhotosRoute: typeof ApiShareTokenPhotosRouteWithChildren
 }
 
@@ -328,6 +341,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiShareTokenCalendarRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/share/$token/location': {
+      id: '/api/share/$token/location'
+      path: '/api/share/$token/location'
+      fullPath: '/api/share/$token/location'
+      preLoaderRoute: typeof ApiShareTokenLocationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/share/$token/photos': {
       id: '/api/share/$token/photos'
       path: '/api/share/$token/photos'
@@ -422,6 +442,7 @@ const rootRouteChildren: RootRouteChildren = {
   STokenRoute: STokenRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
   ApiShareTokenCalendarRoute: ApiShareTokenCalendarRoute,
+  ApiShareTokenLocationRoute: ApiShareTokenLocationRoute,
   ApiShareTokenPhotosRoute: ApiShareTokenPhotosRouteWithChildren,
 }
 export const routeTree = rootRouteImport

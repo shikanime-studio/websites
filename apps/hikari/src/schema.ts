@@ -119,6 +119,28 @@ export const commissionAttendees = sqliteTable(
   ],
 );
 
+export const commissionLocations = sqliteTable(
+  "commission_locations",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    commissionId: integer("commission_id")
+      .notNull()
+      .references(() => commissions.id),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id),
+    lat: real("lat").notNull(),
+    lng: real("lng").notNull(),
+    accuracy: real("accuracy"),
+    createdAt: integer("created_at", { mode: "timestamp" })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    uniqueIndex("commission_locations_user_idx").on(t.commissionId, t.userId),
+  ],
+);
+
 export const commissionPhotos = sqliteTable(
   "commission_photos",
   {
@@ -181,6 +203,7 @@ export interface Schema extends Record<string, unknown> {
   verifications: typeof verifications;
   commissions: typeof commissions;
   commissionAttendees: typeof commissionAttendees;
+  commissionLocations: typeof commissionLocations;
   commissionPhotos: typeof commissionPhotos;
   notifications: typeof notifications;
   rateLimits: typeof rateLimits;

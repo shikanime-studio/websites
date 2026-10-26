@@ -3,7 +3,7 @@ import { Card } from "@astryxdesign/core/Card";
 import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { isFailure, isInitial } from "effect/reactivity/AsyncResult";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   CalendarIcon,
   Camera,
@@ -202,6 +202,8 @@ function SharedShootPage() {
             ) : null}
           </Card>
 
+          <LocationSharingCard recap={recap} />
+
           <Card padding={6}>
             <p className="hk-eyebrow">People</p>
             <ul className="mt-3 flex flex-col gap-2.5">
@@ -393,5 +395,192 @@ function JoinControls({
         </p>
       ) : null}
     </div>
+  );
+}
+
+interface SharedLocation {
+  name: string;
+  lat: number;
+  lng: number;
+  accuracy: number | null;
+  updatedAt: string;
+}
+
+function timeAgo(iso: string): string {
+  const seconds = Math.max(0, (Date.now() - new Date(iso).getTime()) / 1000);
+  if (seconds < 60) return "just now";
+  if (seconds < 3600) return `${Math.floor(seconds / 60)} min ago`;
+  return `${Math.floor(seconds / 3600)} h ago`;
+}
+
+/** On-shoot location sharing: opt-in, visible to everyone with the link. */
+function LocationSharingCard({
+  recap,
+}: {
+  recap: Awaited<ReturnType<typeof getSharedCommission>> & {};
+}) {
+  const session = useAtomValue(sessionAtom);
+  const user = isInitial(session) || isFailure(session)
+    ? null
+    : session.value;
+  const [sharing, setSharing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [locations, setLocations] = useState<SharedLocation[] | null>(null);
+  const watchRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = () => {
+      fetch(`/api/share/${recap.shareToken}/location`)
+        .then(async (response) =>
+          response.ok ? ((await response.json()) as { locations: SharedLocation[] }) : { locations: [] },
+        )
+        .then((body) => {
+          if (!cancelled) setLocations(body.locations);
+        })
+        .catch(() => {});
+    };
+    load();
+    const timer = setInterval(load, 30_000);
+    return () => {
+      cancelled = true;
+      clearInterval(timer);
+    };
+  }, [recap.shareToken]);
+
+  useEffect(
+    () => () => {
+      if (watchRef.current !== null) {
+        navigator.geolocation.clearWatch(watchRef.current);
+      }
+    },
+    [],
+  );
+
+  function start() {
+    if (!("geolocation" in navigator)) {
+      setError("This browser cannot share a location.");
+      return;
+    }
+    setError(null);
+    watchRef.current = navigator.geolocation.watchPosition(
+      (position) => {
+        void fetch(`/api/share/${recap.shareToken}/location`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+            accuracy: position.coords.accuracy,
+          }),
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error(String(response.status));
+          })
+          .catch(() => {
+            setError("Could not upload the position.");
+          });
+      },
+      () => {
+        setError("Location permission denied.");
+        setSharing(false);
+      },
+      { enableHighAccuracy: true, maximumAge: 15_000 },
+    );
+    setSharing(true);
+  }
+
+  function stop() {
+    if (watchRef.current !== null) {
+      navigator.geolocation.clearWatch(watchRef.current);
+      watchRef.current = null;
+    }
+    setSharing(false);
+    void fetch(`/api/share/${recap.shareToken}/location`, {
+      method: "DELETE",
+    });
+    setLocations(
+      (current) =>
+        current?.filter(
+          (item) => !user || item.name !== (user?.name ?? ""),
+        ) ?? [],
+    );
+  }
+
+  return (
+    <Card padding={6}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="hk-eyebrow">Location sharing</p>
+        {sharing ? (
+          <span className="text-ink-soft flex items-center gap-1.5 text-[11px]">
+            <span
+              className="size-1.5 animate-pulse rounded-full"
+              style={{ background: "var(--hk-signal, #e85f17)" }}
+            />
+            Live
+          </span>
+        ) : null}
+      </div>
+
+      {recap.attendees.some(
+        (attendee) => user && attendee.email === user.email,
+      ) ? (
+        <div className="mt-3 flex flex-col gap-2">
+          <Button
+            isDisabled={sharing}
+            label={sharing ? "Sharing…" : "Share my location"}
+            onClick={() => {
+              start();
+            }}
+            size="sm"
+            variant={sharing ? "ghost" : "secondary"}
+          />
+          {sharing ? (
+            <Button
+              label="Stop sharing"
+              onClick={() => {
+                stop();
+              }}
+              size="sm"
+              variant="ghost"
+            />
+          ) : null}
+          {error ? (
+            <p className="text-ink-faint text-[11px]">{error}</p>
+          ) : null}
+        </div>
+      ) : user ? null : (
+        <p className="text-ink-soft mt-3 text-[11.5px]">
+          Crew members can share a live position here on shoot day, after
+          joining.
+        </p>
+      )}
+
+      {locations && locations.length > 0 ? (
+        <ul className="mt-4 flex flex-col gap-2">
+          {locations.map((item) => (
+            <li className="flex items-center gap-2.5" key={item.name}>
+              <MapPin size={13} className="text-secondary shrink-0" />
+              <span className="text-ink min-w-0 flex-1 truncate text-[12.5px]">
+                {item.name}
+                <span className="text-ink-faint"> · {timeAgo(item.updatedAt)}</span>
+              </span>
+              <a
+                className="text-ink-soft hover:text-ink text-[11px] underline"
+                href={`https://www.google.com/maps?q=${item.lat},${item.lng}`}
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                map
+              </a>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-ink-faint mt-3 text-[11px]">
+          No one is sharing a position yet.
+        </p>
+      )}
+    </Card>
   );
 }
