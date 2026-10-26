@@ -9,6 +9,7 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 import appCss from "../assets/global.css?url";
 import { Alert, HikariMark } from "../components/icons";
 import { Navbar } from "../components/Navbar";
@@ -19,6 +20,7 @@ import { hikariTheme } from "../theme/hikari";
 export const Route = createRootRoute({
   head: () => ({
     meta: [
+      { themeColor: "#ff6433" },
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Hikari — cosplay photoshoot commissions" },
@@ -37,10 +39,16 @@ export const Route = createRootRoute({
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+      { name: "theme-color", content: "#ff6433" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-title", content: "Hikari" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "default" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
       { rel: "icon", href: "/icon.svg", type: "image/svg+xml" },
+      { rel: "manifest", href: "/manifest.json" },
+      { rel: "apple-touch-icon", href: "/icon-192.svg" },
     ],
   }),
   component: RootComponent,
@@ -111,6 +119,18 @@ function RootComponent() {
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+    const register = () => {
+      void navigator.serviceWorker.register("/sw.js").catch(() => {});
+    };
+    if (document.readyState === "complete") {
+      register();
+    } else {
+      window.addEventListener("load", register, { once: true });
+    }
+  }, []);
+
   return (
     <html data-astryx-theme="neutral" lang="en">
       <head>

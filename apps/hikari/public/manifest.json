@@ -1,0 +1,23 @@
+{
+  "name": "Hikari — Cosplay Photoshoots",
+  "short_name": "Hikari",
+  "description": "Plan cosplay photoshoots: book a session, schedule the date and place, share the recap, follow progress to delivery.",
+  "id": "/",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#faf6f0",
+  "theme_color": "#ff6433",
+  "lang": "en",
+  "categories": ["photo", "productivity"],
+  "icons": [
+    { "src": "/icon-192.svg", "sizes": "192x192", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/icon-512.svg", "sizes": "512x512", "type": "image/svg+xml", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "New commission", "url": "/commissions/new", "description": "Request a shoot" },
+    { "name": "My shoots", "url": "/", "description": "Open the commissions board" }
+  ]
+}

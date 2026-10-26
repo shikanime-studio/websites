@@ -6,7 +6,7 @@ date and place, shoots, and delivers — while the client and the invited
 crew follow everything on one private link. Inspired by
 [ImaCoCoS](https://omiomi79.github.io/imacocos/).
 
-### Who uses it
+## Who uses it
 
 | Role                   | What they do                                                                                   |
 | ---------------------- | ---------------------------------------------------------------------------------------------- |
