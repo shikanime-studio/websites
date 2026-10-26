@@ -13,7 +13,13 @@ export default antfu(
     },
   },
   {
-    ignores: ["dist/**", ".wrangler/**", ".tanstack/**", ".output/**"],
+    ignores: [
+      "dist/**",
+      ".wrangler/**",
+      ".tanstack/**",
+      ".output/**",
+      "public/sw.js",
+    ],
   },
   {
     files: ["**/*.css", "**/*.json", "**/*.jsonc"],

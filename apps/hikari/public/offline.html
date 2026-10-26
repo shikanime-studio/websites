@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Offline — Hikari</title>
+    <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+    <style>
+      :root {
+        color-scheme: light dark;
+      }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        background: #faf6f0;
+        color: #241c18;
+        font:
+          15px/1.6 system-ui,
+          -apple-system,
+          sans-serif;
+        text-align: center;
+      }
+      @media (prefers-color-scheme: dark) {
+        body {
+          background: #17130f;
+          color: #f4ede6;
+        }
+      }
+      main {
+        padding: 24px;
+        max-width: 22rem;
+      }
+      .mark {
+        width: 56px;
+        height: 56px;
+        margin: 0 auto 18px;
+        border-radius: 16px;
+        background: #ff6433;
+        color: #241c18;
+        display: grid;
+        place-items: center;
+        font-size: 26px;
+        font-weight: 700;
+      }
+      h1 {
+        font-size: 19px;
+        margin: 0 0 8px;
+      }
+      p {
+        margin: 0 0 18px;
+        opacity: 0.75;
+      }
+      button {
+        border: 0;
+        border-radius: 999px;
+        padding: 10px 22px;
+        font: inherit;
+        font-weight: 600;
+        background: #ff6433;
+        color: #fff;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="mark">光</div>
+      <h1>You are offline</h1>
+      <p>
+        Hikari needs the network for this page. Everything you already opened stays available; new data syncs once you
+        are back.
+      </p>
+      <button onclick="location.reload()">Try again</button>
+    </main>
+  </body>
+</html>
