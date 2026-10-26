@@ -1,10 +1,10 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { genericOAuth, oneTap } from "better-auth/plugins";
+import { genericOAuth } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
-import { ACCOUNTS_SITE, GOOGLE_CLIENT_ID, SITE } from "./config";
+import { ACCOUNTS_SITE, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -17,7 +17,6 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       usePlural: true,
     }),
     plugins: [
-      oneTap(),
       genericOAuth({
         config: [
           {
@@ -40,12 +39,6 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       accountLinking: {
         enabled: true,
         trustedProviders: ["accounts"],
-      },
-    },
-    socialProviders: {
-      google: {
-        clientId: GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
       },
     },
     advanced: {

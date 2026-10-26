@@ -43,6 +43,64 @@ interface GalleryContentProps {
   variant?: "default" | "showcase";
 }
 
+export function GalleryItems({
+  items,
+  variant = "default",
+  onSelect,
+}: {
+  items: Array<CardData>;
+  variant?: "default" | "showcase";
+  onSelect: (card: CardData) => void;
+}) {
+  const CardComponent
+    = variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
+
+  if (items.length === 0) {
+    return (
+      <div className="w-full [column-span:all]">
+        <EmptyState
+          title="No results found"
+          description="Try a different word, or clear the search to browse everything."
+        />
+      </div>
+    );
+  }
+
+  return items.map((item) => (
+    <GalleryItem key={item.id}>
+      <Card>
+        <CardComponent
+          title={item.title}
+          href={item.href}
+          onClick={() => {
+            onSelect(item);
+          }}
+          images={item.images.map((img, i) => (
+            <Image
+              key={img.src}
+              src={img.src}
+              alt={`${item.title} - image ${String(i + 1)}`}
+              width={img.width}
+              height={img.height}
+              layout="constrained"
+              className="h-full w-full object-contain"
+            />
+          ))}
+        >
+          <CardStatus status={item.status} />
+          <CardBookmark />
+        </CardComponent>
+        <CardInfo
+          {...item}
+          onClick={() => {
+            onSelect(item);
+          }}
+        />
+      </Card>
+    </GalleryItem>
+  ));
+}
+
 export function GalleryContent({
   atom,
   variant = "default",
@@ -50,9 +108,6 @@ export function GalleryContent({
   const result = useCardResult(atom, "Failed to load gallery");
   const items = getOrElse(result, () => []);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-
-  const CardComponent =
-    variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
 
   return (
     <>
@@ -64,48 +119,11 @@ export function GalleryContent({
         ))}
       </Activity>
       <Activity mode={isInitial(result) ? "hidden" : "visible"}>
-        {items.length > 0 ? (
-          items.map((item) => (
-            <GalleryItem key={item.id}>
-              <Card>
-                <CardComponent
-                  title={item.title}
-                  href={item.href}
-                  onClick={() => {
-                    setSelectedCard(item);
-                  }}
-                  images={item.images.map((img, i) => (
-                    <Image
-                      key={img.src}
-                      src={img.src}
-                      alt={`${item.title} - image ${String(i + 1)}`}
-                      width={img.width}
-                      height={img.height}
-                      layout="constrained"
-                      className="h-full w-full object-contain"
-                    />
-                  ))}
-                >
-                  <CardStatus status={item.status} />
-                  <CardBookmark />
-                </CardComponent>
-                <CardInfo
-                  {...item}
-                  onClick={() => {
-                    setSelectedCard(item);
-                  }}
-                />
-              </Card>
-            </GalleryItem>
-          ))
-        ) : (
-          <div className="w-full [column-span:all]">
-            <EmptyState
-              title="No results found"
-              description="Try adjusting your filters or search terms to find what you're looking for."
-            />
-          </div>
-        )}
+        <GalleryItems
+          items={items}
+          variant={variant}
+          onSelect={setSelectedCard}
+        />
       </Activity>
       {selectedCard && (
         <CardModal

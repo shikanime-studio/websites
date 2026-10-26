@@ -6,9 +6,9 @@ export const Route = createFileRoute("/privacy-notices")({
 
 function PrivacyNoticesPage() {
   return (
-    <article className="prose fadein mx-auto mt-10 mb-6 max-w-none">
-      <h1>PRIVACY NOTICE</h1>
-      <b>Last updated September 25, 2023</b>
+    <article className="prose fadein mx-auto mt-10 mb-6 max-w-none px-4 sm:px-6">
+      <h1 className="font-display">Privacy notice</h1>
+      <p>Last updated 25 September 2023</p>
       <section>
         <p>
           This privacy notice for Shikanime Studio ('we', 'us' , or 'our'),

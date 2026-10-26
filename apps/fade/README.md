@@ -18,6 +18,25 @@ browser's GPU. Open a directory from disk; nothing is uploaded.
 - **Browse**: filmstrip with GPU-rendered thumbnails, keyboard
   navigation (first/last, next/previous), fullscreen and settings
   modals (URL-backed), EXIF info panel.
+- **Studio account**: optional sign-in through the Accounts Center
+  (settings → _Studio account_). Photos never leave the machine; the
+  account is only a name and an avatar.
+
+## Studio account
+
+Fade has no database, so the Accounts Center integration is a
+confidential OAuth client with PKCE and a signed cookie rather than a
+session table:
+
+```text
+/api/studio/login    → 302 to accounts, sets state + verifier cookie
+/api/studio/callback → code → token → userinfo → HMAC-signed cookie
+/api/studio/session  → { user } or { user: null }
+/api/studio/logout   → clears the cookie
+```
+
+`STUDIO_SESSION_SECRET` signs the cookie; `ACCOUNTS_CLIENT_SECRET` is the
+`fade` client secret. Neither is ever sent to the browser.
 
 ## Stack
 
@@ -47,9 +66,10 @@ browser's GPU. Open a directory from disk; nothing is uploaded.
 
 ## Routes
 
-| Route | Purpose                                                     |
-| ----- | ----------------------------------------------------------- |
-| `/`   | the editor (single page; modal via the `modal` query param) |
+| Route           | Purpose                                                     |
+| --------------- | ----------------------------------------------------------- |
+| `/`             | the editor (single page; modal via the `modal` query param) |
+| `/api/studio/*` | Accounts Center sign-in, callback, session, sign-out        |
 
 ## Develop
 

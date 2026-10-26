@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createD1Database } from "../../lib/db";
-import { getItemsWithMakers } from "../../lib/items";
+import { getItemsWithMakers, normalizeImages } from "../../lib/items";
 
 export const Route = createFileRoute("/api/merchs")({
   server: {
@@ -12,7 +12,7 @@ export const Route = createFileRoute("/api/merchs")({
         const galleryItems = items.map((item) => ({
           id: item.id,
           title: item.name,
-          images: item.imageUrls,
+          images: normalizeImages(item.imageUrls),
           artist: {
             name: item.maker?.name ?? "Unknown",
             avatar: item.maker?.avatarImageUrl

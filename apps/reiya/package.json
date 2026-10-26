@@ -32,9 +32,7 @@
     "@fontsource-variable/bricolage-grotesque": "catalog:runtime",
     "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
-    "@tanstack/react-devtools": "catalog:runtime",
     "@tanstack/react-router": "catalog:runtime",
-    "@tanstack/react-router-devtools": "catalog:runtime",
     "@tanstack/react-start": "catalog:runtime",
     "@tanstack/router-plugin": "catalog:build",
     "@unpic/react": "catalog:runtime",
@@ -46,7 +44,6 @@
     "lucide-react": "catalog:runtime",
     "react": "catalog:runtime",
     "react-dom": "catalog:runtime",
-    "simple-icons": "catalog:runtime",
     "tailwindcss": "catalog:runtime",
     "usehooks-ts": "catalog:runtime",
     "zod": "catalog:runtime"

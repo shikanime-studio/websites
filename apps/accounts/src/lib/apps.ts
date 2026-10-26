@@ -19,7 +19,7 @@ export const STUDIO_APPS: StudioApp[] = [
   },
   {
     name: "Fade",
-    tagline: "Commission queue",
+    tagline: "Local RAW darkroom",
     href: "https://fade.shikanime.studio",
   },
   {

@@ -1,4 +1,3 @@
-import { RegistryProvider } from "@effect/atom-react";
 import {
   artistsAtom,
   charactersAtom,
@@ -10,7 +9,6 @@ import { Tab, TabContent, TabList } from "./TabList";
 
 export function Following() {
   return (
-    <RegistryProvider>
       <TabList defaultTab="merchs">
         {(tab) => (
           <>
@@ -44,6 +42,5 @@ export function Following() {
           </>
         )}
       </TabList>
-    </RegistryProvider>
   );
 }

@@ -2,18 +2,15 @@ import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { ToastViewport } from "@astryxdesign/core/Toast";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { RegistryProvider } from "@effect/atom-react";
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
   createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../assets/global.css?url";
 import { Footer } from "../components/Footer";
 import { Navbar } from "../components/Navbar";
-import { OneTap } from "../components/OneTap";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -34,7 +31,7 @@ export const Route = createRootRoute({
       },
       {
         name: "theme-color",
-        content: "#f5f5f5",
+        content: "#faf6f0",
       },
     ],
     links: [
@@ -80,27 +77,14 @@ function RootComponent() {
       <AstryxTheme theme={neutralTheme} mode="system">
         <ToastViewport position="bottomEnd" maxVisible={4} />
         <RootLayout />
-        <TanStackDevtools
-          config={{
-            position: "bottom-right",
-          }}
-          plugins={[
-            {
-              name: "TanStack Router",
-              render: <TanStackRouterDevtoolsPanel />,
-              defaultOpen: false,
-            },
-          ]}
-        />
       </AstryxTheme>
-      <OneTap />
     </RegistryProvider>
   );
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-astryx-theme="neutral">
+    <html data-astryx-theme="neutral" lang="en">
       <head>
         <HeadContent />
       </head>
@@ -116,7 +100,9 @@ function RootLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <Navbar />
-      <main className="grow pt-16">
+      {/* The header is sticky, not fixed: it keeps its own 64px band and the
+          page flows underneath without a phantom gap. */}
+      <main className="grow">
         <Outlet />
       </main>
       <Footer />

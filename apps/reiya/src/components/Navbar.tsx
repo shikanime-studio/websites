@@ -1,177 +1,184 @@
-// icons removed to simplify UI and drop react-icons
+import { Avatar } from "@astryxdesign/core/Avatar";
+import { DropdownMenu } from "@astryxdesign/core/DropdownMenu";
+import { useToast } from "@astryxdesign/core/Toast";
 import { useAtomValue } from "@effect/atom-react";
-import { Link } from "@tanstack/react-router";
-import { Image } from "@unpic/react";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { getOrElse } from "effect/reactivity/AsyncResult";
+import { Menu, Search } from "lucide-react";
+import { useState } from "react";
 import Logo from "../assets/logo.png";
 import { sessionAtom } from "../lib/atoms";
-import { LoginButton } from "./LoginButton";
-import { LogoutButton } from "./LogoutButton";
+import { authClient } from "../lib/auth-client";
+import { SignInButton } from "./SignInButton";
 
+const NAV_LINK =
+  "text-secondary hover:bg-surface rounded-full px-3 py-1.5 text-sm font-medium transition-colors";
+
+/** One 64px band, one accent, one menu component — the same navigation surface
+ *  as Accounts and Hikari, so moving between studio apps feels like one place. */
 export function Navbar() {
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
+  const navigate = useNavigate();
+  const toast = useToast();
+  const [query, setQuery] = useState("");
+
+  const submitSearch = (event: React.FormEvent) => {
+    event.preventDefault();
+    const trimmed = query.trim();
+    void navigate({
+      to: "/explore",
+      search: trimmed.length > 0 ? { q: trimmed } : {},
+    });
+  };
+
+  const signOut = () => {
+    authClient
+      .signOut({
+        fetchOptions: {
+          onSuccess: () => {
+            window.location.href = "/";
+          },
+        },
+      })
+      .catch(() => {
+        toast({ body: "Failed to sign out", type: "error" });
+      });
+  };
 
   return (
-    <nav className="bg-body border-border fixed top-0 z-50 flex w-full items-center justify-between border-b px-4 lg:px-6">
-      {/* Navbar Start */}
-      <div className="flex items-center">
-        <div className="flex items-center gap-6">
-          <Link
-            to="/"
-            className="text-secondary flex items-center gap-2 text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
-          >
-            <img
-              src={Logo}
-              className="h-8 w-auto"
-              alt="Reiya Logo"
-              width={32}
-              height={32}
-            />
-            Reiya
-          </Link>
+    <header className="bg-body/85 border-border sticky top-0 z-50 border-b backdrop-blur-xl">
+      <nav className="mx-auto flex h-16 w-full max-w-6xl items-center gap-2 px-4 sm:px-6">
+        <Link
+          className="flex shrink-0 items-center gap-2 text-[17px] font-bold tracking-tight transition-opacity hover:opacity-80"
+          to="/"
+        >
+          <img
+            alt=""
+            className="size-8 rounded-lg object-cover"
+            height={32}
+            src={Logo}
+            width={32}
+          />
+          <span className="font-display">Reiya</span>
+        </Link>
 
-          <div className="hidden items-center gap-1 md:flex">
-            {session ? (
-              <Link
-                to="/following"
-                className="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 font-medium transition-colors"
-              >
+        <div className="ml-3 hidden items-center gap-1 md:flex">
+          <Link className={NAV_LINK} to="/explore">
+            Explore
+          </Link>
+          {session
+            ? (
+              <Link className={NAV_LINK} to="/following">
                 Following
               </Link>
-            ) : null}
-            <Link
-              to="/explore"
-              className="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 font-medium transition-colors"
-            >
-              Explore
-            </Link>
-
-            <div className="group relative">
-              <button
-                type="button"
-                className="text-secondary/70 hover:text-secondary hover:bg-surface flex items-center rounded-full px-3 py-1.5 text-sm font-medium transition-colors"
-              >
-                More
-              </button>
-              <ul className="bg-body border-border invisible absolute right-0 z-50 mt-1 w-52 rounded-lg border p-2 opacity-0 shadow-md transition-all group-hover:visible group-hover:opacity-100">
-                <li>
-                  <Link to="/privacy-notices">Privacy Notices</Link>
-                </li>
-              </ul>
-            </div>
-          </div>
+            )
+            : null}
         </div>
-      </div>
 
-      {/* Navbar Center */}
-      <div className="hidden max-w-2xl flex-1 justify-center px-4 lg:flex">
-        <div className="relative w-full">
-          <input
-            type="text"
-            placeholder="Search for a character, license, artist, or convention"
-            className="bg-surface focus:ring-accent/20 h-10 w-full rounded-full border-none pr-4 pl-10 text-sm transition-all focus:ring-2 focus:outline-none"
-          />
-          <div className="text-secondary/50 absolute top-1/2 left-3.5 -translate-y-1/2">
-            <span className="text-xs">🔎</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Navbar End */}
-      <div className="flex items-center justify-end gap-2">
-        {/* Icons */}
-        {session ? (
-          <>
-            <button
-              type="button"
-              className="text-secondary/80 hover:bg-surface flex h-9 w-9 items-center justify-center rounded-full transition-colors"
-            >
-              <span className="sr-only">Messages</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="h-5 w-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z"
-                />
-              </svg>
-            </button>
-
-            <button
-              type="button"
-              className="text-secondary/80 hover:bg-surface relative flex h-9 w-9 items-center justify-center rounded-full transition-colors"
-            >
-              <span className="sr-only">Notifications</span>
-              <span className="bg-accent border-body absolute top-2 right-2 h-2 w-2 rounded-full border-2 p-0" />
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-                className="h-5 w-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                />
-              </svg>
-            </button>
-          </>
-        ) : null}
-
-        {/* CTA Button */}
-        <button
-          type="button"
-          className="hidden items-center rounded-full bg-accent px-4 font-bold text-on-accent shadow-sm transition-all hover:shadow-md sm:flex"
+        {/* Progressive enhancement: before hydration this is a plain GET to
+            /explore, afterwards the router owns the transition. */}
+        <form
+          action="/explore"
+          className="relative ml-auto hidden w-full max-w-xs lg:block"
+          method="get"
+          onSubmit={submitSearch}
+          role="search"
         >
-          + Share
-        </button>
+          <Search
+            aria-hidden
+            className="text-secondary/60 pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2"
+          />
+          <input
+            aria-label="Search merch, artists, characters and conventions"
+            className="border-border bg-surface text-secondary placeholder:text-secondary/50 focus:border-accent h-10 w-full rounded-full border pr-3 pl-9 text-sm transition-colors focus:outline-none"
+            name="q"
+            onChange={(event) => {
+              setQuery(event.target.value);
+            }}
+            placeholder="Search merch, artists, conventions"
+            type="search"
+            value={query}
+          />
+        </form>
 
-        {/* User Menu / Login */}
-        <div className="flex items-center pl-1">
-          {session ? (
-            <div className="group relative">
-              <button
-                type="button"
-                className="hover:bg-surface flex h-10 w-10 items-center justify-center rounded-full transition-colors"
-              >
-                <div className="w-10 rounded-full">
-                  <Image
-                    src={
-                      session.user?.image ||
-                      `https://ui-avatars.com/api/?name=${session.user?.name}`
-                    }
-                    alt={`${session.user?.name} Avatar`}
-                    width={40}
-                    height={40}
-                    layout="constrained"
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              </button>
-              <ul className="bg-body border-border invisible absolute right-0 z-50 mt-1 w-52 rounded-lg border p-2 opacity-0 shadow-md transition-all group-hover:visible group-hover:opacity-100">
-                <li>
-                  <Link to="/user">User</Link>
-                </li>
-                <div className="border-border my-1 border-t" />
-                <li>
-                  <LogoutButton />
-                </li>
-              </ul>
-            </div>
-          ) : (
-            <LoginButton />
-          )}
+        <div className="ml-auto flex items-center gap-1">
+          <div className="md:hidden">
+            <DropdownMenu
+              alignment="end"
+              button={{
+                label: "Menu",
+                variant: "ghost",
+                size: "sm",
+                icon: <Menu className="size-4" />,
+              }}
+              items={[
+                {
+                  label: "Explore",
+                  onClick: () => void navigate({ to: "/explore" }),
+                },
+                ...(session
+                  ? [
+                    {
+                      label: "Following",
+                      onClick: () => void navigate({ to: "/following" }),
+                    },
+                    {
+                      label: "Your profile",
+                      onClick: () => void navigate({ to: "/user" }),
+                    },
+                  ]
+                  : []),
+                {
+                  label: "Privacy notices",
+                  onClick: () => void navigate({ to: "/privacy-notices" }),
+                },
+              ]}
+            />
+          </div>
+
+          <div className="hidden md:block">
+            <DropdownMenu
+              alignment="end"
+              button={{ label: "More", variant: "ghost", size: "sm" }}
+              items={[
+                {
+                  label: "Privacy notices",
+                  onClick: () => void navigate({ to: "/privacy-notices" }),
+                },
+              ]}
+            />
+          </div>
+
+          {session
+            ? (
+              <DropdownMenu
+                alignment="end"
+                button={{
+                  label: session.user?.name ?? "Your account",
+                  variant: "ghost",
+                  size: "sm",
+                  icon: (
+                    <Avatar
+                      name={session.user?.name ?? session.user?.email ?? "You"}
+                      size="sm"
+                      src={session.user?.image ?? ""}
+                    />
+                  ),
+                }}
+                items={[
+                  {
+                    label: session.user?.name ?? "Your account",
+                    description: session.user?.email ?? undefined,
+                    onClick: () => void navigate({ to: "/user" }),
+                  },
+                  { type: "divider" },
+                  { label: "Sign out", onClick: signOut },
+                ]}
+              />
+            )
+            : <SignInButton />}
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
