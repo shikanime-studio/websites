@@ -14,48 +14,7 @@
  * → utilities. Token overrides live unlayered at the bottom so they win over
  * the generated theme without fighting specificity.
  */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
-
-@import "@fontsource-variable/bricolage-grotesque/index.css";
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "@astryxdesign/core/reset.css";
-@import "@astryxdesign/core/astryx.css";
-@import "@astryxdesign/theme-neutral/theme.css";
-@import "@astryxdesign/core/tailwind-theme.css";
-@import "tailwindcss/utilities.css" layer(utilities);
-
-@theme inline {
-  --font-sans:
-    ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", -apple-system,
-    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
-    "Noto Sans", sans-serif;
-  --font-display:
-    "Bricolage Grotesque Variable", -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, sans-serif;
-  --font-mono:
-    ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas,
-    "Liberation Mono", monospace;
-
-  --color-canvas: var(--hk-canvas);
-  --color-paper: var(--hk-surface);
-  --color-paper-muted: var(--hk-surface-muted);
-  --color-ink: var(--hk-ink);
-  --color-ink-soft: var(--hk-ink-soft);
-  --color-ink-faint: var(--hk-ink-faint);
-  --color-hairline: var(--hk-line);
-  --color-hairline-strong: var(--hk-line-strong);
-  --color-brand: var(--hk-accent-ink);
-  --color-brand-soft: var(--hk-accent-soft);
-  --color-signal: var(--hk-signal);
-  --color-signal-ink: var(--hk-signal-ink);
-  --color-positive: var(--hk-success);
-  --color-positive-soft: var(--hk-success-soft);
-  --color-negative: var(--hk-danger);
-  --color-negative-soft: var(--hk-danger-soft);
-  --color-caution: var(--hk-warning);
-  --color-caution-soft: var(--hk-warning-soft);
-}
+@import "@shikanime-studio/design/styles.css";
 
 /* ---------------------------------------------------------------------------
  * Palette
@@ -149,9 +108,17 @@
   --color-icon-primary: var(--hk-ink);
   --color-icon-secondary: var(--hk-ink-soft);
 
-  --color-accent: var(--hk-accent);
-  --color-accent-muted: var(--hk-accent-soft);
-  --color-on-accent: #241c18;
+  --studio-accent: var(--hk-accent);
+  --studio-accent-muted: var(--hk-accent-soft);
+  --studio-accent-ink: var(--hk-accent-ink);
+  --studio-on-accent: #241c18;
+  --studio-canvas: var(--hk-canvas);
+  --studio-surface: var(--hk-surface);
+  --studio-surface-muted: var(--hk-surface-muted);
+  --studio-ink: var(--hk-ink);
+  --studio-ink-soft: var(--hk-ink-soft);
+  --studio-line: var(--hk-line);
+  --studio-line-strong: var(--hk-line-strong);
   --color-neutral: var(--hk-neutral);
   --color-tint-hover: light-dark(#000000, #ffffff);
 
@@ -205,7 +172,15 @@ body {
   color: #241c18;
 }
 
-:where(a, button, [role="button"], input, textarea, select, summary):focus-visible {
+:where(
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  summary
+):focus-visible {
   outline: 2px solid var(--hk-accent-ink);
   outline-offset: 2px;
   border-radius: 4px;
@@ -234,176 +209,159 @@ body {
  * ------------------------------------------------------------------------- */
 
 @layer components {
-
-.hk-shell {
-  width: 100%;
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: 20px;
-}
-
-@media (min-width: 768px) {
-  .hk-shell {
-    padding-inline: 40px;
+  .hk-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
   }
-}
 
-.hk-display {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  text-wrap: balance;
-}
+  .hk-display-light {
+    font-weight: 300;
+  }
 
-.hk-display-light {
-  font-weight: 300;
-}
+  .hk-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--hk-ink-soft);
+  }
 
-.hk-eyebrow {
-  font-family: var(--font-sans);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-transform: none;
-  color: var(--hk-ink-soft);
-}
+  .hk-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding-inline: 10px;
+    border-radius: 999px;
+    border: 1px solid var(--hk-line);
+    background: var(--hk-surface);
+    color: var(--hk-ink-soft);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
 
-.hk-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  height: 26px;
-  padding-inline: 10px;
-  border-radius: 999px;
-  border: 1px solid var(--hk-line);
-  background: var(--hk-surface);
-  color: var(--hk-ink-soft);
-  font-size: 12px;
-  font-weight: 500;
-  white-space: nowrap;
-}
+  /* Sticker: a candy badge that looks peeled off a print. */
+  .hk-sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 2px solid var(--hk-surface);
+    background: var(--hk-signal);
+    color: #241c18;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    box-shadow: var(--hk-shadow-sm);
+    transform: rotate(-3deg);
+    white-space: nowrap;
+  }
 
-/* Sticker: a candy badge that looks peeled off a print. */
-.hk-sticker {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  border: 2px solid var(--hk-surface);
-  background: var(--hk-signal);
-  color: #241c18;
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.01em;
-  box-shadow: var(--hk-shadow-sm);
-  transform: rotate(-3deg);
-  white-space: nowrap;
-}
+  /* Thumbnail: the image-forward top of a commission card. */
+  .hk-thumb {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffd84d 0%, #ff8a5c 58%, #ff6433 100%);
+  }
 
-/* Thumbnail: the image-forward top of a commission card. */
-.hk-thumb {
-  position: relative;
-  overflow: hidden;
-  background: linear-gradient(135deg, #ffd84d 0%, #ff8a5c 58%, #ff6433 100%);
-}
-
-.hk-thumb::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image: radial-gradient(
-    rgba(255, 255, 255, 0.3) 1.5px,
-    transparent 1.5px
-  );
-  background-size: 18px 18px;
-  opacity: 0.55;
-  pointer-events: none;
-}
-
-/* Round avatar/initial bubble. */
-.hk-avatar {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  border: 2px solid var(--hk-surface);
-  background: var(--hk-surface-muted);
-  color: var(--hk-ink);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-/* Brand skins for Astryx Button variants that the system does not ship. */
-
-.hk-btn-outline {
-  background-color: var(--hk-surface);
-  border: 1px solid var(--hk-line-strong);
-  color: var(--hk-ink);
-}
-
-.hk-btn-outline:hover {
-  background-color: var(--hk-surface-muted);
-  color: var(--hk-ink);
-}
-
-/* Surfaces with texture -------------------------------------------------- */
-
-.hk-grid-texture {
-  background-image: radial-gradient(
-    light-dark(#241c1814, #ffffff12) 1.2px,
-    transparent 1.2px
-  );
-  background-size: 22px 22px;
-  mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
-}
-
-.hk-warm-glow {
-  background:
-    radial-gradient(
-      40rem 26rem at 80% 6%,
-      light-dark(#ff8a5c40, #ff8a5c1f) 0%,
-      transparent 68%
-    ),
-    radial-gradient(
-      34rem 24rem at 8% 26%,
-      light-dark(#c9a7ff33, #c9a7ff1a) 0%,
-      transparent 72%
+  .hk-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.3) 1.5px,
+      transparent 1.5px
     );
-}
-
-/* Motion ----------------------------------------------------------------- */
-
-@keyframes hk-pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
+    background-size: 18px 18px;
+    opacity: 0.55;
+    pointer-events: none;
   }
 
-  50% {
-    opacity: 0.35;
+  /* Round avatar/initial bubble. */
+  .hk-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: 2px solid var(--hk-surface);
+    background: var(--hk-surface-muted);
+    color: var(--hk-ink);
+    font-size: 11px;
+    font-weight: 800;
   }
-}
 
-.hk-live-dot {
-  animation: hk-pulse-dot 2.4s var(--hk-ease) infinite;
-}
+  /* Brand skins for Astryx Button variants that the system does not ship. */
 
-.hk-footer-link {
-  color: var(--hk-ink-soft);
-  font-size: 12.5px;
-  text-decoration: none;
-  transition: color 160ms var(--hk-ease);
-  width: fit-content;
-}
+  .hk-btn-outline {
+    background-color: var(--hk-surface);
+    border: 1px solid var(--hk-line-strong);
+    color: var(--hk-ink);
+  }
 
-.hk-footer-link:hover {
-  color: var(--hk-ink);
-}
+  .hk-btn-outline:hover {
+    background-color: var(--hk-surface-muted);
+    color: var(--hk-ink);
+  }
 
+  /* Surfaces with texture -------------------------------------------------- */
+
+  .hk-grid-texture {
+    background-image: radial-gradient(
+      light-dark(#241c1814, #ffffff12) 1.2px,
+      transparent 1.2px
+    );
+    background-size: 22px 22px;
+    mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
+  }
+
+  .hk-warm-glow {
+    background:
+      radial-gradient(
+        40rem 26rem at 80% 6%,
+        light-dark(#ff8a5c40, #ff8a5c1f) 0%,
+        transparent 68%
+      ),
+      radial-gradient(
+        34rem 24rem at 8% 26%,
+        light-dark(#c9a7ff33, #c9a7ff1a) 0%,
+        transparent 72%
+      );
+  }
+
+  /* Motion ----------------------------------------------------------------- */
+
+  @keyframes hk-pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .hk-live-dot {
+    animation: hk-pulse-dot 2.4s var(--hk-ease) infinite;
+  }
+
+  .hk-footer-link {
+    color: var(--hk-ink-soft);
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: color 160ms var(--hk-ease);
+    width: fit-content;
+  }
+
+  .hk-footer-link:hover {
+    color: var(--hk-ink);
+  }
 }
 
 /* Astryx component nudges ------------------------------------------------- */
@@ -416,4 +374,3 @@ body {
   font-family: var(--font-display);
   letter-spacing: -0.02em;
 }
-

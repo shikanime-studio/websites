@@ -1,0 +1,368 @@
+/*
+ * The studio design layer.
+ *
+ * Every product app — accounts, hikari, reiya, fade — imports this file first
+ * and then only declares its own brand hue. Layer order, Astryx, Tailwind, the
+ * type ramp, the page shell and the header band all live here so a change made
+ * once reaches every app.
+ */
+@import "@fontsource-variable/bricolage-grotesque";
+
+@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
+
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "@astryxdesign/core/reset.css";
+@import "@astryxdesign/core/astryx.css";
+@import "@astryxdesign/theme-neutral/theme.css";
+@import "@astryxdesign/core/tailwind-theme.css";
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* ---------------------------------------------------------------------------
+ * Type
+ * ------------------------------------------------------------------------- */
+
+@theme inline {
+  --font-display:
+    "Bricolage Grotesque Variable", ui-rounded, "SF Pro Rounded",
+    "Hiragino Maru Gothic ProN", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-sans:
+    ui-rounded, "SF Pro Rounded", "Hiragino Maru Gothic ProN", -apple-system,
+    BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial,
+    "Noto Sans", sans-serif;
+}
+
+/* ---------------------------------------------------------------------------
+ * Tokens
+ *
+ * `--studio-*` is the contract: an app that wants its own accent redefines
+ * those two or three values and nothing else. Everything below maps them onto
+ * the Astryx semantic tokens, so components keep writing `bg-body`,
+ * `text-secondary` and `bg-accent` without knowing which app they are in.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  /* Warm paper ground, ink text: the studio's shared surface pair. */
+  --studio-canvas: light-dark(#faf6f0, #171512);
+  --studio-surface: light-dark(#ffffff, #211a17);
+  --studio-surface-muted: light-dark(#f2ece0, #2a211c);
+  --studio-ink: light-dark(#1c1b19, #f4f1ec);
+  --studio-ink-soft: light-dark(#6b6357, #c9bdb0);
+  --studio-line: light-dark(#e6ddcd, #3a2c24);
+  --studio-line-strong: light-dark(#d3c6ae, #4a382d);
+
+  /* One accent, the studio orange. Apps swap the hue, never the role. */
+  --studio-accent: light-dark(#cc4c0c, #ff9a5c);
+  --studio-accent-ink: light-dark(#b8430a, #ffb083);
+  --studio-accent-muted: light-dark(#fdeee3, #2c1a0f);
+  --studio-on-accent: light-dark(#ffffff, #2a1206);
+
+  --studio-radius-card: 16px;
+  --studio-radius-pill: 999px;
+  --studio-radius-control: 10px;
+
+  /* One page measure and one reading measure. */
+  --studio-page: 72rem;
+  --studio-measure: 68ch;
+
+  /* One band height, one compact height. */
+  --studio-header-height: 64px;
+  --studio-header-height-compact: 48px;
+}
+
+:root {
+  --color-background-body: var(--studio-canvas);
+  --color-background-surface: var(--studio-surface);
+  --color-background-card: var(--studio-surface);
+  --color-background-popover: var(--studio-surface);
+  --color-background-muted: var(--studio-surface-muted);
+
+  --color-text-primary: var(--studio-ink);
+  --color-text-secondary: var(--studio-ink-soft);
+  --color-icon-primary: var(--studio-ink);
+  --color-icon-secondary: var(--studio-ink-soft);
+
+  --color-accent: var(--studio-accent);
+  --color-accent-muted: var(--studio-accent-muted);
+  --color-text-accent: var(--studio-accent-ink);
+  --color-icon-accent: var(--studio-accent);
+  --color-on-accent: var(--studio-on-accent);
+
+  --color-border: var(--studio-line);
+  --color-border-emphasized: var(--studio-line-strong);
+
+  --font-family-heading: var(--font-display);
+
+  --radius-container: var(--studio-radius-card);
+  --radius-element: var(--studio-radius-control);
+}
+
+/*
+ * Astryx ships its palette inside `@scope ([data-astryx-theme="neutral"])`,
+ * which out-specifies a plain `:root` rule for every descendant — the provider
+ * wrapper would otherwise re-impose the neutral grey accent inside the app.
+ * Redeclaring the same map inside the same scope, later in the cascade, keeps
+ * one source of truth for both the document root and the provider wrapper.
+ */
+@scope ([data-astryx-theme="neutral"]) to ([data-astryx-theme]) {
+  :scope {
+    --color-background-body: var(--studio-canvas);
+    --color-background-surface: var(--studio-surface);
+    --color-background-card: var(--studio-surface);
+    --color-background-popover: var(--studio-surface);
+    --color-background-muted: var(--studio-surface-muted);
+
+    --color-text-primary: var(--studio-ink);
+    --color-text-secondary: var(--studio-ink-soft);
+    --color-icon-primary: var(--studio-ink);
+    --color-icon-secondary: var(--studio-ink-soft);
+
+    --color-accent: var(--studio-accent);
+    --color-accent-muted: var(--studio-accent-muted);
+    --color-text-accent: var(--studio-accent-ink);
+    --color-icon-accent: var(--studio-accent);
+    --color-on-accent: var(--studio-on-accent);
+
+    --color-border: var(--studio-line);
+    --color-border-emphasized: var(--studio-line-strong);
+
+    --font-family-heading: var(--font-display);
+
+    --radius-container: var(--studio-radius-card);
+    --radius-element: var(--studio-radius-control);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-background-body);
+  color: var(--color-text-primary);
+  font-family: var(--font-family-body);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: light-dark(#fbd9c2, #5a2d12);
+}
+
+/* ---------------------------------------------------------------------------
+ * Layout primitives
+ * ------------------------------------------------------------------------- */
+
+.studio-shell {
+  width: 100%;
+  max-width: var(--studio-page);
+  margin-inline: auto;
+  padding-inline: 1rem;
+}
+
+@media (min-width: 640px) {
+  .studio-shell {
+    padding-inline: 1.5rem;
+  }
+}
+
+/* A centred column for a single card: sign-in, consent, a form. */
+.studio-shell--narrow {
+  max-width: 28rem;
+}
+
+/* Vertical rhythm for a page that sits under the header. */
+.studio-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding-block: 2rem;
+}
+
+@media (min-width: 640px) {
+  .studio-page {
+    padding-block: 2.5rem;
+  }
+}
+
+.studio-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+  font-weight: 600;
+}
+
+.studio-measure {
+  max-width: var(--studio-measure);
+}
+
+/* ---------------------------------------------------------------------------
+ * Header
+ * ------------------------------------------------------------------------- */
+
+.studio-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  border-bottom: 1px solid var(--color-border);
+  background: color-mix(
+    in oklab,
+    var(--color-background-body) 88%,
+    transparent
+  );
+  backdrop-filter: blur(14px);
+}
+
+.studio-header__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: var(--studio-header-height);
+}
+
+.studio-header--compact .studio-header__bar {
+  height: var(--studio-header-height-compact);
+}
+
+.studio-brand {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-text-primary);
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.studio-brand:hover {
+  opacity: 0.8;
+}
+
+.studio-brand__mark {
+  display: block;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.studio-header__links {
+  display: none;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.75rem;
+}
+
+.studio-header__center {
+  display: none;
+  flex: 1;
+  justify-content: center;
+  min-width: 0;
+}
+
+.studio-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+}
+
+.studio-header__menu {
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .studio-header__links {
+    display: flex;
+  }
+
+  .studio-header__menu {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .studio-header__center {
+    display: flex;
+  }
+}
+
+.studio-nav-link {
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--studio-radius-pill);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.studio-nav-link:hover {
+  color: var(--color-text-primary);
+  background: var(--color-background-muted);
+}
+
+.studio-nav-link[aria-current="page"] {
+  color: var(--color-text-primary);
+  background: var(--color-background-muted);
+  font-weight: 600;
+}
+
+/* ---------------------------------------------------------------------------
+ * Footer
+ * ------------------------------------------------------------------------- */
+
+.studio-footer {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border);
+}
+
+.studio-footer__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-block: 2rem;
+}
+
+.studio-footer__links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1.25rem;
+}
+
+.studio-footer__link {
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.studio-footer__link:hover {
+  color: var(--color-text-primary);
+}
+
+.studio-footer__note {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .studio-footer__inner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

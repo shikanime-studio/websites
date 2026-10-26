@@ -30,6 +30,7 @@
     "@cloudflare/vite-plugin": "catalog:build",
     "@effect/atom-react": "catalog:",
     "@fontsource-variable/bricolage-grotesque": "catalog:runtime",
+    "@shikanime-studio/design": "workspace:*",
     "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-router": "catalog:runtime",

@@ -38,7 +38,7 @@ export function LandingPage() {
           className="hk-warm-glow pointer-events-none absolute inset-x-0 top-0 h-[520px]"
         />
 
-        <div className="hk-shell relative grid items-center gap-7 pt-8 pb-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:pt-14 lg:pb-16">
+        <div className="studio-shell relative grid items-center gap-7 pt-8 pb-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-8 lg:pt-14 lg:pb-16">
           <div className="text-center lg:text-left">
             <span className="hk-chip">
               <span
@@ -77,7 +77,7 @@ export function LandingPage() {
       </section>
 
       <section className="border-hairline border-t">
-        <div className="hk-shell py-14 md:py-20">
+        <div className="studio-shell py-14 md:py-20">
           <p className="hk-eyebrow">{t("landing.howTitle")}</p>
           <h2 className="hk-display mt-3 max-w-xl text-[clamp(1.8rem,3.4vw,2.6rem)]">
             {t("landing.howHeading")}
@@ -107,7 +107,7 @@ export function LandingPage() {
         className="border-hairline border-t"
         style={{ background: "var(--hk-surface-muted)" }}
       >
-        <div className="hk-shell grid items-center gap-10 py-14 md:py-20 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
+        <div className="studio-shell grid items-center gap-10 py-14 md:py-20 lg:grid-cols-[1fr_0.9fr] lg:gap-16">
           <div>
             <p className="hk-eyebrow">{t("landing.shareEyebrow")}</p>
             <h2 className="hk-display mt-3 text-[clamp(1.9rem,3.6vw,2.8rem)]">
@@ -204,7 +204,7 @@ export function LandingPage() {
       </section>
 
       <section className="border-hairline border-t">
-        <div className="hk-shell flex flex-col items-center gap-4 py-16 text-center md:py-20">
+        <div className="studio-shell flex flex-col items-center gap-4 py-16 text-center md:py-20">
           <h2 className="hk-display max-w-xl text-[clamp(1.9rem,4vw,3rem)]">
             {t("landing.closingTitle")}
           </h2>

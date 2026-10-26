@@ -1,4 +1,5 @@
 import { useTranslator } from "@astryxdesign/core/i18n";
+import { StudioFooter } from "@shikanime-studio/design";
 import { HikariMark } from "./icons";
 
 export function SiteFooter() {
@@ -6,38 +7,25 @@ export function SiteFooter() {
   const year = String(new Date().getFullYear());
 
   return (
-    <footer className="border-hairline mt-auto border-t">
-      <div className="hk-shell flex flex-col gap-4 py-8 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2.5">
-          <HikariMark />
-          <span className="hk-display text-[17px] font-semibold tracking-[-0.02em]">
-            Hikari
-          </span>
-        </div>
-
-        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
-          <a
-            className="hk-footer-link"
-            href="https://shikanime.studio"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Shikanime Studio ↗
-          </a>
-          <a
-            className="hk-footer-link"
-            href="https://docs.shikanime.studio"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            {t("landing.footerDocs")} ↗
-          </a>
-        </nav>
-
-        <p className="text-ink-faint text-[11px] font-medium">
-          {t("landing.footerRights", { year })}
-        </p>
-      </div>
-    </footer>
+    <StudioFooter
+      brand={{
+        name: "Hikari",
+        href: "/",
+        mark: <HikariMark className="size-6" />,
+      }}
+      links={[
+        {
+          href: "https://shikanime.studio",
+          label: "Shikanime Studio ↗",
+          external: true,
+        },
+        {
+          href: "https://docs.shikanime.studio",
+          label: `${t("landing.footerDocs")} ↗`,
+          external: true,
+        },
+      ]}
+      note={t("landing.footerRights", { year })}
+    />
   );
 }

@@ -87,14 +87,13 @@ node scripts/register-client.mjs --id reiya --name Reiya \
 relations that back the explore queries; better-auth tables for
 identity. Read helpers live in `src/lib/items.ts` (server functions).
 
-## Design
+## Design system
 
-The shell is the studio shell: a 64px sticky header with a hairline
-border, the warm `#faf6f0` canvas, ink text and the shared orange accent
-(`#cc4c0c` light / `#ff9a5c` dark) that Accounts and Hikari use. The
-palette is declared once in `src/assets/global.css` by re-pointing Astryx
-neutral tokens, so components keep using `bg-body`, `text-secondary` and
-`bg-accent` without per-page overrides.
+The shell comes from `@shikanime-studio/design`: `StudioHeader` (the 64px
+band), `StudioFooter` and `PageShell`, plus the `@shikanime-studio/design/
+styles.css` foundation this app imports first. Only the brand hue is local —
+`--studio-accent` and friends — so a layout change lands in one package and
+reaches every product app.
 
 ## Conventions
 
