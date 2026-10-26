@@ -49,6 +49,10 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       : {}),
     secret: env.BETTER_AUTH_SECRET,
     baseURL: SITE,
+    // Local Playwright runs sign up from the same origin as baseURL.
+    ...(import.meta.env.DEV
+      ? { trustedOrigins: ["http://localhost:3101"] }
+      : {}),
     socialProviders: {
       google: {
         clientId: GOOGLE_CLIENT_ID,
