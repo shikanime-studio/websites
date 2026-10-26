@@ -512,6 +512,23 @@ function CommissionDetailBody({ commission }: { commission: CommissionDetail }) 
                 No helpers or models invited yet.
               </p>
             )}
+            {commission.attendees.length > 0 ? (
+              <>
+                <p className="hk-eyebrow mt-4">Joined via invite</p>
+                <ul className="mt-2 flex flex-col gap-1.5">
+                  {commission.attendees.map((attendee) => (
+                    <li
+                      className="text-ink-soft flex items-center gap-2 text-[11.5px]"
+                      key={String(attendee.id)}
+                    >
+                      <span className="bg-accent inline-block size-1.5 rounded-full" />
+                      {attendee.name ? `${attendee.name} · ` : ""}
+                      {attendee.email}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
           </Card>
 
           <Card padding={6}>

@@ -94,7 +94,20 @@ export const getCommission = createServerFn()
       .from(schema.commissionPhotos)
       .where(eq(schema.commissionPhotos.commissionId, id))
       .orderBy(asc(schema.commissionPhotos.id));
-    return { ...commission, photos };
+    const attendees = await db
+      .select({
+        id: schema.commissionAttendees.id,
+        name: schema.users.name,
+        email: schema.users.email,
+      })
+      .from(schema.commissionAttendees)
+      .innerJoin(
+        schema.users,
+        eq(schema.users.id, schema.commissionAttendees.userId),
+      )
+      .where(eq(schema.commissionAttendees.commissionId, id))
+      .orderBy(asc(schema.commissionAttendees.id));
+    return { ...commission, photos, attendees };
   });
 
 export const createCommissionFn = createServerFn({ method: "POST" })
@@ -185,6 +198,19 @@ export const getSharedCommission = createServerFn()
       .from(schema.users)
       .where(eq(schema.users.id, commission.clientId))
       .limit(1);
+    const attendees = await db
+      .select({
+        id: schema.commissionAttendees.id,
+        name: schema.users.name,
+        email: schema.users.email,
+      })
+      .from(schema.commissionAttendees)
+      .innerJoin(
+        schema.users,
+        eq(schema.users.id, schema.commissionAttendees.userId),
+      )
+      .where(eq(schema.commissionAttendees.commissionId, commission.id))
+      .orderBy(asc(schema.commissionAttendees.id));
     return {
       id: commission.id,
       title: commission.title,
@@ -199,10 +225,36 @@ export const getSharedCommission = createServerFn()
       locationLng: commission.locationLng,
       shareToken: commission.shareToken,
       invitees: parseInvitees(commission.invitees),
+      attendees,
       photographerName: photographer[0]?.name ?? "Shikanime Studio",
       clientName: client[0]?.name ?? "Client",
       photos,
     };
+  });
+
+/** A signed-in visitor claims their seat on a shoot via the share link. */
+export const joinSharedCommission = createServerFn({ method: "POST" })
+  .validator((token: string) => z.string().regex(SHARE_TOKEN_PATTERN).parse(token))
+  .handler(async ({ data: token }) => {
+    const user = await getSessionUser(getRequest());
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+    const db = createD1Database();
+    const rows = await db
+      .select({ id: schema.commissions.id })
+      .from(schema.commissions)
+      .where(eq(schema.commissions.shareToken, token))
+      .limit(1);
+    const commission = rows[0];
+    if (!commission) {
+      throw new Error("Not found");
+    }
+    await db
+      .insert(schema.commissionAttendees)
+      .values({ commissionId: commission.id, userId: user.id })
+      .onConflictDoNothing();
+    return { name: user.name, email: user.email };
   });
 
 export const changeCommissionStatusFn = createServerFn({ method: "POST" })
