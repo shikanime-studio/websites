@@ -1,41 +1,16 @@
-@import "@fontsource-variable/bricolage-grotesque";
+@import "@shikanime-studio/design/styles.css";
 
-/* Astryx layer order: reset → component styles → theme tokens → Tailwind bridge → utilities */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
-
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "@astryxdesign/core/reset.css";
-@import "@astryxdesign/core/astryx.css";
-@import "@astryxdesign/theme-neutral/theme.css";
-@import "@astryxdesign/core/tailwind-theme.css";
-@import "tailwindcss/utilities.css" layer(utilities);
-
-html {
-  font-family: var(--font-family-body);
+/* Accounts keeps two local aliases: the brand hue for the legacy preview
+   markup, and the display class older files still use. */
+:root {
+  --studio-brand: var(--studio-accent);
+  --studio-brand-soft: var(--studio-accent-muted);
+  --studio-cream: var(--studio-canvas);
 }
 
 .font-display {
-  font-family: "Bricolage Grotesque Variable", var(--font-family-body);
+  font-family: var(--font-display);
   letter-spacing: -0.02em;
-}
-
-/* Consumer-facing brand accent, layered over the neutral theme. Orange is the
-   Shikanime Studio signature: it carries calls to action, links and the mark,
-   while the surfaces stay warm neutral so the accent never has to shout. */
-[data-astryx-theme="neutral"] {
-  --color-accent: light-dark(#cc4c0c, #ff9a5c);
-  --color-accent-muted: light-dark(#fdeee3, #2c1a0f);
-  --color-text-accent: light-dark(#b8430a, #ffb083);
-  --color-icon-accent: light-dark(#cc4c0c, #ffb083);
-  --color-on-accent: light-dark(#ffffff, #2a1206);
-}
-
-:root {
-  --studio-brand: #cc4c0c;
-  --studio-brand-soft: #fdeee3;
-  --studio-cream: light-dark(#faf6f0, #171512);
-  --studio-ink: light-dark(#1c1b19, #f4f1ec);
 }
 
 /* The active Accounts Center destination reads as a filled pill, the way
@@ -43,8 +18,4 @@ html {
 .nav-pill-active {
   background: light-dark(#2f2f2f, #f2efea);
   color: light-dark(#ffffff, #171512);
-}
-
-::selection {
-  background: light-dark(#fbd9c2, #5a2d12);
 }

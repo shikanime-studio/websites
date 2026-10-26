@@ -1,6 +1,6 @@
+import { PageShell } from "@shikanime-studio/design";
 import { createFileRoute } from "@tanstack/react-router";
 import { Following as FollowingComponent } from "../components/Following";
-import { PageShell } from "../components/PageShell";
 
 export const Route = createFileRoute("/following")({
   component: FollowingPage,

@@ -51,7 +51,7 @@ const WWW_PREFIX = /^www\./;
 function PhotographerProfilePage() {
   const profile = Route.useLoaderData() as PublicProfileView;
   return (
-    <div className="hk-shell max-w-2xl py-10 md:py-14">
+    <div className="studio-shell max-w-2xl py-10 md:py-14">
       <header className="flex flex-col items-center gap-4 text-center">
         {profile.image ? (
           <img

@@ -1,13 +1,5 @@
 /* Astryx layer order: reset → component styles → theme tokens → Tailwind bridge → utilities */
-@layer reset, theme, base, astryx-base, astryx-theme, components, utilities;
-
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "@astryxdesign/core/reset.css";
-@import "@astryxdesign/core/astryx.css";
-@import "@astryxdesign/theme-neutral/theme.css";
-@import "@astryxdesign/core/tailwind-theme.css";
-@import "tailwindcss/utilities.css" layer(utilities);
+@import "@shikanime-studio/design/styles.css";
 
 @theme {
   --animate-fade-in: fade-in 250ms ease;

@@ -121,7 +121,7 @@ function HomePage() {
   return (
     <div className="pb-20">
       <section className="border-border border-b bg-[var(--studio-cream)]">
-        <div className="mx-auto flex w-full max-w-5xl flex-col items-center gap-5 px-4 py-16 text-center sm:px-6 sm:py-20">
+        <div className="studio-shell flex flex-col items-center gap-5 py-16 text-center sm:py-20">
           <span className="border-border bg-body flex items-center gap-2 rounded-full border py-1 pr-3 pl-1 text-xs font-semibold">
             <span className="bg-accent text-on-accent flex size-6 items-center justify-center rounded-full text-[10px] font-black">
               S
@@ -151,7 +151,7 @@ function HomePage() {
         </div>
       </section>
 
-      <div className="mx-auto grid w-full max-w-5xl items-center gap-12 px-4 py-14 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
+      <div className="studio-shell grid items-center gap-12 py-14 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
         <AccountPreview />
         <ul className="flex flex-col gap-5">
           {FEATURES.map((feature) => (
@@ -170,7 +170,7 @@ function HomePage() {
         </ul>
       </div>
 
-      <section className="mx-auto w-full max-w-5xl px-4 sm:px-6">
+      <section className="studio-shell">
         <h2 className="pb-3 text-[15px] font-semibold">
           More from Shikanime Studio
         </h2>

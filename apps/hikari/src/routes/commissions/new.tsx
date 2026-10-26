@@ -104,7 +104,7 @@ function NewCommissionPage() {
   }
 
   return (
-    <div className="hk-shell py-8 md:py-12">
+    <div className="studio-shell py-8 md:py-12">
       <Link
         className="text-ink-soft hover:text-ink inline-flex items-center gap-1.5 text-[12.5px] font-medium transition-colors"
         to="/"

@@ -91,6 +91,14 @@ app degrades with a warning when `navigator.gpu` is missing.
 No secrets. Analytics is wired in `__root.tsx` with a Mixpanel token —
 remove or point it at your own project before reusing this app.
 
+## Design system
+
+The shell comes from `@shikanime-studio/design`: `StudioHeader` (the compact
+48px band), `StudioFooter` and `PageShell`, plus the `@shikanime-studio/design/
+styles.css` foundation this app imports first. Only the brand hue is local —
+`--studio-accent` and friends — so a layout change lands in one package and
+reaches every product app.
+
 ## Conventions
 
 - Every data read is an atom; `useAtomSuspense` with Suspense

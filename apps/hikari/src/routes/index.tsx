@@ -26,7 +26,7 @@ export const Route = createFileRoute("/")({
 function HomeBoot() {
   const t = useTranslator();
   return (
-    <div className="hk-shell flex min-h-[62vh] flex-col items-center justify-center gap-3">
+    <div className="studio-shell flex min-h-[62vh] flex-col items-center justify-center gap-3">
       <span className="hk-live-dot" style={{ opacity: 0.9 }}>
         <HikariMark />
       </span>
@@ -51,7 +51,7 @@ function CommissionsDashboard() {
   const refetch = useAtomRefresh(commissionsAtom);
   if (isFailure(result)) {
     return (
-      <div className="hk-shell mt-10">
+      <div className="studio-shell mt-10">
         <Banner
           description={t("home.errorBody")}
           endContent={
@@ -107,7 +107,7 @@ function CommissionsDashboard() {
   }
 
   return (
-    <div className="hk-shell py-10 md:py-14">
+    <div className="studio-shell py-10 md:py-14">
       <header className="flex flex-wrap items-end justify-between gap-5">
         <div>
           <h1 className="hk-display text-[clamp(2rem,4vw,2.85rem)]">

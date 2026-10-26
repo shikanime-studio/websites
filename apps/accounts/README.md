@@ -112,6 +112,14 @@ Workers Builds deploys `main` automatically. Manual: `pnpm deploy`.
 Migrations must be applied to remote D1 before a deploy that needs them:
 `printf 'y\n' | pnpm db:migrate` with `CLOUDFLARE_ACCOUNT_ID` set.
 
+## Design system
+
+The shell comes from `@shikanime-studio/design`: `StudioHeader` (the 64px
+band), `StudioFooter` and `PageShell`, plus the `@shikanime-studio/design/
+styles.css` foundation this app imports first. Only the brand hue is local —
+`--studio-accent` and friends — so a layout change lands in one package and
+reaches every product app.
+
 ## Conventions
 
 - Copy lives inline (no i18n catalogue); en-GB tone, short sentences.

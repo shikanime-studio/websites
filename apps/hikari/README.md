@@ -97,6 +97,14 @@ lat/lng, unique `share_token`, `invitees` JSON) and
 `commission_photos` (object key, content type, size). Migrations in
 `migrations/`; generate new ones with drizzle-kit.
 
+## Design system
+
+The shell comes from `@shikanime-studio/design`: `StudioHeader` (the 64px
+band), `StudioFooter` and `PageShell`, plus the `@shikanime-studio/design/
+styles.css` foundation this app imports first. Only the brand hue is local —
+`--studio-accent` and friends — so a layout change lands in one package and
+reaches every product app.
+
 ## Conventions
 
 - `src/lib/sharing.ts` owns tokens, invitee parsing, timezone math,

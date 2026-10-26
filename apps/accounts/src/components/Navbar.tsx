@@ -1,49 +1,56 @@
 import { Avatar } from "@astryxdesign/core/Avatar";
 import { Button } from "@astryxdesign/core/Button";
 import { useAtomValue } from "@effect/atom-react";
-import { Link, useMatchRoute } from "@tanstack/react-router";
+import { StudioHeader } from "@shikanime-studio/design";
+import { Link, useMatchRoute, useRouterState } from "@tanstack/react-router";
 import { getOrElse } from "effect/reactivity/AsyncResult";
 import { sessionAtom } from "../lib/atoms";
+
+const MARK = (
+  <span className="bg-accent text-on-accent flex size-8 items-center justify-center rounded-lg text-xs font-black">
+    S
+  </span>
+);
 
 export function Navbar() {
   const session = getOrElse(useAtomValue(sessionAtom), () => null);
   const matchRoute = useMatchRoute();
+  const pathname = useRouterState({ select: (state) => state.location.pathname });
   const onLogin = Boolean(matchRoute({ to: "/login" }));
+  const user = session?.user;
 
   return (
-    <header className="bg-body/85 border-border fixed top-0 z-50 w-full border-b backdrop-blur">
-      <nav className="mx-auto flex h-14 w-full max-w-5xl items-center justify-between px-4 sm:px-6">
-        <Link
-          to="/"
-          className="flex items-center gap-2.5 text-[15px] font-bold tracking-tight transition-opacity hover:opacity-80"
-        >
-          <span className="bg-accent/10 text-accent flex size-7 items-center justify-center rounded-full text-xs font-black">
-            S
-          </span>
-          Accounts
-        </Link>
-        {session?.user
+    <StudioHeader
+      actions={
+        user
           ? (
             <Link
-              to="/settings"
               className="hover:bg-surface flex items-center gap-2 rounded-full py-1 pr-3 pl-1 transition-colors"
+              to="/settings"
             >
               <Avatar
-                name={session.user.name ?? session.user.email ?? "User"}
-                src={session.user.image ?? ""}
+                name={user.name ?? user.email ?? "User"}
                 size="sm"
+                src={user.image ?? ""}
               />
               <span className="hidden text-sm font-medium sm:inline">
-                {session.user.name ?? session.user.email}
+                {user.name ?? user.email}
               </span>
             </Link>
           )
           : onLogin
           ? null
-          : (
-            <Button href="/login" label="Sign in" variant="primary" size="sm" />
-          )}
-      </nav>
-    </header>
+          : <Button href="/login" label="Sign in" size="sm" variant="primary" />
+      }
+      brand={{ name: "Accounts", href: "/", mark: MARK }}
+      links={[
+        { href: "/settings", label: "Your account", active: pathname.startsWith("/settings") },
+      ]}
+      renderLink={({ href, className, children, ...rest }) => (
+        <Link className={className} to={href} {...rest}>
+          {children}
+        </Link>
+      )}
+    />
   );
 }

@@ -69,7 +69,7 @@ function RootError({ reset }: ErrorComponentProps) {
 function RootErrorPanel({ reset }: { reset: () => void }) {
   const t = useTranslator();
   return (
-    <div className="hk-shell flex min-h-[70vh] flex-col items-center justify-center py-20 text-center">
+    <div className="studio-shell flex min-h-[70vh] flex-col items-center justify-center py-20 text-center">
       <HikariMark />
       <span
         className="mt-5 flex size-11 items-center justify-center rounded-full"

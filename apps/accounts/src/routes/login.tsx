@@ -21,7 +21,7 @@ function LoginPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+    <div className="studio-shell studio-shell--narrow flex flex-col py-20 sm:py-28">
       <Card padding={6}>
         <div className="flex flex-col items-center gap-6 text-center">
           <span className="bg-accent text-on-accent flex size-14 items-center justify-center rounded-2xl text-lg font-black">
@@ -51,7 +51,7 @@ function LoginPage() {
 
 function SignedInNotice() {
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+    <div className="studio-shell studio-shell--narrow flex flex-col py-20 sm:py-28">
       <Card padding={6}>
         <div className="flex flex-col items-center gap-4 text-center">
           <span className="bg-accent text-on-accent flex size-12 items-center justify-center rounded-full text-sm font-black">

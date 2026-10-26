@@ -37,8 +37,9 @@ export function AccountCenterLayout() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
-      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-16">
+    <div className="studio-page">
+      <div className="studio-shell">
+        <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[300px_minmax(0,1fr)] lg:gap-16">
         <nav aria-label="Accounts Center" className="min-w-0 lg:sticky lg:top-10 lg:self-start">
           <div className="hidden flex-col gap-3 lg:flex">
             <Link
@@ -113,8 +114,9 @@ export function AccountCenterLayout() {
           </div>
         </nav>
 
-        <div className="min-w-0">
-          <Outlet />
+          <div className="min-w-0">
+            <Outlet />
+          </div>
         </div>
       </div>
     </div>

@@ -109,7 +109,7 @@ function ConsentPage() {
 
   if (!session?.user) {
     return (
-      <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-28">
+      <div className="studio-shell studio-shell--narrow flex flex-col py-20 sm:py-28">
         <Card padding={6}>
           <div className="flex flex-col items-center gap-4 text-center">
             <Heading level={1} type="display-3">
@@ -132,7 +132,7 @@ function ConsentPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col px-4 py-20 sm:py-24">
+    <div className="studio-shell studio-shell--narrow flex flex-col py-20 sm:py-24">
       <Card padding={6}>
         <div className="flex flex-col items-center gap-5 text-center">
           <div className="flex items-center gap-3">

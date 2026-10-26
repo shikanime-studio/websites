@@ -2,12 +2,12 @@ import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { ToastViewport } from "@astryxdesign/core/Toast";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
 import { RegistryProvider } from "@effect/atom-react";
+import { StudioFooter } from "@shikanime-studio/design";
 import {
   createRootRoute,
   HeadContent,
   Outlet,
   Scripts,
-  useRouterState,
 } from "@tanstack/react-router";
 import appCss from "../assets/global.css?url";
 import { Navbar } from "../components/Navbar";
@@ -53,21 +53,33 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
-  // The Accounts Center runs without the marketing chrome, the way an account
-  // hub should: the sidebar is the navigation.
-  const inCenter = useRouterState({
-    select: (state) => state.location.pathname.startsWith("/settings"),
-  });
-
   return (
     <RegistryProvider>
       <AstryxTheme theme={neutralTheme} mode="system">
         <ToastViewport position="bottomEnd" maxVisible={4} />
-      <div className="flex min-h-screen flex-col">
-        {inCenter ? null : <Navbar />}
-        <main className={inCenter ? "grow" : "grow pt-14"}>
-          <Outlet />
-        </main>
+        <div className="flex min-h-screen flex-col">
+          <Navbar />
+          <main className="grow">
+            <Outlet />
+          </main>
+          <StudioFooter
+            brand={{
+              name: "Shikanime Studio",
+              href: "https://shikanime.studio",
+              mark: (
+                <span className="bg-accent text-on-accent flex size-6 items-center justify-center rounded-md text-[10px] font-black">
+                  S
+                </span>
+              ),
+            }}
+            links={[
+              { href: "https://shikanime.studio", label: "Studio ↗", external: true },
+              { href: "https://hikari.shikanime.studio", label: "Hikari ↗", external: true },
+              { href: "https://reiya.shikanime.studio", label: "Reiya ↗", external: true },
+              { href: "https://fade.shikanime.studio", label: "Fade ↗", external: true },
+            ]}
+            note={`© ${String(new Date().getFullYear())} Shikanime Studio`}
+          />
         </div>
       </AstryxTheme>
     </RegistryProvider>

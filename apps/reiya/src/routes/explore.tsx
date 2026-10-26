@@ -1,3 +1,4 @@
+import { PageShell } from "@shikanime-studio/design";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { getOrElse } from "effect/reactivity/AsyncResult";
@@ -13,7 +14,6 @@ import {
 } from "../components/Explore";
 import { Gallery, GalleryItems } from "../components/Gallery";
 import { Hero } from "../components/Hero";
-import { PageShell } from "../components/PageShell";
 import { useCardResult } from "../hooks/useCardResult";
 import {
   artistsAtom,

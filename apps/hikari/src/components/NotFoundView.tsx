@@ -6,7 +6,7 @@ export function NotFoundView() {
   const t = useTranslator();
 
   return (
-    <div className="hk-shell flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
+    <div className="studio-shell flex min-h-[60vh] flex-col items-center justify-center py-20 text-center">
       <p
         className="hk-display text-[clamp(4rem,12vw,7rem)] leading-none"
         style={{ color: "var(--hk-signal)" }}

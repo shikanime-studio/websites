@@ -28,7 +28,8 @@
     "clsx": "catalog:runtime",
     "prism-react-renderer": "catalog:runtime",
     "react": "catalog:runtime",
-    "react-dom": "catalog:runtime"
+    "react-dom": "catalog:runtime",
+    "@fontsource-variable/bricolage-grotesque": "catalog:runtime"
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",

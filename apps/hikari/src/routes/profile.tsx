@@ -50,7 +50,7 @@ function ProfileEditorPage() {
 
   if (!signedIn) {
     return (
-      <div className="hk-shell py-16 text-center">
+      <div className="studio-shell py-16 text-center">
         <p className="text-ink-soft text-[13px]">Sign in to edit your public profile.</p>
       </div>
     );
@@ -79,7 +79,7 @@ function ProfileEditorPage() {
   }
 
   return (
-    <div className="hk-shell max-w-2xl py-10">
+    <div className="studio-shell max-w-2xl py-10">
       <header className="flex flex-col gap-1.5">
         <p className="hk-eyebrow">Public profile</p>
         <h1 className="hk-display text-[clamp(1.7rem,4vw,2.4rem)]">

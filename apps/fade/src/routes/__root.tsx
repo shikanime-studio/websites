@@ -1,7 +1,6 @@
 import { Theme as AstryxTheme } from "@astryxdesign/core/theme";
 import { ToastViewport } from "@astryxdesign/core/Toast";
 import { neutralTheme } from "@astryxdesign/theme-neutral/built";
-import { TanStackDevtools } from "@tanstack/react-devtools";
 import {
   ClientOnly,
   createRootRoute,
@@ -9,7 +8,6 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
-import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
 import appCss from "../assets/global.css?url";
 import { MixpanelProvider } from "../components/MixpanelProvider";
 import { useTheme } from "../hooks/useTheme";
@@ -63,18 +61,6 @@ function AstryxSurface() {
   return (
     <AstryxTheme theme={neutralTheme} mode={theme ?? "system"}>
       <Outlet />
-      <TanStackDevtools
-        config={{
-          position: "bottom-right",
-        }}
-        plugins={[
-          {
-            name: "TanStack Router",
-            render: <TanStackRouterDevtoolsPanel />,
-            defaultOpen: false,
-          },
-        ]}
-      />
     </AstryxTheme>
   );
 }

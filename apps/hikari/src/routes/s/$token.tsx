@@ -70,7 +70,7 @@ function SharedShootPage() {
     : null;
 
   return (
-    <div className="hk-shell max-w-3xl py-10 md:py-14">
+    <div className="studio-shell max-w-3xl py-10 md:py-14">
       <header className="flex flex-col gap-4">
         <div className="flex items-center justify-between gap-4">
           <span className="hk-eyebrow">Shooting recap</span>
