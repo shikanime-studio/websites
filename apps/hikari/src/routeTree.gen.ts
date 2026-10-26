@@ -10,7 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PhotographerRouteImport } from './routes/$photographer'
 import { Route as R404RouteImport } from './routes/404'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ApiCommissionsRouteImport } from './routes/api/commissions'
 import { Route as ApiNotificationsRouteImport } from './routes/api/notifications'
 import { Route as ApiPlacesRouteImport } from './routes/api/places'
@@ -31,9 +33,19 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PhotographerRoute = PhotographerRouteImport.update({
+  id: '/$photographer',
+  path: '/$photographer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const R404Route = R404RouteImport.update({
   id: '/404',
   path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiCommissionsRoute = ApiCommissionsRouteImport.update({
@@ -111,7 +123,9 @@ const ApiShareTokenPhotosPhotoIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$photographer': typeof PhotographerRoute
   '/404': typeof R404Route
+  '/profile': typeof ProfileRoute
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/api/places': typeof ApiPlacesRoute
@@ -129,7 +143,9 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$photographer': typeof PhotographerRoute
   '/404': typeof R404Route
+  '/profile': typeof ProfileRoute
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/api/places': typeof ApiPlacesRoute
@@ -148,7 +164,9 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$photographer': typeof PhotographerRoute
   '/404': typeof R404Route
+  '/profile': typeof ProfileRoute
   '/api/commissions': typeof ApiCommissionsRouteWithChildren
   '/api/notifications': typeof ApiNotificationsRouteWithChildren
   '/api/places': typeof ApiPlacesRoute
@@ -168,7 +186,9 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$photographer'
     | '/404'
+    | '/profile'
     | '/api/commissions'
     | '/api/notifications'
     | '/api/places'
@@ -186,7 +206,9 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$photographer'
     | '/404'
+    | '/profile'
     | '/api/commissions'
     | '/api/notifications'
     | '/api/places'
@@ -204,7 +226,9 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/$photographer'
     | '/404'
+    | '/profile'
     | '/api/commissions'
     | '/api/notifications'
     | '/api/places'
@@ -223,7 +247,9 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PhotographerRoute: typeof PhotographerRoute
   R404Route: typeof R404Route
+  ProfileRoute: typeof ProfileRoute
   ApiCommissionsRoute: typeof ApiCommissionsRouteWithChildren
   ApiNotificationsRoute: typeof ApiNotificationsRouteWithChildren
   ApiPlacesRoute: typeof ApiPlacesRoute
@@ -244,11 +270,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/$photographer': {
+      id: '/$photographer'
+      path: '/$photographer'
+      fullPath: '/$photographer'
+      preLoaderRoute: typeof PhotographerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/404': {
       id: '/404'
       path: '/404'
       fullPath: '/404'
       preLoaderRoute: typeof R404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/commissions': {
@@ -413,7 +453,9 @@ const ApiShareTokenPhotosRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PhotographerRoute: PhotographerRoute,
   R404Route: R404Route,
+  ProfileRoute: ProfileRoute,
   ApiCommissionsRoute: ApiCommissionsRouteWithChildren,
   ApiNotificationsRoute: ApiNotificationsRouteWithChildren,
   ApiPlacesRoute: ApiPlacesRoute,

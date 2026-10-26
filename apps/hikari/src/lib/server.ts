@@ -1,6 +1,7 @@
+import type { CommissionStatus } from "../schema";
 import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
-import { and, asc, desc, eq, or } from "drizzle-orm";
+import { and, asc, desc, eq, inArray, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import * as schema from "../schema";
 import { createD1Database } from "./db";
@@ -231,6 +232,165 @@ export const getSharedCommission = createServerFn()
       photos,
     };
   });
+
+/** Public linktree-style profile for a photographer slug. */
+export const getPublicProfile = createServerFn()
+  .validator((slug: string) => z.string().trim().min(2).max(48).parse(slug))
+  .handler(async ({ data: slug }) => {
+    const db = createD1Database();
+    const rows = await db
+      .select({
+        userId: schema.photographerProfiles.userId,
+        headline: schema.photographerProfiles.headline,
+        bio: schema.photographerProfiles.bio,
+        location: schema.photographerProfiles.location,
+        instagram: schema.photographerProfiles.instagram,
+        links: schema.photographerProfiles.links,
+        acceptRequests: schema.photographerProfiles.acceptRequests,
+        name: schema.users.name,
+        image: schema.users.image,
+      })
+      .from(schema.photographerProfiles)
+      .innerJoin(schema.users, eq(schema.users.id, schema.photographerProfiles.userId))
+      .where(eq(schema.photographerProfiles.slug, slug))
+      .limit(1);
+    const profile = rows[0];
+    if (!profile) {
+      return null;
+    }
+    const base = db
+      .select({
+        id: schema.commissions.id,
+        title: schema.commissions.title,
+        characterName: schema.commissions.characterName,
+        shootingDate: schema.commissions.shootingDate,
+        timezone: schema.commissions.timezone,
+        locationName: schema.commissions.locationName,
+        status: schema.commissions.status,
+      })
+      .from(schema.commissions)
+      .where(
+        and(
+          eq(schema.commissions.photographerId, profile.userId),
+          ne(schema.commissions.status, "refused" as CommissionStatus),
+        ),
+      )
+      .orderBy(desc(schema.commissions.shootingDate));
+    const upcoming = await base.limit(8);
+    const pastRows = await db
+      .select({
+        id: schema.commissions.id,
+        title: schema.commissions.title,
+        characterName: schema.commissions.characterName,
+        shootingDate: schema.commissions.shootingDate,
+        locationName: schema.commissions.locationName,
+        status: schema.commissions.status,
+        photoCount: sql<number>`(
+          select count(*) from ${schema.commissionPhotos}
+          where ${schema.commissionPhotos.commissionId} = ${schema.commissions.id}
+        )`.mapWith(Number),
+      })
+      .from(schema.commissions)
+      .where(
+        and(
+          eq(schema.commissions.photographerId, profile.userId),
+          inArray(schema.commissions.status, ["completed", "delivered"] as CommissionStatus[]),
+        ),
+      )
+      .orderBy(desc(schema.commissions.shootingDate))
+      .limit(12);
+    return {
+      name: profile.name,
+      image: profile.image,
+      slug,
+      headline: profile.headline,
+      bio: profile.bio,
+      location: profile.location,
+      instagram: profile.instagram,
+      links: JSON.parse(profile.links || "[]"),
+      acceptRequests: profile.acceptRequests,
+      plans: upcoming.filter((item) => !["completed", "delivered"].includes(item.status)),
+      past: pastRows.map((row) => ({ ...row, photoCount: row.photoCount ?? 0 })),
+    };
+  });
+
+export const saveMyProfile = createServerFn({ method: "POST" })
+  .validator(
+    z.object({
+      slug: z
+        .string()
+        .trim()
+        .toLowerCase()
+        .regex(/^[a-z0-9-]{2,48}$/),
+      headline: z.string().trim().max(120).default(""),
+      bio: z.string().trim().max(400).default(""),
+      location: z.string().trim().max(120).default(""),
+      instagram: z.string().trim().max(64).default(""),
+      links: z
+        .array(z.object({ label: z.string().trim().max(60), url: z.string().trim().url().max(300) }))
+        .max(8)
+        .default([]),
+      acceptRequests: z.boolean().default(true),
+    }),
+  )
+  .handler(async ({ data }) => {
+    const user = await getSessionUser(getRequest());
+    if (!user) {
+      throw new Error("Unauthorized");
+    }
+    const db = createD1Database();
+    await db
+      .insert(schema.photographerProfiles)
+      .values({
+        userId: user.id,
+        slug: data.slug,
+        headline: data.headline,
+        bio: data.bio,
+        location: data.location,
+        instagram: data.instagram,
+        links: JSON.stringify(data.links),
+        acceptRequests: data.acceptRequests,
+        updatedAt: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: schema.photographerProfiles.slug,
+        set: {
+          slug: data.slug,
+          headline: data.headline,
+          bio: data.bio,
+          location: data.location,
+          instagram: data.instagram,
+          links: JSON.stringify(data.links),
+          acceptRequests: data.acceptRequests,
+          updatedAt: new Date(),
+        },
+      });
+    return { slug: data.slug };
+  });
+
+export const getMyProfile = createServerFn().handler(async () => {
+  const user = await getSessionUser(getRequest());
+  if (!user) {
+    throw new Error("Unauthorized");
+  }
+  const db = createD1Database();
+  const rows = await db
+    .select()
+    .from(schema.photographerProfiles)
+    .where(eq(schema.photographerProfiles.userId, user.id))
+    .limit(1);
+  const row = rows[0];
+  return {
+    slug: row?.slug ?? "",
+    headline: row?.headline ?? "",
+    bio: row?.bio ?? "",
+    location: row?.location ?? "",
+    instagram: row?.instagram ?? "",
+    links: JSON.parse(row?.links || "[]") as Array<{ label: string; url: string }>,
+    acceptRequests: row?.acceptRequests ?? true,
+    name: user.name,
+  };
+});
 
 /** A signed-in visitor claims their seat on a shoot via the share link. */
 export const joinSharedCommission = createServerFn({ method: "POST" })
