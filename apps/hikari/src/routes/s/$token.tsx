@@ -2,6 +2,7 @@ import { Button } from "@astryxdesign/core/Button";
 import { Card } from "@astryxdesign/core/Card";
 import { useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Effect } from "effect";
 import { isFailure, isInitial } from "effect/reactivity/AsyncResult";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -13,8 +14,10 @@ import {
   MapPin,
   Users,
 } from "../../components/icons";
+import { joinByInvite } from "../../lib/api";
 import { sessionAtom } from "../../lib/atoms";
 import { authClient } from "../../lib/auth-client";
+import { isInviteToken, ROLE_LABELS } from "../../lib/cast";
 import { SITE } from "../../lib/config";
 import { getSharedCommission, joinSharedCommission } from "../../lib/server";
 import {
@@ -25,6 +28,10 @@ import {
 } from "../../lib/sharing";
 
 export const Route = createFileRoute("/s/$token")({
+  validateSearch: (search: { invite?: unknown }): { invite?: string } => {
+    const invite = typeof search.invite === "string" ? search.invite.trim() : "";
+    return isInviteToken(invite) ? { invite } : {};
+  },
   loader: async ({ params }) => {
     const recap = await getSharedCommission({ data: params.token });
     if (!recap) {
@@ -205,38 +212,31 @@ function SharedShootPage() {
           <LocationSharingCard recap={recap} />
 
           <Card padding={6}>
-            <p className="hk-eyebrow">People</p>
-            <ul className="mt-3 flex flex-col gap-2.5">
-              <PersonRow
-                email=""
-                label={`${recap.photographerName} · photographer`}
-              />
-              <PersonRow email="" label={`${recap.clientName} · client`} />
-              {recap.attendees.map((attendee) => (
-                <PersonRow
-                  email={attendee.email}
-                  key={String(attendee.id)}
-                  label={`${attendee.name} · joined`}
-                />
-              ))}
-              {invitees
-                .filter(
-                  (invitee) =>
-                    !recap.attendees.some(
-                      (attendee) => attendee.email === invitee.email,
-                    ),
-                )
-                .map((invitee) => (
+            <p className="hk-eyebrow">Cast</p>
+            {recap.cast.length > 0 ? (
+              <ul className="mt-3 flex flex-col gap-2.5">
+                {recap.cast.map((member) => (
                   <PersonRow
-                    email={invitee.email}
-                    key={invitee.email}
-                    label={invitee.name || invitee.email}
+                    email=""
+                    key={String(member.id)}
+                    label={`${member.name} · ${ROLE_LABELS[member.role].toLowerCase()}`}
                   />
                 ))}
-            </ul>
-            {invitees.length === 0 && recap.attendees.length === 0 ? (
+              </ul>
+            ) : (
               <p className="text-ink-faint mt-3 flex items-center gap-1.5 text-[11.5px]">
-                <Users size={13} /> No helpers or models invited yet.
+                <Users size={13} /> The call sheet is still empty.
+              </p>
+            )}
+            {recap.characters.length > 0 ? (
+              <p className="text-ink-soft mt-3 text-[11.5px]">
+                Shooting{" "}
+                {recap.characters
+                  .map((character) =>
+                    character.series
+                      ? `${character.name} (${character.series})`
+                      : character.name)
+                  .join(", ")}
               </p>
             ) : null}
             <JoinControls recap={recap} />
@@ -334,6 +334,7 @@ function JoinControls({
 }: {
   recap: Awaited<ReturnType<typeof getSharedCommission>> & {};
 }) {
+  const { invite } = Route.useSearch();
   const session = useAtomValue(sessionAtom);
   const user = isInitial(session) || isFailure(session) ? null : session.value;
   const joined = user
@@ -342,27 +343,34 @@ function JoinControls({
   const [joining, setJoining] = useState(false);
   const [failed, setFailed] = useState(false);
 
-  if (joined) {
+  // An invite still has to be redeemable after a plain "Join the shoot":
+  // that join only writes an attendee row, never a cast row.
+  if (joined && !invite) {
     return (
-      <p className="text-ink-soft mt-4 flex items-center gap-1.5 text-[12px]">
+      <p className="text-secondary mt-4 flex items-center gap-1.5 text-[12px]">
         <Check size={13} /> You are on the crew list.
       </p>
     );
   }
+  const returnTo = invite
+    ? `/s/${recap.shareToken}?invite=${invite}`
+    : `/s/${recap.shareToken}`;
   if (!user) {
     return (
       <div className="mt-4 flex flex-col gap-2">
-        <p className="text-ink-soft text-[12px]">
-          Invited to this shoot? Sign in to join the crew list.
+        <p className="text-secondary text-[12px]">
+          {invite
+            ? "This link adds you to the cast. Sign in with your studio account to accept it."
+            : "Invited to this shoot? Sign in first, then join with the link you were sent."}
         </p>
         <Button
           clickAction={() => {
             void authClient.signIn.social({
               provider: "accounts",
-              callbackURL: `/s/${recap.shareToken}`,
+              callbackURL: returnTo,
             });
           }}
-          label="Sign in to join"
+          label={invite ? "Sign in to accept" : "Sign in to join"}
           size="sm"
           variant="secondary"
         />
@@ -371,15 +379,32 @@ function JoinControls({
   }
   return (
     <div className="mt-4 flex flex-col gap-2">
+      {joined ? (
+        <p className="text-secondary text-[12px]">
+          You are already on the crew list — accepting adds your role to the
+          call sheet.
+        </p>
+      ) : null}
       <Button
         isDisabled={joining}
-        label={joining ? "Joining…" : failed ? "Try again" : "Join the shoot"}
+        label={
+          joining
+            ? "Joining…"
+            : failed
+            ? "Try again"
+            : invite
+            ? "Accept invitation"
+            : "Join the shoot"
+        }
         onClick={() => {
           setJoining(true);
           setFailed(false);
-          joinSharedCommission({ data: recap.shareToken })
+          const request = invite
+            ? Effect.runPromise(joinByInvite(recap.shareToken, invite))
+            : joinSharedCommission({ data: recap.shareToken });
+          void request
             .then(() => {
-              window.location.reload();
+              window.location.href = `/s/${recap.shareToken}`;
             })
             .catch(() => {
               setJoining(false);
@@ -390,8 +415,10 @@ function JoinControls({
         variant="primary"
       />
       {failed ? (
-        <p className="text-ink-faint text-[11px]">
-          Could not join. Try again in a moment.
+        <p className="text-secondary/70 text-[11px]">
+          {invite
+            ? "This invitation is no longer valid — ask for a new link."
+            : "Could not join. Try again in a moment."}
         </p>
       ) : null}
     </div>

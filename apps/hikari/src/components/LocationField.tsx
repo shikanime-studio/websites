@@ -1,5 +1,7 @@
+import { Button } from "@astryxdesign/core/Button";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { TextInput } from "@astryxdesign/core/TextInput";
+import { useToast } from "@astryxdesign/core/Toast";
 import { Effect } from "effect";
 import { useEffect, useRef, useState } from "react";
 
@@ -26,12 +28,52 @@ export function LocationField({
   const [results, setResults] = useState<SelectedPlace[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const container = useRef<HTMLDivElement>(null);
-  const selecting = useRef(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const selectingRef = useRef(false);
+  const toast = useToast();
+  const [locating, setLocating] = useState(false);
+
+  /** Fills the field from the device position — a shoot usually happens near
+   *  the person booking it, and the map makes the guess easy to correct. */
+  function locateMe() {
+    if (!("geolocation" in navigator)) {
+      toast({ body: "This browser has no location access.", type: "error" });
+      return;
+    }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        fetch(`/api/places?reverse=${latitude},${longitude}`)
+          .then(async (response) =>
+            response.ok ? (await response.json()) as { place?: SelectedPlace } : {},
+          )
+          .then((body) => {
+            const place = body.place
+              ?? { label: `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`, lat: latitude, lon: longitude };
+            onChange({ text: place.label, place });
+          })
+          .catch(() => {
+            onChange({
+              text: `${latitude.toFixed(5)}, ${longitude.toFixed(5)}`,
+              place: { label: "Current location", lat: latitude, lon: longitude },
+            });
+          })
+          .finally(() => {
+            setLocating(false);
+          });
+      },
+      () => {
+        setLocating(false);
+        toast({ body: "Location permission was declined.", type: "error" });
+      },
+      { enableHighAccuracy: true, timeout: 8000 },
+    );
+  }
 
   useEffect(() => {
     function close(event: MouseEvent) {
-      if (!container.current?.contains(event.target as Node)) {
+      if (!containerRef.current?.contains(event.target as Node)) {
         setOpen(false);
       }
     }
@@ -43,7 +85,7 @@ export function LocationField({
 
   useEffect(() => {
     const query = value.text.trim();
-    if (selecting.current || query.length < 3 || query === value.place?.label) {
+    if (selectingRef.current || query.length < 3 || query === value.place?.label) {
       setResults([]);
       return;
     }
@@ -74,7 +116,7 @@ export function LocationField({
   }, [value.text, value.place?.label]);
 
   async function choose(place: SelectedPlace) {
-    selecting.current = true;
+    selectingRef.current = true;
     setOpen(false);
     setResults([]);
     let resolved = place;
@@ -95,29 +137,50 @@ export function LocationField({
       }
     }
     onChange({ text: resolved.label, place: resolved });
-    selecting.current = false;
+    selectingRef.current = false;
   }
 
   return (
-    <div className="relative" ref={container}>
+    <div className="relative" ref={containerRef}>
       <TextInput
         description="Type an address or place, then pick a suggestion."
         isRequired
         label="Location"
         size="lg"
         onChange={(text) => {
-          selecting.current = false;
+          selectingRef.current = false;
           onChange({ text, place: null });
         }}
         placeholder="Parc de Bercy, Paris"
         value={value.text}
       />
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <Button
+          isLoading={locating}
+          label={locating ? "Locating…" : "Use my location"}
+          onClick={locateMe}
+          size="sm"
+          variant="ghost"
+        />
+        {value.place ? (
+          <Button
+            href={`https://www.google.com/maps/search/?api=1&query=${String(value.place.lat ?? "")},${String(value.place.lon ?? "")}`}
+            label="Open in Maps"
+            rel="noopener noreferrer"
+            size="sm"
+            target="_blank"
+            variant="ghost"
+          />
+        ) : null}
+      </div>
       {value.place?.lat !== null && value.place?.lat !== undefined ? (
-        <div className="border-hairline mt-2 overflow-hidden rounded-xl border">
+        <div className="border-border mt-2 overflow-hidden rounded-xl border">
+          {/* Google's embed keeps pan and zoom without shipping a map SDK. */}
           <iframe
-            className="h-32 w-full"
+            className="h-48 w-full"
             loading="lazy"
-            src={`https://www.google.com/maps?q=${String(value.place.lat)},${String(value.place.lon)}&output=embed`}
+            referrerPolicy="no-referrer-when-downgrade"
+            src={`https://www.google.com/maps?q=${String(value.place.lat)},${String(value.place.lon)}&z=15&output=embed`}
             title="Selected location"
           />
         </div>
@@ -128,13 +191,13 @@ export function LocationField({
           role="listbox"
         >
           {loading ? (
-            <div className="text-ink-soft flex items-center gap-2 px-3 py-2.5 text-[12px]">
+            <div className="text-secondary flex items-center gap-2 px-3 py-2.5 text-[12px]">
               <Spinner aria-label="Searching places" size="sm" /> Searching…
             </div>
           ) : null}
           {results.map((place) => (
             <button
-              className="hover:bg-surface text-ink block w-full px-3 py-2.5 text-left text-[12.5px]"
+              className="hover:bg-surface text-primary block w-full px-3 py-2.5 text-left text-[12.5px]"
               key={`${place.placeId ?? place.label}-${String(place.lat)}`}
               onClick={() => {
                 void choose(place);

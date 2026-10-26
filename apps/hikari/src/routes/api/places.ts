@@ -10,6 +10,8 @@ interface Place {
 }
 
 const NOMINATIM = "https://nominatim.openstreetmap.org/search";
+const NOMINATIM_REVERSE = "https://nominatim.openstreetmap.org/reverse";
+const COORDINATES = /^-?\d+(\.\d+)?,-?\d+(\.\d+)?$/;
 const GOOGLE_AUTOCOMPLETE = "https://places.googleapis.com/v1/places:autocomplete";
 const GOOGLE_DETAILS = "https://places.googleapis.com/v1/places";
 
@@ -101,12 +103,64 @@ async function nominatim(query: string): Promise<Place[]> {
   );
 }
 
+/** "Where am I?" — the browser knows the coordinates, this gives them a name. */
+async function reverseNominatim(lat: number, lon: number): Promise<Place | null> {
+  const url = new URL(NOMINATIM_REVERSE);
+  url.searchParams.set("format", "jsonv2");
+  url.searchParams.set("lat", String(lat));
+  url.searchParams.set("lon", String(lon));
+  url.searchParams.set("zoom", "16");
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "Hikari/1.0 (https://hikari.shikanime.studio)",
+      "Accept-Language": "en",
+    },
+  });
+  if (!response.ok) return null;
+  const body = (await response.json()) as { display_name?: string };
+  return body.display_name
+    ? { label: body.display_name, lat, lon }
+    : null;
+}
+
+async function reverseGoogle(
+  lat: number,
+  lon: number,
+  key: string,
+): Promise<Place | null> {
+  const url = new URL("https://maps.googleapis.com/maps/api/geocode/json");
+  url.searchParams.set("latlng", `${String(lat)},${String(lon)}`);
+  url.searchParams.set("key", key);
+  const response = await fetch(url);
+  if (!response.ok) return null;
+  const body = (await response.json()) as {
+    results?: Array<{ formatted_address?: string }>;
+  };
+  const label = body.results?.[0]?.formatted_address;
+  return label ? { label, lat, lon } : null;
+}
+
 export const Route = createFileRoute("/api/places")({
   server: {
     handlers: {
       GET: async ({ request }: { request: Request }) => {
         const url = new URL(request.url);
         const key = (env as { GOOGLE_MAPS_API_KEY?: string }).GOOGLE_MAPS_API_KEY;
+        const reverse = url.searchParams.get("reverse");
+        if (reverse) {
+          const parsed = z
+            .string()
+            .regex(COORDINATES)
+            .safeParse(reverse);
+          if (!parsed.success) {
+            return Response.json({ place: null }, { status: 400 });
+          }
+          const [lat, lon] = parsed.data.split(",").map(Number) as [number, number];
+          const place = key
+            ? await reverseGoogle(lat, lon, key)
+            : await reverseNominatim(lat, lon);
+          return Response.json({ place });
+        }
         const placeId = url.searchParams.get("placeId");
         if (placeId) {
           if (!key) {
