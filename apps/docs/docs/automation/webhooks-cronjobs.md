@@ -31,7 +31,8 @@ flowchart TD
     D -->|nothing new| Z[Report only, zero artifacts]
     I --> R[sks-issue-refine: converge with assignees]
     R --> GO{Explicit go-ahead}
-    GO -->|yes| W[Fresh jj workspace off main, commit, push, PR]
+    GO -->|yes| BRD[Automata board: Todo in human priority order]
+    BRD -->|human moves to In Progress| W[jj workspace, commit, push, PR]
     GO -->|no| PARK[Issue parked for humans]
     W --> P[PR authored by yorha-operator]
     P --> HU{Human review submitted}
@@ -64,6 +65,19 @@ and `skills` toolsets.
 | `github-mention` | `issue_comment`, `pull_request_review_comment` | action `created`, `edited`; body contains `@yorha-operator`; sender is `shikanime` | `sks-triage` |
 | `github-pr` | `pull_request` | action `opened`, `reopened`, `synchronize`, `review_requested`, `edited`; not draft; `mergeable` not false; `yorha-operator` among requested reviewers; sender allow-list | `sks-pr-review` |
 | `github-pr-land` | `pull_request_review` | review `submitted`; state `approved`, `commented`, or `changes_requested`; PR authored by `yorha-operator`; sender is not `yorha-operator`; reviewer association `COLLABORATOR`, `MEMBER`, or `OWNER` | `sks-land` |
+| `github-project` | `projects_v2_item` | action `edited` only (created carries no `changes` field); the Automata board's `project_node_id`; `content_type` Issue; the Status field's `field_node_id` changed in `changes.field_value`; sender is `shikanime` | `sks-dev` |
+
+The `github-project` route is the prioritization stage between refine and
+implementation: refined issues stay `Todo` on the Automata board in human
+priority order, and moving a card to `In Progress` is what dispatches the
+dev loop for it. The payload carries node ids only — no issue number — so
+the run resolves number and repository from `content_node_id` through the
+GraphQL node API, then clones and follows the dev loop: small
+fastlane-eligible work lands, bigger work stays a reviewed PR. The run
+never writes to the board: the receiver token holds no project scope, and
+the card's flip to `Done` is a native project workflow. Registration: one
+`projects_v2_item` org hook per org pointing at
+`/webhooks/github-project`.
 
 The `cloud-pi-native` org carries no hooks — this account holds only
 member there — so its coverage is cron polling.
