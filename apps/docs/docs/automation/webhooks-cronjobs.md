@@ -8,76 +8,117 @@ The automata agent reacts to GitHub events and runs the fleet's
 recurring audits. Both surfaces are declared in
 `shikanime-labs/machines` under
 `modules/nixos/profiles/automata.nix` — the host filesystem is
-ephemeral, so nothing is registered at runtime.
+ephemeral, so nothing is registered at runtime. Cron jobs set
+`deliver = "local"` and webhook routes set `deliver = "log"`: run
+output stays in the guest logs (`~/.hermes/logs/gateway.log` and the
+cron run records) and nothing posts to Discord, Matrix, or PR comments
+automatically. Every GitHub side effect is an explicit `gh` call from
+inside the run.
+
+## Flow
+
+```mermaid
+flowchart TD
+    A[Cron timers - 8 jobs] --> G1
+    G1[Enumerate: alerts, metrics, CI, notifications, renovate, drift]
+    G1 --> D[Dedup ledger: open issues plus previous run output]
+    B[Org webhook deliveries] --> F
+    F[Route filters: events, actions, field gates, sender allow-list]
+    F -->|pass| G2[Agent run with injected skill]
+    F -->|drop| X[Logged filtered, no run]
+    G2 --> D
+    D -->|new finding| I[Triaged issue, cap 3 per run]
+    D -->|nothing new| Z[Report only, zero artifacts]
+    I --> R[sks-issue-refine: converge with assignees]
+    R --> GO{Explicit go-ahead}
+    GO -->|yes| W[Fresh jj workspace off main, commit, push, PR]
+    GO -->|no| PARK[Issue parked for humans]
+    W --> P[PR authored by yorha-operator]
+    P --> HU{Human review submitted}
+    HU -->|approved by member or collaborator| L[github-pr-land route]
+    HU -->|changes requested| W
+    L --> C[Issue closed N of N]
+    C --> DOC[daily-docs-sync mirrors the change into the wiki]
+```
+
+Both intakes converge on the same ledger discipline: dedup against
+open issues and the previous run output before acting; a cron run is
+killed at about 3 minutes; at most one small PR per run and at most 3
+filed issues per run.
 
 ## Webhook routes
 
 The webhook platform listens on port `8644`, guarded by the
 `hermes-agent-webhook-secret` sops secret, with a rate limit of 120
-requests per minute. Every route delivers to the Hermes log only.
+requests per minute. One route per URL path; org-level hooks on
+`shikanime-labs` and `shikanime-studio` deliver to
+`https://automata-webhook.taila659a.ts.net/webhooks/<route>`. A failed
+filter gate logs `[webhook] filtered` and no run starts. Each route
+injects exactly one skill and runs with the `terminal`, `file`, `web`,
+and `skills` toolsets.
 
-- `github-issue` — events `issues` and `issue_comment`; fires when the
-  payload is not a pull request and the sender is `shikanime` or
-  `yorha-operator`. Runs the `sks-triage` skill.
-- `github-pr` — event `pull_request`; fires on actions `opened`,
-  `reopened`, and `synchronize` from senders `shikanime` or
-  `yorha-operator`. Runs the `sks-pr-review` skill.
+| Route | Events | Gates | Skill |
+|---|---|---|---|
+| `github-issue` | `issues` | action `opened`, `reopened`, `edited`; payload is not a pull request; sender is `shikanime` or `yorha-operator` | `sks-triage` |
+| `github-refine` | `issues` | action `assigned`; assignee is `yorha-operator`; sender allow-list | `sks-issue-refine` |
+| `github-mention` | `issue_comment`, `pull_request_review_comment` | action `created`, `edited`; body contains `@yorha-operator`; sender is `shikanime` | `sks-triage` |
+| `github-pr` | `pull_request` | action `opened`, `reopened`, `synchronize`, `review_requested`, `edited`; not draft; `mergeable` not false; `yorha-operator` among requested reviewers; sender allow-list | `sks-pr-review` |
+| `github-pr-land` | `pull_request_review` | review `submitted`; state `approved`, `commented`, or `changes_requested`; PR authored by `yorha-operator`; sender is not `yorha-operator`; reviewer association `COLLABORATOR`, `MEMBER`, or `OWNER` | `sks-land` |
 
-Each route carries a short triage or review prompt and runs with the
-`terminal`, `file`, `web`, and `skills` toolsets.
+The `cloud-pi-native` org carries no hooks — this account holds only
+member there — so its coverage is cron polling.
 
 ## Scheduled jobs
 
 Jobs live in VCS: `hermesHomeFiles."cron/jobs.json"` in the automata
-profile, all delivering locally to the Hermes log. Schedules sit in a
-00:00–03:00 UTC night window on 15-minute boundaries, so triage writes
-land while the European working day is asleep.
+profile, all delivering locally to the Hermes log. Daily jobs sit on
+15-minute staggers from 00:45 through 02:30 guest time, inside the
+inference gateway's measured zero-deferral night window.
 
-| Job | Schedule | Scope |
-|---|---|---|
-| `daily-docs-sync` | `45 0 * * *` | Recent org changes mirrored into the per-repo GitHub wikis, then docs.shikanime.studio claims verified against manifests and live cluster state; drift filed in this repo, small factual fixes fastlaned. |
-| `weekly-fleet-efficiency-audit` | `0 1 * * 1` | Efficiency proposals from A2A peers; top 3 filed as issues in `shikanime-labs/manifests`. |
-| `daily-fleet-health-audit` | `15 1 * * *` | Every `sks-audit` surface over the whole fleet and all three orgs: security alerts, perimeter redteam, CI failures, firing alerts, Flux health, Kubernetes warning events. |
-| `daily-github-triage` | `30 1 * * *` | Labels, assignment, and first replies on open issues and PRs. |
-| `daily-github-cleanup` | `45 1 * * *` | Deletion of fully-merged branches idle 7 days or more. |
-| `daily-github-notification-sweep` | `0 2 * * *` | Unread GitHub notifications, answered as `yorha-operator`. |
-| `daily-renovate-landing` | `30 2 * * *` | Landing pass over open renovate PRs across the three orgs. |
-| `monthly-sdlc-efficiency-audit` | `0 3 1 * *` | Monthly SDLC efficiency audit over the `sks-audit` SDLC surface: census, untriaged scan, review and merge latency. |
+| Job | Schedule | Skills | Scope and caps |
+|---|---|---|---|
+| `daily-docs-sync` | `45 0 * * *` | `sks-wiki`, `sks-issue`, `sks-commit`, `sks-pr`, `sks-fastlane` | Recent org changes mirrored into the per-repo GitHub wikis, stalest first, at most 2 wiki syncs per run; then docs.shikanime.studio claims verified against manifests and live cluster state, drift filed in this repo. |
+| `weekly-fleet-efficiency-audit` | `0 1 * * 1` | `sks-issue` | Efficiency proposals from A2A peers; top 3 filed as issues in `shikanime-labs/manifests`; proposals only, no PRs. |
+| `daily-fleet-health-audit` | `15 1 * * *` | `sks-audit`, `sks-issue`, `sks-commit`, `sks-pr`, `sks-fastlane` | Every `sks-audit` surface over the whole fleet and all three orgs: security alerts, perimeter redteam, CI failures, firing alerts, Flux health, Kubernetes warning events; max 3 issues; never closes or edits what it audits. |
+| `daily-github-triage` | `30 1 * * *` | `sks-triage`, `sks-issue` | Triage across shikanime-labs, shikanime-studio, and cloud-pi-native. |
+| `daily-github-cleanup` | `45 1 * * *` | `sks-gc` | Cleanup sweep across the three orgs. |
+| `15m-github-notification-sweep` | `2,17,32,47 * * * *` | `sks-github-notif-sweep`, `sks-triage` | Unread notifications for shikanime-labs and shikanime-studio; the slots never coincide with the daily block. |
+| `daily-renovate-landing` | `30 2 * * *` | `sks-maintenance`, `sks-issue`, `sks-land` | Landing pass over open renovate PRs across the three orgs. |
+| `monthly-sdlc-efficiency-audit` | `0 3 1 * *` | `sks-audit`, `sks-issue` | Monthly SDLC efficiency audit over the `sks-audit` SDLC surface: census, untriaged scan, review and merge latency with bot rows split out, merged-PR residue, landing-gate stalls, stale branches; max 3 issues with measured baselines. |
 
 The issue-filing jobs share one contract:
 
-- Deduplicate against open issues in the target repo; tracked findings
-  are listed, never re-filed.
-- Findings land as issues in `shikanime-labs/manifests`,
+- Deduplicate against open issues and the previous run output; tracked
+  findings are listed, never re-filed. A clean sweep reports nothing
+  new and produces zero artifacts.
+- Findings land as triaged issues in `shikanime-labs/manifests`,
   `shikanime-studio/websites`, or the affected repo, assigned
-  `yorha-operator` when eligible.
-- Small fixes may take the fastlane path: at most 5 files and 100
-  changed lines, nothing matching
-  `lock|secret|.enc.|auth|iam|cert|token`, no schema or API change,
-  checks green on the exact head, merged with
-  `gh pr merge --squash --admin --match-head-commit` and a receipt
-  comment, at most 3 fastlanes per run. Pending or red checks leave the
-  PR open for the next run.
-- Nothing closes automatically; resolved items are noted only.
+  `yorha-operator` when eligible, at most 3 per run.
+- Small fixes may take the fastlane path; the eligibility gate is
+  owned by the `sks-fastlane` skill and the cap is one small PR per
+  run. Pending or red checks leave the PR open for the next run.
+- Nothing closes, dismisses, silences, or edits automatically;
+  resolution is human-verified.
 
 ## Workstation jobs
 
 The operator's workstation runs a second set outside VCS, declared in
-`~/.hermes/cron/jobs.json` of the local Hermes profile. Schedules
-mirror the hub's night-window convention in local time (CET/CEST),
-again staggered in 15-minute steps.
+`~/.hermes/cron/jobs.json` of the local Hermes profile. Schedules sit
+in the 04:00–05:30 CET window on 15-minute boundaries — the same
+zero-deferral hours the fleet jobs target — with the 15-minute sweep
+on the `:02/:17/:32/:47` slots.
 
 | Job | Schedule | Scope |
 |---|---|---|
-| `daily-cpn-docs-sync` | `0 0 * * *` | Reflects `author:shikanime` commits across cloud-pi-native into the org's documentation repos. |
-| `daily-github-notification-sweep` | `15 0 * * *` | Unread notifications for shikanime-labs and shikanime-studio. |
-| `daily-cpn-github-sweep` | `30 0 * * *` | Open cloud-pi-native items authored by `shikanime`. |
-| `daily-cpn-github-triage` | `45 0 * * *` | Triage of those items: labels, milestones, first replies. |
-| `daily-cpin-github-actions-failure-triage` | `0 1 * * *` | Failed Actions runs on work authored by `shikanime`. |
-| `weekly-veille-technologique` | `15 0 * * 1` | Technology watch plus skills-catalog consolidation for the profile. |
-| `weekly-cpin-security-audit` | `0 1 * * 2` | Code-scanning, secret-scanning, and Dependabot alerts, plus security-bot comments, on repos touched by `shikanime`'s open work. Read-only: never dismisses alerts, never opens fix PRs. |
-| `weekly-cpin-security-redteam` | `15 1 * * 3` | Findings tracker over the cloud-pi-native red-team ledger issue (`Constats red team passive cpin-hp + formation` in `documentation-interne-socle`); statuses each finding open, in-flight, pending verification, or verified, and reports the unremediated count and oldest age. Read-only: remediation closure is deliberate, N-of-N verified, human-confirmed. |
-| `monthly-org-process-improvement` | `30 1 1 * *` | Proposals-only process sweep across both studios orgs: recurring CI failure causes, stale AGENTS.md, workflow drift, jobs in error state, review-starved PRs, aging issues. Files at most 3 issues in `shikanime-labs/manifests` per run against the previous run's ledger; a clean sweep reports one line. |
+| `daily-cpn-docs-sync` | `0 4 * * *` | All commits across cloud-pi-native reflected into the org's two documentation repos; cursor-based continuity, one sync per run. |
+| `15m-github-notification-sweep` | `2,17,32,47 * * * *` | Unread notifications for shikanime-labs and shikanime-studio, answered as `yorha-operator`; repos without a webhook reach the agent through this sweep. |
+| `daily-cpn-github-sweep` | `30 4 * * *` | New and open cloud-pi-native items org-wide; read-only report. |
+| `daily-cpin-github-triage` | `45 4 * * *` | Triage of open cloud-pi-native PRs and issues, all authors equally; read-only classification. |
+| `daily-cpin-github-actions-failure-triage` | `0 5 * * *` | Failed Actions runs org-wide in the last 24 hours; read-only diagnosis and classification. |
+| `weekly-veille-technologique` | `15 4 * * 1` | Technology watch and skills-catalog consolidation for the profile; delivers to Discord. |
+| `weekly-cpin-security-audit` | `0 5 * * 2` | Code-scanning, secret-scanning, and Dependabot alerts plus security-bot comments on the org's active repos. Read-only: never dismisses alerts, never opens fix PRs. |
+| `weekly-cpin-security-redteam` | `15 5 * * 3` | Findings tracker over the cloud-pi-native red-team ledger issue in `documentation-interne-socle`; statuses each finding and reports the unremediated count and oldest age. Read-only; reports in French. |
+| `monthly-org-process-improvement` | `30 5 1 * *` | Proposals-only process sweep across shikanime-labs and shikanime-studio; at most 3 issues per run against the previous run's ledger; hard 3-minute bound. |
 
 The two weekly cloud-pi-native security jobs carry one deliberate
 exception in their prompts: console's unsalted SHA-256 token hash is
@@ -94,3 +135,27 @@ secret into the service environment, and a rebuild restarts
 `hermes-agent.service` with the new declarations. Workstation jobs take
 effect on save — the local scheduler picks up `jobs.json` without a
 restart.
+
+A merged machines PR is not live until the containerdisk chain
+completes: image publish on the main push, a manifests bump of the
+automata pin, then the VM restart. Compare `systemctl show
+hermes-agent -p ExecMainStartTimestamp` with the rendered `config.yaml`
+mtime — an older PID means the process is serving pre-merge
+declarations — then signed-ping every route.
+
+## Operations
+
+Audit the hook inventory — a second hook with the same URL and events
+doubles every delivery:
+
+```sh
+gh api orgs/shikanime-labs/hooks --jq '.[] | {id, url: .config.url, events}'
+gh api orgs/shikanime-studio/hooks --jq '.[] | {id, url: .config.url, events}'
+```
+
+Run evidence lives on the receiver's file logs, not journald:
+
+```sh
+grep "route=" ~/.hermes/logs/gateway.log
+ls ~/.hermes/cron/output/
+```
