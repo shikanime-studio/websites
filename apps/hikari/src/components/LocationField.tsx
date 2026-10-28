@@ -28,6 +28,8 @@ export function LocationField({
   const [results, setResults] = useState<SelectedPlace[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  // A finished search that found nothing still owes the user a sentence.
+  const [missed, setMissed] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const selectingRef = useRef(false);
   const toast = useToast();
@@ -92,6 +94,7 @@ export function LocationField({
     const controller = new AbortController();
     const timer = setTimeout(() => {
       setLoading(true);
+      setMissed(false);
       fetch(`/api/places?q=${encodeURIComponent(query)}`, {
         signal: controller.signal,
       })
@@ -99,7 +102,9 @@ export function LocationField({
           response.ok ? response.json() : { places: [] },
         )
         .then((body) => {
-          setResults(body.places ?? []);
+          const places = body.places ?? [];
+          setResults(places);
+          setMissed(places.length === 0);
           setOpen(true);
         })
         .catch(() => {
@@ -185,7 +190,7 @@ export function LocationField({
           />
         </div>
       ) : null}
-      {open && (results.length > 0 || loading) ? (
+      {open && (results.length > 0 || loading || missed) ? (
         <div
           className="border-border bg-body absolute z-40 mt-1 w-full overflow-hidden rounded-xl border shadow-lg"
           role="listbox"
@@ -194,6 +199,11 @@ export function LocationField({
             <div className="text-secondary flex items-center gap-2 px-3 py-2.5 text-[12px]">
               <Spinner aria-label="Searching places" size="sm" /> Searching…
             </div>
+          ) : null}
+          {!loading && results.length === 0 && missed ? (
+            <p className="text-secondary px-3 py-2.5 text-[12px]" role="status">
+              No place matched yet — keep typing, or tap “Use my location”.
+            </p>
           ) : null}
           {results.map((place) => (
             <button

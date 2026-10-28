@@ -41,9 +41,9 @@ function NewCommissionPage() {
   const [shootingDate, setShootingDate] = useState("");
   const [location, setLocation] = useState<LocationValue>({ text: "", place: null });
   const [inviteesRaw, setInviteesRaw] = useState("");
-  // Rendered on the server first, so start from the studio default and adopt
-  // the device zone once we are in the browser; otherwise SSR and hydration
-  // disagree on the first paint.
+  // The timezone is assumed, never shown: the studio default on the server,
+  // the device zone as soon as we are in the browser. SSR and hydration stay
+  // in agreement because the swap happens after the first paint.
   const [timezone, setTimezone] = useState("Europe/Paris");
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -186,6 +186,11 @@ function NewCommissionPage() {
                 <div className="grid gap-5 sm:grid-cols-2">
                   <DateTimeInput
                     hourFormat="24h"
+                    // A time field left as free text reads as broken. The
+                    // quarter-hour list is the desktop picker; touch devices
+                    // get the wheels sheet either way.
+                    timeIncrement={15}
+                    timeOptionInterval={15}
                     isOptional
                     label={t("form.fieldDate")}
                     size="lg"
@@ -198,38 +203,15 @@ function NewCommissionPage() {
                   <LocationField value={location} onChange={setLocation} />
                 </div>
 
-                <div className="grid gap-5 sm:grid-cols-[1fr_1.4fr]">
-                  <div className="flex flex-col gap-1.5">
-                    <TextInput
-                      description="Detected from this device — change it if the shoot is elsewhere."
-                      label="Timezone"
-                      size="lg"
-                      onChange={setTimezone}
-                      value={timezone}
-                    />
-                    <button
-                      className="text-accent w-fit text-[11px] font-medium hover:underline"
-                      onClick={() => {
-                        setTimezone(
-                          Intl.DateTimeFormat().resolvedOptions().timeZone
-                          || "Europe/Paris",
-                        );
-                      }}
-                      type="button"
-                    >
-                      Use my device timezone
-                    </button>
-                  </div>
-                  <TextArea
-                    description="Only used for the calendar invitations. Access is granted by link, not by these addresses."
-                    isOptional
-                    label="Calendar guests"
-                    onChange={setInviteesRaw}
-                    placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
-                    rows={3}
-                    value={inviteesRaw}
-                  />
-                </div>
+                <TextArea
+                  description="Only used for the calendar invitations. Access is granted by link, not by these addresses."
+                  isOptional
+                  label="Calendar guests"
+                  onChange={setInviteesRaw}
+                  placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
+                  rows={3}
+                  value={inviteesRaw}
+                />
               </div>
             </fieldset>
 

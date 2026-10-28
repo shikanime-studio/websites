@@ -111,6 +111,12 @@ export function CharacterPicker({
                 ) : null}
               </button>
             ))}
+            {results.length === 0 && typed ? (
+              <p className="text-secondary/70 px-3 py-2 text-[11.5px]" role="status">
+                Nothing in the studio list yet — it is added when you send the
+                request.
+              </p>
+            ) : null}
             {typed ? (
               <button
                 className="border-border text-primary hover:bg-surface block w-full border-t px-3 py-2.5 text-left text-[12.5px]"

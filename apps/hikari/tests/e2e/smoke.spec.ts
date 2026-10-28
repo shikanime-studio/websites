@@ -17,18 +17,20 @@ test("a visitor can open the commission request form", async ({ page }) => {
 
   expect(response?.status()).toBe(200);
   await expect(page.locator("form")).toBeVisible();
-  await expect(page.getByLabel("Timezone")).toBeVisible();
   await expect(page.getByLabel("Calendar guests")).toBeVisible();
 });
 
-test("the request form pre-fills the timezone and offers characters and cast", async ({ page }) => {
+test("the request form hides the timezone and offers characters and cast", async ({ page }) => {
   await page.goto("/commissions/new");
 
-  const timezone = page.getByLabel("Timezone");
-  await expect(timezone).toBeVisible();
-  await expect(timezone).not.toHaveValue("");
+  // The timezone is assumed from the device and never rendered.
+  await expect(page.getByLabel("Timezone")).toHaveCount(0);
 
   await expect(page.getByLabel("Characters")).toBeVisible();
+  // The shooting time is a picker, not a free-text field.
+  await expect(
+    page.getByRole("combobox", { name: /Shooting date time/i }),
+  ).toBeVisible();
   await expect(page.getByRole("button", { name: "Add someone" })).toBeVisible();
   // A photographer is optional now: the shoot can start self-managed.
   await expect(page.getByLabel(/Photographer/)).not.toHaveAttribute("required");
