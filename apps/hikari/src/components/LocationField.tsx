@@ -1,9 +1,11 @@
+import type { Map as LeafletMap, Marker as LeafletMarker } from "leaflet";
 import { Button } from "@astryxdesign/core/Button";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { useToast } from "@astryxdesign/core/Toast";
 import { Effect } from "effect";
 import { useEffect, useRef, useState } from "react";
+import "leaflet/dist/leaflet.css";
 
 export interface SelectedPlace {
   label: string;
@@ -145,6 +147,109 @@ export function LocationField({
     selectingRef.current = false;
   }
 
+  const mapHostRef = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
+  const pinRef = useRef<LeafletMarker | null>(null);
+
+  /** A dropped pin is the truth: coordinates first, the nearest address after. */
+  function commitPin(lat: number, lon: number) {
+    selectingRef.current = true;
+    const fallback = `${lat.toFixed(5)}, ${lon.toFixed(5)}`;
+    onChange({ text: fallback, place: { label: fallback, lat, lon } });
+    fetch(`/api/places?reverse=${lat},${lon}`)
+      .then(async (response): Promise<{ place?: SelectedPlace }> =>
+        response.ok ? response.json() : {},
+      )
+      .then((body) => {
+        const label = body.place?.label;
+        if (label) {
+          onChange({ text: label, place: { label, lat, lon } });
+        }
+      })
+      .catch(() => {
+        // Coordinates alone are a usable answer; the pin stays where it was put.
+      })
+      .finally(() => {
+        selectingRef.current = false;
+      });
+  }
+
+  // The drag handler is bound once, so it reads the latest commit through a ref.
+  const commitRef = useRef(commitPin);
+  useEffect(() => {
+    commitRef.current = commitPin;
+  });
+
+  const pinLat = value.place?.lat ?? null;
+  const pinLon = value.place?.lon ?? null;
+
+  useEffect(() => {
+    if (pinLat === null || pinLon === null) {
+      mapRef.current?.remove();
+      mapRef.current = null;
+      pinRef.current = null;
+      return;
+    }
+    let cancelled = false;
+    void import("leaflet").then((loaded) => {
+      const L = (loaded as unknown as { default?: typeof loaded }).default ?? loaded;
+      if (cancelled || !mapHostRef.current) return;
+      if (mapRef.current) {
+        mapRef.current.setView([pinLat, pinLon], mapRef.current.getZoom());
+        pinRef.current?.setLatLng([pinLat, pinLon]);
+        return;
+      }
+      const map = L.map(mapHostRef.current, {
+        center: [pinLat, pinLon],
+        zoom: 15,
+        scrollWheelZoom: false,
+      });
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      }).addTo(map);
+      const pin = L.marker([pinLat, pinLon], {
+        draggable: true,
+        keyboard: true,
+        title: "Shoot location",
+        alt: "Shoot location pin",
+        icon: L.divIcon({
+          className: "",
+          html: '<svg width="26" height="36" viewBox="0 0 26 36" aria-hidden="true"><path d="M13 0C5.8 0 0 5.8 0 13c0 9.4 13 23 13 23s13-13.6 13-23C26 5.8 20.2 0 13 0Z" fill="#cc4c0c"/><circle cx="13" cy="12.5" r="5" fill="#fff"/></svg>',
+          iconSize: [26, 36],
+          iconAnchor: [13, 35],
+        }),
+      }).addTo(map);
+      pin.on("dragend", () => {
+        const point = pin.getLatLng();
+        commitRef.current(point.lat, point.lng);
+      });
+      map.on("click", (event) => {
+        pin.setLatLng(event.latlng);
+        commitRef.current(event.latlng.lat, event.latlng.lng);
+      });
+      // The container is laid out after the first paint; Leaflet needs the size.
+      requestAnimationFrame(() => {
+        map.invalidateSize();
+      });
+      mapRef.current = map;
+      pinRef.current = pin;
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [pinLat, pinLon]);
+
+  useEffect(
+    () => () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+      pinRef.current = null;
+    },
+    [],
+  );
+
   return (
     <div className="relative" ref={containerRef}>
       <TextInput
@@ -178,16 +283,13 @@ export function LocationField({
           />
         ) : null}
       </div>
-      {value.place?.lat !== null && value.place?.lat !== undefined ? (
+      {pinLat !== null && pinLon !== null ? (
         <div className="border-border mt-2 overflow-hidden rounded-xl border">
-          {/* Google's embed keeps pan and zoom without shipping a map SDK. */}
-          <iframe
-            className="h-48 w-full"
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            src={`https://www.google.com/maps?q=${String(value.place.lat)},${String(value.place.lon)}&z=15&output=embed`}
-            title="Selected location"
-          />
+          <div className="h-56 w-full" ref={mapHostRef} />
+          <p className="text-secondary px-3 py-2 text-[11px]">
+            Drag the pin, or tap the map, to put the shoot exactly where it
+            happens.
+          </p>
         </div>
       ) : null}
       {open && (results.length > 0 || loading || missed) ? (

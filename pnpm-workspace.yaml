@@ -52,6 +52,7 @@ catalogs:
     "@tanstack/react-virtual": ^3.14.10
     "@unpic/react": ^1.0.2
     better-auth: ^1.7.3
+    leaflet: ^1.9.4
     daisyui: ^5.7.27
     drizzle-orm: ^0.45.2
     drizzle-seed: ^0.3.1
@@ -100,6 +101,7 @@ catalogs:
     "@types/eslint-plugin-jsx-a11y": ^6.10.1
     "@types/node": ^22.20.1
     "@types/react": ^19.2.18
+    "@types/leaflet": ^1.9.21
     "@types/react-dom": ^19.2.5
     "@types/wicg-file-system-access": ^2023.10.7
     "@webgpu/types": ^0.1.72

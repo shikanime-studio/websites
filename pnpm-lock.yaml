@@ -164,6 +164,9 @@ catalogs:
     file-type:
       specifier: ^21.3.4
       version: 21.3.4
+    leaflet:
+      specifier: ^1.9.4
+      version: 1.9.4
     lucide-react:
       specifier: ^0.577.0
       version: 0.577.0
@@ -254,6 +257,9 @@ catalogs:
     '@types/eslint-plugin-jsx-a11y':
       specifier: ^6.10.1
       version: 6.10.1
+    '@types/leaflet':
+      specifier: ^1.9.21
+      version: 1.9.22
     '@types/node':
       specifier: ^22.20.1
       version: 22.20.1
@@ -755,6 +761,9 @@ importers:
       effect:
         specifier: 'catalog:'
         version: 4.0.0-rc.118
+      leaflet:
+        specifier: catalog:runtime
+        version: 1.9.4
       react:
         specifier: catalog:runtime
         version: 19.2.8
@@ -807,6 +816,9 @@ importers:
       '@tsconfig/vite-react':
         specifier: catalog:types
         version: 7.0.2
+      '@types/leaflet':
+        specifier: catalog:types
+        version: 1.9.22
       '@types/node':
         specifier: catalog:types
         version: 22.20.1
@@ -5302,6 +5314,9 @@ packages:
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
+  '@types/leaflet@1.9.22':
+    resolution: {integrity: sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA==}
+
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
 
@@ -8497,6 +8512,9 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
@@ -17041,6 +17059,10 @@ snapshots:
 
   '@types/json-schema@7.0.15': {}
 
+  '@types/leaflet@1.9.22':
+    dependencies:
+      '@types/geojson': 7946.0.16
+
   '@types/mdast@4.0.4':
     dependencies:
       '@types/unist': 3.0.3
@@ -20779,6 +20801,8 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
+
+  leaflet@1.9.4: {}
 
   leven@3.1.0: {}
 
