@@ -23,9 +23,12 @@ export interface LocationValue {
 export function LocationField({
   value,
   onChange,
+  interactivePin = true,
 }: {
   value: LocationValue;
   onChange: (next: LocationValue) => void;
+  /** Flag `place-pin`: the draggable map, or the older read-only embed. */
+  interactivePin?: boolean;
 }) {
   const [results, setResults] = useState<SelectedPlace[]>([]);
   const [open, setOpen] = useState(false);
@@ -184,7 +187,7 @@ export function LocationField({
   const pinLon = value.place?.lon ?? null;
 
   useEffect(() => {
-    if (pinLat === null || pinLon === null) {
+    if (!interactivePin || pinLat === null || pinLon === null) {
       mapRef.current?.remove();
       mapRef.current = null;
       pinRef.current = null;
@@ -239,7 +242,7 @@ export function LocationField({
     return () => {
       cancelled = true;
     };
-  }, [pinLat, pinLon]);
+  }, [interactivePin, pinLat, pinLon]);
 
   useEffect(
     () => () => {
@@ -284,13 +287,26 @@ export function LocationField({
         ) : null}
       </div>
       {pinLat !== null && pinLon !== null ? (
-        <div className="border-border mt-2 overflow-hidden rounded-xl border">
-          <div className="h-56 w-full" ref={mapHostRef} />
-          <p className="text-secondary px-3 py-2 text-[11px]">
-            Drag the pin, or tap the map, to put the shoot exactly where it
-            happens.
-          </p>
-        </div>
+        interactivePin ? (
+          <div className="border-border mt-2 overflow-hidden rounded-xl border">
+            <div className="h-56 w-full" ref={mapHostRef} />
+            <p className="text-secondary px-3 py-2 text-[11px]">
+              Drag the pin, or tap the map, to put the shoot exactly where it
+              happens.
+            </p>
+          </div>
+        ) : (
+          <div className="border-border mt-2 overflow-hidden rounded-xl border">
+            {/* Flag off: the map still shows the place, it just cannot move. */}
+            <iframe
+              className="h-48 w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+              src={`https://www.google.com/maps?q=${String(pinLat)},${String(pinLon)}&z=15&output=embed`}
+              title="Selected location"
+            />
+          </div>
+        )
       ) : null}
       {open && (results.length > 0 || loading || missed) ? (
         <div

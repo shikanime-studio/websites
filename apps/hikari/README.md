@@ -44,6 +44,32 @@ crew follow everything on one private link. Inspired by
 - **Landing** (`/`): explains the service in one screen — three steps,
   a mock recap, one CTA — in EN/FR/JA.
 
+## Feature flags
+
+Flags are evaluated with [OpenFeature](https://openfeature.dev) through Cloudflare
+Flagship. The Worker reaches the `hikari` Flagship app through the `FLAGS` binding
+declared in `wrangler.jsonc`; `getFlagsFn` in `src/lib/server.ts` resolves the flags
+a page needs and the routes read them from `flagsAtom`.
+
+| Flag        | Used for                        |
+| ----------- | ------------------------------- |
+| `place-pin` | Draggable map pin; off = embed. |
+
+Add a flag by declaring it in the `FLAGS` map next to its fallback,
+creating the key in Flagship, and reading it from the resolved object.
+The fallback is what the app serves when the binding cannot answer — a
+flag outage must never break a page.
+
+Flagship has no local simulator that can evaluate, so the binding is declared
+`remote: true`: `pnpm dev` reads the real app and needs a Cloudflare login. If
+wrangler reports more than one account, export `CLOUDFLARE_ACCOUNT_ID`.
+
+```bash
+APP=022a4cc6-d6d3-4e4a-b8e6-0271836f3c64
+pnpm exec wrangler flagship flags get "$APP" place-pin
+pnpm exec wrangler flagship flags set "$APP" place-pin -V off
+```
+
 ## Stack
 
 | Layer   | Choice                                                                                                                                                        |

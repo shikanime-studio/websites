@@ -20,6 +20,15 @@
       "enabled": true,
     },
   },
+  "flagship": [
+    {
+      "binding": "FLAGS",
+      "app_id": "022a4cc6-d6d3-4e4a-b8e6-0271836f3c64",
+      // The local simulator cannot evaluate Flagship flags; dev reads the
+      // remote app so a flag behaves the same way it does in production.
+      "remote": true,
+    },
+  ],
   "d1_databases": [
     {
       "binding": "DB",

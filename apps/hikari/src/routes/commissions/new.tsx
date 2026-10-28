@@ -8,16 +8,17 @@ import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { useToast } from "@astryxdesign/core/Toast";
-import { useAtomRefresh } from "@effect/atom-react";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
+import { isFailure, isInitial } from "effect/reactivity/AsyncResult";
 import { useEffect, useState } from "react";
 import { CastEditor } from "../../components/CastEditor";
 import { CharacterPicker } from "../../components/CharacterPicker";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
 import { LocationField } from "../../components/LocationField";
 import { ApiError, createCommission } from "../../lib/api";
-import { commissionsAtom } from "../../lib/atoms";
+import { commissionsAtom, flagsAtom } from "../../lib/atoms";
 import { normalizeCast, normalizeCharacters } from "../../lib/cast";
 import { parseInviteeInput } from "../../lib/sharing";
 
@@ -54,6 +55,11 @@ function NewCommissionPage() {
       cancelAnimationFrame(frame);
     };
   }, []);
+  // Flags arrive after the first paint; the fallbacks keep SSR and hydration
+  // identical until the binding answers.
+  const flags = useAtomValue(flagsAtom);
+  const placePin =
+    isInitial(flags) || isFailure(flags) ? true : flags.value.placePin;
   const [attempted, setAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -200,7 +206,11 @@ function NewCommissionPage() {
                     placeholder={t("form.fieldDate")}
                     value={shootingDate as never}
                   />
-                  <LocationField value={location} onChange={setLocation} />
+                  <LocationField
+                    interactivePin={placePin}
+                    value={location}
+                    onChange={setLocation}
+                  />
                 </div>
 
                 <TextArea
