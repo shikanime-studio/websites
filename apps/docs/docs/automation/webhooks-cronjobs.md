@@ -130,6 +130,7 @@ on the `:02/:17/:32/:47` slots.
 | `daily-cpin-github-triage` | `45 4 * * *` | Triage of open cloud-pi-native PRs and issues, all authors equally; read-only classification. |
 | `daily-cpin-github-actions-failure-triage` | `0 5 * * *` | Failed Actions runs org-wide in the last 24 hours; read-only diagnosis and classification. |
 | `weekly-veille-technologique` | `15 4 * * 1` | Technology watch and skills-catalog consolidation for the profile; delivers to Discord. |
+| `weekly-automata-board-hygiene` | `15 4 * * 2` | Read-only hygiene audit of the Automata board (shikanime-labs project 5): stale Todo, zombie In Progress, Done residue, duplicates, unowned cards; reports to Discord with recommendations — never moves or edits cards. |
 | `weekly-cpin-security-audit` | `0 5 * * 2` | Code-scanning, secret-scanning, and Dependabot alerts plus security-bot comments on the org's active repos. Read-only: never dismisses alerts, never opens fix PRs. |
 | `weekly-cpin-security-redteam` | `15 5 * * 3` | Findings tracker over the cloud-pi-native red-team ledger issue in `documentation-interne-socle`; statuses each finding and reports the unremediated count and oldest age. Read-only; reports in French. |
 | `monthly-org-process-improvement` | `30 5 1 * *` | Proposals-only process sweep across shikanime-labs and shikanime-studio; at most 3 issues per run against the previous run's ledger; hard 3-minute bound. |
