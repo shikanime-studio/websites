@@ -65,19 +65,21 @@ and `skills` toolsets.
 | `github-mention` | `issue_comment`, `pull_request_review_comment` | action `created`, `edited`; body contains `@yorha-operator`; sender is `shikanime` | `sks-triage` |
 | `github-pr` | `pull_request` | action `opened`, `reopened`, `synchronize`, `review_requested`, `edited`; not draft; `mergeable` not false; `yorha-operator` among requested reviewers; sender allow-list | `sks-pr-review` |
 | `github-pr-land` | `pull_request_review` | review `submitted`; state `approved`, `commented`, or `changes_requested`; PR authored by `yorha-operator`; sender is not `yorha-operator`; reviewer association `COLLABORATOR`, `MEMBER`, or `OWNER` | `sks-land` |
-| `github-project` | `projects_v2_item` | action `edited` only (created carries no `changes` field); the Automata board's `project_node_id`; `content_type` Issue; the Status field's `field_node_id` changed in `changes.field_value`; sender is `shikanime` | `sks-dev` |
+| `github-project` | `projects_v2_item` | action `edited` only (created carries no `changes` field); a pertinent board's `project_node_id` (Automata `PVT_kwDOEX1U4M4BoW9_`, Nishir `PVT_kwDOEX1U4M4BoW97`); `content_type` Issue; the board's Status field's `field_node_id` changed in `changes.field_value` (`PVTSSF_…zhm3c4U` on Automata, `PVTSSF_…zhm3c00` on Nishir); sender is `shikanime` | `sks-dev` |
 
 The `github-project` route is the prioritization stage between refine and
-implementation: refined issues stay `Todo` on the Automata board in human
-priority order, and moving a card to `In Progress` is what dispatches the
-dev loop for it. The payload carries node ids only — no issue number — so
-the run resolves number and repository from `content_node_id` through the
-GraphQL node API, then clones and follows the dev loop: small
-fastlane-eligible work lands, bigger work stays a reviewed PR. The run
-never writes to the board: the receiver token holds no project scope, and
-the card's flip to `Done` is a native project workflow. Registration: one
-`projects_v2_item` org hook per org pointing at
-`/webhooks/github-project`.
+implementation. Each issue's pertinent project is resolved live from its
+`projectItems` — automata-scope work defaults to the Automata board, infra
+cards to Nishir; a card may legitimately sit on both. Refined issues stay
+`Todo` in human priority order, and moving a card to `In Progress` is what
+dispatches the dev loop for it. The payload carries node ids only — no
+issue number — so the run resolves number and repository from
+`content_node_id` through the GraphQL node API, then clones and follows
+the dev loop: small fastlane-eligible work lands, bigger work stays a
+reviewed PR. The run never writes to the board: the receiver token holds
+no project scope, and the card's flip to `Done` is a native project
+workflow. Registration: one `projects_v2_item` org hook per org pointing
+at `/webhooks/github-project`.
 
 The `cloud-pi-native` org carries no hooks — this account holds only
 member there — so its coverage is cron polling.
@@ -130,7 +132,7 @@ on the `:02/:17/:32/:47` slots.
 | `daily-cpin-github-triage` | `45 4 * * *` | Triage of open cloud-pi-native PRs and issues, all authors equally; read-only classification. |
 | `daily-cpin-github-actions-failure-triage` | `0 5 * * *` | Failed Actions runs org-wide in the last 24 hours; read-only diagnosis and classification. |
 | `weekly-veille-technologique` | `15 4 * * 1` | Technology watch and skills-catalog consolidation for the profile; delivers to Discord. |
-| `weekly-automata-board-hygiene` | `15 4 * * 2` | Read-only hygiene audit of the Automata board (shikanime-labs project 5): stale Todo, zombie In Progress, Done residue, duplicates, unowned cards; reports to Discord with recommendations — never moves or edits cards. |
+| `weekly-automata-board-hygiene` | `15 4 * * 2` | Read-only hygiene audit of both pertinent labs boards (Automata #5 for agent work, Nishir #4 for infra cards): stale Todo, zombie In Progress, Done residue, same-board duplicates, unowned cards; reports here with recommendations — never moves or edits cards. A fleet twin runs on the automata guest once its token carries `read:project`. |
 | `weekly-cpin-security-audit` | `0 5 * * 2` | Code-scanning, secret-scanning, and Dependabot alerts plus security-bot comments on the org's active repos. Read-only: never dismisses alerts, never opens fix PRs. |
 | `weekly-cpin-security-redteam` | `15 5 * * 3` | Findings tracker over the cloud-pi-native red-team ledger issue in `documentation-interne-socle`; statuses each finding and reports the unremediated count and oldest age. Read-only; reports in French. |
 | `monthly-org-process-improvement` | `30 5 1 * *` | Proposals-only process sweep across shikanime-labs and shikanime-studio; at most 3 issues per run against the previous run's ledger; hard 3-minute bound. |
