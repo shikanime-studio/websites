@@ -942,3 +942,43 @@ export const markNotificationReadFn = createServerFn({ method: "POST" })
       );
     return { ok: true };
   });
+
+/**
+ * Every flag this app reads, with the value used when Flagship cannot answer.
+ * The keys belong to the `hikari` app in Cloudflare Flagship; the Worker
+ * reaches it through the FLAGS binding declared in wrangler.jsonc.
+ *
+ * The provider is imported inside the handler on purpose: OpenFeature and the
+ * Flagship SDK pull Node built-ins and `cloudflare:workers`, neither of which
+ * may appear in the client graph.
+ */
+const FLAGS = {
+  placePin: { key: "place-pin", fallback: true },
+} as const;
+
+let flagsReady: Promise<void> | undefined;
+
+/** The flags one page needs, resolved once on the server. */
+export const getFlagsFn = createServerFn().handler(async () => {
+  const [{ FlagshipServerProvider }, { OpenFeature }, { env }] = await Promise.all([
+    import("@cloudflare/flagship/server"),
+    import("@openfeature/server-sdk"),
+    import("cloudflare:workers"),
+  ]);
+  // One provider per isolate: the binding authenticates itself and later
+  // requests reuse it. A failed setup resolves quietly so the declared
+  // fallbacks answer instead of turning a flag outage into a broken page.
+  flagsReady ??= OpenFeature.setProviderAndWait(
+    new FlagshipServerProvider({ binding: env.FLAGS }),
+  ).catch(() => {});
+  await flagsReady;
+  const client = OpenFeature.getClient();
+  const read = async (flag: { key: string; fallback: boolean }) => {
+    try {
+      return await client.getBooleanValue(flag.key, flag.fallback);
+    } catch {
+      return flag.fallback;
+    }
+  };
+  return { placePin: await read(FLAGS.placePin) };
+});

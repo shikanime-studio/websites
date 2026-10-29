@@ -4,6 +4,7 @@
 interface __BaseEnv_Env {
   PHOTOS: R2Bucket;
   DB: D1Database;
+  FLAGS: Flagship;
 }
 declare namespace Cloudflare {
   interface Env extends __BaseEnv_Env {}

@@ -10,6 +10,7 @@ import {
   createCommissionFn,
   createInviteFn,
   getCommission,
+  getFlagsFn,
   getSessionFn,
   getUserPreferences,
   joinByInviteFn,
@@ -36,6 +37,8 @@ const fromServerFn = <A>(run: () => Promise<A>): Effect.Effect<A, ApiError> =>
   });
 
 export const fetchSession = fromServerFn(getSessionFn);
+
+export const fetchFlags = fromServerFn(getFlagsFn);
 
 export const fetchNotifications: Effect.Effect<NotificationList, ApiError> =
   fromServerFn(listNotifications);

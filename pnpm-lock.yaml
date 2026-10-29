@@ -101,6 +101,9 @@ catalogs:
     '@better-auth/passkey':
       specifier: ^1.7.3
       version: 1.7.12
+    '@cloudflare/flagship':
+      specifier: ^0.6.0
+      version: 0.6.0
     '@docusaurus/core':
       specifier: 3.10.2
       version: 3.10.2
@@ -131,6 +134,9 @@ catalogs:
     '@mermaid-js/layout-elk':
       specifier: ^1.0.1
       version: 1.0.1
+    '@openfeature/server-sdk':
+      specifier: ^1.23.0
+      version: 1.23.0
     '@tanstack/react-db':
       specifier: ^0.1.96
       version: 0.1.96
@@ -164,6 +170,9 @@ catalogs:
     file-type:
       specifier: ^21.3.4
       version: 21.3.4
+    leaflet:
+      specifier: ^1.9.4
+      version: 1.9.4
     lucide-react:
       specifier: ^0.577.0
       version: 0.577.0
@@ -254,6 +263,9 @@ catalogs:
     '@types/eslint-plugin-jsx-a11y':
       specifier: ^6.10.1
       version: 6.10.1
+    '@types/leaflet':
+      specifier: ^1.9.21
+      version: 1.9.22
     '@types/node':
       specifier: ^22.20.1
       version: 22.20.1
@@ -716,6 +728,9 @@ importers:
       '@astryxdesign/theme-neutral':
         specifier: 'catalog:'
         version: 0.5.2(@astryxdesign/core@0.5.2(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@cloudflare/flagship':
+        specifier: catalog:runtime
+        version: 0.6.0(@openfeature/server-sdk@1.23.0(@openfeature/core@1.12.0))
       '@cloudflare/vite-plugin':
         specifier: catalog:build
         version: 1.54.3(@types/node@22.20.1)(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(wrangler@4.152.0(@types/node@22.20.1))
@@ -725,6 +740,9 @@ importers:
       '@fontsource-variable/bricolage-grotesque':
         specifier: catalog:runtime
         version: 5.3.0
+      '@openfeature/server-sdk':
+        specifier: catalog:runtime
+        version: 1.23.0(@openfeature/core@1.12.0)
       '@shikanime-studio/design':
         specifier: workspace:*
         version: link:../../packages/design
@@ -755,6 +773,9 @@ importers:
       effect:
         specifier: 'catalog:'
         version: 4.0.0-rc.118
+      leaflet:
+        specifier: catalog:runtime
+        version: 1.9.4
       react:
         specifier: catalog:runtime
         version: 19.2.8
@@ -807,6 +828,9 @@ importers:
       '@tsconfig/vite-react':
         specifier: catalog:types
         version: 7.0.2
+      '@types/leaflet':
+        specifier: catalog:types
+        version: 1.9.22
       '@types/node':
         specifier: catalog:types
         version: 22.20.1
@@ -2322,6 +2346,17 @@ packages:
   '@clack/prompts@1.8.1':
     resolution: {integrity: sha512-dlT1m5e/0yUL0kRNcQn7yGLVThkgbB0Ga/1AmfDDC/8ik6AIiSf2QLQO2zPYvefsHP0aFgxO93cVLCCfDp7kzQ==}
     engines: {node: '>= 20.12.0'}
+
+  '@cloudflare/flagship@0.6.0':
+    resolution: {integrity: sha512-3nEhn3RKrk7V/Fc7sT83XhU00LwlBiGO+ooo+GmzDjlaIQMtm7tfkib5KAwmDFn9yi64POMDhIMC06TscOu1BQ==}
+    peerDependencies:
+      '@openfeature/server-sdk': ^1.20.2
+      '@openfeature/web-sdk': ^1.7.3
+    peerDependenciesMeta:
+      '@openfeature/server-sdk':
+        optional: true
+      '@openfeature/web-sdk':
+        optional: true
 
   '@cloudflare/kv-asset-handler@0.5.0':
     resolution: {integrity: sha512-jxQYkj8dSIzc0cD6cMMNdOc1UVjqSqu8BZdor5s8cGjW2I8BjODt/kWPVdY+u9zj3ms75Q5qaZgnxUad83+eAg==}
@@ -4104,6 +4139,15 @@ packages:
     resolution: {integrity: sha512-hAX0pT/73190NLqBPPWSdBVGtbY6VOhWYK3qqHqtXQ1gK7kS2yz4+ivsN07hpJ6I3aeMtKP6J6npsEKOAzuTLA==}
     engines: {node: '>=20.0'}
 
+  '@openfeature/core@1.12.0':
+    resolution: {integrity: sha512-7PCPzyd1OC19begz30+CRknFB0ChtyaZUhk7YWrk+Bov1fpVw0HYkTXtoxxsvPfDZB9P9WsT7uixN+Z8f9+bcA==}
+
+  '@openfeature/server-sdk@1.23.0':
+    resolution: {integrity: sha512-JWeLvltJIV0AFgOfbw7hK9b9Rw/5wWq+RMhCIU9sJtAqarxr8hSPglG+JAGGhYdElAz3Qwe9W3ApWyPNkQEyqg==}
+    engines: {node: '>=20'}
+    peerDependencies:
+      '@openfeature/core': ^1.12.0
+
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
@@ -5301,6 +5345,9 @@ packages:
 
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
+
+  '@types/leaflet@1.9.22':
+    resolution: {integrity: sha512-h3lhECYEKDasG7LFHu+GiHqAvsgLuQvlJvVZzJDGONo3sEL+wUOqSFLnwkZlK0qVxnxbuGFW8iBlJNYs5wgndA==}
 
   '@types/mdast@4.0.4':
     resolution: {integrity: sha512-kGaNbPh1k7AFzgpud/gMdvIm5xuECykRR+JnWKQno9TAXVa6WIVCGTPvYGekIDL4uwCZQSYbUxNBSb1aUo79oA==}
@@ -8497,6 +8544,9 @@ packages:
 
   layout-base@2.0.1:
     resolution: {integrity: sha512-dp3s92+uNI1hWIpPGH3jK2kxE2lMjdXdr+DH8ynZHpd6PUlH6x6cbuXnoMmiNumznqaNO31xu9e79F0uuZ0JFg==}
+
+  leaflet@1.9.4:
+    resolution: {integrity: sha512-nxS1ynzJOmOlHp+iL3FyWqK89GtNL8U8rvlMOsQdTTssxZwCXh8N2NB3GDQOL+YR3XnWyZAxwQixURb+FA74PA==}
 
   leven@3.1.0:
     resolution: {integrity: sha512-qsda+H8jTaUaN/x5vzW2rzc+8Rw4TAQ/4KjB46IwK5VH+IlVeeeje/EoZRpiXvIqjFgK84QffqPztGI3VBLG1A==}
@@ -13206,6 +13256,12 @@ snapshots:
       fast-wrap-ansi: 0.2.2
       sisteransi: 1.0.5
 
+  '@cloudflare/flagship@0.6.0(@openfeature/server-sdk@1.23.0(@openfeature/core@1.12.0))':
+    dependencies:
+      lru-cache: 11.5.3
+    optionalDependencies:
+      '@openfeature/server-sdk': 1.23.0(@openfeature/core@1.12.0)
+
   '@cloudflare/kv-asset-handler@0.5.0': {}
 
   '@cloudflare/unenv-preset@2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260831.1)':
@@ -15779,6 +15835,12 @@ snapshots:
 
   '@oozcitak/util@10.0.0': {}
 
+  '@openfeature/core@1.12.0': {}
+
+  '@openfeature/server-sdk@1.23.0(@openfeature/core@1.12.0)':
+    dependencies:
+      '@openfeature/core': 1.12.0
+
   '@opentelemetry/api@1.9.0':
     optional: true
 
@@ -17040,6 +17102,10 @@ snapshots:
   '@types/json-logic-js@2.0.5': {}
 
   '@types/json-schema@7.0.15': {}
+
+  '@types/leaflet@1.9.22':
+    dependencies:
+      '@types/geojson': 7946.0.16
 
   '@types/mdast@4.0.4':
     dependencies:
@@ -20779,6 +20845,8 @@ snapshots:
   layout-base@1.0.2: {}
 
   layout-base@2.0.1: {}
+
+  leaflet@1.9.4: {}
 
   leven@3.1.0: {}
 

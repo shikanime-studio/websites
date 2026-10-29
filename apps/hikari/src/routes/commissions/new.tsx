@@ -8,16 +8,17 @@ import { useTranslator } from "@astryxdesign/core/i18n";
 import { TextArea } from "@astryxdesign/core/TextArea";
 import { TextInput } from "@astryxdesign/core/TextInput";
 import { useToast } from "@astryxdesign/core/Toast";
-import { useAtomRefresh } from "@effect/atom-react";
+import { useAtomRefresh, useAtomValue } from "@effect/atom-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Cause, Effect, Exit } from "effect";
+import { isFailure, isInitial } from "effect/reactivity/AsyncResult";
 import { useEffect, useState } from "react";
 import { CastEditor } from "../../components/CastEditor";
 import { CharacterPicker } from "../../components/CharacterPicker";
 import { ArrowLeft, Bell, CalendarIcon, Camera, Images } from "../../components/icons";
 import { LocationField } from "../../components/LocationField";
 import { ApiError, createCommission } from "../../lib/api";
-import { commissionsAtom } from "../../lib/atoms";
+import { commissionsAtom, flagsAtom } from "../../lib/atoms";
 import { normalizeCast, normalizeCharacters } from "../../lib/cast";
 import { parseInviteeInput } from "../../lib/sharing";
 
@@ -41,9 +42,9 @@ function NewCommissionPage() {
   const [shootingDate, setShootingDate] = useState("");
   const [location, setLocation] = useState<LocationValue>({ text: "", place: null });
   const [inviteesRaw, setInviteesRaw] = useState("");
-  // Rendered on the server first, so start from the studio default and adopt
-  // the device zone once we are in the browser; otherwise SSR and hydration
-  // disagree on the first paint.
+  // The timezone is assumed, never shown: the studio default on the server,
+  // the device zone as soon as we are in the browser. SSR and hydration stay
+  // in agreement because the swap happens after the first paint.
   const [timezone, setTimezone] = useState("Europe/Paris");
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -54,6 +55,11 @@ function NewCommissionPage() {
       cancelAnimationFrame(frame);
     };
   }, []);
+  // Flags arrive after the first paint; the fallbacks keep SSR and hydration
+  // identical until the binding answers.
+  const flags = useAtomValue(flagsAtom);
+  const placePin =
+    isInitial(flags) || isFailure(flags) ? true : flags.value.placePin;
   const [attempted, setAttempted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
@@ -186,6 +192,11 @@ function NewCommissionPage() {
                 <div className="grid gap-5 sm:grid-cols-2">
                   <DateTimeInput
                     hourFormat="24h"
+                    // A time field left as free text reads as broken. The
+                    // quarter-hour list is the desktop picker; touch devices
+                    // get the wheels sheet either way.
+                    timeIncrement={15}
+                    timeOptionInterval={15}
                     isOptional
                     label={t("form.fieldDate")}
                     size="lg"
@@ -195,41 +206,22 @@ function NewCommissionPage() {
                     placeholder={t("form.fieldDate")}
                     value={shootingDate as never}
                   />
-                  <LocationField value={location} onChange={setLocation} />
-                </div>
-
-                <div className="grid gap-5 sm:grid-cols-[1fr_1.4fr]">
-                  <div className="flex flex-col gap-1.5">
-                    <TextInput
-                      description="Detected from this device — change it if the shoot is elsewhere."
-                      label="Timezone"
-                      size="lg"
-                      onChange={setTimezone}
-                      value={timezone}
-                    />
-                    <button
-                      className="text-accent w-fit text-[11px] font-medium hover:underline"
-                      onClick={() => {
-                        setTimezone(
-                          Intl.DateTimeFormat().resolvedOptions().timeZone
-                          || "Europe/Paris",
-                        );
-                      }}
-                      type="button"
-                    >
-                      Use my device timezone
-                    </button>
-                  </div>
-                  <TextArea
-                    description="Only used for the calendar invitations. Access is granted by link, not by these addresses."
-                    isOptional
-                    label="Calendar guests"
-                    onChange={setInviteesRaw}
-                    placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
-                    rows={3}
-                    value={inviteesRaw}
+                  <LocationField
+                    interactivePin={placePin}
+                    value={location}
+                    onChange={setLocation}
                   />
                 </div>
+
+                <TextArea
+                  description="Only used for the calendar invitations. Access is granted by link, not by these addresses."
+                  isOptional
+                  label="Calendar guests"
+                  onChange={setInviteesRaw}
+                  placeholder={"Aiko <aiko@example.com>\nstudio@example.com"}
+                  rows={3}
+                  value={inviteesRaw}
+                />
               </div>
             </fieldset>
 
