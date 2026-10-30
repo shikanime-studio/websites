@@ -30,10 +30,8 @@ flowchart TD
     D -->|new finding| I[Triaged issue, cap 3 per run]
     D -->|nothing new| Z[Report only, zero artifacts]
     I --> R[sks-issue-refine: converge with assignees]
-    R --> GO{Explicit go-ahead}
-    GO -->|yes| BRD[Automata board: Todo in human priority order]
+    R --> BRD[Automata board: Todo in human priority order]
     BRD -->|human moves to In Progress| W[jj workspace, commit, push, PR]
-    GO -->|no| PARK[Issue parked for humans]
     W --> P[PR authored by yorha-operator]
     P --> HU{Human review submitted}
     HU -->|approved by member or collaborator| L[github-pr-land route]
