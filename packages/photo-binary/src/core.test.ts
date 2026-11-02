@@ -18,7 +18,7 @@ function rafHeader(): DataView {
 
 function asciiAnalysis(reserved: number): Analysis {
   return {
-    format: "test",
+    format: "tiff",
     byteLength: 32,
     endian: "le",
     fields: new Map([

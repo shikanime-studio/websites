@@ -1,10 +1,14 @@
 /**
- * Binary analysis: the immutable description of where every field lives.
+ * Photo container analysis: the immutable description of where every field
+ * lives inside an image file.
  *
  * The reader/writer in `mutate.ts` never owns the bytes. It takes a view plus
  * one of these descriptors and produces a plan — so the same analysis can be
  * cached, shared, persisted or compared without touching the file.
  */
+
+/** The image containers this package speaks. Not a general binary toolkit. */
+export type PhotoFormat = "raf" | "jpeg" | "tiff" | "png" | "webp";
 
 export type Endian = "le" | "be";
 
@@ -30,7 +34,7 @@ export interface Segment {
 }
 
 export interface Analysis {
-  readonly format: string;
+  readonly format: PhotoFormat;
   readonly byteLength: number;
   readonly endian: Endian;
   readonly fields: ReadonlyMap<string, Field>;
