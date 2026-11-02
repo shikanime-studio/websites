@@ -46,6 +46,8 @@ variable "d1s" {
   type        = map(string)
   description = "Map of Cloudflare D1 databases"
   default = {
-    reiya = "reiya"
+    accounts = "accounts"
+    hikari   = "hikari"
+    reiya    = "reiya"
   }
 }

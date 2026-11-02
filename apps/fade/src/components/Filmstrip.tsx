@@ -2,6 +2,7 @@ import type { FileItem } from "../lib/fs";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
+import { useAtomSuspense } from "@effect/atom-react";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Image } from "@unpic/react";
@@ -9,8 +10,8 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import { Activity, Suspense, useEffect, useRef } from "react";
 import { useElementSize } from "../hooks/useElementSize";
 import { useGallery } from "../hooks/useGallery";
-import { useThumbnail } from "../hooks/useThumbnail";
 import { settingsCollection } from "../lib/db";
+import { thumbnailAtom } from "../lib/photo-atoms";
 import { FileIcon } from "./FileIcon";
 
 const ITEM_SIZE = 88;
@@ -205,7 +206,7 @@ function FilmstripItemContent({
   style,
 }: FilmstripItemProps) {
   const { handle } = fileItem;
-  const { url } = useThumbnail(fileItem, 80, 80);
+  const url = useAtomSuspense(thumbnailAtom(fileItem, 80, 80, 1.0)).value;
 
   return (
     <button

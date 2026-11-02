@@ -17,11 +17,11 @@ export function FilterButton({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex items-center font-medium bg-inverted text-on-dark flex items-center gap-2 rounded-full border-none px-4 py-2 text-sm font-medium transition-all ${
+      className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm transition-colors ${
         active
-          ? "text-accent bg-surface font-bold hover:bg-border"
-          : "bg-surface text-secondary hover:bg-surface"
-      } `}
+          ? "border-accent bg-accent-muted text-text-accent font-semibold"
+          : "border-border bg-body text-secondary hover:bg-surface font-medium"
+      }`}
     >
       {label}
       {hasDropdown && (

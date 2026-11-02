@@ -1,9 +1,10 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { oneTap } from "better-auth/plugins";
+import { genericOAuth } from "better-auth/plugins";
 import { env } from "cloudflare:workers";
 import * as schema from "../schema";
+import { ACCOUNTS_SITE, SITE } from "./config";
 
 export function createAuth(db: DrizzleD1Database<typeof schema>) {
   return betterAuth({
@@ -15,13 +16,29 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
       },
       usePlural: true,
     }),
-    plugins: [oneTap()],
+    plugins: [
+      genericOAuth({
+        config: [
+          {
+            providerId: "accounts",
+            discoveryUrl: `${ACCOUNTS_SITE}/api/auth/.well-known/openid-configuration`,
+            clientId: "reiya",
+            clientSecret: env.ACCOUNTS_CLIENT_SECRET,
+            scopes: ["openid", "profile", "email"],
+            pkce: true,
+            // The Accounts Center session is the studio identity: signing out of
+            // one app must not end it everywhere.
+            disableProviderLogout: true,
+          },
+        ],
+      }),
+    ],
     secret: env.BETTER_AUTH_SECRET,
-    baseURL: import.meta.env.VITE_SITE,
-    socialProviders: {
-      google: {
-        clientId: import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID,
-        clientSecret: env.GOOGLE_CLIENT_SECRET,
+    baseURL: SITE,
+    account: {
+      accountLinking: {
+        enabled: true,
+        trustedProviders: ["accounts"],
       },
     },
     advanced: {
@@ -37,4 +54,3 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
   });
 }
 
-export type Auth = ReturnType<typeof createAuth>;

@@ -1,47 +1,42 @@
-import { createContext, use } from "react";
+import type { LightingState } from "../lib/ui-atoms";
+import { useAtom } from "@effect/atom-react";
+import { DEFAULT_LIGHTING, lightingAtom } from "../lib/ui-atoms";
 
-export interface LightingContextType {
-  exposure: number;
-  setExposure: (value: number) => void;
-  resetExposure: () => void;
-  contrast: number;
-  setContrast: (value: number) => void;
-  resetContrast: () => void;
-  saturation: number;
-  setSaturation: (value: number) => void;
-  resetSaturation: () => void;
-  highlights: number;
-  setHighlights: (value: number) => void;
-  resetHighlights: () => void;
-  shadows: number;
-  setShadows: (value: number) => void;
-  resetShadows: () => void;
-  whites: number;
-  setWhites: (value: number) => void;
-  resetWhites: () => void;
-  blacks: number;
-  setBlacks: (value: number) => void;
-  resetBlacks: () => void;
-  tint: number;
-  setTint: (value: number) => void;
-  resetTint: () => void;
-  temperature: number;
-  setTemperature: (value: number) => void;
-  resetTemperature: () => void;
-  vibrance: number;
-  setVibrance: (value: number) => void;
-  resetVibrance: () => void;
-  hue: number;
-  setHue: (value: number) => void;
-  resetHue: () => void;
-}
-
-export const LightingContext = createContext<LightingContextType | null>(null);
+type NumericKey = keyof LightingState;
 
 export function useLighting() {
-  const context = use(LightingContext);
-  if (!context) {
-    throw new Error("useLighting must be used within a LightingProvider");
-  }
-  return context;
+  const [state, setState] = useAtom(lightingAtom);
+
+  const set = (key: NumericKey) => (value: number) => {
+    setState((prev) => ({ ...prev, [key]: value }));
+  };
+  const reset = (key: NumericKey) => () => {
+    setState((prev) => ({ ...prev, [key]: DEFAULT_LIGHTING[key] }));
+  };
+
+  return {
+    ...state,
+    setExposure: set("exposure"),
+    resetExposure: reset("exposure"),
+    setContrast: set("contrast"),
+    resetContrast: reset("contrast"),
+    setSaturation: set("saturation"),
+    resetSaturation: reset("saturation"),
+    setHighlights: set("highlights"),
+    resetHighlights: reset("highlights"),
+    setShadows: set("shadows"),
+    resetShadows: reset("shadows"),
+    setWhites: set("whites"),
+    resetWhites: reset("whites"),
+    setBlacks: set("blacks"),
+    resetBlacks: reset("blacks"),
+    setTint: set("tint"),
+    resetTint: reset("tint"),
+    setTemperature: set("temperature"),
+    resetTemperature: reset("temperature"),
+    setVibrance: set("vibrance"),
+    resetVibrance: reset("vibrance"),
+    setHue: set("hue"),
+    resetHue: reset("hue"),
+  };
 }

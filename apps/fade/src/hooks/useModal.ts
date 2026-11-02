@@ -1,18 +1,18 @@
-import { createContext, use } from "react";
+import { useNavigate, useSearch } from "@tanstack/react-router";
 
 export type ModalType = "settings" | "fullscreen" | undefined;
 
-export interface ModalContextType {
-  modal: ModalType;
-  setModal: (modal: ModalType) => void;
-}
-
-export const ModalContext = createContext<ModalContextType | null>(null);
-
+/** The modal lives in the URL, so it survives reloads and back/forward. */
 export function useModal() {
-  const context = use(ModalContext);
-  if (!context) {
-    throw new Error("useModal must be used within a ModalProvider");
-  }
-  return context;
+  const { modal } = useSearch({ from: "/" });
+  const navigate = useNavigate();
+
+  const setModal = (next: ModalType) => {
+    void navigate({
+      to: "/",
+      search: (prev: Record<string, unknown>) => ({ ...prev, modal: next }),
+    });
+  };
+
+  return { modal, setModal };
 }

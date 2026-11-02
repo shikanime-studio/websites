@@ -1,15 +1,8 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
-import { Activity, createContext, use, useState } from "react";
-
-interface TabContextType {
-  activeTab: string;
-  setActiveTab: (value: string) => void;
-}
-
-const TabContext = createContext<TabContextType | undefined>(undefined);
+import { Activity, useState } from "react";
 
 interface TabListProps {
-  children: ReactNode;
+  children: (tab: { value: string; select: (value: string) => void }) => ReactNode;
   className?: string;
   defaultTab: string;
 }
@@ -22,33 +15,34 @@ export function TabList({
   const [activeTab, setActiveTab] = useState(defaultTab);
 
   return (
-    <TabContext value={{ activeTab, setActiveTab }}>
-      <div
-        role="tablist"
-        className={`flex flex-wrap justify-start gap-x-6 gap-y-4 sm:gap-x-8 ${className}`}
-      >
-        {children}
-      </div>
-    </TabContext>
+    <div
+      role="tablist"
+      className={`flex flex-wrap justify-start gap-x-6 gap-y-4 sm:gap-x-8 ${className}`}
+    >
+      {children({ value: activeTab, select: setActiveTab })}
+    </div>
   );
 }
 
 interface TabProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  "value" | "onChange"
+  "value" | "onChange" | "onSelect"
 > {
+  active: boolean;
   children?: ReactNode;
   className?: string;
+  onSelect: (value: string) => void;
   value: string;
 }
 
-export function Tab({ children, className = "", value, ...props }: TabProps) {
-  const context = use(TabContext);
-
-  const handleChange = () => {
-    context?.setActiveTab(value);
-  };
-
+export function Tab({
+  active,
+  children,
+  className = "",
+  onSelect,
+  value,
+  ...props
+}: TabProps) {
   return (
     <input
       type="radio"
@@ -57,27 +51,28 @@ export function Tab({ children, className = "", value, ...props }: TabProps) {
       {...props}
       className={`border-border checked:border-accent checked:text-secondary content-center rounded-none border-transparent text-lg font-bold whitespace-nowrap text-secondary/50 transition-colors checked:border-b-4! hover:border-border hover:text-secondary/80 sm:text-xl ${className} `}
       aria-label={typeof children === "string" ? children : undefined}
-      checked={context?.activeTab === value}
-      onChange={handleChange}
+      checked={active}
+      onChange={() => {
+        onSelect(value);
+      }}
     />
   );
 }
 
 interface TabContentProps {
+  active: boolean;
   children: ReactNode;
   className?: string;
-  value: string;
 }
 
 export function TabContent({
+  active,
   children,
   className = "",
-  value,
 }: TabContentProps) {
-  const context = use(TabContext);
   return (
     <div role="tabpanel" className={className}>
-      <Activity mode={context?.activeTab === value ? "visible" : "hidden"}>
+      <Activity mode={active ? "visible" : "hidden"}>
         {children}
       </Activity>
     </div>

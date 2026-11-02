@@ -101,11 +101,9 @@ Inside a jj workspace gh has no git remote — pass `-R <org>/<repo>`.
 
 ## Formatting
 
-`nix fmt` runs treefmt over the whole tree per run — scope it to your
-app with `nix fmt apps/<app>` and restore anything outside your change
-before committing. Markdown wraps at 80 columns; never skip the formatter, and
-never run it over GitHub issue/PR bodies. Those bodies are free text
-and are exempt.
+Run `nix fmt` (treefmt) before committing; it formats the whole tree.
+Markdown wraps at 80 columns; never skip the formatter, and never run it
+over GitHub issue/PR bodies. Those bodies are free text and are exempt.
 
 ## Verification before "done"
 

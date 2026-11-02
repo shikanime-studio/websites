@@ -55,7 +55,7 @@ export function CardModal({ card, onClose }: CardModalProps) {
 
   return createPortal(
     <dialog className="fixed inset-0 z-50 flex items-center justify-center bg-overlay p-4">
-      <div className="bg-body flex max-h-[90vh] w-11/12 max-w-6xl flex-col overflow-hidden rounded-3xl p-0 shadow-2xl md:flex-row">
+      <div className="bg-body flex max-h-[90vh] w-11/12 max-w-6xl flex-col overflow-hidden rounded-2xl p-0 shadow-2xl md:flex-row">
         <button
           type="button"
           onClick={onClose}

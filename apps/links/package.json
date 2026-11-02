@@ -14,7 +14,10 @@
     "preview": "astro preview",
     "start": "astro dev",
     "types": "wrangler types src/worker-configuration.d.ts",
-    "upload": "wrangler versions upload"
+    "upload": "wrangler versions upload",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@astrojs/check": "catalog:types",
@@ -32,6 +35,8 @@
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
     "@e18e/eslint-plugin": "catalog:lint",
+    "@playwright/test": "catalog:test",
+    "@testing-library/jest-dom": "catalog:test",
     "@tsconfig/node-lts": "catalog:types",
     "@tsconfig/node-ts": "catalog:types",
     "@tsconfig/strictest": "catalog:types",
@@ -40,9 +45,11 @@
     "eslint-plugin-astro": "catalog:lint",
     "eslint-plugin-format": "catalog:lint",
     "eslint-plugin-import-lite": "catalog:lint",
+    "jsdom": "catalog:test",
     "prettier-plugin-astro": "catalog:format",
     "typescript": "catalog:types",
     "vite": "catalog:build",
+    "vitest": "catalog:test",
     "wrangler": "catalog:infra"
   },
   "engines": {

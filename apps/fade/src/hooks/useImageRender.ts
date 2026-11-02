@@ -1,7 +1,8 @@
 import type { RefObject } from "react";
+import { useAtomSuspense } from "@effect/atom-react";
 import { useEffect, useMemo } from "react";
+import { gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-graph";
 import imageShader from "../shaders/image.wgsl?raw";
-import { useGPU } from "./useGPU";
 
 interface LightingParams {
   exposure: number;
@@ -18,7 +19,8 @@ interface LightingParams {
 }
 
 function useImagePipeline() {
-  const { device, format } = useGPU();
+  const device = useAtomSuspense(gpuDeviceAtom).value;
+  const format = useAtomSuspense(gpuFormatAtom).value;
 
   return useMemo(() => {
     if (!device || !format) return null;
@@ -78,7 +80,8 @@ export function useImageRender(
     hue: 0,
   },
 ) {
-  const { device, format } = useGPU();
+  const device = useAtomSuspense(gpuDeviceAtom).value;
+  const format = useAtomSuspense(gpuFormatAtom).value;
   const pipeline = useImagePipeline();
 
   const texture = useMemo(() => {

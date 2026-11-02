@@ -1,0 +1,74 @@
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import { oauthProvider } from "@better-auth/oauth-provider";
+import { betterAuth } from "better-auth";
+import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { jwt, oneTap } from "better-auth/plugins";
+import { env } from "cloudflare:workers";
+import * as schema from "../schema";
+import { GOOGLE_CLIENT_ID, SITE } from "./config";
+
+export function createAuth(db: DrizzleD1Database<typeof schema>) {
+  return betterAuth({
+    database: drizzleAdapter(db, {
+      provider: "sqlite",
+      schema: {
+        ...schema,
+        rateLimit: schema.rateLimits,
+        // usePlural pluralizes the jwt plugin's "jwks" model to "jwkss";
+        // bind it to the singular-named drizzle table.
+        jwkss: schema.jwks,
+      },
+      usePlural: true,
+    }),
+    plugins: [
+      oneTap(),
+      // Signs this server's own tokens; the provider derives its issuer from
+      // this plugin's jwt.issuer option (falls back to baseURL).
+      jwt({
+        jwt: {
+          // Issuer pathname must match the auth base path so the provider's
+          // well-known metadata hooks resolve under /api/auth.
+          issuer: `${SITE}/api/auth`,
+        },
+      }),
+      oauthProvider({
+        loginPage: "/login",
+        consentPage: "/consent",
+        scopes: ["openid", "profile", "email", "offline_access"],
+        grantTypes: ["authorization_code", "refresh_token"],
+        allowDynamicClientRegistration: false,
+        codeExpiresIn: 600,
+        accessTokenExpiresIn: 3600,
+        refreshTokenExpiresIn: 2_592_000,
+      }),
+    ],
+    // Playwright needs a way to become a real user without Google. The
+    // provider is compiled out of production builds.
+    ...(import.meta.env.DEV
+      ? { emailAndPassword: { enabled: true } }
+      : {}),
+    secret: env.BETTER_AUTH_SECRET,
+    baseURL: SITE,
+    // Local Playwright runs sign up from the same origin as baseURL.
+    ...(import.meta.env.DEV
+      ? { trustedOrigins: ["http://localhost:3101"] }
+      : {}),
+    socialProviders: {
+      google: {
+        clientId: GOOGLE_CLIENT_ID,
+        clientSecret: env.GOOGLE_CLIENT_SECRET,
+      },
+    },
+    advanced: {
+      ipAddress: {
+        ipAddressHeaders: ["cf-connecting-ip"],
+      },
+    },
+    rateLimit: {
+      window: 60,
+      max: 100,
+      storage: "database",
+    },
+  });
+}
+

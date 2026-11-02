@@ -1,59 +1,37 @@
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import type { Schema } from "../schema";
-import { desc, eq, gt, like, or } from "drizzle-orm";
-import { characters, events, items, licenses, makers } from "../schema";
+import { desc, eq } from "drizzle-orm";
+import { characters, events, items, makers } from "../schema";
 
-export function getItemsByMaker(
-  db: DrizzleD1Database<Schema>,
-  makerId: number,
-) {
-  return db
-    .select({
-      id: items.id,
-      name: items.name,
-      priceRange: items.priceRange,
-      imageUrls: items.imageUrls,
-      category: items.category,
-      maker: {
-        name: makers.name,
-        avatarImageUrl: makers.avatarImageUrl,
-        avatarImageWidth: makers.avatarImageWidth,
-        avatarImageHeight: makers.avatarImageHeight,
-      },
-    })
-    .from(items)
-    .leftJoin(makers, eq(items.makerId, makers.id))
-    .where(eq(items.makerId, makerId))
-    .orderBy(desc(items.createdAt));
+export interface ImageRef {
+  src: string;
+  width: number;
+  height: number;
 }
 
-export function getItemsByCharacterName(
-  db: DrizzleD1Database<Schema>,
-  characterName: string,
-) {
-  return db
-    .select({
-      id: items.id,
-      name: items.name,
-      priceRange: items.priceRange,
-      imageUrls: items.imageUrls,
-      category: items.category,
-      maker: {
-        name: makers.name,
-        avatarImageUrl: makers.avatarImageUrl,
-        avatarImageWidth: makers.avatarImageWidth,
-        avatarImageHeight: makers.avatarImageHeight,
-      },
-    })
-    .from(items)
-    .leftJoin(makers, eq(items.makerId, makers.id))
-    .where(
-      or(
-        like(items.name, `%${characterName}%`),
-        like(items.description, `%${characterName}%`),
-      ),
-    )
-    .orderBy(desc(items.createdAt));
+/** D1 returns `image_urls` as text when the row came from a raw SQL seed; rows
+ *  written through drizzle come back parsed. Accept both, never trust either. */
+export function normalizeImages(value: unknown): ImageRef[] {
+  const parsed = typeof value === "string"
+    ? (() => {
+      try {
+        return JSON.parse(value) as unknown;
+      } catch {
+        return [];
+      }
+    })()
+    : value;
+  if (!Array.isArray(parsed)) return [];
+  return parsed.flatMap((entry): ImageRef[] => {
+    if (typeof entry !== "object" || entry === null) return [];
+    const record = entry as { src?: unknown; width?: unknown; height?: unknown };
+    if (typeof record.src !== "string") return [];
+    return [{
+      src: record.src,
+      width: typeof record.width === "number" ? record.width : 0,
+      height: typeof record.height === "number" ? record.height : 0,
+    }];
+  });
 }
 
 export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
@@ -74,29 +52,6 @@ export function getItemsWithMakers(db: DrizzleD1Database<Schema>) {
     .from(items)
     .leftJoin(makers, eq(items.makerId, makers.id))
     .orderBy(desc(items.createdAt));
-}
-
-export function getItem(db: DrizzleD1Database<Schema>, id: number) {
-  return db
-    .select({
-      id: items.id,
-      name: items.name,
-      description: items.description,
-      priceRange: items.priceRange,
-      imageUrls: items.imageUrls,
-      category: items.category,
-      maker: {
-        id: makers.id,
-        name: makers.name,
-        avatarImageUrl: makers.avatarImageUrl,
-        avatarImageWidth: makers.avatarImageWidth,
-        avatarImageHeight: makers.avatarImageHeight,
-      },
-    })
-    .from(items)
-    .leftJoin(makers, eq(items.makerId, makers.id))
-    .where(eq(items.id, id))
-    .get();
 }
 
 export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
@@ -121,34 +76,8 @@ export function getRecentItems(db: DrizzleD1Database<Schema>, limit = 10) {
     .limit(limit);
 }
 
-export function getUpcomingEvents(db: DrizzleD1Database<Schema>, limit = 3) {
-  const now = new Date().toISOString();
-  return db
-    .select()
-    .from(events)
-    .where(gt(events.endsAt, now))
-    .orderBy(events.startsAt)
-    .limit(limit);
-}
-
-export function getFeaturedMakers(db: DrizzleD1Database<Schema>, limit = 8) {
-  return db.select().from(makers).limit(limit);
-}
-
 export function getAllMakers(db: DrizzleD1Database<Schema>) {
   return db.select().from(makers).orderBy(makers.name);
-}
-
-export function getMaker(db: DrizzleD1Database<Schema>, id: number) {
-  return db.select().from(makers).where(eq(makers.id, id)).get();
-}
-
-export function getLicenses(db: DrizzleD1Database<Schema>, limit = 10) {
-  return db.select().from(licenses).limit(limit);
-}
-
-export function getAllLicenses(db: DrizzleD1Database<Schema>) {
-  return db.select().from(licenses).orderBy(licenses.name);
 }
 
 export function getAllEvents(db: DrizzleD1Database<Schema>) {
@@ -159,6 +88,3 @@ export function getAllCharacters(db: DrizzleD1Database<Schema>) {
   return db.select().from(characters).orderBy(characters.name);
 }
 
-export function getCharacter(db: DrizzleD1Database<Schema>, id: number) {
-  return db.select().from(characters).where(eq(characters.id, id)).get();
-}

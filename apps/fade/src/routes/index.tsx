@@ -2,17 +2,13 @@ import { Spinner } from "@astryxdesign/core/Spinner";
 import { createFileRoute } from "@tanstack/react-router";
 import { Suspense } from "react";
 import { z } from "zod";
-import { DirectoryProvider } from "../components/DirectoryProvider";
 import { Filmstrip } from "../components/Filmstrip";
-import { GalleryProvider } from "../components/GalleryProvider";
-import { GPUProvider } from "../components/GPUProvider";
-import { ImageInfoProvider } from "../components/ImageInfoProvider";
-import { LightingProvider } from "../components/LightingProvider";
 import { MainViewer } from "../components/MainViewer";
-import { ModalProvider } from "../components/ModalProvider";
 import { Sidebar } from "../components/Sidebar";
 import { ToolBar } from "../components/ToolBar";
 import { useDirectory } from "../hooks/useDirectory";
+import { useGallery } from "../hooks/useGallery";
+import { useKeymap } from "../hooks/useKeymap";
 
 export const Route = createFileRoute("/")({
   component: App,
@@ -22,45 +18,48 @@ export const Route = createFileRoute("/")({
 });
 
 function GalleryContainer() {
-  const { handle } = useDirectory();
+  useDirectory();
+  const gallery = useGallery();
+
+  useKeymap("navigateNext", () => {
+    if (gallery.files.length === 0) return;
+    gallery.navigateNext();
+  });
+  useKeymap("navigatePrevious", () => {
+    if (gallery.files.length === 0) return;
+    gallery.navigatePrevious();
+  });
+  useKeymap("selectFirst", () => {
+    if (gallery.files.length === 0) return;
+    gallery.selectFile(0);
+  });
+  useKeymap("selectLast", () => {
+    if (gallery.files.length === 0) return;
+    gallery.selectFile(gallery.files.length - 1);
+  });
 
   return (
-    <GalleryProvider handle={handle}>
-      <div className="bg-body text-secondary selection:bg-warning selection:text-on-warning flex h-screen flex-col">
-        <ToolBar />
-        <div className="flex min-h-0 flex-1 overflow-hidden">
-          <ImageInfoProvider>
-            <LightingProvider>
-              <MainViewer />
-              <Sidebar />
-            </LightingProvider>
-          </ImageInfoProvider>
-        </div>
-        <Filmstrip />
+    <div className="bg-body text-secondary selection:bg-warning selection:text-on-warning flex h-screen flex-col">
+      <ToolBar />
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <MainViewer />
+        <Sidebar />
       </div>
-    </GalleryProvider>
+      <Filmstrip />
+    </div>
   );
 }
 
 function App() {
-  const navigate = Route.useNavigate();
-  const search = Route.useSearch();
-
   return (
-    <GPUProvider>
-      <DirectoryProvider>
-        <Suspense
-          fallback={
-            <div className="flex h-screen items-center justify-center">
-              <Spinner size="lg" />
-            </div>
-          }
-        >
-          <ModalProvider navigate={navigate} search={search}>
-            <GalleryContainer />
-          </ModalProvider>
-        </Suspense>
-      </DirectoryProvider>
-    </GPUProvider>
+    <Suspense
+      fallback={
+        <div className="flex h-screen items-center justify-center">
+          <Spinner size="lg" />
+        </div>
+      }
+    >
+      <GalleryContainer />
+    </Suspense>
   );
 }

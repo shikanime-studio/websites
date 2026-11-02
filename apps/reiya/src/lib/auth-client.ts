@@ -1,9 +1,4 @@
 import { createAuthClient } from "better-auth/client";
-import { oneTapClient } from "better-auth/client/plugins";
+import { SITE } from "./config";
 
-export const authClient = createAuthClient({
-  baseURL: import.meta.env.VITE_SITE,
-  plugins: [
-    oneTapClient({ clientId: import.meta.env.VITE_PUBLIC_GOOGLE_CLIENT_ID }),
-  ],
-});
+export const authClient = createAuthClient({ baseURL: SITE });

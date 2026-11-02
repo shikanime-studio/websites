@@ -41,8 +41,7 @@ flowchart LR
    column is the tactical plan.
 2. **Branch**: fresh jj workspace pinned to `main@origin` — never work in
    the shared checkout.
-3. **Verify**: `nix fmt` scoped, `pnpm lint`, `pnpm build` as
-   applicable.
+3. **Verify**: `nix fmt`, `pnpm lint`, `pnpm build` as applicable.
 4. **Land**: push branch → PR → CI green → squash merge. A verbal lgtm
    is the approval signal.
 5. **Deploy happens by Git**: Flux reconciles manifests. Workers Builds
@@ -54,8 +53,8 @@ Commits use a plain capitalized title, no conventional-commit prefix.
 Agent-assisted commits carry the Automata co-author trailer. `manifests`
 and `skills` require `Signed-off-by` (gitlint CC1).
 
-Markdown wraps at 80 columns. `nix fmt` runs scoped
-(`nix fmt apps/<app>`). A whole-tree run dirties ~64 files.
+Markdown wraps at 80 columns. Run `nix fmt` (treefmt) before
+shipping; it formats the whole tree.
 
 jj does not auto-track bookmarks — `jj bookmark track <branch>`
 --remote=origin` before every push.

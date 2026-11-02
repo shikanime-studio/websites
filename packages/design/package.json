@@ -1,0 +1,27 @@
+{
+  "name": "@shikanime-studio/design",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./styles.css": "./src/styles.css"
+  },
+  "dependencies": {
+    "@fontsource-variable/bricolage-grotesque": "catalog:runtime"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "@types/react": "catalog:types",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types"
+  },
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  }
+}

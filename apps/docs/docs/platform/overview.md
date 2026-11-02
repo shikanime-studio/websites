@@ -9,7 +9,7 @@ identity. **Shikanime Studio** (`shikanime-studio`) is the public-facing
 side: web properties and product work. It owns the `websites` monorepo.
 **Shikanime Labs** (`shikanime-labs`) covers infrastructure, tooling,
 and automation. It owns `machines`, `manifests`, `skills`, `actions`,
-`dashboards`, `tailnet`, `knix`, `wharf`, `niximgs`, `automata`,
+`dashboards`, `tailnet`, `knix`, `wharf`, `niximgs`,
 `enhancements`, and more.
 
 Cross-org proposals are tracked KEP-style in `shikanime-labs/enhancements`.
@@ -30,7 +30,6 @@ erDiagram
     string manifests "Kubernetes Kustomize"
     string skills "agent skill catalog"
     string actions "reusable CI workflows"
-    string automata "Go hygiene CLI"
   }
   WEBAPP {
     string websites "pnpm monorepo"
@@ -48,7 +47,6 @@ erDiagram
 | `skills`                    | Curated agent-skill catalog for Hermes agents               |
 | `actions`                   | Reusable GitHub Actions workflows                           |
 | `dashboards`                | Grafana dashboards, pinned by tag in manifests              |
-| `automata`                  | Go CLI for kustomize/Actions version hygiene                |
 | `knix`                      | Opinionated RKE2 deployment module (Kubernetes + Nix)       |
 | `wharf`                     | Build OCI images from Nix flakes                            |
 | `niximgs`                   | Nix-built container image registry (Bitnami-style)          |

@@ -1,7 +1,7 @@
-import type { Schema } from "./schema";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import process from "node:process";
 import { faker } from "@faker-js/faker";
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
@@ -15,7 +15,10 @@ async function main() {
 
   // Create in-memory DB
   const sqlite = new Database(":memory:");
-  const db = drizzle<Schema>(sqlite, { schema });
+  const db = drizzle(sqlite, { schema });
+  // drizzle-seed's declared BaseSQLiteDatabase generic rejects the Schema-typed
+  // client; seeding runs on the schema-less overload of drizzle().
+  const seedDb = drizzle(sqlite);
 
   // We look for migrations to create tables in the in-memory DB
   const migrationsFolder = "./migrations";
@@ -124,7 +127,7 @@ async function main() {
     { count: COUNT },
   );
   const makerLinks = faker.helpers.multiple(
-    () => [faker.internet.url(), faker.internet.url()],
+    (): string => faker.internet.url(),
     { count: COUNT },
   );
   const licenseNames = faker.helpers.multiple(
@@ -143,9 +146,9 @@ async function main() {
     count: COUNT,
   });
   const itemImages = faker.helpers.multiple(
-    () => {
+    (): string => {
       const numImages = faker.number.int({ min: 1, max: 4 });
-      return faker.helpers.multiple(
+      const images = faker.helpers.multiple(
         () => ({
           src: faker.image.urlPicsumPhotos({
             width: 400,
@@ -156,6 +159,7 @@ async function main() {
         }),
         { count: numImages },
       );
+      return JSON.stringify(images);
     },
     { count: COUNT },
   );
@@ -163,7 +167,7 @@ async function main() {
     count: COUNT,
   });
 
-  await seed(db as any, seedSchema, { count: COUNT, seed: 12345 }).refine(
+  await seed(seedDb, seedSchema, { count: COUNT, seed: 12345 }).refine(
     (f) => ({
       users: {
         columns: {
@@ -182,7 +186,7 @@ async function main() {
           coverImageUrl: f.valuesFromArray({ values: makerCovers }),
           coverImageWidth: f.int({ minValue: 800, maxValue: 800 }),
           coverImageHeight: f.int({ minValue: 400, maxValue: 400 }),
-          links: f.valuesFromArray({ values: makerLinks as Array<any> }),
+          links: f.valuesFromArray({ values: makerLinks }),
         },
       },
       licenses: {
@@ -208,7 +212,7 @@ async function main() {
         columns: {
           name: f.valuesFromArray({ values: itemNames }),
           description: f.loremIpsum({ sentencesCount: 2 }),
-          imageUrls: f.valuesFromArray({ values: itemImages as Array<any> }),
+          imageUrls: f.valuesFromArray({ values: itemImages }),
           priceRange: f.valuesFromArray({ values: itemPrices }),
         },
       },
@@ -295,9 +299,13 @@ async function main() {
 
   for (const table of tables) {
     try {
-      const rows = sqlite.prepare(`SELECT * FROM ${table}`).all() as Array<
-        Record<string, any>
-      >;
+      const statement = sqlite.prepare(`SELECT * FROM ${table}`);
+      const rows: Array<Record<string, unknown>> = [];
+      for (const row of statement.iterate()) {
+        if (typeof row === "object" && row !== null) {
+          rows.push({ ...row });
+        }
+      }
       if (rows.length === 0) continue;
 
       outputSql += `\n-- Data for ${table}\n`;
@@ -327,6 +335,9 @@ async function main() {
   const tempDir = os.tmpdir();
   const seedFile = path.join(tempDir, `seed-${Date.now()}.sql`);
   fs.writeFileSync(seedFile, outputSql);
+  // `pnpm db:seed` captures stdout to find the file it must execute, so this
+  // one line *is* the program's output.
+  process.stdout.write(`${seedFile}\n`);
 }
 
 main().catch(console.error);

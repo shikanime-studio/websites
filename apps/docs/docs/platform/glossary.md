@@ -46,7 +46,7 @@ use elsewhere. This page is the reference.
 | **ghstack** | Stacked-PR tooling; `sks-*` skill family encodes the org's issue→PR lifecycle for humans and agents |
 | **gitlint CC1** | Commit-lint rule requiring `Signed-off-by`, enforced on `manifests` and `skills` |
 | **wharf / niximgs** | OCI image supply chain: wharf builds images from Nix flakes; niximgs is the app-image catalog (`ghcr.io/shikanime`) |
-| **automata** | Overloaded: the KubeVirt VM that is the A2A hub, the Go CLI for repo/cluster hygiene, and the agent signing persona. Context disambiguates |
+| **automata** | Overloaded: the KubeVirt VM that is the A2A hub and the agent signing persona. Context disambiguates |
 
 ## Products
 

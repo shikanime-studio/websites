@@ -12,6 +12,8 @@ workspace monorepo.
   - `links` — Link hub / landing page (`https://links.shikanime.studio`)
   - `fade` — Local image viewer using WebGPU (`https://fade.shikanime.studio`)
   - `reiya` — Merch/community site (`https://reiya.shikanime.studio`)
+  - `hikari` — Cosplay photoshoot commission planner
+    (`https://hikari.shikanime.studio`)
 - Each app has its own `wrangler.jsonc` and deploys to Cloudflare via Wrangler
 
 ## Commit Style

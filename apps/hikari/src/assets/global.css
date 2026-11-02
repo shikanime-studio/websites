@@ -1,0 +1,376 @@
+/*
+ * Hikari design tokens.
+ *
+ * Three references meet here:
+ * - Astryx (Meta's design system) supplies the semantic token contract and
+ *   the component layer. Its neutral theme is deliberately colourless, so the
+ *   palette below re-points those tokens at Hikari's own values.
+ * - ImaCoCoS, the original inspiration, supplies the warm paper ground and
+ *   the signal yellow.
+ * - Ko-fi, Vgen and booth.pm supply the candy palette, the chunky tags and
+ *   the rounded, sticker-friendly shapes.
+ *
+ * Layer order: reset → theme → base → astryx-base → astryx-theme → components
+ * → utilities. Token overrides live unlayered at the bottom so they win over
+ * the generated theme without fighting specificity.
+ */
+@import "@shikanime-studio/design/styles.css";
+
+/* ---------------------------------------------------------------------------
+ * Palette
+ * ------------------------------------------------------------------------- */
+
+:root {
+  /* Surfaces: warm cream paper, like a desk covered in prints. */
+  --hk-canvas: light-dark(#fff8f0, #171110);
+  --hk-surface: light-dark(#ffffff, #211a17);
+  --hk-surface-muted: light-dark(#fff1e4, #2a211c);
+  --hk-surface-raised: light-dark(#ffffff, #26201c);
+
+  /* Ink: warm near-black, not slate. */
+  --hk-ink: light-dark(#241c18, #fff4e9);
+  --hk-ink-soft: light-dark(#6f6058, #cdbdb2);
+  --hk-ink-faint: light-dark(#7a6659, #9a8a7f);
+
+  /* Rules: soft warm hairlines. */
+  --hk-line: light-dark(#f2e2d3, #3a2c24);
+  --hk-line-strong: light-dark(#e4cdba, #4a382d);
+
+  /* Action: Ko-fi coral. Ink text on coral keeps it readable and playful. */
+  --hk-accent: light-dark(#ff6433, #ff7a4d);
+  --hk-accent-soft: light-dark(#ffe4d8, #3a1e14);
+
+  /* Text-safe coral for links and focus; the fill coral is too light for
+   * small text on the canvas (2.8:1). */
+  --hk-accent-ink: light-dark(#c43d10, #ffb59a);
+
+  /* Candy tints: status badges, thumbnails, category dots. */
+  --hk-candy-lilac: #d9c2ff;
+  --hk-candy-sky: #b9daff;
+
+  /* Signal: sunny yellow, for current-stage markers and stickers. */
+  --hk-signal: light-dark(#ffd84d, #ffd84d);
+  --hk-signal-ink: light-dark(#4a3a00, #ffe9a3);
+
+  /* Status */
+  --hk-success: light-dark(#1f7a4a, #7ee0a6);
+  --hk-success-soft: light-dark(#e4f7ec, #12291d);
+  --hk-danger: light-dark(#d6402f, #ff9a8a);
+  --hk-danger-soft: light-dark(#fde7e3, #33130f);
+  --hk-warning: light-dark(#a96a00, #ffc46b);
+  --hk-warning-soft: light-dark(#fff0c8, #33240a);
+  --hk-neutral: light-dark(#241c180d, #ffffff14);
+
+  /* Elevation: warm and soft, like paper on a table. */
+  --hk-shadow-xs: 0 1px 2px light-dark(#5a37230a, #00000040);
+  --hk-shadow-sm:
+    0 2px 4px light-dark(#5a372308, #00000040),
+    0 6px 16px -6px light-dark(#5a372314, #00000059);
+  --hk-shadow-md:
+    0 4px 10px -2px light-dark(#5a37230f, #00000047),
+    0 18px 40px -18px light-dark(#5a372326, #000000a6);
+  --hk-shadow-lg:
+    0 6px 12px -4px light-dark(#5a372312, #00000052),
+    0 36px 70px -28px light-dark(#5a372333, #000000bf);
+
+  /* Radius scale: chunky and friendly. */
+  --hk-radius-xs: 10px;
+  --hk-radius-sm: 14px;
+  --hk-radius-md: 20px;
+  --hk-radius-lg: 26px;
+  --hk-radius-xl: 34px;
+
+  /* Astryx button radius override: every action is a pill. */
+  --_button-radius: 999px;
+
+  --hk-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --hk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---------------------------------------------------------------------------
+ * Re-point the semantic tokens used by Astryx components and Tailwind
+ * utilities. Anything built with `bg-body`, `text-secondary`, `border-border`
+ * or `bg-accent` now renders in Hikari's palette.
+ * ------------------------------------------------------------------------- */
+
+:root {
+  --color-background-body: var(--hk-canvas);
+  --color-background-surface: var(--hk-surface);
+  --color-background-card: var(--hk-surface);
+  --color-background-popover: var(--hk-surface-raised);
+  --color-background-muted: var(--hk-surface-muted);
+  --color-background-inverted: var(--hk-ink);
+
+  --color-text-primary: var(--hk-ink);
+  --color-text-secondary: var(--hk-ink-soft);
+  --color-text-disabled: var(--hk-ink-faint);
+  --color-text-accent: var(--hk-accent-ink);
+  --color-icon-primary: var(--hk-ink);
+  --color-icon-secondary: var(--hk-ink-soft);
+
+  --studio-accent: var(--hk-accent);
+  --studio-accent-muted: var(--hk-accent-soft);
+  --studio-accent-ink: var(--hk-accent-ink);
+  --studio-on-accent: #241c18;
+  --studio-canvas: var(--hk-canvas);
+  --studio-surface: var(--hk-surface);
+  --studio-surface-muted: var(--hk-surface-muted);
+  --studio-ink: var(--hk-ink);
+  --studio-ink-soft: var(--hk-ink-soft);
+  --studio-line: var(--hk-line);
+  --studio-line-strong: var(--hk-line-strong);
+  --color-neutral: var(--hk-neutral);
+  --color-tint-hover: light-dark(#000000, #ffffff);
+
+  --color-border: var(--hk-line);
+  --color-border-emphasized: var(--hk-line-strong);
+
+  --color-success: var(--hk-success);
+  --color-success-muted: var(--hk-success-soft);
+  --color-on-success: light-dark(#ffffff, #06130c);
+  --color-warning: var(--hk-warning);
+  --color-warning-muted: var(--hk-warning-soft);
+  --color-on-warning: #241c18;
+  --color-error: var(--hk-danger);
+  --color-error-muted: var(--hk-danger-soft);
+  --color-on-error: light-dark(#ffffff, #220d0a);
+
+  --color-skeleton: light-dark(#ffe9d8, #33261f);
+  --color-shadow: light-dark(#5a37231a, #00000066);
+
+  --font-family-heading: var(--font-display);
+  --font-family-body: var(--font-sans);
+  --font-family-code: var(--font-mono);
+
+  --radius-page: var(--hk-radius-xl);
+  --radius-container: var(--hk-radius-lg);
+  --radius-element: var(--hk-radius-sm);
+  --radius-inner: var(--hk-radius-xs);
+}
+
+/* ---------------------------------------------------------------------------
+ * Base
+ * ------------------------------------------------------------------------- */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
+}
+
+body {
+  background-color: var(--hk-canvas);
+  color: var(--hk-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--hk-signal);
+  color: #241c18;
+}
+
+:where(
+  a,
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  summary
+):focus-visible {
+  outline: 2px solid var(--hk-accent-ink);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Composition primitives
+ *
+ * These live in the `components` layer so Tailwind utilities can still
+ * override them (`hidden`, `pl-9`, `w-full`, …). Unlayered rules would win
+ * over every utility and quietly break layout at breakpoints.
+ * ------------------------------------------------------------------------- */
+
+@layer components {
+  .hk-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .hk-display-light {
+    font-weight: 300;
+  }
+
+  .hk-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--hk-ink-soft);
+  }
+
+  .hk-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 26px;
+    padding-inline: 10px;
+    border-radius: 999px;
+    border: 1px solid var(--hk-line);
+    background: var(--hk-surface);
+    color: var(--hk-ink-soft);
+    font-size: 12px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Sticker: a candy badge that looks peeled off a print. */
+  .hk-sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    border: 2px solid var(--hk-surface);
+    background: var(--hk-signal);
+    color: #241c18;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    box-shadow: var(--hk-shadow-sm);
+    transform: rotate(-3deg);
+    white-space: nowrap;
+  }
+
+  /* Thumbnail: the image-forward top of a commission card. */
+  .hk-thumb {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ffd84d 0%, #ff8a5c 58%, #ff6433 100%);
+  }
+
+  .hk-thumb::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(
+      rgba(255, 255, 255, 0.3) 1.5px,
+      transparent 1.5px
+    );
+    background-size: 18px 18px;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
+  /* Round avatar/initial bubble. */
+  .hk-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 999px;
+    border: 2px solid var(--hk-surface);
+    background: var(--hk-surface-muted);
+    color: var(--hk-ink);
+    font-size: 11px;
+    font-weight: 800;
+  }
+
+  /* Brand skins for Astryx Button variants that the system does not ship. */
+
+  .hk-btn-outline {
+    background-color: var(--hk-surface);
+    border: 1px solid var(--hk-line-strong);
+    color: var(--hk-ink);
+  }
+
+  .hk-btn-outline:hover {
+    background-color: var(--hk-surface-muted);
+    color: var(--hk-ink);
+  }
+
+  /* Surfaces with texture -------------------------------------------------- */
+
+  .hk-grid-texture {
+    background-image: radial-gradient(
+      light-dark(#241c1814, #ffffff12) 1.2px,
+      transparent 1.2px
+    );
+    background-size: 22px 22px;
+    mask-image: radial-gradient(circle at 50% 38%, #000 0%, transparent 74%);
+  }
+
+  .hk-warm-glow {
+    background:
+      radial-gradient(
+        40rem 26rem at 80% 6%,
+        light-dark(#ff8a5c40, #ff8a5c1f) 0%,
+        transparent 68%
+      ),
+      radial-gradient(
+        34rem 24rem at 8% 26%,
+        light-dark(#c9a7ff33, #c9a7ff1a) 0%,
+        transparent 72%
+      );
+  }
+
+  /* Motion ----------------------------------------------------------------- */
+
+  @keyframes hk-pulse-dot {
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.35;
+    }
+  }
+
+  .hk-live-dot {
+    animation: hk-pulse-dot 2.4s var(--hk-ease) infinite;
+  }
+
+  .hk-footer-link {
+    color: var(--hk-ink-soft);
+    font-size: 12.5px;
+    text-decoration: none;
+    transition: color 160ms var(--hk-ease);
+    width: fit-content;
+  }
+
+  .hk-footer-link:hover {
+    color: var(--hk-ink);
+  }
+}
+
+/* Astryx component nudges ------------------------------------------------- */
+
+[data-astryx-theme] {
+  --astryx-card-padding: var(--spacing-4);
+}
+
+[data-astryx-theme] :where(h1, h2, h3, h4) {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}

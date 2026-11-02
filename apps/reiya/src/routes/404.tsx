@@ -16,7 +16,7 @@ function NotFoundPage() {
           {/* Text Content */}
           <div className="flex-1 space-y-6 text-center lg:text-left">
             <div className="relative inline-block">
-              <h1 className="text-accent -rotate-2 transform text-8xl font-black tracking-tighter md:text-9xl">
+              <h1 className="font-display text-accent -rotate-2 transform text-8xl font-semibold tracking-tighter md:text-9xl">
                 404
               </h1>
               <span className="absolute -top-4 -right-8 rotate-12 transform rounded-full bg-body px-3 py-1 text-sm font-bold text-on-accent shadow-md">
@@ -24,7 +24,7 @@ function NotFoundPage() {
               </span>
             </div>
 
-            <h2 className="text-secondary text-3xl leading-tight font-black tracking-tight md:text-4xl">
+            <h2 className="font-display text-secondary text-3xl leading-tight font-semibold tracking-tight md:text-4xl">
               This page is currently
               <br />
               <span className="text-accent underline decoration-wavy decoration-2 underline-offset-4">

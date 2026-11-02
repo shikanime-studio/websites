@@ -42,7 +42,7 @@ export function CardInfo({
 
   return (
     <div className="flex flex-col gap-1">
-      <h3 className="truncate text-lg leading-tight font-bold text-secondary">
+      <h3 className="text-secondary truncate text-[15px] leading-tight font-semibold">
         <a href={href} onClick={handleTitleClick} className="hover:underline">
           {title}
         </a>

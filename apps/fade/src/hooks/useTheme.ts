@@ -1,17 +1,33 @@
 import type { Theme } from "../lib/db";
-import { createContext, use } from "react";
-
-export interface ThemeContextValue {
-  theme: Theme | undefined;
-  setTheme: (theme?: Theme) => void;
-}
-
-export const ThemeContext = createContext<ThemeContextValue | null>(null);
+import { eq, useLiveQuery } from "@tanstack/react-db";
+import { settingsCollection } from "../lib/db";
 
 export function useTheme() {
-  const context = use(ThemeContext);
-  if (!context) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+  const { data: theme } = useLiveQuery((q) =>
+    q
+      .from({ settings: settingsCollection })
+      .where(({ settings }) => eq(settings.id, "theme"))
+      .findOne(),
+  );
+
+  const themeValue = theme?.value as Theme | undefined;
+
+  const setTheme = (newTheme?: Theme) => {
+    if (!newTheme) {
+      if (theme) {
+        settingsCollection.delete("theme");
+      }
+      return;
+    }
+
+    if (theme) {
+      settingsCollection.update("theme", (draft) => {
+        draft.value = newTheme;
+      });
+    } else {
+      settingsCollection.insert({ id: "theme", value: newTheme });
+    }
+  };
+
+  return { theme: themeValue, setTheme };
 }

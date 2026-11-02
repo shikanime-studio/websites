@@ -1,8 +1,11 @@
+import type * as AsyncResultType from "effect/reactivity/AsyncResult";
+import type { Atom } from "effect/reactivity/Atom";
 import type { ReactNode } from "react";
 import type { CardData } from "../lib/api-client";
-import { useQuery } from "@tanstack/react-query";
 import { Image } from "@unpic/react";
+import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import { Activity, useState } from "react";
+import { useCardResult } from "../hooks/useCardResult";
 import {
   Card,
   CardBookmark,
@@ -33,81 +36,94 @@ export function GalleryItem({ children }: GalleryItemProps) {
   return <div className="mb-4 break-inside-avoid">{children}</div>;
 }
 
+type CardsAtom = Atom<AsyncResultType.AsyncResult<Array<CardData>, unknown>>;
+
 interface GalleryContentProps {
-  queryKey: Array<string>;
-  queryFn: () => Promise<Array<CardData>>;
-  staleTime?: number;
+  atom: CardsAtom;
   variant?: "default" | "showcase";
 }
 
+export function GalleryItems({
+  items,
+  variant = "default",
+  onSelect,
+}: {
+  items: Array<CardData>;
+  variant?: "default" | "showcase";
+  onSelect: (card: CardData) => void;
+}) {
+  const CardComponent
+    = variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
+
+  if (items.length === 0) {
+    return (
+      <div className="w-full [column-span:all]">
+        <EmptyState
+          title="No results found"
+          description="Try a different word, or clear the search to browse everything."
+        />
+      </div>
+    );
+  }
+
+  return items.map((item) => (
+    <GalleryItem key={item.id}>
+      <Card>
+        <CardComponent
+          title={item.title}
+          href={item.href}
+          onClick={() => {
+            onSelect(item);
+          }}
+          images={item.images.map((img, i) => (
+            <Image
+              key={img.src}
+              src={img.src}
+              alt={`${item.title} - image ${String(i + 1)}`}
+              width={img.width}
+              height={img.height}
+              layout="constrained"
+              className="h-full w-full object-contain"
+            />
+          ))}
+        >
+          <CardStatus status={item.status} />
+          <CardBookmark />
+        </CardComponent>
+        <CardInfo
+          {...item}
+          onClick={() => {
+            onSelect(item);
+          }}
+        />
+      </Card>
+    </GalleryItem>
+  ));
+}
+
 export function GalleryContent({
-  queryKey,
-  queryFn,
-  staleTime = 1000 * 60 * 5,
+  atom,
   variant = "default",
 }: GalleryContentProps) {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey,
-    queryFn,
-    staleTime,
-  });
+  const result = useCardResult(atom, "Failed to load gallery");
+  const items = getOrElse(result, () => []);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
-
-  const CardComponent =
-    variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         {Array.from({ length: 8 }).map(() => (
           <GalleryItem key={crypto.randomUUID()}>
             <SkeletonCard />
           </GalleryItem>
         ))}
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
-        {items.length > 0 ? (
-          items.map((item) => (
-            <GalleryItem key={item.id}>
-              <Card>
-                <CardComponent
-                  title={item.title}
-                  href={item.href}
-                  onClick={() => {
-                    setSelectedCard(item);
-                  }}
-                  images={item.images.map((img, i) => (
-                    <Image
-                      key={img.src}
-                      src={img.src}
-                      alt={`${item.title} - image ${String(i + 1)}`}
-                      width={img.width}
-                      height={img.height}
-                      layout="constrained"
-                      className="h-full w-full object-contain"
-                    />
-                  ))}
-                >
-                  <CardStatus status={item.status} />
-                  <CardBookmark />
-                </CardComponent>
-                <CardInfo
-                  {...item}
-                  onClick={() => {
-                    setSelectedCard(item);
-                  }}
-                />
-              </Card>
-            </GalleryItem>
-          ))
-        ) : (
-          <div className="w-full [column-span:all]">
-            <EmptyState
-              title="No results found"
-              description="Try adjusting your filters or search terms to find what you're looking for."
-            />
-          </div>
-        )}
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
+        <GalleryItems
+          items={items}
+          variant={variant}
+          onSelect={setSelectedCard}
+        />
       </Activity>
       {selectedCard && (
         <CardModal
@@ -122,27 +138,22 @@ export function GalleryContent({
 }
 
 export function ShowcaseGalleryContent({
-  queryKey,
-  queryFn,
-  staleTime = 1000 * 60 * 5,
+  atom,
 }: Omit<GalleryContentProps, "variant">) {
-  const { data: items = [], isLoading } = useQuery({
-    queryKey,
-    queryFn,
-    staleTime,
-  });
+  const result = useCardResult(atom, "Failed to load gallery");
+  const items = getOrElse(result, () => []);
   const [selectedCard, setSelectedCard] = useState<CardData | null>(null);
 
   return (
     <>
-      <Activity mode={isLoading ? "visible" : "hidden"}>
+      <Activity mode={isInitial(result) ? "visible" : "hidden"}>
         {Array.from({ length: 8 }).map(() => (
           <GalleryItem key={crypto.randomUUID()}>
             <SkeletonCard />
           </GalleryItem>
         ))}
       </Activity>
-      <Activity mode={isLoading ? "hidden" : "visible"}>
+      <Activity mode={isInitial(result) ? "hidden" : "visible"}>
         {items.length > 0 ? (
           items.map((item) => (
             <GalleryItem key={item.id}>

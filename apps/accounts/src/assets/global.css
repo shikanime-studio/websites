@@ -1,0 +1,21 @@
+@import "@shikanime-studio/design/styles.css";
+
+/* Accounts keeps two local aliases: the brand hue for the legacy preview
+   markup, and the display class older files still use. */
+:root {
+  --studio-brand: var(--studio-accent);
+  --studio-brand-soft: var(--studio-accent-muted);
+  --studio-cream: var(--studio-canvas);
+}
+
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: -0.02em;
+}
+
+/* The active Accounts Center destination reads as a filled pill, the way
+   Meta's own center marks the current section. */
+.nav-pill-active {
+  background: light-dark(#2f2f2f, #f2efea);
+  color: light-dark(#ffffff, #171512);
+}

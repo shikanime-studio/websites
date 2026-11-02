@@ -1,45 +1,46 @@
 import {
-  fetchArtists,
-  fetchCharacters,
-  fetchEvents,
-  fetchMerchs,
-} from "../lib/api-client";
+  artistsAtom,
+  charactersAtom,
+  eventsAtom,
+  merchsAtom,
+} from "../lib/atoms";
 import { GalleryContent } from "./Gallery";
-import { QueryProvider } from "./QueryProvider";
 import { Tab, TabContent, TabList } from "./TabList";
 
 export function Following() {
   return (
-    <QueryProvider>
       <TabList defaultTab="merchs">
-        <Tab name="following_tabs" value="merchs">
+        {(tab) => (
+          <>
+        <Tab active={tab.value === "merchs"} name="following_tabs" onSelect={tab.select} value="merchs">
           Merchs
         </Tab>
-        <TabContent value="merchs">
-          <GalleryContent queryKey={["merchs"]} queryFn={fetchMerchs} />
+        <TabContent active={tab.value === "merchs"}>
+          <GalleryContent atom={merchsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="events">
+        <Tab active={tab.value === "events"} name="following_tabs" onSelect={tab.select} value="events">
           Events
         </Tab>
-        <TabContent value="events">
-          <GalleryContent queryKey={["events"]} queryFn={fetchEvents} />
+        <TabContent active={tab.value === "events"}>
+          <GalleryContent atom={eventsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="artists">
+        <Tab active={tab.value === "artists"} name="following_tabs" onSelect={tab.select} value="artists">
           Artists
         </Tab>
-        <TabContent value="artists">
-          <GalleryContent queryKey={["artists"]} queryFn={fetchArtists} />
+        <TabContent active={tab.value === "artists"}>
+          <GalleryContent atom={artistsAtom} />
         </TabContent>
 
-        <Tab name="following_tabs" value="characters">
+        <Tab active={tab.value === "characters"} name="following_tabs" onSelect={tab.select} value="characters">
           Characters
         </Tab>
-        <TabContent value="characters">
-          <GalleryContent queryKey={["characters"]} queryFn={fetchCharacters} />
+        <TabContent active={tab.value === "characters"}>
+          <GalleryContent atom={charactersAtom} />
         </TabContent>
+          </>
+        )}
       </TabList>
-    </QueryProvider>
   );
 }
