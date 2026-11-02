@@ -39,19 +39,19 @@ function encodeNumber(
 
   switch (kind) {
     case "u8":
-      if (value < 0 || value > 0xff) return null;
+      if (value < 0 || value > 0xFF) return null;
       view.setUint8(0, value);
       return bytes;
     case "u16":
-      if (value < 0 || value > 0xffff) return null;
+      if (value < 0 || value > 0xFFFF) return null;
       view.setUint16(0, value, le);
       return bytes;
     case "u32":
-      if (value < 0 || value > 0xffffffff) return null;
+      if (value < 0 || value > 0xFFFFFFFF) return null;
       view.setUint32(0, value, le);
       return bytes;
     case "i32":
-      if (value < -0x80000000 || value > 0x7fffffff) return null;
+      if (value < -0x80000000 || value > 0x7FFFFFFF) return null;
       view.setInt32(0, value, le);
       return bytes;
     default:

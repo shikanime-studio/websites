@@ -1,0 +1,21 @@
+{
+  "name": "@shikanime-studio/binary",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "catalog:lint",
+    "eslint": "catalog:lint",
+    "typescript": "catalog:types",
+    "vitest": "catalog:test"
+  },
+  "scripts": {
+    "check": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run"
+  }
+}
