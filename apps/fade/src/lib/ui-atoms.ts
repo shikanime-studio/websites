@@ -1,5 +1,5 @@
 import type { Mixpanel } from "mixpanel-browser";
-import type { Theme } from "./db";
+import type { Theme } from "./settings";
 import { make, writable } from "effect/reactivity/Atom";
 
 /** The loaded <img> element shared with the info panel. */
