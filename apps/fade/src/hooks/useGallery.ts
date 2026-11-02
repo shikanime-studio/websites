@@ -1,48 +1,36 @@
-import type { FileItem } from "../lib/fs";
-import { useAtom, useAtomSuspense } from "@effect/atom-react";
-import { useCallback } from "react";
-import { galleryAtom } from "../lib/photo-atoms";
-import { directoryHandleAtom, selectedIndexAtom } from "../lib/ui-atoms";
+import type { GalleryView } from "../lib/gallery-atoms";
+import { useAtomSet, useAtomSuspense } from "@effect/atom-react";
+import { useMemo } from "react";
+import { galleryActionAtom, galleryViewAtom } from "../lib/gallery-atoms";
 
-export interface GalleryState {
-  files: Array<FileItem>;
-  selectedIndex: number;
-}
-
-export interface GalleryValue extends GalleryState {
+export interface GalleryValue extends GalleryView {
   selectFile: (index: number) => void;
   navigateNext: () => void;
   navigatePrevious: () => void;
-  selectedFile: FileItem | null;
 }
 
+/**
+ * React binding only: subscribes to the gallery atoms and hands components
+ * stable callbacks. The clamping and the index transitions live in the graph.
+ */
 export function useGallery(): GalleryValue {
-  const handle = useAtom(directoryHandleAtom)[0];
-  const files = useAtomSuspense(galleryAtom(handle)).value ?? [];
-  const [storedIndex, setStoredIndex] = useAtom(selectedIndexAtom);
-  const selectedIndex = Math.min(storedIndex, Math.max(files.length - 1, 0));
+  const view = useAtomSuspense(galleryViewAtom).value;
+  const dispatch = useAtomSet(galleryActionAtom);
 
-  const selectFile = useCallback(
-    (index: number) => {
-      setStoredIndex(Math.max(0, Math.min(index, files.length - 1)));
-    },
-    [files.length, setStoredIndex],
+  const actions = useMemo(
+    () => ({
+      selectFile: (index: number) => {
+        dispatch({ _tag: "select", index });
+      },
+      navigateNext: () => {
+        dispatch({ _tag: "next" });
+      },
+      navigatePrevious: () => {
+        dispatch({ _tag: "previous" });
+      },
+    }),
+    [dispatch],
   );
 
-  const navigateNext = useCallback(() => {
-    setStoredIndex((prev) => Math.min(prev + 1, files.length - 1));
-  }, [files.length, setStoredIndex]);
-
-  const navigatePrevious = useCallback(() => {
-    setStoredIndex((prev) => Math.max(prev - 1, 0));
-  }, [setStoredIndex]);
-
-  return {
-    files,
-    selectedIndex,
-    selectFile,
-    navigateNext,
-    navigatePrevious,
-    selectedFile: files[selectedIndex] ?? null,
-  };
+  return { ...view, ...actions };
 }

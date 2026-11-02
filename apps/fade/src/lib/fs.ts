@@ -83,3 +83,24 @@ export async function scanDirectory(
 
   return result;
 }
+
+export type DirectoryPick =
+  | { readonly ok: true; readonly handle: FileSystemDirectoryHandle }
+  | { readonly ok: false; readonly reason: "unsupported" | "aborted" | "failed" };
+
+/**
+ * Ask the browser for a directory. Cancellation is a normal outcome, not an
+ * error: the caller decides what to say, this only classifies what happened.
+ */
+export async function pickDirectory(): Promise<DirectoryPick> {
+  if (typeof window === "undefined" || !("showDirectoryPicker" in window)) {
+    return { ok: false, reason: "unsupported" };
+  }
+  try {
+    const handle = await window.showDirectoryPicker();
+    return { ok: true, handle };
+  } catch (error) {
+    const aborted = error instanceof DOMException && error.name === "AbortError";
+    return { ok: false, reason: aborted ? "aborted" : "failed" };
+  }
+}
