@@ -2,7 +2,8 @@ import type { RefObject } from "react";
 import { useAtomSuspense } from "@effect/atom-react";
 import { useEffect, useMemo } from "react";
 import { gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-graph";
-import imageShader from "../shaders/image.wgsl?raw";
+import { imageRenderPipelineAtom } from "../lib/pipelines";
+
 
 interface LightingParams {
   exposure: number;
@@ -16,51 +17,6 @@ interface LightingParams {
   temperature: number;
   vibrance: number;
   hue: number;
-}
-
-function useImagePipeline() {
-  const device = useAtomSuspense(gpuDeviceAtom).value;
-  const format = useAtomSuspense(gpuFormatAtom).value;
-
-  return useMemo(() => {
-    if (!device || !format) return null;
-
-    const shaderModule = device.createShaderModule({
-      code: imageShader,
-    });
-
-    return device.createRenderPipeline({
-      layout: "auto",
-      vertex: {
-        module: shaderModule,
-        entryPoint: "vs_main",
-      },
-      fragment: {
-        module: shaderModule,
-        entryPoint: "fs_main",
-        targets: [
-          {
-            format,
-            blend: {
-              color: {
-                srcFactor: "src-alpha",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
-              },
-              alpha: {
-                srcFactor: "one",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
-              },
-            },
-          },
-        ],
-      },
-      primitive: {
-        topology: "triangle-strip",
-      },
-    });
-  }, [device, format]);
 }
 
 export function useImageRender(
@@ -82,7 +38,7 @@ export function useImageRender(
 ) {
   const device = useAtomSuspense(gpuDeviceAtom).value;
   const format = useAtomSuspense(gpuFormatAtom).value;
-  const pipeline = useImagePipeline();
+  const pipeline = useAtomSuspense(imageRenderPipelineAtom).value;
 
   const texture = useMemo(() => {
     if (!device || !image || !image.complete || image.naturalWidth === 0) {

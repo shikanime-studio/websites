@@ -2,7 +2,8 @@ import type { RefObject } from "react";
 import { useAtomSuspense } from "@effect/atom-react";
 import { useEffect, useMemo } from "react";
 import { gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-graph";
-import rafShader from "../shaders/raf.wgsl?raw";
+import { rawRenderPipelineAtom } from "../lib/pipelines";
+
 
 interface LightingParams {
   exposure: number;
@@ -16,39 +17,6 @@ interface LightingParams {
   temperature: number;
   vibrance: number;
   hue: number;
-}
-
-function useRawImagePipeline() {
-  const device = useAtomSuspense(gpuDeviceAtom).value;
-  const format = useAtomSuspense(gpuFormatAtom).value;
-
-  return useMemo(() => {
-    if (!device || !format) return null;
-
-    const shaderModule = device.createShaderModule({
-      code: rafShader,
-    });
-
-    return device.createRenderPipeline({
-      layout: "auto",
-      vertex: {
-        module: shaderModule,
-        entryPoint: "vs_main",
-      },
-      fragment: {
-        module: shaderModule,
-        entryPoint: "fs_main",
-        targets: [
-          {
-            format,
-          },
-        ],
-      },
-      primitive: {
-        topology: "triangle-strip",
-      },
-    });
-  }, [device, format]);
 }
 
 export function useRawImageRender(
@@ -72,7 +40,7 @@ export function useRawImageRender(
 ) {
   const device = useAtomSuspense(gpuDeviceAtom).value;
   const format = useAtomSuspense(gpuFormatAtom).value;
-  const pipeline = useRawImagePipeline();
+  const pipeline = useAtomSuspense(rawRenderPipelineAtom).value;
   const texture = useMemo(() => {
     if (!device || width <= 0 || height <= 0) return null;
 

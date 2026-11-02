@@ -1,6 +1,6 @@
 import type { Mixpanel } from "mixpanel-browser";
 import type { Theme } from "./db";
-import { make } from "effect/reactivity/Atom";
+import { make, writable } from "effect/reactivity/Atom";
 
 /** The loaded <img> element shared with the info panel. */
 export const imageElementAtom = make<HTMLImageElement | null>(null);
@@ -42,3 +42,24 @@ export const DEFAULT_LIGHTING: LightingState = {
 };
 
 export const lightingAtom = make<LightingState>(DEFAULT_LIGHTING);
+
+export type LightingKey = keyof LightingState;
+
+export type LightingAction =
+  | { readonly _tag: "set"; readonly key: LightingKey; readonly value: number }
+  | { readonly _tag: "reset"; readonly key: LightingKey };
+
+/**
+ * Lighting transitions live next to the state they change: a set merges one
+ * channel, a reset restores that channel's default. Components dispatch these
+ * instead of rebuilding setter closures on every render.
+ */
+export const lightingActionAtom = writable(
+  (get) => get(lightingAtom),
+  (ctx, action: LightingAction) => {
+    const current = ctx.get(lightingAtom);
+    const value
+      = action._tag === "set" ? action.value : DEFAULT_LIGHTING[action.key];
+    ctx.set(lightingAtom, { ...current, [action.key]: value });
+  },
+);
