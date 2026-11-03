@@ -1,5 +1,5 @@
 export const LittleEndianness = 0x4949; // 'II'
-export const BigEndianness = 0x4d4d; // 'MM'
+export const BigEndianness = 0x4D4D; // 'MM'
 
 export type Endianness = typeof LittleEndianness | typeof BigEndianness;
 
@@ -20,15 +20,15 @@ export type ExifType =
   | typeof SLongExifType
   | typeof SRationalExifType;
 
-export const MakeTagId = 0x010f;
+export const MakeTagId = 0x010F;
 export const ModelTagId = 0x0110;
 export const ExifOffsetTagId = 0x8769;
-export const ExposureTimeTagId = 0x829a;
-export const FNumberTagId = 0x829d;
+export const ExposureTimeTagId = 0x829A;
+export const FNumberTagId = 0x829D;
 export const ISOTagId = 0x8827;
 export const DateTimeOriginalTagId = 0x9003;
-export const FocalLengthTagId = 0x920a;
-export const LensModelTagId = 0xa433;
+export const FocalLengthTagId = 0x920A;
+export const LensModelTagId = 0xA433;
 
 export type ExifTagEntry =
   | { tagId: typeof MakeTagId; value: string }

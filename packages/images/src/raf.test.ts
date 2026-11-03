@@ -1,5 +1,5 @@
 import type { ExifTagEntry } from "./exif";
-import type { FileItem } from "./fs";
+import type { ImageSource } from "./source";
 import { describe, expect, it } from "vitest";
 import { MakeTagId } from "./exif";
 import {
@@ -15,14 +15,8 @@ import {
 import { createRawImageDataView } from "./raw";
 
 // Mock FileItem creator
-function createFileItem(file: File): FileItem {
-  return {
-    handle: {
-      getFile: () => Promise.resolve(file),
-    } as unknown as FileSystemFileHandle,
-    sidecars: [],
-    mimeType: file.type,
-  };
+function createFileItem(file: File): ImageSource {
+  return { mimeType: file.type, getFile: () => Promise.resolve(file) };
 }
 
 // Helper to create EXIF data block
@@ -31,7 +25,7 @@ function createExifBlock(make = "Test") {
 
   // TIFF Header: II (little endian), 42, offset 8
   const tiffHeader = new Uint8Array([
-    0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00,
+    0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00,
   ]);
 
   // IFD0: 1 entry
@@ -40,7 +34,7 @@ function createExifBlock(make = "Test") {
   // Entry: Make (0x010f), ASCII (2), count, offset 26
   const entry = new Uint8Array(12);
   const entryView = new DataView(entry.buffer);
-  entryView.setUint16(0, 0x010f, true); // Tag
+  entryView.setUint16(0, 0x010F, true); // Tag
   entryView.setUint16(2, 0x0002, true); // Type (ASCII)
   entryView.setUint32(4, makeLen, true); // Count
   entryView.setUint32(8, 26, true); // Value/Offset (26)
@@ -137,13 +131,13 @@ describe("createRawImageDataView", () => {
   it("should extract EXIF tags from RAF (Fujifilm)", async () => {
     // Create a valid JPEG with EXIF
     const exifData = createExifBlock("Fujifilm XT-5");
-    const soi = new Uint8Array([0xff, 0xd8]);
-    const app1Marker = new Uint8Array([0xff, 0xe1]);
+    const soi = new Uint8Array([0xFF, 0xD8]);
+    const app1Marker = new Uint8Array([0xFF, 0xE1]);
     const exifHeader = new Uint8Array([0x45, 0x78, 0x69, 0x66, 0x00, 0x00]);
     const segmentLengthVal = 2 + exifHeader.length + exifData.length;
     const segmentLength = new Uint8Array([
-      (segmentLengthVal >> 8) & 0xff,
-      segmentLengthVal & 0xff,
+      (segmentLengthVal >> 8) & 0xFF,
+      segmentLengthVal & 0xFF,
     ]);
 
     const jpegData = new Uint8Array(

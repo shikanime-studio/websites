@@ -10,7 +10,8 @@
     "@antfu/eslint-config": "catalog:lint",
     "eslint": "catalog:lint",
     "typescript": "catalog:types",
-    "vitest": "catalog:test"
+    "vitest": "catalog:test",
+    "@webgpu/types": "catalog:types"
   },
   "scripts": {
     "check": "tsc -p tsconfig.json --noEmit",

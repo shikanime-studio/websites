@@ -1,8 +1,8 @@
 import type { RefObject } from "react";
 import { useAtomSuspense } from "@effect/atom-react";
+import { createRawPipeline } from "@shikanime-studio/images";
 import { useEffect, useMemo } from "react";
 import { gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-graph";
-import rafShader from "../shaders/raf.wgsl?raw";
 
 interface LightingParams {
   exposure: number;
@@ -22,33 +22,10 @@ function useRawImagePipeline() {
   const device = useAtomSuspense(gpuDeviceAtom).value;
   const format = useAtomSuspense(gpuFormatAtom).value;
 
-  return useMemo(() => {
-    if (!device || !format) return null;
-
-    const shaderModule = device.createShaderModule({
-      code: rafShader,
-    });
-
-    return device.createRenderPipeline({
-      layout: "auto",
-      vertex: {
-        module: shaderModule,
-        entryPoint: "vs_main",
-      },
-      fragment: {
-        module: shaderModule,
-        entryPoint: "fs_main",
-        targets: [
-          {
-            format,
-          },
-        ],
-      },
-      primitive: {
-        topology: "triangle-strip",
-      },
-    });
-  }, [device, format]);
+  return useMemo(
+    () => (device && format ? createRawPipeline(device, format) : null),
+    [device, format],
+  );
 }
 
 export function useRawImageRender(

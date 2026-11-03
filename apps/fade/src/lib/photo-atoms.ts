@@ -1,20 +1,23 @@
-import type { ExifDataView, ExifTagEntry } from "./exif";
+import type { ExifDataView, ExifTagEntry } from "@shikanime-studio/images";
 import type { FileItem } from "./fs";
+import {
+  computeHistogram,
+  createImageDataView,
+  createRawImageDataView,
+  DimensionsTagId,
+  RafDataView,
+  renderThumbnail,
+} from "@shikanime-studio/images";
 import { Effect } from "effect";
 import { make } from "effect/reactivity/Atom";
 import { cachedAtom, emptyAtom, nullableAtom } from "./atoms";
-import { scanDirectory } from "./fs";
+import { imageSource, scanDirectory } from "./fs";
 import { gpuDeviceAtom } from "./gpu-graph";
-import { computeHistogram } from "./histogram";
-import { createImageDataView } from "./img";
 import {
   histogramComputePipelineAtom,
   histogramNormalizePipelineAtom,
   thumbnailPipelineAtom,
 } from "./pipelines";
-import { DimensionsTagId, RafDataView } from "./raf";
-import { createRawImageDataView } from "./raw";
-import { renderThumbnail } from "./thumbnail";
 
 /** File handle -> File. */
 export const fileAtom = (item: FileItem | null) =>
@@ -55,7 +58,7 @@ export const exifAtom = (item: FileItem | null) =>
     if (!item) return null;
 
     try {
-      const view = await createImageDataView(item);
+      const view = await createImageDataView(imageSource(item));
       if (!view) return null;
 
       let exifView: ExifDataView<ArrayBufferLike> | null = null;
@@ -83,7 +86,7 @@ export const rawImageAtom = (item: FileItem | null) =>
   nullableAtom(item, "raw-image", async () => {
     if (!item) return null;
 
-    const view = await createRawImageDataView(item);
+    const view = await createRawImageDataView(imageSource(item));
     if (!view) return null;
 
     const data = view.getCfa();
@@ -136,7 +139,7 @@ export const thumbnailAtom = (
               device,
               pipeline,
               blob,
-              fileItem: item,
+              mimeType: item?.mimeType,
               width,
               height,
               quality,

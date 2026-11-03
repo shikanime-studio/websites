@@ -1,19 +1,19 @@
-import type { FileItem } from "./fs";
 import type { RafDataView } from "./raf";
+import type { ImageSource } from "./source";
 import { ExifDataView } from "./exif";
 import { createRawImageDataView } from "./raw";
 
 const JpegMarker = {
-  SOI: 0xffd8,
-  APP1: 0xffe1,
+  SOI: 0xFFD8,
+  APP1: 0xFFE1,
   ExifHeader: 0x45786966, // 'Exif'
   Zero: 0x0000,
-  Prefix: 0xff00,
+  Prefix: 0xFF00,
 } as const;
 
 const PngMarker = {
-  Signature1: 0x89504e47, // \x89PNG
-  Signature2: 0x0d0a1a0a, // \r\n\x1a\n
+  Signature1: 0x89504E47, // \x89PNG
+  Signature2: 0x0D0A1A0A, // \r\n\x1a\n
   ExifChunk: 0x65584966, // eXIf
 } as const;
 
@@ -158,9 +158,9 @@ export class TiffDataView<T extends ArrayBufferLike>
 }
 
 export async function createImageDataView(
-  source: FileItem,
+  source: ImageSource,
 ): Promise<ImageDataView | RafDataView<ArrayBuffer> | null> {
-  const file = await source.handle.getFile();
+  const file = await source.getFile();
   switch (source.mimeType) {
     case "image/jpeg":
       return new JpegDataView(await file.arrayBuffer());

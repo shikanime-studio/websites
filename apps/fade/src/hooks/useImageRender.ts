@@ -1,8 +1,8 @@
 import type { RefObject } from "react";
 import { useAtomSuspense } from "@effect/atom-react";
+import { createImagePipeline } from "@shikanime-studio/images";
 import { useEffect, useMemo } from "react";
 import { gpuDeviceAtom, gpuFormatAtom } from "../lib/gpu-graph";
-import imageShader from "../shaders/image.wgsl?raw";
 
 interface LightingParams {
   exposure: number;
@@ -22,45 +22,10 @@ function useImagePipeline() {
   const device = useAtomSuspense(gpuDeviceAtom).value;
   const format = useAtomSuspense(gpuFormatAtom).value;
 
-  return useMemo(() => {
-    if (!device || !format) return null;
-
-    const shaderModule = device.createShaderModule({
-      code: imageShader,
-    });
-
-    return device.createRenderPipeline({
-      layout: "auto",
-      vertex: {
-        module: shaderModule,
-        entryPoint: "vs_main",
-      },
-      fragment: {
-        module: shaderModule,
-        entryPoint: "fs_main",
-        targets: [
-          {
-            format,
-            blend: {
-              color: {
-                srcFactor: "src-alpha",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
-              },
-              alpha: {
-                srcFactor: "one",
-                dstFactor: "one-minus-src-alpha",
-                operation: "add",
-              },
-            },
-          },
-        ],
-      },
-      primitive: {
-        topology: "triangle-strip",
-      },
-    });
-  }, [device, format]);
+  return useMemo(
+    () => (device && format ? createImagePipeline(device, format) : null),
+    [device, format],
+  );
 }
 
 export function useImageRender(

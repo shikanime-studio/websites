@@ -2,7 +2,8 @@ import type { Analysis } from "./analysis";
 import { describe, expect, it } from "vitest";
 import { validate } from "./analysis";
 import { apply, plan, read } from "./mutate";
-import { analyzeRafHeader, JpegImageLength } from "./raf";
+import { JpegImageLength } from "./raf";
+import { analyzeRafHeader } from "./raf-header";
 
 function rafHeader(): DataView {
   const bytes = new Uint8Array(256);

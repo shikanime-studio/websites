@@ -1,19 +1,13 @@
 import type { ExifTagEntry } from "./exif";
-import type { FileItem } from "./fs";
 import type { ImageDataView } from "./img";
+import type { ImageSource } from "./source";
 import { describe, expect, it } from "vitest";
 import { MakeTagId } from "./exif";
 import { createImageDataView } from "./img";
 
 // Mock FileItem creator
-function createFileItem(file: File): FileItem {
-  return {
-    handle: {
-      getFile: () => Promise.resolve(file),
-    } as unknown as FileSystemFileHandle,
-    sidecars: [],
-    mimeType: file.type,
-  };
+function createFileItem(file: File): ImageSource {
+  return { mimeType: file.type, getFile: () => Promise.resolve(file) };
 }
 
 describe("getTagEntries", () => {
@@ -23,7 +17,7 @@ describe("getTagEntries", () => {
 
     // TIFF Header: II (little endian), 42, offset 8
     const tiffHeader = new Uint8Array([
-      0x49, 0x49, 0x2a, 0x00, 0x08, 0x00, 0x00, 0x00,
+      0x49, 0x49, 0x2A, 0x00, 0x08, 0x00, 0x00, 0x00,
     ]);
 
     // IFD0: 1 entry
@@ -32,7 +26,7 @@ describe("getTagEntries", () => {
     // Entry: Make (0x010f), ASCII (2), count, offset 26
     const entry = new Uint8Array(12);
     const entryView = new DataView(entry.buffer);
-    entryView.setUint16(0, 0x010f, true); // Tag
+    entryView.setUint16(0, 0x010F, true); // Tag
     entryView.setUint16(2, 0x0002, true); // Type (ASCII)
     entryView.setUint32(4, makeLen, true); // Count
     entryView.setUint32(8, 26, true); // Value/Offset (26)
@@ -70,16 +64,16 @@ describe("getTagEntries", () => {
     const exifData = createExifBlock("JPEG");
 
     // JPEG SOI
-    const soi = new Uint8Array([0xff, 0xd8]);
+    const soi = new Uint8Array([0xFF, 0xD8]);
 
     // APP1 Marker (FFE1) + Length (2 bytes) + Exif Header (6 bytes: Exif\0\0)
-    const app1Marker = new Uint8Array([0xff, 0xe1]);
+    const app1Marker = new Uint8Array([0xFF, 0xE1]);
     const exifHeader = new Uint8Array([0x45, 0x78, 0x69, 0x66, 0x00, 0x00]);
 
     const segmentLengthVal = 2 + exifHeader.length + exifData.length;
     const segmentLength = new Uint8Array([
-      (segmentLengthVal >> 8) & 0xff,
-      segmentLengthVal & 0xff,
+      (segmentLengthVal >> 8) & 0xFF,
+      segmentLengthVal & 0xFF,
     ]);
 
     const jpegData = new Uint8Array(
@@ -113,7 +107,7 @@ describe("getTagEntries", () => {
   it("should extract EXIF tags from PNG", async () => {
     const exifData = createExifBlock("PNG ");
     const pngSignature = new Uint8Array([
-      0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
+      0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A,
     ]);
 
     // Chunk Length
