@@ -61,6 +61,32 @@ stays on the main thread because it needs the app's `GPUDevice`; moving it means
 creating the device inside the worker and handing back `ImageBitmap`s — the next
 step, not a rewrite.
 
+## Effect at the type level
+
+The closed unions are `Data.TaggedEnum` rather than hand-written unions, so the
+constructors and the `$is` guards ship with the type and a new variant cannot be
+added without every match site seeing it:
+
+```ts
+export type Plan = Data.TaggedEnum<{
+  ok: { readonly planned: Planned };
+  unknownField: { readonly id: string };
+  outOfRange: { readonly id: string; readonly value: number };
+  needsRelocation: { readonly id: string; readonly required: number };
+}>;
+export const Plan = Data.taggedEnum<Plan>();
+```
+
+`plan(...)` returns `Plan.ok(...)` / `Plan.needsRelocation(...)`, and the
+narrowing reads as `Mutation.$is("number")(mutation)`. The tagged objects are
+still plain `{ _tag, ... }` values, so callers can keep constructing and
+comparing them literally — the ADT adds structure, not a new wire format.
+
+The worker boundary decodes with `Schema`: a `postMessage` payload is untrusted,
+so `handleImageRequest` runs `Schema.decodeUnknownOption` before touching it and
+rejects anything that is not a known request. That is the one place a runtime
+check belongs; the rest of the package trusts its own types.
+
 ## Reading and mutating
 
 ```ts

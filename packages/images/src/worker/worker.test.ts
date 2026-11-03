@@ -29,6 +29,15 @@ describe("handleImageRequest", () => {
     expect(output).toEqual([{ tagId: 0x010F, value: "Fuji" }]);
   });
 
+  it("rejects a payload the protocol does not describe", async () => {
+    await expect(
+      handleImageRequest({ id: 1, kind: "delete-everything" }),
+    ).rejects.toThrow("Invalid image worker request");
+    await expect(handleImageRequest(null)).rejects.toThrow(
+      "Invalid image worker request",
+    );
+  });
+
   it("returns the plain bytes for a non-RAW preview", async () => {
     const file = exifFile();
     const output = await handleImageRequest({

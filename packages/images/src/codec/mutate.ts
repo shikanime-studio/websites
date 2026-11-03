@@ -1,10 +1,23 @@
 import type { Analysis, Endian, Field } from "./analysis";
+import { Data } from "effect";
 import { fieldWidth } from "./analysis";
 
-/** A value change the UI asks for; it never carries bytes. */
-export type Mutation =
-  | { readonly _tag: "number"; readonly id: string; readonly value: number }
-  | { readonly _tag: "ascii"; readonly id: string; readonly value: string };
+/**
+ * A value change the UI asks for; it never carries bytes.
+ *
+ * A tagged enum rather than a hand-written union: the constructors and `$is`
+ * guards come with the type, so a new variant cannot be added without every
+ * match site seeing it.
+ */
+export type Mutation = Data.TaggedEnum<{
+  number: { readonly id: string; readonly value: number };
+  ascii: { readonly id: string; readonly value: string };
+}>;
+
+// The constructor and the type share a name on purpose — that merging is the
+// documented Effect pattern, so `Mutation.number(...)` constructs `Mutation`.
+// eslint-disable-next-line ts/no-redeclare
+export const Mutation = Data.taggedEnum<Mutation>();
 
 /** One range to overwrite. Same length as the bytes it replaces. */
 export interface Write {
@@ -18,12 +31,16 @@ export interface Planned {
   readonly writes: readonly Write[];
 }
 
-export type Plan =
-  | { readonly _tag: "ok"; readonly planned: Planned }
-  | { readonly _tag: "unknownField"; readonly id: string }
-  | { readonly _tag: "outOfRange"; readonly id: string; readonly value: number }
+export type Plan = Data.TaggedEnum<{
+  ok: { readonly planned: Planned };
+  unknownField: { readonly id: string };
+  outOfRange: { readonly id: string; readonly value: number };
   /** The value is longer than the bytes reserved for it: relocate, never truncate. */
-  | { readonly _tag: "needsRelocation"; readonly id: string; readonly required: number };
+  needsRelocation: { readonly id: string; readonly required: number };
+}>;
+
+// eslint-disable-next-line ts/no-redeclare
+export const Plan = Data.taggedEnum<Plan>();
 
 function encodeNumber(
   kind: Field["kind"],
@@ -77,31 +94,28 @@ function encodeAscii(value: string, reserved: number): Uint8Array | null {
  */
 export function plan(analysis: Analysis, mutation: Mutation): Plan {
   const field = analysis.fields.get(mutation.id);
-  if (!field) return { _tag: "unknownField", id: mutation.id };
+  if (!field) return Plan.unknownField({ id: mutation.id });
 
-  if (mutation._tag === "number") {
+  if (Mutation.$is("number")(mutation)) {
     const bytes = encodeNumber(field.kind, field.endian, mutation.value);
     if (!bytes) {
-      return { _tag: "outOfRange", id: field.id, value: mutation.value };
+      return Plan.outOfRange({ id: field.id, value: mutation.value });
     }
-    return {
-      _tag: "ok",
+    return Plan.ok({
       planned: { analysis, writes: [{ offset: field.offset, bytes }] },
-    };
+    });
   }
 
   const bytes = encodeAscii(mutation.value, field.reserved);
   if (!bytes) {
-    return {
-      _tag: "needsRelocation",
+    return Plan.needsRelocation({
       id: field.id,
       required: new TextEncoder().encode(mutation.value).length + 1,
-    };
+    });
   }
-  return {
-    _tag: "ok",
+  return Plan.ok({
     planned: { analysis, writes: [{ offset: field.offset, bytes }] },
-  };
+  });
 }
 
 /** Apply a plan to the caller's buffer. The analysis is never mutated. */
