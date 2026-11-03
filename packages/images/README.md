@@ -1,4 +1,4 @@
-# @shikanime-studio/photo-binary
+# @shikanime-studio/images
 
 Read and mutate the fields of a photo container — RAF sidecars, EXIF/TIFF
 directories, JPEG segments, PNG and WebP chunks — through one immutable
@@ -15,7 +15,7 @@ import {
   plan,
   read,
   validate,
-} from "@shikanime-studio/photo-binary";
+} from "@shikanime-studio/images";
 
 const analysis = analyzeRafHeader(view); // what lives where
 validate(analysis); // invariants: [] means safe to write
