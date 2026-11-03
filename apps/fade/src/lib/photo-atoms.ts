@@ -1,20 +1,22 @@
-import type { ExifDataView, ExifTagEntry } from "./exif";
+import type { ExifTagEntry } from "@shikanime-studio/images";
 import type { FileItem } from "./fs";
+import {
+  computeHistogram,
+  createRawImageDataView,
+  DimensionsTagId,
+  renderThumbnail,
+} from "@shikanime-studio/images";
 import { Effect } from "effect";
 import { make } from "effect/reactivity/Atom";
 import { cachedAtom, emptyAtom, nullableAtom } from "./atoms";
-import { scanDirectory } from "./fs";
+import { imageSource, scanDirectory } from "./fs";
 import { gpuDeviceAtom } from "./gpu-graph";
-import { computeHistogram } from "./histogram";
-import { createImageDataView } from "./img";
+import { runImageTask } from "./image-worker";
 import {
   histogramComputePipelineAtom,
   histogramNormalizePipelineAtom,
   thumbnailPipelineAtom,
 } from "./pipelines";
-import { DimensionsTagId, RafDataView } from "./raf";
-import { createRawImageDataView } from "./raw";
-import { renderThumbnail } from "./thumbnail";
 
 /** File handle -> File. */
 export const fileAtom = (item: FileItem | null) =>
@@ -33,17 +35,15 @@ export const previewAtom = (item: FileItem | null) =>
           const file = yield* get.result(fileAtom(item));
           if (!file) return null;
 
-          if (item?.mimeType === "image/x-fujifilm-raf") {
-            const buffer = yield* Effect.tryPromise(() => file.arrayBuffer());
-            const view = new RafDataView(buffer);
-            const jpgView = view.getJpegImage();
-            if (!jpgView) return null;
-            return new Blob([jpgView as unknown as BlobPart], {
-              type: "image/jpeg",
-            });
-          }
-
-          return file;
+          // The codec runs in the worker; this thread only wraps the bytes.
+          const preview = yield* Effect.tryPromise(() =>
+            runImageTask("preview", {
+              file,
+              mimeType: item?.mimeType,
+            }),
+          );
+          if (!preview) return null;
+          return new Blob([preview.bytes], { type: preview.type });
         }),
       ),
     emptyAtom as never,
@@ -55,20 +55,8 @@ export const exifAtom = (item: FileItem | null) =>
     if (!item) return null;
 
     try {
-      const view = await createImageDataView(item);
-      if (!view) return null;
-
-      let exifView: ExifDataView<ArrayBufferLike> | null = null;
-      if (view instanceof RafDataView) {
-        const jpeg = view.getJpegImage();
-        if (jpeg) {
-          exifView = jpeg.getExif();
-        }
-      } else {
-        exifView = view.getExif();
-      }
-
-      return exifView ? exifView.getTagEntries() : null;
+      const file = await item.handle.getFile();
+      return await runImageTask("exif", { file, mimeType: item.mimeType });
     } catch (error) {
       console.error(
         "Failed to read the camera data (EXIF) for this image.",
@@ -83,7 +71,7 @@ export const rawImageAtom = (item: FileItem | null) =>
   nullableAtom(item, "raw-image", async () => {
     if (!item) return null;
 
-    const view = await createRawImageDataView(item);
+    const view = await createRawImageDataView(imageSource(item));
     if (!view) return null;
 
     const data = view.getCfa();
@@ -136,7 +124,7 @@ export const thumbnailAtom = (
               device,
               pipeline,
               blob,
-              fileItem: item,
+              mimeType: item?.mimeType,
               width,
               height,
               quality,

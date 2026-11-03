@@ -1,5 +1,5 @@
-import type { FileItem } from "./fs";
 import type { RafDataView } from "./raf";
+import type { ImageSource } from "./source";
 import { ExifDataView } from "./exif";
 import { createRawImageDataView } from "./raw";
 
@@ -158,9 +158,9 @@ export class TiffDataView<T extends ArrayBufferLike>
 }
 
 export async function createImageDataView(
-  source: FileItem,
+  source: ImageSource,
 ): Promise<ImageDataView | RafDataView<ArrayBuffer> | null> {
-  const file = await source.handle.getFile();
+  const file = await source.getFile();
   switch (source.mimeType) {
     case "image/jpeg":
       return new JpegDataView(await file.arrayBuffer());
