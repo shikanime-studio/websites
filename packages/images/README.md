@@ -8,20 +8,58 @@ do it.
 Pure functions and data. No state, no lifecycle, no React, no Effect — the
 caller decides when a pipeline is built, cached or dropped.
 
-## What is here
+## Layers
 
-| Area | Files |
-| --- | --- |
-| Field model | `analysis.ts` — `PhotoFormat`, `Field`, `Segment`, `Analysis`, `validate()` |
-| Mutation | `mutate.ts` — `plan` (pure), `apply` (only writer), `read` |
-| Containers | `raf.ts` (RAW + offsets), `img.ts` (JPEG/PNG/WebP/TIFF views), `raw.ts` |
-| Metadata | `exif.ts` — TIFF/EXIF directory walking |
-| Rendering | `thumbnail.ts`, `histogram.ts` |
-| GPU | `pipelines.ts` — five pipeline builders, shaders in `src/shaders` |
-| Input | `source.ts` — `ImageSource`, the two things a reader needs from a file |
+| Layer | Folder | What it owns |
+| --- | --- | --- |
+| Codec | `src/codec` | field model, decoding and encoding: `analysis`, `mutate`, `raf`, `raf-header`, `img`, `exif`, `raw`, `preview`, `exif-read`, `source` |
+| Render | `src/render` | GPU work: `thumbnail`, `histogram`, `pipelines`, `shaders` |
+| Worker | `src/worker` | the off-thread boundary: typed protocol, handler, client, host |
 
-The formats are a closed `PhotoFormat` union (`raf`, `jpeg`, `tiff`, `png`,
-`webp`), so the surface cannot drift into "anything with bytes".
+Three folders is the whole split. State, React and Effect deliberately live
+outside the package: a codec has no lifecycle, and a renderer only needs a
+device.
+
+## Worker
+
+The codec runs off the main thread. The package ships the protocol, the handler
+and a client; the app supplies a three-line worker file.
+
+```ts
+// app worker entry
+import { serveImageWorker } from "@shikanime-studio/images/worker";
+serveImageWorker(globalThis as never);
+
+// main thread
+const client = createImageWorkerClient(
+  new Worker(new URL("./images.worker.ts", import.meta.url), { type: "module" }),
+);
+const tags = await client.run("exif", { file, mimeType });
+```
+
+`run` is typed per task: the request kind decides the input and output type, and
+each call carries an id so concurrent asks cannot resolve each other. A worker
+error rejects everything in flight rather than leaving promises pending.
+
+Where there is no `Worker` — SSR, tests — the same handler runs in-process, so
+callers never branch on the environment:
+
+```ts
+export async function runImageTask<K>(
+  kind: K,
+  input: ImageWorkerTasks[K]["input"],
+) {
+  if (typeof Worker === "undefined") {
+    return handleImageRequest({ id: 0, kind, input });
+  }
+  return workerClient().run(kind, input);
+}
+```
+
+Today the worker owns the codec (EXIF, preview, container reads). Rendering
+stays on the main thread because it needs the app's `GPUDevice`; moving it means
+creating the device inside the worker and handing back `ImageBitmap`s — the next
+step, not a rewrite.
 
 ## Reading and mutating
 

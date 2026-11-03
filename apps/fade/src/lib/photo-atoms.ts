@@ -1,11 +1,9 @@
-import type { ExifDataView, ExifTagEntry } from "@shikanime-studio/images";
+import type { ExifTagEntry } from "@shikanime-studio/images";
 import type { FileItem } from "./fs";
 import {
   computeHistogram,
-  createImageDataView,
   createRawImageDataView,
   DimensionsTagId,
-  RafDataView,
   renderThumbnail,
 } from "@shikanime-studio/images";
 import { Effect } from "effect";
@@ -13,6 +11,7 @@ import { make } from "effect/reactivity/Atom";
 import { cachedAtom, emptyAtom, nullableAtom } from "./atoms";
 import { imageSource, scanDirectory } from "./fs";
 import { gpuDeviceAtom } from "./gpu-graph";
+import { runImageTask } from "./image-worker";
 import {
   histogramComputePipelineAtom,
   histogramNormalizePipelineAtom,
@@ -36,17 +35,15 @@ export const previewAtom = (item: FileItem | null) =>
           const file = yield* get.result(fileAtom(item));
           if (!file) return null;
 
-          if (item?.mimeType === "image/x-fujifilm-raf") {
-            const buffer = yield* Effect.tryPromise(() => file.arrayBuffer());
-            const view = new RafDataView(buffer);
-            const jpgView = view.getJpegImage();
-            if (!jpgView) return null;
-            return new Blob([jpgView as unknown as BlobPart], {
-              type: "image/jpeg",
-            });
-          }
-
-          return file;
+          // The codec runs in the worker; this thread only wraps the bytes.
+          const preview = yield* Effect.tryPromise(() =>
+            runImageTask("preview", {
+              file,
+              mimeType: item?.mimeType,
+            }),
+          );
+          if (!preview) return null;
+          return new Blob([preview.bytes], { type: preview.type });
         }),
       ),
     emptyAtom as never,
@@ -58,20 +55,8 @@ export const exifAtom = (item: FileItem | null) =>
     if (!item) return null;
 
     try {
-      const view = await createImageDataView(imageSource(item));
-      if (!view) return null;
-
-      let exifView: ExifDataView<ArrayBufferLike> | null = null;
-      if (view instanceof RafDataView) {
-        const jpeg = view.getJpegImage();
-        if (jpeg) {
-          exifView = jpeg.getExif();
-        }
-      } else {
-        exifView = view.getExif();
-      }
-
-      return exifView ? exifView.getTagEntries() : null;
+      const file = await item.handle.getFile();
+      return await runImageTask("exif", { file, mimeType: item.mimeType });
     } catch (error) {
       console.error(
         "Failed to read the camera data (EXIF) for this image.",
