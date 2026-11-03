@@ -38,8 +38,8 @@ describe("exifDataView helpers", () => {
     const view = new ExifDataView(bytes.buffer);
     expect(view.isLittleEndian()).toBe(true);
 
-    bytes[0] = 0x4D;
-    bytes[1] = 0x4D;
+    bytes[0] = 0x4d;
+    bytes[1] = 0x4d;
     expect(view.isLittleEndian()).toBe(false);
   });
 
@@ -59,13 +59,13 @@ describe("exifDataView helpers", () => {
   it("reads a tag header", () => {
     const bytes = new Uint8Array(12);
     const view = new DataView(bytes.buffer);
-    view.setUint16(0, 0x010F, true);
+    view.setUint16(0, 0x010f, true);
     view.setUint16(2, 2, true);
     view.setUint32(4, 5, true);
 
     const exif = new ExifDataView(bytes.buffer);
     expect(exif.getTagHeader(0, true)).toEqual({
-      tagId: 0x010F,
+      tagId: 0x010f,
       type: 2,
       count: 5,
     });

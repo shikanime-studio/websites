@@ -11,11 +11,11 @@ const exifFile = () => {
   view.setUint16(2, 42, true);
   view.setUint32(4, 8, true);
   view.setUint16(8, 1, true);
-  view.setUint16(10, 0x010F, true);
+  view.setUint16(10, 0x010f, true);
   view.setUint16(12, 2, true);
   view.setUint32(14, 5, true);
   view.setUint32(18, 26, true);
-  bytes.set([0x46, 0x75, 0x6A, 0x69, 0x00], 26);
+  bytes.set([0x46, 0x75, 0x6a, 0x69, 0x00], 26);
   return new File([bytes], "fixture.tiff", { type: "image/tiff" });
 };
 
@@ -26,7 +26,7 @@ describe("handleImageRequest", () => {
       kind: "exif",
       input: { file: exifFile(), mimeType: "image/tiff" },
     });
-    expect(output).toEqual([{ tagId: 0x010F, value: "Fuji" }]);
+    expect(output).toEqual([{ tagId: 0x010f, value: "Fuji" }]);
   });
 
   it("rejects a payload the protocol does not describe", async () => {
@@ -99,7 +99,7 @@ describe("client over a fake worker", () => {
       file: exifFile(),
       mimeType: "image/tiff",
     });
-    expect(output).toEqual([{ tagId: 0x010F, value: "Fuji" }]);
+    expect(output).toEqual([{ tagId: 0x010f, value: "Fuji" }]);
     client.dispose();
   });
 
@@ -110,7 +110,7 @@ describe("client over a fake worker", () => {
       client.run("exif", { file: exifFile(), mimeType: "image/tiff" }),
     ]);
     expect(first).toMatchObject({ type: "image/tiff" });
-    expect(second).toEqual([{ tagId: 0x010F, value: "Fuji" }]);
+    expect(second).toEqual([{ tagId: 0x010f, value: "Fuji" }]);
     client.dispose();
   });
 });

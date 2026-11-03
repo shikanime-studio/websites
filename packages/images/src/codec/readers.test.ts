@@ -45,25 +45,25 @@ describe("jpegDataView.getExif", () => {
   });
 
   it("stops at a marker that is not a segment", () => {
-    const bytes = new Uint8Array([0xFF, 0xD8, 0x12, 0x34, 0x00, 0x00]);
+    const bytes = new Uint8Array([0xff, 0xd8, 0x12, 0x34, 0x00, 0x00]);
     expect(new JpegDataView(bytes.buffer).getExif()).toBeNull();
   });
 
   it("skips an APP1 segment that is not EXIF", () => {
     const bytes = new Uint8Array(16);
     const view = new DataView(bytes.buffer);
-    view.setUint16(0, 0xFFD8); // SOI
-    view.setUint16(2, 0xFFE1); // APP1
+    view.setUint16(0, 0xffd8); // SOI
+    view.setUint16(2, 0xffe1); // APP1
     view.setUint16(4, 14); // segment length
-    view.setUint32(6, 0x4A464946); // 'JFIF', not 'Exif'
+    view.setUint32(6, 0x4a464946); // 'JFIF', not 'Exif'
     view.setUint16(10, 0);
-    view.setUint16(12, 0xFFDA); // a second marker so the loop continues
+    view.setUint16(12, 0xffda); // a second marker so the loop continues
 
     expect(new JpegDataView(bytes.buffer).getExif()).toBeNull();
   });
 
   it("breaks when a marker is cut short", () => {
-    const bytes = new Uint8Array([0xFF, 0xD8, 0xFF, 0xE1]);
+    const bytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe1]);
     expect(new JpegDataView(bytes.buffer).getExif()).toBeNull();
     expect(new JpegDataView(new Uint8Array(0).buffer).getExif()).toBeNull();
     expect(exifTags()).toHaveLength(0);
@@ -78,8 +78,8 @@ describe("pngDataView.getExif", () => {
   it("stops when a chunk runs past the end", () => {
     const bytes = new Uint8Array(16);
     const view = new DataView(bytes.buffer);
-    view.setUint32(0, 0x89504E47);
-    view.setUint32(4, 0x0D0A1A0A);
+    view.setUint32(0, 0x89504e47);
+    view.setUint32(4, 0x0d0a1a0a);
     view.setUint32(8, 4096); // chunk length far beyond the payload
 
     expect(new PngDataView(bytes.buffer).getExif()).toBeNull();
@@ -88,8 +88,8 @@ describe("pngDataView.getExif", () => {
   it("walks past unknown chunks and stops at the end", () => {
     const bytes = new Uint8Array(24);
     const view = new DataView(bytes.buffer);
-    view.setUint32(0, 0x89504E47);
-    view.setUint32(4, 0x0D0A1A0A);
+    view.setUint32(0, 0x89504e47);
+    view.setUint32(4, 0x0d0a1a0a);
     view.setUint32(8, 4); // chunk length
     view.setUint32(12, 0x49444154); // 'IDAT'
 

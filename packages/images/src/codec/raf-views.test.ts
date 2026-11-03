@@ -107,7 +107,7 @@ describe("rafCfaHeaderDataView", () => {
     const bytes = new Uint8Array(4 + 4 + 2);
     const view = new DataView(bytes.buffer);
     view.setUint32(0, 1, false);
-    view.setUint16(4, 0x7FFF, false); // unknown tag
+    view.setUint16(4, 0x7fff, false); // unknown tag
     view.setUint16(6, 2, false);
     view.setUint16(8, 9, false);
 

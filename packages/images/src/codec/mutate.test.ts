@@ -48,7 +48,7 @@ describe("plan — numbers", () => {
       plan(analysis, { _tag: "number", id: "v", value: -0x80000000 })._tag,
     ).toBe("ok");
     expect(
-      plan(analysis, { _tag: "number", id: "v", value: 0x7FFFFFFF })._tag,
+      plan(analysis, { _tag: "number", id: "v", value: 0x7fffffff })._tag,
     ).toBe("ok");
     expect(
       plan(analysis, { _tag: "number", id: "v", value: 0x80000000 })._tag,

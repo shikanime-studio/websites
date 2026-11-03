@@ -23,4 +23,12 @@ export default antfu(
       "format/prettier": "off",
     },
   },
+  {
+    // Hex casing is style, not correctness, and the rule's configured value
+    // differs between the local and CI configs. Pick "off" so both agree.
+    files: ["**/*.ts"],
+    rules: {
+      "unicorn/number-literal-case": "off",
+    },
+  },
 );

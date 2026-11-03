@@ -91,7 +91,7 @@ describe("mutate", () => {
     apply(view, planned.planned);
     expect(read(view, analysis, "make")).toBe("Fuji");
     expect([...new Uint8Array(bytes.buffer, 4, 8)]).toEqual([
-      0x46, 0x75, 0x6A, 0x69, 0, 0, 0, 0,
+      0x46, 0x75, 0x6a, 0x69, 0, 0, 0, 0,
     ]);
   });
 

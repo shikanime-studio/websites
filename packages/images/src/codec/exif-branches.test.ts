@@ -68,7 +68,7 @@ describe("getTagEntry", () => {
     data.setUint16(2, AsciiExifType, true);
     data.setUint32(4, 6, true);
     data.setUint32(8, 20, true); // value lives at 20
-    bytes.set([0x46, 0x75, 0x6A, 0x69, 0x00], 20);
+    bytes.set([0x46, 0x75, 0x6a, 0x69, 0x00], 20);
 
     expect(exif.getTagEntry(0, true)).toEqual({
       tagId: MakeTagId,

@@ -4,16 +4,16 @@ import { ExifDataView } from "./exif";
 import { createRawImageDataView } from "./raw";
 
 const JpegMarker = {
-  SOI: 0xFFD8,
-  APP1: 0xFFE1,
+  SOI: 0xffd8,
+  APP1: 0xffe1,
   ExifHeader: 0x45786966, // 'Exif'
   Zero: 0x0000,
-  Prefix: 0xFF00,
+  Prefix: 0xff00,
 } as const;
 
 const PngMarker = {
-  Signature1: 0x89504E47, // \x89PNG
-  Signature2: 0x0D0A1A0A, // \r\n\x1a\n
+  Signature1: 0x89504e47, // \x89PNG
+  Signature2: 0x0d0a1a0a, // \r\n\x1a\n
   ExifChunk: 0x65584966, // eXIf
 } as const;
 
