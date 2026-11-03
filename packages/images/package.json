@@ -8,15 +8,17 @@
   },
   "devDependencies": {
     "@antfu/eslint-config": "catalog:lint",
+    "@vitest/coverage-v8": "catalog:test",
+    "@webgpu/types": "catalog:types",
     "eslint": "catalog:lint",
     "typescript": "catalog:types",
-    "vitest": "catalog:test",
-    "@webgpu/types": "catalog:types"
+    "vitest": "catalog:test"
   },
   "scripts": {
     "check": "tsc -p tsconfig.json --noEmit",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage"
   }
 }
