@@ -31,8 +31,20 @@ export interface Planned {
   readonly writes: readonly Write[];
 }
 
+export interface Relocated {
+  /** Offsets already shifted for the cut and the insert. */
+  readonly analysis: Analysis;
+  /** The old reservation, cut out of the original layout. */
+  readonly removed: { readonly at: number; readonly length: number };
+  /** The grown value, appended at its segment's end (original layout). */
+  readonly inserted: { readonly at: number; readonly bytes: Uint8Array };
+  /** Length fields and other in-place patches, addressed in the new layout. */
+  readonly writes: readonly Write[];
+}
+
 export type Plan = Data.TaggedEnum<{
   ok: { readonly planned: Planned };
+  relocated: { readonly relocated: Relocated };
   unknownField: { readonly id: string };
   outOfRange: { readonly id: string; readonly value: number };
   /** The value is longer than the bytes reserved for it: relocate, never truncate. */
@@ -108,10 +120,8 @@ export function plan(analysis: Analysis, mutation: Mutation): Plan {
 
   const bytes = encodeAscii(mutation.value, field.reserved);
   if (!bytes) {
-    return Plan.needsRelocation({
-      id: field.id,
-      required: new TextEncoder().encode(mutation.value).length + 1,
-    });
+    const required = new TextEncoder().encode(mutation.value).length + 1;
+    return relocate(analysis, field, mutation.value, required);
   }
   return Plan.ok({
     planned: { analysis, writes: [{ offset: field.offset, bytes }] },
@@ -164,4 +174,116 @@ export function read(
       );
     }
   }
+}
+
+/** Shift every offset at or after `at`, and grow the segment containing it. */
+function shift(analysis: Analysis, at: number, delta: number): Analysis {
+  const fields = new Map<string, Field>();
+  for (const field of analysis.fields.values()) {
+    fields.set(field.id, {
+      ...field,
+      offset: field.offset >= at ? field.offset + delta : field.offset,
+    });
+  }
+  const segments = analysis.segments.map((segment) => {
+    if (segment.start >= at) {
+      return { ...segment, start: segment.start + delta };
+    }
+    const end = segment.start + segment.length;
+    // An insertion at the segment's end grows it; one past it leaves it alone.
+    return end >= at ? { ...segment, length: segment.length + delta } : segment;
+  });
+  return {
+    ...analysis,
+    byteLength: analysis.byteLength + delta,
+    fields,
+    segments,
+  };
+}
+
+/**
+ * Grow a value past its reservation: append it at the end of the segment that
+ * owns it, shift what follows, and patch the segment's length field.
+ *
+ * A value with no owning segment, or a segment that cannot grow, is refused —
+ * guessing a location would produce a file that parses and lies.
+ */
+function relocate(
+  analysis: Analysis,
+  field: Field,
+  value: string,
+  required: number,
+): Plan {
+  const segment = analysis.segments.find(
+    (candidate) => candidate.id === field.segment,
+  );
+  if (!segment || !segment.growable) {
+    return Plan.needsRelocation({ id: field.id, required });
+  }
+
+  const bytes = encodeAscii(value, required);
+  if (!bytes) return Plan.needsRelocation({ id: field.id, required });
+
+  // The old reservation is cut, so everything after it moves left before the
+  // new value is appended at what is now the segment's end.
+  const at = segment.start + segment.length;
+  const removed = shift(analysis, field.offset + field.reserved, -field.reserved);
+  const insertAt = at - field.reserved;
+  const moved = shift(removed, insertAt, required);
+
+  const fields = new Map(moved.fields);
+  fields.set(field.id, { ...field, offset: insertAt, reserved: required });
+
+  const writes: Write[] = [];
+  if (segment.lengthField) {
+    const lengthField = fields.get(segment.lengthField);
+    if (lengthField) {
+      const lengthBytes = encodeNumber(
+        lengthField.kind,
+        lengthField.endian,
+        segment.length - field.reserved + required,
+      );
+      if (!lengthBytes) {
+        return Plan.needsRelocation({ id: field.id, required });
+      }
+      writes.push({ offset: lengthField.offset, bytes: lengthBytes });
+    }
+  }
+
+  return Plan.relocated({
+    relocated: {
+      analysis: { ...moved, fields },
+      removed: { at: field.offset, length: field.reserved },
+      inserted: { at, bytes },
+      writes,
+    },
+  });
+}
+
+/** Build the file the relocation describes; the input view is left untouched. */
+export function applyRelocation(
+  view: DataView,
+  relocated: Relocated,
+): Uint8Array {
+  const source = new Uint8Array(view.buffer, view.byteOffset, view.byteLength);
+  const { removed, inserted } = relocated;
+  const out = new Uint8Array(
+    source.length - removed.length + inserted.bytes.length,
+  );
+
+  // prefix · (bytes between the cut and the append point) · new value · suffix
+  out.set(source.subarray(0, removed.at), 0);
+  const middle = source.subarray(
+    removed.at + removed.length,
+    inserted.at,
+  );
+  out.set(middle, removed.at);
+  const insertAt = inserted.at - removed.length;
+  out.set(inserted.bytes, insertAt);
+  out.set(source.subarray(inserted.at), insertAt + inserted.bytes.length);
+
+  for (const write of relocated.writes) {
+    out.set(write.bytes, write.offset);
+  }
+  return out;
 }

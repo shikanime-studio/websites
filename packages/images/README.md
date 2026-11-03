@@ -116,6 +116,33 @@ A same-width write returns the **same** analysis instance: the descriptor is
 already in sync. A value longer than its reservation is reported as
 `needsRelocation` — never truncated.
 
+## Growing a value
+
+A value wider than its reservation cannot be written in place, and truncating it
+would silently corrupt the file. The descriptor says where it may go: a field
+names its `segment`, and a segment says whether it is `growable`.
+
+```ts
+const result = plan(analysis, {
+  _tag: "ascii",
+  id: "artist",
+  value: "A much longer name",
+});
+if (result._tag === "relocated") {
+  const next = applyRelocation(view, result.relocated); // new bytes, input untouched
+  // result.relocated.analysis carries the shifted offsets
+}
+```
+
+Relocation cuts the old reservation, appends the value at its segment's end, and
+shifts every later field and segment by the difference. The segment's
+`lengthField` is patched in the same plan. `applyRelocation` returns a new
+buffer because the length changed; the `ok` path still writes into yours.
+
+A field with no segment, or in a segment that cannot grow, still answers
+`needsRelocation`. Guessing a location would produce a file that parses and
+lies.
+
 ## Reading a file
 
 ```ts

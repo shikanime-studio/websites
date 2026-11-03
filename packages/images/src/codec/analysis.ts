@@ -22,6 +22,8 @@ export interface Field {
   /** Bytes reserved for the value: the ceiling for in-place writes. */
   readonly reserved: number;
   readonly endian: Endian;
+  /** Segment this value lives in; relocation needs a container to grow into. */
+  readonly segment?: string;
 }
 
 export interface Segment {
@@ -31,6 +33,8 @@ export interface Segment {
   /** Field that stores this segment's length, patched when the segment moves. */
   readonly lengthField?: string;
   readonly checksum?: "crc32";
+  /** Whether a value may be appended at the end of this segment. */
+  readonly growable?: boolean;
 }
 
 export interface Analysis {
@@ -66,6 +70,12 @@ export function validate(analysis: Analysis): readonly string[] {
     const width = fieldWidth(field.kind);
     if (width > 0 && field.reserved < width) {
       problems.push(`field ${field.id}: reserved ${field.reserved} < width ${width}`);
+    }
+    if (
+      field.segment
+      && !analysis.segments.some((segment) => segment.id === field.segment)
+    ) {
+      problems.push(`field ${field.id}: unknown segment ${field.segment}`);
     }
     if (field.offset < 0 || field.offset + field.reserved > analysis.byteLength) {
       problems.push(

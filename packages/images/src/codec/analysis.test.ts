@@ -52,6 +52,12 @@ describe("validate", () => {
     ]);
   });
 
+  it("rejects a field that claims an undeclared segment", () => {
+    expect(validate(analysis([field({ segment: "ghost" })]))).toEqual([
+      "field f: unknown segment ghost",
+    ]);
+  });
+
   it("rejects a segment that runs past the buffer", () => {
     const withSegment: Analysis = {
       ...analysis([field()], 16),
