@@ -112,6 +112,7 @@
                         "apps/accounts/src/worker-configuration.d.ts"
                         "apps/links/src/worker-configuration.d.ts"
                         "apps/reiya/src/worker-configuration.d.ts"
+                        "apps/transfert/src/worker-configuration.d.ts"
                         "apps/www/src/worker-configuration.d.ts"
                       ];
                     };
