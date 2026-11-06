@@ -1155,6 +1155,133 @@ importers:
         specifier: catalog:infra
         version: 4.152.0(@types/node@22.20.1)
 
+  apps/transfert:
+    dependencies:
+      '@astryxdesign/core':
+        specifier: 'catalog:'
+        version: 0.5.2(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@astryxdesign/theme-neutral':
+        specifier: 'catalog:'
+        version: 0.5.2(@astryxdesign/core@0.5.2(@stylexjs/stylex@0.19.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
+      '@cloudflare/vite-plugin':
+        specifier: catalog:build
+        version: 1.54.3(@types/node@22.20.1)(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(wrangler@4.152.0(@types/node@22.20.1))
+      '@effect/atom-react':
+        specifier: 'catalog:'
+        version: 4.0.0-rc.118(effect@4.0.0-rc.118)(react@19.2.8)(scheduler@0.27.0)
+      '@fontsource-variable/bricolage-grotesque':
+        specifier: catalog:runtime
+        version: 5.3.0
+      '@shikanime-studio/design':
+        specifier: workspace:*
+        version: link:../../packages/design
+      '@stylexjs/stylex':
+        specifier: 'catalog:'
+        version: 0.19.0
+      '@tailwindcss/vite':
+        specifier: catalog:build
+        version: 4.3.3(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))
+      '@tanstack/react-router':
+        specifier: catalog:runtime
+        version: 1.170.41(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@tanstack/react-start':
+        specifier: catalog:runtime
+        version: 1.168.60(esbuild@0.28.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(rolldown@1.2.15)(rollup@4.63.1)(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(webpack@5.112.0(esbuild@0.28.2))
+      '@tanstack/router-plugin':
+        specifier: catalog:build
+        version: 1.168.35(@tanstack/react-router@1.170.41(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(esbuild@0.28.2)(rolldown@1.2.15)(rollup@4.63.1)(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))(webpack@5.112.0(esbuild@0.28.2))
+      '@vitejs/plugin-react':
+        specifier: catalog:build
+        version: 5.2.0(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))
+      drizzle-orm:
+        specifier: catalog:runtime
+        version: 0.45.2(@electric-sql/pglite@0.3.15)(@opentelemetry/api@1.9.0)(@types/better-sqlite3@7.6.13)(better-sqlite3@12.11.1)(kysely@0.29.5)(postgres@3.4.7)
+      effect:
+        specifier: 'catalog:'
+        version: 4.0.0-rc.118
+      lucide-react:
+        specifier: catalog:runtime
+        version: 0.577.0(react@19.2.8)
+      react:
+        specifier: catalog:runtime
+        version: 19.2.8
+      react-dom:
+        specifier: catalog:runtime
+        version: 19.2.8(react@19.2.8)
+      tailwindcss:
+        specifier: catalog:runtime
+        version: 4.3.3
+      zod:
+        specifier: catalog:runtime
+        version: 4.6.7
+    devDependencies:
+      '@antfu/eslint-config':
+        specifier: catalog:lint
+        version: 7.7.3(@eslint-react/eslint-plugin@2.13.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@typescript-eslint/typescript-estree@8.69.0(typescript@5.9.3))(@typescript-eslint/utils@8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(@vue/compiler-sfc@3.5.30)(astro-eslint-parser@1.4.0)(eslint-plugin-astro@1.7.0(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-format@2.0.1(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-hooks@7.1.1(eslint@9.39.5(jiti@2.7.0)))(eslint-plugin-react-refresh@0.5.6(eslint@9.39.5(jiti@2.7.0)))(eslint@9.39.5(jiti@2.7.0))(prettier-plugin-astro@0.14.1)(typescript@5.9.3)(vitest@4.1.11(@opentelemetry/api@1.9.0)(@types/node@22.20.1)(jsdom@30.1.3(@noble/hashes@2.4.0))(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)))
+      '@e18e/eslint-plugin':
+        specifier: catalog:lint
+        version: 0.3.0(eslint@9.39.5(jiti@2.7.0))
+      '@eslint-react/eslint-plugin':
+        specifier: catalog:lint
+        version: 2.13.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+      '@tsconfig/node-lts':
+        specifier: catalog:types
+        version: 24.0.1
+      '@tsconfig/node-ts':
+        specifier: catalog:types
+        version: 23.6.4
+      '@tsconfig/strictest':
+        specifier: catalog:types
+        version: 2.0.8
+      '@tsconfig/vite-react':
+        specifier: catalog:types
+        version: 7.0.2
+      '@types/eslint-plugin-jsx-a11y':
+        specifier: catalog:types
+        version: 6.10.1(jiti@2.7.0)
+      '@types/node':
+        specifier: catalog:types
+        version: 22.20.1
+      '@types/react':
+        specifier: catalog:types
+        version: 19.2.18
+      '@types/react-dom':
+        specifier: catalog:types
+        version: 19.2.5(@types/react@19.2.18)
+      '@typescript-eslint/eslint-plugin':
+        specifier: catalog:lint
+        version: 8.69.0(@typescript-eslint/parser@8.69.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.5(jiti@2.7.0))(typescript@5.9.3)
+      drizzle-kit:
+        specifier: catalog:script
+        version: 0.31.10
+      eslint:
+        specifier: catalog:lint
+        version: 9.39.5(jiti@2.7.0)
+      eslint-plugin-import-lite:
+        specifier: catalog:lint
+        version: 0.5.2(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-jsx-a11y:
+        specifier: catalog:lint
+        version: 6.10.2(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-hooks:
+        specifier: catalog:lint
+        version: 7.1.1(eslint@9.39.5(jiti@2.7.0))
+      eslint-plugin-react-refresh:
+        specifier: catalog:lint
+        version: 0.5.6(eslint@9.39.5(jiti@2.7.0))
+      tsx:
+        specifier: catalog:script
+        version: 4.23.13
+      typescript:
+        specifier: catalog:types
+        version: 5.9.3
+      vite:
+        specifier: ^8.3.5
+        version: 8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)
+      wrangler:
+        specifier: catalog:infra
+        version: 4.152.0(@types/node@22.20.1)
+
   apps/www:
     dependencies:
       '@astrojs/check':
