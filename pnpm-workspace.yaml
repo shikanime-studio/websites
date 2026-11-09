@@ -126,8 +126,8 @@ overrides:
   sharp: ^0.35.5
   "shell-quote@<1.11.0": ^1.11.0
   "tinypool@<2.1.1": ^2.1.2
-  seroval: 1.6.4
-  seroval-plugins: 1.6.4
+  "seroval": 1.6.11
+  "seroval-plugins": 1.6.11
   "devalue@<5.9.3": ^5.9.3
   "launch-editor@<2.14.2": ^2.14.2
   "smol-toml@<1.9.0": ^1.9.0
