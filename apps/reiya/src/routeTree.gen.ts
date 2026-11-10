@@ -14,11 +14,7 @@ import { Route as R404RouteImport } from './routes/404'
 import { Route as ExploreRouteImport } from './routes/explore'
 import { Route as FollowingRouteImport } from './routes/following'
 import { Route as PrivacyNoticesRouteImport } from './routes/privacy-notices'
-import { Route as ApiArtistsRouteImport } from './routes/api/artists'
-import { Route as ApiCharactersRouteImport } from './routes/api/characters'
-import { Route as ApiEventsRouteImport } from './routes/api/events'
-import { Route as ApiMerchsRouteImport } from './routes/api/merchs'
-import { Route as ApiShowcasesRouteImport } from './routes/api/showcases'
+import { Route as RpcIndexRouteImport } from './routes/rpc/index'
 import { Route as UserIndexRouteImport } from './routes/user/index'
 import { Route as ApiAuthSplatRouteImport } from './routes/api/auth/$'
 
@@ -47,29 +43,9 @@ const PrivacyNoticesRoute = PrivacyNoticesRouteImport.update({
   path: '/privacy-notices',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiArtistsRoute = ApiArtistsRouteImport.update({
-  id: '/api/artists',
-  path: '/api/artists',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiCharactersRoute = ApiCharactersRouteImport.update({
-  id: '/api/characters',
-  path: '/api/characters',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiEventsRoute = ApiEventsRouteImport.update({
-  id: '/api/events',
-  path: '/api/events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiMerchsRoute = ApiMerchsRouteImport.update({
-  id: '/api/merchs',
-  path: '/api/merchs',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiShowcasesRoute = ApiShowcasesRouteImport.update({
-  id: '/api/showcases',
-  path: '/api/showcases',
+const RpcIndexRoute = RpcIndexRouteImport.update({
+  id: '/rpc/',
+  path: '/rpc/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const UserIndexRoute = UserIndexRouteImport.update({
@@ -89,11 +65,7 @@ export interface FileRoutesByFullPath {
   '/explore': typeof ExploreRoute
   '/following': typeof FollowingRoute
   '/privacy-notices': typeof PrivacyNoticesRoute
-  '/api/artists': typeof ApiArtistsRoute
-  '/api/characters': typeof ApiCharactersRoute
-  '/api/events': typeof ApiEventsRoute
-  '/api/merchs': typeof ApiMerchsRoute
-  '/api/showcases': typeof ApiShowcasesRoute
+  '/rpc/': typeof RpcIndexRoute
   '/user/': typeof UserIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -103,11 +75,7 @@ export interface FileRoutesByTo {
   '/explore': typeof ExploreRoute
   '/following': typeof FollowingRoute
   '/privacy-notices': typeof PrivacyNoticesRoute
-  '/api/artists': typeof ApiArtistsRoute
-  '/api/characters': typeof ApiCharactersRoute
-  '/api/events': typeof ApiEventsRoute
-  '/api/merchs': typeof ApiMerchsRoute
-  '/api/showcases': typeof ApiShowcasesRoute
+  '/rpc': typeof RpcIndexRoute
   '/user': typeof UserIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -118,11 +86,7 @@ export interface FileRoutesById {
   '/explore': typeof ExploreRoute
   '/following': typeof FollowingRoute
   '/privacy-notices': typeof PrivacyNoticesRoute
-  '/api/artists': typeof ApiArtistsRoute
-  '/api/characters': typeof ApiCharactersRoute
-  '/api/events': typeof ApiEventsRoute
-  '/api/merchs': typeof ApiMerchsRoute
-  '/api/showcases': typeof ApiShowcasesRoute
+  '/rpc/': typeof RpcIndexRoute
   '/user/': typeof UserIndexRoute
   '/api/auth/$': typeof ApiAuthSplatRoute
 }
@@ -134,11 +98,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/following'
     | '/privacy-notices'
-    | '/api/artists'
-    | '/api/characters'
-    | '/api/events'
-    | '/api/merchs'
-    | '/api/showcases'
+    | '/rpc/'
     | '/user/'
     | '/api/auth/$'
   fileRoutesByTo: FileRoutesByTo
@@ -148,11 +108,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/following'
     | '/privacy-notices'
-    | '/api/artists'
-    | '/api/characters'
-    | '/api/events'
-    | '/api/merchs'
-    | '/api/showcases'
+    | '/rpc'
     | '/user'
     | '/api/auth/$'
   id:
@@ -162,11 +118,7 @@ export interface FileRouteTypes {
     | '/explore'
     | '/following'
     | '/privacy-notices'
-    | '/api/artists'
-    | '/api/characters'
-    | '/api/events'
-    | '/api/merchs'
-    | '/api/showcases'
+    | '/rpc/'
     | '/user/'
     | '/api/auth/$'
   fileRoutesById: FileRoutesById
@@ -177,11 +129,7 @@ export interface RootRouteChildren {
   ExploreRoute: typeof ExploreRoute
   FollowingRoute: typeof FollowingRoute
   PrivacyNoticesRoute: typeof PrivacyNoticesRoute
-  ApiArtistsRoute: typeof ApiArtistsRoute
-  ApiCharactersRoute: typeof ApiCharactersRoute
-  ApiEventsRoute: typeof ApiEventsRoute
-  ApiMerchsRoute: typeof ApiMerchsRoute
-  ApiShowcasesRoute: typeof ApiShowcasesRoute
+  RpcIndexRoute: typeof RpcIndexRoute
   UserIndexRoute: typeof UserIndexRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
 }
@@ -223,39 +171,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyNoticesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/artists': {
-      id: '/api/artists'
-      path: '/api/artists'
-      fullPath: '/api/artists'
-      preLoaderRoute: typeof ApiArtistsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/characters': {
-      id: '/api/characters'
-      path: '/api/characters'
-      fullPath: '/api/characters'
-      preLoaderRoute: typeof ApiCharactersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/events': {
-      id: '/api/events'
-      path: '/api/events'
-      fullPath: '/api/events'
-      preLoaderRoute: typeof ApiEventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/merchs': {
-      id: '/api/merchs'
-      path: '/api/merchs'
-      fullPath: '/api/merchs'
-      preLoaderRoute: typeof ApiMerchsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/showcases': {
-      id: '/api/showcases'
-      path: '/api/showcases'
-      fullPath: '/api/showcases'
-      preLoaderRoute: typeof ApiShowcasesRouteImport
+    '/rpc/': {
+      id: '/rpc/'
+      path: '/rpc'
+      fullPath: '/rpc/'
+      preLoaderRoute: typeof RpcIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/user/': {
@@ -281,11 +201,7 @@ const rootRouteChildren: RootRouteChildren = {
   ExploreRoute: ExploreRoute,
   FollowingRoute: FollowingRoute,
   PrivacyNoticesRoute: PrivacyNoticesRoute,
-  ApiArtistsRoute: ApiArtistsRoute,
-  ApiCharactersRoute: ApiCharactersRoute,
-  ApiEventsRoute: ApiEventsRoute,
-  ApiMerchsRoute: ApiMerchsRoute,
-  ApiShowcasesRoute: ApiShowcasesRoute,
+  RpcIndexRoute: RpcIndexRoute,
   UserIndexRoute: UserIndexRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,
 }

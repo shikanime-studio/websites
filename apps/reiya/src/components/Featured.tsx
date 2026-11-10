@@ -1,4 +1,4 @@
-import type { CardData } from "../lib/api-client";
+import type { Card as CardData, CardList } from "../rpc/contract";
 import { Carousel } from "@astryxdesign/core/Carousel";
 import { Image } from "@unpic/react";
 import { ArrowRight } from "lucide-react";
@@ -41,7 +41,7 @@ function FeaturedCarouselItem({ item }: FeaturedCarouselItemProps) {
 
 interface FeaturedProps {
   title?: string;
-  items: Array<CardData>;
+  items: CardList;
   className?: string;
   viewAllLink?: string;
 }

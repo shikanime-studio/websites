@@ -19,7 +19,10 @@ export function SignInButton({ size = "sm" }: { size?: "sm" | "md" | "lg" }) {
           })
           .catch(() => {
             setIsLoading(false);
-            toast({ body: "Could not reach the Accounts Center", type: "error" });
+            toast({
+              body: "Could not reach the Accounts Center",
+              type: "error",
+            });
           });
       }}
       icon={

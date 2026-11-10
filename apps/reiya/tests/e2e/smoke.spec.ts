@@ -30,5 +30,7 @@ test("search carries the query into explore", async ({ page }) => {
   await page.getByRole("searchbox").press("Enter");
 
   await expect(page).toHaveURL(/\/explore\?q=silk/);
-  await expect(page.getByRole("heading", { name: /results for/i })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: /results for/i }),
+  ).toBeVisible();
 });

@@ -1,4 +1,4 @@
-import type { CardData } from "../lib/api-client";
+import type { Card as CardData } from "../rpc/contract";
 import { Image } from "@unpic/react";
 import {
   ArrowUp,

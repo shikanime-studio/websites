@@ -1,24 +1,34 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { createD1Database } from "../lib/db";
-import { categories as categoriesTable } from "../schema";
 
-interface Category {
+interface CategoryRow {
   id: number;
   name: string;
   icon: string | null;
 }
 
-const getCategories = createServerFn().handler(
-  async (): Promise<Array<Category>> => {
-    const db = createD1Database();
-    const rows = await db.select().from(categoriesTable);
-    return rows.slice(0, 8);
-  },
-);
+const rpcFetch = async <T,>(tag: string): Promise<T> => {
+  if (import.meta.env.SSR) {
+    const { getCategoriesRows, getSessionUserFor } =
+      await import("../rpc/handlers");
+    const headers = new Headers();
+    const value =
+      tag === "getCategories"
+        ? await getCategoriesRows()
+        : await getSessionUserFor(headers);
+    return value as T;
+  }
+  const res = await fetch("/rpc", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify([{ _tag: "Request", id: 1, tag, payload: undefined }]),
+  });
+  const batch: unknown = await res.json();
+  const exit = (batch as Array<{ exit?: { value?: unknown } }>)[0]?.exit;
+  return exit?.value as T;
+};
 
 export const Route = createFileRoute("/")({
-  loader: () => getCategories(),
+  loader: () => rpcFetch<Array<CategoryRow>>("getCategories"),
   component: HomePage,
 });
 
@@ -79,7 +89,10 @@ function HomePage() {
               <h2 className="text-secondary text-sm font-semibold">
                 Browse by category
               </h2>
-              <Link to="/explore" className="text-accent text-sm font-semibold hover:underline">
+              <Link
+                to="/explore"
+                className="text-accent text-sm font-semibold hover:underline"
+              >
                 {" "}
                 Explore all →{" "}
               </Link>

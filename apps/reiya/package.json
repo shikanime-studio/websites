@@ -17,11 +17,11 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite dev",
-    "types": "wrangler types src/worker-configuration.d.ts",
-    "upload": "wrangler versions upload",
     "test": "vitest run",
+    "test:e2e": "playwright test",
     "test:watch": "vitest",
-    "test:e2e": "playwright test"
+    "types": "wrangler types src/worker-configuration.d.ts",
+    "upload": "wrangler versions upload"
   },
   "dependencies": {
     "@astryxdesign/core": "catalog:",

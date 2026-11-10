@@ -3,7 +3,7 @@
 The studio's merch and community site: a gallery of makers, events and
 merch drops, with a following feed for signed-in visitors.
 
-**Live:** https://reiya.shikanime.studio
+**Live:** <https://reiya.shikanime.studio>
 
 ## What it does
 

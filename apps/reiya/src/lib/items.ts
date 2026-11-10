@@ -12,25 +12,32 @@ export interface ImageRef {
 /** D1 returns `image_urls` as text when the row came from a raw SQL seed; rows
  *  written through drizzle come back parsed. Accept both, never trust either. */
 export function normalizeImages(value: unknown): ImageRef[] {
-  const parsed = typeof value === "string"
-    ? (() => {
-      try {
-        return JSON.parse(value) as unknown;
-      } catch {
-        return [];
-      }
-    })()
-    : value;
+  const parsed =
+    typeof value === "string"
+      ? (() => {
+          try {
+            return JSON.parse(value) as unknown;
+          } catch {
+            return [];
+          }
+        })()
+      : value;
   if (!Array.isArray(parsed)) return [];
   return parsed.flatMap((entry): ImageRef[] => {
     if (typeof entry !== "object" || entry === null) return [];
-    const record = entry as { src?: unknown; width?: unknown; height?: unknown };
+    const record = entry as {
+      src?: unknown;
+      width?: unknown;
+      height?: unknown;
+    };
     if (typeof record.src !== "string") return [];
-    return [{
-      src: record.src,
-      width: typeof record.width === "number" ? record.width : 0,
-      height: typeof record.height === "number" ? record.height : 0,
-    }];
+    return [
+      {
+        src: record.src,
+        width: typeof record.width === "number" ? record.width : 0,
+        height: typeof record.height === "number" ? record.height : 0,
+      },
+    ];
   });
 }
 
@@ -87,4 +94,3 @@ export function getAllEvents(db: DrizzleD1Database<Schema>) {
 export function getAllCharacters(db: DrizzleD1Database<Schema>) {
   return db.select().from(characters).orderBy(characters.name);
 }
-

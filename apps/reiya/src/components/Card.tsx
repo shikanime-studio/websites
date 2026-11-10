@@ -1,6 +1,6 @@
 import type { CarouselHandle } from "@astryxdesign/core/Carousel";
 import type { MouseEvent, ReactNode } from "react";
-import type { CardData } from "../lib/api-client";
+import type { Card as CardData } from "../rpc/contract";
 import { Carousel } from "@astryxdesign/core/Carousel";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Image } from "@unpic/react";

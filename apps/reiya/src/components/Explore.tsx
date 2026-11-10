@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import type { CardData } from "../lib/api-client";
+import type { CardList } from "../rpc/contract";
 import { Carousel } from "@astryxdesign/core/Carousel";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { RegistryProvider } from "@effect/atom-react";
@@ -14,7 +14,7 @@ import {
   charactersAtom,
   eventsAtom,
   showcasesAtom,
-} from "../lib/atoms";
+} from "../rpc/client";
 import { EmptyState } from "./EmptyState";
 import { Featured } from "./Featured";
 import { FilterBar, FilterButton } from "./FilterBar";
@@ -79,7 +79,7 @@ export function ExploreSection({
 
 function ExploreFeaturedContent() {
   const result = useCardResult(showcasesAtom);
-  const items: Array<CardData> = getOrElse(result, () => []);
+  const items: CardList = getOrElse(result, () => []);
 
   return (
     <>
@@ -112,7 +112,7 @@ export function ExploreFeatured({ className, children }: ExploreSectionProps) {
 
 function ExploreArtistsContent() {
   const result = useCardResult(artistsAtom);
-  const items: Array<CardData> = getOrElse(result, () => []);
+  const items: CardList = getOrElse(result, () => []);
 
   return (
     <>
@@ -145,7 +145,7 @@ export function ExploreArtists({ className, children }: ExploreSectionProps) {
 
 function ExploreCharactersContent() {
   const result = useCardResult(charactersAtom);
-  const items: Array<CardData> = getOrElse(result, () => []);
+  const items: CardList = getOrElse(result, () => []);
 
   return (
     <>
@@ -181,7 +181,7 @@ export function ExploreCharacters({
 
 function ExploreConventionsContent() {
   const result = useCardResult(eventsAtom);
-  const events: Array<CardData> = getOrElse(result, () => []);
+  const events: CardList = getOrElse(result, () => []);
 
   return (
     <ExploreSection>
@@ -247,7 +247,9 @@ function ExploreConventionsContent() {
                     </div>
                   ) : null}
                   <div className="flex items-center gap-1">
-                    <span className="text-xs text-secondary/70">{event.price}</span>
+                    <span className="text-xs text-secondary/70">
+                      {event.price}
+                    </span>
                   </div>
                   <h4 className="truncate text-sm font-bold text-secondary">
                     {event.title}
@@ -293,30 +295,40 @@ function ExploreShowcaseContent() {
     <TabList defaultTab="Merch Findings">
       {(tab) => (
         <>
-      <Tab active={tab.value === "Featured Artists & Circles"} name="showcase_tabs" onSelect={tab.select} value="Featured Artists & Circles">
-        Featured Artists & Circles
-      </Tab>
-      <Tab active={tab.value === "Merch Findings"} name="showcase_tabs" onSelect={tab.select} value="Merch Findings">
-        Merch Findings
-      </Tab>
-      <TabContent active={tab.value === "Merch Findings"}>
-        <div className="flex flex-col gap-6">
-          <FilterBar>
-            <FilterButton label="Category" hasDropdown />
-            <FilterButton label="Licenses" hasDropdown />
-            <FilterButton label="Service options" hasDropdown />
-            <FilterButton label="Price" hasDropdown />
-            <FilterButton label="On sale" />
-            {filters.map((label) => (
-              <FilterButton key={label} label={label} />
-            ))}
-          </FilterBar>
+          <Tab
+            active={tab.value === "Featured Artists & Circles"}
+            name="showcase_tabs"
+            onSelect={tab.select}
+            value="Featured Artists & Circles"
+          >
+            Featured Artists & Circles
+          </Tab>
+          <Tab
+            active={tab.value === "Merch Findings"}
+            name="showcase_tabs"
+            onSelect={tab.select}
+            value="Merch Findings"
+          >
+            Merch Findings
+          </Tab>
+          <TabContent active={tab.value === "Merch Findings"}>
+            <div className="flex flex-col gap-6">
+              <FilterBar>
+                <FilterButton label="Category" hasDropdown />
+                <FilterButton label="Licenses" hasDropdown />
+                <FilterButton label="Service options" hasDropdown />
+                <FilterButton label="Price" hasDropdown />
+                <FilterButton label="On sale" />
+                {filters.map((label) => (
+                  <FilterButton key={label} label={label} />
+                ))}
+              </FilterBar>
 
-          <Gallery>
-            <ShowcaseGalleryContent atom={showcasesAtom} />
-          </Gallery>
-        </div>
-      </TabContent>
+              <Gallery>
+                <ShowcaseGalleryContent atom={showcasesAtom} />
+              </Gallery>
+            </div>
+          </TabContent>
         </>
       )}
     </TabList>
