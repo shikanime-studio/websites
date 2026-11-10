@@ -158,8 +158,8 @@ trustPolicyExclude:
   - semver@6.3.1
 catalog:
   "@astryxdesign/core": ^0.5.2
-  "@effect/atom-react": 4.0.0-rc.118
-  effect: 4.0.0-rc.118
+  "@effect/atom-react": 4.1.2
+  effect: 4.1.2
   "@astryxdesign/theme-neutral": ^0.5.2
   "@docusaurus/core": 3.10.2
   "@docusaurus/module-type-aliases": 3.10.2
