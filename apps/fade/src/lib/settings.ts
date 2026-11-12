@@ -76,7 +76,6 @@ function readSettings(): Settings {
       const parsed = settingsSchema.safeParse(raw ?? {});
       return parsed.success ? parsed.data : {};
     }
-    // Legacy entries carry the id inside the payload: { id, value }.
     const merged: Record<string, unknown> = {};
     for (const entry of entries) {
       if (typeof entry === "object" && entry !== null && "id" in entry) {

@@ -109,7 +109,6 @@ export const rawImageAtom = family((item: FileItem | null) =>
         let width = 0;
         let height = 0;
         if (dimEntry && Array.isArray(dimEntry.value)) {
-          // Dimensions value is [height, width]
           [height, width] = dimEntry.value as [number, number];
         }
 
