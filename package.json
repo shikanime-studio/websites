@@ -2,13 +2,20 @@
   "name": "@shikanime-studio/websites",
   "version": "0.0.0",
   "type": "module",
+  "scripts": {
+    "test": "pnpm -r --if-present test",
+    "test:e2e": "pnpm -r --if-present test:e2e"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "2.0.0-beta.85",
+    "@effect/platform-node": "4.1.2",
+    "@effect/platform-node-shared": "4.1.2",
+    "alchemy": "2.0.0-beta.85",
+    "effect": "catalog:"
+  },
   "engines": {
     "node": ">=22",
     "pnpm": ">=10"
   },
-  "packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8",
-  "scripts": {
-    "test": "pnpm -r --if-present test",
-    "test:e2e": "pnpm -r --if-present test:e2e"
-  }
+  "packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8"
 }
