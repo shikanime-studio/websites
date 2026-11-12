@@ -137,9 +137,6 @@ catalogs:
     '@openfeature/server-sdk':
       specifier: ^1.23.0
       version: 1.23.0
-    '@tanstack/react-db':
-      specifier: ^0.1.96
-      version: 0.1.96
     '@tanstack/react-router':
       specifier: 1.170.41
       version: 1.170.41
@@ -568,9 +565,6 @@ importers:
       '@tailwindcss/vite':
         specifier: catalog:build
         version: 4.3.3(vite@8.3.5(@types/node@22.20.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1))
-      '@tanstack/react-db':
-        specifier: catalog:runtime
-        version: 0.1.96(react@19.2.8)(typescript@5.9.3)
       '@tanstack/react-router':
         specifier: catalog:runtime
         version: 1.170.41(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4899,16 +4893,6 @@ packages:
     peerDependencies:
       vite: ^8.3.5
 
-  '@tanstack/db-ivm@0.1.18':
-    resolution: {integrity: sha512-+pZJiRKdoKRM5Epq9T7otD9ZJl82pRFauo7LKuJGrarjVKQ7r+QQlPe3kGdN9LEKSnuNGIWjX9OOY4M8kH4eLw==}
-    peerDependencies:
-      typescript: '>=4.7'
-
-  '@tanstack/db@0.7.0':
-    resolution: {integrity: sha512-ZQns5TIWb0m6PEIf4c2vU7NyFq+QgMuL7zIo70243NSEbLPtd7hd86t3ksm/H3ozwcuCb7vL14BHt/OxNyPQGA==}
-    peerDependencies:
-      typescript: '>=4.7'
-
   '@tanstack/devtools-client@0.0.6':
     resolution: {integrity: sha512-f85ZJXJnDIFOoykG/BFIixuAevJovCvJF391LPs6YjBAPhGYC50NWlx1y4iF/UmK5/cCMx+/JqI5SBOz7FanQQ==}
     engines: {node: '>=18'}
@@ -4941,15 +4925,6 @@ packages:
   '@tanstack/history@1.162.4':
     resolution: {integrity: sha512-utTS5L2OkeYUzXGohL1Z8sefu1GLNOJcxe8Hd6iIdc/Xo1K1nDB2JEp4iSFhvYh33xKC9V91TxrS8qfrpoKobQ==}
     engines: {node: '>=20.19'}
-
-  '@tanstack/pacer-lite@0.2.2':
-    resolution: {integrity: sha512-eQ1MyLKCHyXiH7NbdmB80W77OhiMgGBUb+qDx/8WMGbwg5Lf/NlfD0TfNYAqY77i8V3AxoDoYdICrQE5ADw4Yw==}
-    engines: {node: '>=18'}
-
-  '@tanstack/react-db@0.1.96':
-    resolution: {integrity: sha512-NIjRiFH9KqNnWRtixFal22KA+9b2ktBxI7TbW7xIVa2/sKOHSxFcPAkz6HEC3V7O9PfDTh3j8aezj02CxjHrLw==}
-    peerDependencies:
-      react: '>=16.8.0'
 
   '@tanstack/react-router@1.170.41':
     resolution: {integrity: sha512-Mpvw8Wm5MGDbTqI8Yc9flLKxbOHwoWocv0H2aGKcgw2a017oK5nZWqa954P+DrUx/8fI98YNywnHP5XcD3tQ9w==}
@@ -7744,10 +7719,6 @@ packages:
 
   fraction.js@5.3.4:
     resolution: {integrity: sha512-1X1NTtiJphryn/uLQz3whtY6jK3fTqoE3ohKs0tT+Ujr1W59oopxmoEh7Lu5p6vBaPbgoM0bzveAW4Qi5RyWDQ==}
-
-  fractional-indexing@3.4.0:
-    resolution: {integrity: sha512-8J3glhz2rrpKG6KmI7wmJo3zH1VjeOpN+vTJSw1fOyO+Viqq3zX6/5NGh6oaZB2qIAYdOYuu5Dz9xp4faOO0Pg==}
-    engines: {node: ^14.13.1 || >=16.0.0}
 
   fresh@0.5.2:
     resolution: {integrity: sha512-zJ2mQYM18rEFOudeV4GShTGIQ7RbzA7ozbU9I/XBpm7kqgMywgmylMwXHxZJmkVoYkna9d2pVXVXPdYTP9ej8Q==}
@@ -10664,9 +10635,6 @@ packages:
   sort-css-media-queries@2.2.0:
     resolution: {integrity: sha512-0xtkGhWCC9MGt/EzgnvbbbKhqWjl1+/rncmhTh5qCpbYguXh6S/qwePfv/JQ8jePXXmqingylxoC49pCkSPIbA==}
     engines: {node: '>= 6.3.0'}
-
-  sorted-btree@1.8.1:
-    resolution: {integrity: sha512-395+XIP+wqNn3USkFSrNz7G3Ss/MXlZEqesxvzCRFwL14h6e8LukDHdLBePn5pwbm5OQ9vGu8mDyz2lLDIqamQ==}
 
   source-map-js@1.2.2:
     resolution: {integrity: sha512-KGj/8Y43x35aZVDtt+J4mK1hoLGHULMYfSkODJNQjNDC3oW1PqPoxMwo0pLUsWM/UEGzON/NxeHywEfNXNP3Vw==}
@@ -16459,19 +16427,6 @@ snapshots:
       tailwindcss: 4.3.3
       vite: 8.3.5(@types/node@26.4.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(tsx@4.23.13)(yaml@2.9.1)
 
-  '@tanstack/db-ivm@0.1.18(typescript@5.9.3)':
-    dependencies:
-      fractional-indexing: 3.4.0
-      sorted-btree: 1.8.1
-      typescript: 5.9.3
-
-  '@tanstack/db@0.7.0(typescript@5.9.3)':
-    dependencies:
-      '@standard-schema/spec': 1.1.0
-      '@tanstack/db-ivm': 0.1.18(typescript@5.9.3)
-      '@tanstack/pacer-lite': 0.2.2
-      typescript: 5.9.3
-
   '@tanstack/devtools-client@0.0.6':
     dependencies:
       '@tanstack/devtools-event-client': 0.4.4
@@ -16514,16 +16469,6 @@ snapshots:
   '@tanstack/history@1.162.1': {}
 
   '@tanstack/history@1.162.4': {}
-
-  '@tanstack/pacer-lite@0.2.2': {}
-
-  '@tanstack/react-db@0.1.96(react@19.2.8)(typescript@5.9.3)':
-    dependencies:
-      '@tanstack/db': 0.7.0(typescript@5.9.3)
-      react: 19.2.8
-      use-sync-external-store: 1.6.0(react@19.2.8)
-    transitivePeerDependencies:
-      - typescript
 
   '@tanstack/react-router@1.170.41(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
@@ -19980,8 +19925,6 @@ snapshots:
   forwarded@0.2.0: {}
 
   fraction.js@5.3.4: {}
-
-  fractional-indexing@3.4.0: {}
 
   fresh@0.5.2: {}
 
@@ -23523,8 +23466,6 @@ snapshots:
     optional: true
 
   sort-css-media-queries@2.2.0: {}
-
-  sorted-btree@1.8.1: {}
 
   source-map-js@1.2.2: {}
 

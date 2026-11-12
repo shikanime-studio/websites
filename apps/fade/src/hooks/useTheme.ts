@@ -1,33 +1,23 @@
-import type { Theme } from "../lib/db";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { settingsCollection } from "../lib/db";
+import type { Theme } from "../lib/settings";
+import { useAtomSet, useAtomValue } from "@effect/atom-react";
+import { useCallback } from "react";
+import { settingActionAtom, settingsAtom } from "../lib/settings";
 
+/**
+ * React binding only: the preference lives in the settings atom, which also
+ * owns persistence. The hook keeps the `{ theme, setTheme }` shape the modal
+ * already uses.
+ */
 export function useTheme() {
-  const { data: theme } = useLiveQuery((q) =>
-    q
-      .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "theme"))
-      .findOne(),
+  const theme = useAtomValue(settingsAtom).theme;
+  const dispatch = useAtomSet(settingActionAtom);
+
+  const setTheme = useCallback(
+    (next?: Theme) => {
+      dispatch({ _tag: "set", id: "theme", value: next });
+    },
+    [dispatch],
   );
 
-  const themeValue = theme?.value as Theme | undefined;
-
-  const setTheme = (newTheme?: Theme) => {
-    if (!newTheme) {
-      if (theme) {
-        settingsCollection.delete("theme");
-      }
-      return;
-    }
-
-    if (theme) {
-      settingsCollection.update("theme", (draft) => {
-        draft.value = newTheme;
-      });
-    } else {
-      settingsCollection.insert({ id: "theme", value: newTheme });
-    }
-  };
-
-  return { theme: themeValue, setTheme };
+  return { theme, setTheme };
 }

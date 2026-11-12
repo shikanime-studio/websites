@@ -1,5 +1,5 @@
-import type { Setting } from "../lib/db";
 import type { FileItem } from "../lib/fs";
+import type { BooleanSettingId } from "../lib/settings";
 import { Card } from "@astryxdesign/core/Card";
 import { Collapsible } from "@astryxdesign/core/Collapsible";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
@@ -8,8 +8,7 @@ import { MetadataList, MetadataListItem } from "@astryxdesign/core/MetadataList"
 import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { Text } from "@astryxdesign/core/Text";
-import { useAtomSuspense, useAtomValue  } from "@effect/atom-react";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useAtomSet, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import {
   Camera,
   ChevronLeft,
@@ -20,7 +19,6 @@ import {
 import { Activity, Suspense } from "react";
 import { useGallery } from "../hooks/useGallery";
 import { useLighting } from "../hooks/useLighting";
-import { settingsCollection } from "../lib/db";
 import {
   ExposureTimeTagId,
   FNumberTagId,
@@ -32,20 +30,16 @@ import {
 } from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { exifAtom, fileAtom } from "../lib/photo-atoms";
+import { settingActionAtom, settingsAtom } from "../lib/settings";
 import { imageElementAtom } from "../lib/ui-atoms";
 import { FileIcon } from "./FileIcon";
 import { Histogram } from "./Histogram";
 
 export function Sidebar() {
   const { selectedFile } = useGallery();
-  const { data } = useLiveQuery((q) =>
-    q
-      .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "sidebarCollapsed"))
-      .findOne(),
-  );
-
-  const isCollapsed = (data?.value as boolean) || false;
+  const settings = useAtomValue(settingsAtom);
+  const setSetting = useAtomSet(settingActionAtom);
+  const isCollapsed = settings.sidebarCollapsed ?? false;
 
   return (
     <aside
@@ -59,16 +53,11 @@ export function Sidebar() {
         size="sm"
         label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         onClick={() => {
-          if (data) {
-            settingsCollection.update("sidebarCollapsed", (draft) => {
-              draft.value = !isCollapsed;
-            });
-          } else {
-            settingsCollection.insert({
-              id: "sidebarCollapsed",
-              value: !isCollapsed,
-            });
-          }
+          setSetting({
+            _tag: "set",
+            id: "sidebarCollapsed",
+            value: !isCollapsed,
+          });
         }}
         icon={
           isCollapsed ? (
@@ -466,35 +455,21 @@ function CollapsibleSection({
   className = "",
 }: {
   title: string;
-  id: string;
+  id: BooleanSettingId;
   icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
 }) {
-  const { data } = useLiveQuery((q) =>
-    q
-      .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, id))
-      .findOne(),
-  );
-
-  const isCollapsed = (data?.value as boolean) || false;
+  const settings = useAtomValue(settingsAtom);
+  const setSetting = useAtomSet(settingActionAtom);
+  const isCollapsed = Boolean(settings[id]);
 
   return (
     <div className={className}>
       <Collapsible
         isOpen={!isCollapsed}
         onOpenChange={(open) => {
-          if (data) {
-            settingsCollection.update(id, (draft) => {
-              draft.value = !open;
-            });
-          } else {
-            settingsCollection.insert({
-              id,
-              value: !open,
-            } as Setting);
-          }
+          setSetting({ _tag: "set", id, value: !open });
         }}
         trigger={
           <div className="border-border text-secondary mb-5 flex w-full items-center gap-2 border-b pb-3">

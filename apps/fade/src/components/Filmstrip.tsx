@@ -2,16 +2,15 @@ import type { FileItem } from "../lib/fs";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
-import { useAtomSuspense } from "@effect/atom-react";
-import { eq, useLiveQuery } from "@tanstack/react-db";
+import { useAtomSet, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Image } from "@unpic/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Activity, Suspense, useEffect, useRef } from "react";
 import { useElementSize } from "../hooks/useElementSize";
 import { useGallery } from "../hooks/useGallery";
-import { settingsCollection } from "../lib/db";
 import { thumbnailAtom } from "../lib/photo-atoms";
+import { settingActionAtom, settingsAtom } from "../lib/settings";
 import { FileIcon } from "./FileIcon";
 
 const ITEM_SIZE = 88;
@@ -21,14 +20,9 @@ export function Filmstrip() {
   const ref = useRef<HTMLDivElement>(null);
   const { width } = useElementSize(ref);
 
-  const { data } = useLiveQuery((q) =>
-    q
-      .from({ settings: settingsCollection })
-      .where(({ settings }) => eq(settings.id, "filmstripCollapsed"))
-      .findOne(),
-  );
-
-  const isCollapsed = (data?.value as boolean) || false;
+  const settings = useAtomValue(settingsAtom);
+  const setSetting = useAtomSet(settingActionAtom);
+  const isCollapsed = settings.filmstripCollapsed ?? false;
 
   // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
@@ -63,16 +57,11 @@ export function Filmstrip() {
         size="sm"
         label={isCollapsed ? "Expand filmstrip" : "Collapse filmstrip"}
         onClick={() => {
-          if (data) {
-            settingsCollection.update("filmstripCollapsed", (draft) => {
-              draft.value = !isCollapsed;
-            });
-          } else {
-            settingsCollection.insert({
-              id: "filmstripCollapsed",
-              value: !isCollapsed,
-            });
-          }
+          setSetting({
+            _tag: "set",
+            id: "filmstripCollapsed",
+            value: !isCollapsed,
+          });
         }}
         icon={
           isCollapsed ? (

@@ -1,20 +1,15 @@
-import type { Command } from "../lib/db";
-import { eq, useLiveQuery } from "@tanstack/react-db";
-import { keymap as keymapSchema, keymapsCollection } from "../lib/db";
+import type { Command } from "../lib/settings";
+import { useAtomValue } from "@effect/atom-react";
+import { keyFor, keymapsAtom } from "../lib/settings";
 import { useKeydown } from "./useKeydown";
 
+/** Which key triggers a command, and the DOM listener that fires it. */
 export function useKeymap(command: Command, handler: () => void) {
-  const { data: keymap } = useLiveQuery((q) =>
-    q
-      .from({ keymaps: keymapsCollection })
-      .where(({ keymaps }) => eq(keymaps.command, command))
-      .findOne(),
-  );
+  const keymaps = useAtomValue(keymapsAtom);
+  const key = keyFor(keymaps, command);
 
   useKeydown((event) => {
-    const activeKeymap = keymap ?? keymapSchema.parse({ command });
-
-    if (activeKeymap.key === event.key) {
+    if (event.key === key) {
       event.preventDefault();
       handler();
     }

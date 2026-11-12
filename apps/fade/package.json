@@ -25,7 +25,6 @@
     "@shikanime-studio/design": "workspace:*",
     "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
-    "@tanstack/react-db": "catalog:runtime",
     "@tanstack/react-router": "catalog:runtime",
     "@tanstack/react-start": "catalog:runtime",
     "@tanstack/react-virtual": "catalog:runtime",
