@@ -1,7 +1,16 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:base"],
-  "lockFileMaintenance": { "enabled": true },
-  "nix": { "enabled": true },
-  "npm": { "enabled": true }
+  "extends": [
+    "config:best-practices",
+    "security:openssf-scorecard"
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "nix": {
+    "enabled": true
+  },
+  "npm": {
+    "enabled": true
+  }
 }
