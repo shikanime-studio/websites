@@ -1,3 +1,4 @@
+import type { ImageSource } from "@shikanime-studio/images";
 import { fileTypeFromBlob } from "file-type";
 
 export interface FileItem {
@@ -83,3 +84,9 @@ export async function scanDirectory(
 
   return result;
 }
+
+/** What the image package needs from a gallery entry. */
+export const imageSource = (item: FileItem): ImageSource => ({
+  mimeType: item.mimeType,
+  getFile: () => item.handle.getFile(),
+});

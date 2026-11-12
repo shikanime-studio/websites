@@ -9,6 +9,15 @@ import { Slider as AstryxSlider } from "@astryxdesign/core/Slider";
 import { Spinner } from "@astryxdesign/core/Spinner";
 import { Text } from "@astryxdesign/core/Text";
 import { useAtomSuspense, useAtomValue  } from "@effect/atom-react";
+import {
+  ExposureTimeTagId,
+  FNumberTagId,
+  FocalLengthTagId,
+  ISOTagId,
+  LensModelTagId,
+  MakeTagId,
+  ModelTagId,
+} from "@shikanime-studio/images";
 import { eq, useLiveQuery } from "@tanstack/react-db";
 import {
   Camera,
@@ -21,15 +30,6 @@ import { Activity, Suspense } from "react";
 import { useGallery } from "../hooks/useGallery";
 import { useLighting } from "../hooks/useLighting";
 import { settingsCollection } from "../lib/db";
-import {
-  ExposureTimeTagId,
-  FNumberTagId,
-  FocalLengthTagId,
-  ISOTagId,
-  LensModelTagId,
-  MakeTagId,
-  ModelTagId,
-} from "../lib/exif";
 import { formatBytes } from "../lib/intl";
 import { exifAtom, fileAtom } from "../lib/photo-atoms";
 import { imageElementAtom } from "../lib/ui-atoms";

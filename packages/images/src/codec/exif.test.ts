@@ -1,19 +1,13 @@
 import type { ExifTagEntry } from "./exif";
-import type { FileItem } from "./fs";
 import type { ImageDataView } from "./img";
+import type { ImageSource } from "./source";
 import { describe, expect, it } from "vitest";
 import { MakeTagId } from "./exif";
 import { createImageDataView } from "./img";
 
 // Mock FileItem creator
-function createFileItem(file: File): FileItem {
-  return {
-    handle: {
-      getFile: () => Promise.resolve(file),
-    } as unknown as FileSystemFileHandle,
-    sidecars: [],
-    mimeType: file.type,
-  };
+function createFileItem(file: File): ImageSource {
+  return { mimeType: file.type, getFile: () => Promise.resolve(file) };
 }
 
 describe("getTagEntries", () => {

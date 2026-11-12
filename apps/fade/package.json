@@ -23,6 +23,7 @@
     "@effect/atom-react": "catalog:",
     "@fontsource-variable/inter": "catalog:runtime",
     "@shikanime-studio/design": "workspace:*",
+    "@shikanime-studio/images": "workspace:*",
     "@stylexjs/stylex": "catalog:",
     "@tailwindcss/vite": "catalog:build",
     "@tanstack/react-db": "catalog:runtime",

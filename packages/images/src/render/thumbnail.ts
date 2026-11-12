@@ -1,10 +1,9 @@
-import type { FileItem } from "./fs";
-
 export interface ThumbnailInput {
   device: GPUDevice | null;
   pipeline: GPURenderPipeline | null;
   blob: Blob;
-  fileItem: FileItem | null;
+  /** The container's own type, when the blob lost it (RAW sidecars). */
+  mimeType: string | undefined;
   width: number;
   height: number;
   quality: number;
@@ -15,7 +14,7 @@ export async function renderThumbnail({
   device,
   pipeline,
   blob,
-  fileItem,
+  mimeType,
   width,
   height,
   quality,
@@ -25,7 +24,7 @@ export async function renderThumbnail({
         !pipeline ||
         !blob ||
         (!blob.type.startsWith("image/") &&
-          fileItem?.mimeType !== "image/x-fujifilm-raf")
+          mimeType !== "image/x-fujifilm-raf")
       ) {
         return null;
       }
