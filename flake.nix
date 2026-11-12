@@ -69,68 +69,65 @@
         git-hooks.flakeModule
         treefmt-nix.flakeModule
       ];
-      perSystem =
-        { pkgs, ... }:
-        {
-          devenv.shells.default = {
-            imports = [
-              devlib.devenvModules.git
-              devlib.devenvModules.javascript
-              devlib.devenvModules.nix
-              devlib.devenvModules.opentofu
-              devlib.devenvModules.shell
-              devlib.devenvModules.shikanime-studio
+      perSystem = { pkgs, ... }: {
+        devenv.shells.default = {
+          imports = [
+            devlib.devenvModules.git
+            devlib.devenvModules.javascript
+            devlib.devenvModules.nix
+            devlib.devenvModules.shell
+            devlib.devenvModules.shikanime-studio
+          ];
+          gitignore = {
+            content = [
+              "apps/fade/.tanstack"
+              "apps/fade/playwright-report"
+              "apps/fade/test-results"
             ];
-            gitignore = {
-              content = [
-                "apps/fade/.tanstack"
-                "apps/fade/playwright-report"
-                "apps/fade/test-results"
-              ];
-              templates = [
-                "repo:shikanime-studio/gitignore/refs/heads/main/Astro.gitignore"
-                "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
-              ];
-            };
-            packages = with pkgs; [
-              google-cloud-sdk
-              imagemagick
-              taze
+            templates = [
+              "repo:shikanime-studio/gitignore/refs/heads/main/Astro.gitignore"
+              "repo:shikanime-studio/gitignore/refs/heads/main/Wrangler.gitignore"
             ];
-            treefmt.config = {
-              programs = {
-                sqlfluff = {
-                  enable = true;
-                  dialect = "sqlite";
-                };
-                sqlfluff-lint.enable = true;
-                typos.configFile =
-                  let
-                    format = pkgs.formats.toml { };
-                    settings = {
-                      files.extend-exclude = [
-                        "apps/accounts/src/worker-configuration.d.ts"
-                        "apps/links/src/worker-configuration.d.ts"
-                        "apps/reiya/src/worker-configuration.d.ts"
-                        "apps/www/src/worker-configuration.d.ts"
-                      ];
-                    };
-                    configFile = format.generate "typos.toml" settings;
-                  in
-                  "${configFile}";
-                wgslfmt.enable = true;
+          };
+          packages = with pkgs; [
+            google-cloud-sdk
+            imagemagick
+            taze
+          ];
+          treefmt.config = {
+            programs = {
+              sqlfluff = {
+                enable = true;
+                dialect = "sqlite";
               };
-              settings.global.excludes = [
-                "*.gen.ts"
-                ".github/workflows/*"
-                "apps/*/node_modules/*"
-                "packages/*/dist/*"
-                "packages/*/node_modules/*"
-                "pnpm-lock.yaml"
-              ];
+              sqlfluff-lint.enable = true;
+              typos.configFile =
+                let
+                  format = pkgs.formats.toml { };
+                  settings = {
+                    files.extend-exclude = [
+                      "apps/accounts/src/worker-configuration.d.ts"
+                      "apps/links/src/worker-configuration.d.ts"
+                      "apps/reiya/src/worker-configuration.d.ts"
+                      "apps/www/src/worker-configuration.d.ts"
+                    ];
+                  };
+                  configFile = format.generate "typos.toml" settings;
+                in
+                "${configFile}";
+              wgslfmt.enable = true;
             };
+            settings.global.excludes = [
+              "*.gen.ts"
+              ".github/workflows/*"
+              "apps/*/node_modules/*"
+              "packages/*/dist/*"
+              "packages/*/node_modules/*"
+              "pnpm-lock.yaml"
+            ];
           };
         };
+      };
       systems = [
         "x86_64-linux"
         "aarch64-linux"
