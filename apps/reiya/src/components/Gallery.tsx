@@ -1,7 +1,7 @@
 import type * as AsyncResultType from "effect/reactivity/AsyncResult";
 import type { Atom } from "effect/reactivity/Atom";
 import type { ReactNode } from "react";
-import type { CardData } from "../lib/api-client";
+import type { Card as CardData, CardList } from "../rpc/contract";
 import { Image } from "@unpic/react";
 import { getOrElse, isInitial } from "effect/reactivity/AsyncResult";
 import { Activity, useState } from "react";
@@ -36,7 +36,7 @@ export function GalleryItem({ children }: GalleryItemProps) {
   return <div className="mb-4 break-inside-avoid">{children}</div>;
 }
 
-type CardsAtom = Atom<AsyncResultType.AsyncResult<Array<CardData>, unknown>>;
+type CardsAtom = Atom<AsyncResultType.AsyncResult<CardList, unknown>>;
 
 interface GalleryContentProps {
   atom: CardsAtom;
@@ -48,12 +48,12 @@ export function GalleryItems({
   variant = "default",
   onSelect,
 }: {
-  items: Array<CardData>;
+  items: CardList;
   variant?: "default" | "showcase";
   onSelect: (card: CardData) => void;
 }) {
-  const CardComponent
-    = variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
+  const CardComponent =
+    variant === "showcase" ? CardShowcaseCarousel : CardCarousel;
 
   if (items.length === 0) {
     return (

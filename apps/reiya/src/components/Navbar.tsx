@@ -8,8 +8,8 @@ import { getOrElse } from "effect/reactivity/AsyncResult";
 import { Menu, Search } from "lucide-react";
 import { useState } from "react";
 import Logo from "../assets/logo.png";
-import { sessionAtom } from "../lib/atoms";
 import { authClient } from "../lib/auth-client";
+import { sessionAtom } from "../rpc/client";
 import { SignInButton } from "./SignInButton";
 
 /** Reiya's slice of the shared header: a search field, two menus and the
@@ -19,7 +19,9 @@ export function Navbar() {
   const navigate = useNavigate();
   const toast = useToast();
   const [query, setQuery] = useState("");
-  const pathname = useRouterState({ select: (state) => state.location.pathname });
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  });
 
   const submitSearch = (event: React.FormEvent) => {
     event.preventDefault();
@@ -63,37 +65,49 @@ export function Navbar() {
             />
           </div>
 
-          {session
-            ? (
-              <DropdownMenu
-                alignment="end"
-                button={{
-                  label: session.user?.name ?? "Your account",
-                  variant: "ghost",
-                  size: "sm",
-                  icon: (
-                    <Avatar
-                      name={session.user?.name ?? session.user?.email ?? "You"}
-                      size="sm"
-                      src={session.user?.image ?? ""}
-                    />
-                  ),
-                }}
-                items={[
-                  {
-                    label: session.user?.name ?? "Your account",
-                    description: session.user?.email ?? undefined,
-                    onClick: () => void navigate({ to: "/user" }),
-                  },
-                  { type: "divider" },
-                  { label: "Sign out", onClick: signOut },
-                ]}
-              />
-            )
-            : <SignInButton />}
+          {session ? (
+            <DropdownMenu
+              alignment="end"
+              button={{
+                label: session?.name ?? "Your account",
+                variant: "ghost",
+                size: "sm",
+                icon: (
+                  <Avatar
+                    name={session?.name ?? session?.email ?? "You"}
+                    size="sm"
+                    src={session?.image ?? ""}
+                  />
+                ),
+              }}
+              items={[
+                {
+                  label: session?.name ?? "Your account",
+                  description: session?.email ?? undefined,
+                  onClick: () => void navigate({ to: "/user" }),
+                },
+                { type: "divider" },
+                { label: "Sign out", onClick: signOut },
+              ]}
+            />
+          ) : (
+            <SignInButton />
+          )}
         </>
       }
-      brand={{ name: "Reiya", href: "/", mark: <img alt="" className="studio-brand__mark" height={32} src={Logo} width={32} /> }}
+      brand={{
+        name: "Reiya",
+        href: "/",
+        mark: (
+          <img
+            alt=""
+            className="studio-brand__mark"
+            height={32}
+            src={Logo}
+            width={32}
+          />
+        ),
+      }}
       center={
         <form
           action="/explore"
@@ -122,9 +136,19 @@ export function Navbar() {
         </form>
       }
       links={[
-        { href: "/explore", label: "Explore", active: pathname.startsWith("/explore") },
+        {
+          href: "/explore",
+          label: "Explore",
+          active: pathname.startsWith("/explore"),
+        },
         ...(session
-          ? [{ href: "/following", label: "Following", active: pathname.startsWith("/following") }]
+          ? [
+              {
+                href: "/following",
+                label: "Following",
+                active: pathname.startsWith("/following"),
+              },
+            ]
           : []),
       ]}
       menu={
@@ -137,12 +161,21 @@ export function Navbar() {
             icon: <Menu className="size-4" />,
           }}
           items={[
-            { label: "Explore", onClick: () => void navigate({ to: "/explore" }) },
+            {
+              label: "Explore",
+              onClick: () => void navigate({ to: "/explore" }),
+            },
             ...(session
               ? [
-                { label: "Following", onClick: () => void navigate({ to: "/following" }) },
-                { label: "Your profile", onClick: () => void navigate({ to: "/user" }) },
-              ]
+                  {
+                    label: "Following",
+                    onClick: () => void navigate({ to: "/following" }),
+                  },
+                  {
+                    label: "Your profile",
+                    onClick: () => void navigate({ to: "/user" }),
+                  },
+                ]
               : []),
             {
               label: "Privacy notices",

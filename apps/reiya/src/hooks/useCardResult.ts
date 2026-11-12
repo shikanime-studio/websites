@@ -7,9 +7,9 @@ import { useEffect } from "react";
 
 /** Reads a result atom, toasting once per failure. */
 export function useCardResult<A, E>(
-  atom: Atom<AsyncResult<Array<A>, E>>,
+  atom: Atom<AsyncResult<readonly A[], E>>,
   message = "Failed to load content",
-): AsyncResult<Array<A>, E> {
+): AsyncResult<readonly A[], E> {
   const result = useAtomValue(atom);
   const toast = useToast();
   useEffect(() => {

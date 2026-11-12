@@ -35,9 +35,7 @@ export function Hero() {
               <h2 className="font-display text-xl font-semibold text-white">
                 {panel.title}
               </h2>
-              <p className="max-w-[28ch] text-sm text-white/80">
-                {panel.body}
-              </p>
+              <p className="max-w-[28ch] text-sm text-white/80">{panel.body}</p>
             </div>
           </div>
         ))}

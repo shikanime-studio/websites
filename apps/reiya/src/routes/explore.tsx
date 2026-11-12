@@ -1,6 +1,5 @@
 import { PageShell } from "@shikanime-studio/design";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import { getOrElse } from "effect/reactivity/AsyncResult";
 import {
   ExploreArtists,
@@ -21,29 +20,41 @@ import {
   eventsAtom,
   merchsAtom,
   showcasesAtom,
-} from "../lib/atoms";
-import { createD1Database } from "../lib/db";
-import { categories as categoriesTable } from "../schema";
+} from "../rpc/client";
 
-interface Category {
+interface CategoryRow {
   id: number;
   name: string;
   icon: string | null;
 }
 
-const getCategories = createServerFn().handler(
-  async (): Promise<Array<Category>> => {
-    const db = createD1Database();
-    return db.select().from(categoriesTable);
-  },
-);
+const rpcFetch = async <T,>(tag: string): Promise<T> => {
+  if (import.meta.env.SSR) {
+    const { getCategoriesRows, getSessionUserFor } =
+      await import("../rpc/handlers");
+    const headers = new Headers();
+    const value =
+      tag === "getCategories"
+        ? await getCategoriesRows()
+        : await getSessionUserFor(headers);
+    return value as T;
+  }
+  const res = await fetch("/rpc", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify([{ _tag: "Request", id: 1, tag, payload: undefined }]),
+  });
+  const batch: unknown = await res.json();
+  const exit = (batch as Array<{ exit?: { value?: unknown } }>)[0]?.exit;
+  return exit?.value as T;
+};
 
 export const Route = createFileRoute("/explore")({
   validateSearch: (search: { q?: unknown }): { q?: string } => {
     const q = typeof search.q === "string" ? search.q.trim() : "";
     return q.length > 0 ? { q } : {};
   },
-  loader: () => getCategories(),
+  loader: () => rpcFetch<Array<CategoryRow>>("getCategories"),
   component: ExplorePage,
 });
 
@@ -52,14 +63,35 @@ const MATCHES = (haystack: Array<string>, needle: string) =>
 
 function SearchResults({ query }: { query: string }) {
   const needle = query.toLowerCase();
-  const merchs = getOrElse(useCardResult(merchsAtom, "Failed to search"), () => []);
-  const artists = getOrElse(useCardResult(artistsAtom, "Failed to search"), () => []);
-  const events = getOrElse(useCardResult(eventsAtom, "Failed to search"), () => []);
-  const characters = getOrElse(useCardResult(charactersAtom, "Failed to search"), () => []);
-  const showcases = getOrElse(useCardResult(showcasesAtom, "Failed to search"), () => []);
+  const merchs = getOrElse(
+    useCardResult(merchsAtom, "Failed to search"),
+    () => [],
+  );
+  const artists = getOrElse(
+    useCardResult(artistsAtom, "Failed to search"),
+    () => [],
+  );
+  const events = getOrElse(
+    useCardResult(eventsAtom, "Failed to search"),
+    () => [],
+  );
+  const characters = getOrElse(
+    useCardResult(charactersAtom, "Failed to search"),
+    () => [],
+  );
+  const showcases = getOrElse(
+    useCardResult(showcasesAtom, "Failed to search"),
+    () => [],
+  );
 
   const seen = new Set<string>();
-  const results = [...merchs, ...showcases, ...artists, ...characters, ...events]
+  const results = [
+    ...merchs,
+    ...showcases,
+    ...artists,
+    ...characters,
+    ...events,
+  ]
     .filter((card) => MATCHES([card.title, card.artist.name], needle))
     .filter((card) => {
       const key = String(card.id);

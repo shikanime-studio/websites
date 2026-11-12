@@ -4,41 +4,35 @@ import { Card } from "@astryxdesign/core/Card";
 import { useToast } from "@astryxdesign/core/Toast";
 import { PageShell } from "@shikanime-studio/design";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
-import { getRequest } from "@tanstack/react-start/server";
 import { SquareArrowOutUpRight } from "lucide-react";
-import { createAuth } from "../../lib/auth";
 import { authClient } from "../../lib/auth-client";
 import { ACCOUNTS_SITE } from "../../lib/config";
-import { createD1Database } from "../../lib/db";
 
-interface SessionUser {
-  name: string;
-  email: string;
-  image?: string | null | undefined;
-}
+const rpcFetch = async <T,>(tag: string): Promise<T> => {
+  if (import.meta.env.SSR) {
+    const { getCategoriesRows, getSessionUserFor } =
+      await import("../../rpc/handlers");
+    const headers = new Headers();
+    const value =
+      tag === "getCategories"
+        ? await getCategoriesRows()
+        : await getSessionUserFor(headers);
+    return value as T;
+  }
+  const res = await fetch("/rpc", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify([{ _tag: "Request", id: 1, tag, payload: undefined }]),
+  });
+  const batch: unknown = await res.json();
+  const exit = (batch as Array<{ exit?: { value?: unknown } }>)[0]?.exit;
+  return exit?.value as T;
+};
 
-const getSessionUser = createServerFn().handler(
-  async (): Promise<SessionUser | null> => {
-    const request = getRequest();
-    const db = createD1Database();
-    const auth = createAuth(db);
-    const session = await auth.api.getSession({
-      headers: request.headers,
-    });
-    if (!session?.user) {
-      return null;
-    }
-    return {
-      name: session.user.name,
-      email: session.user.email,
-      image: session.user.image,
-    };
-  },
-);
+type SessionRow = { name: string; email: string; image?: string | null } | null;
 
 export const Route = createFileRoute("/user/")({
-  loader: () => getSessionUser(),
+  loader: () => rpcFetch<SessionRow>("getSessionUser"),
   component: UserPage,
 });
 
@@ -71,57 +65,47 @@ function UserPage() {
         </p>
       </div>
 
-      {user
-        ? (
-          <Card className="flex flex-col gap-6">
-            <div className="flex items-center gap-4">
-              <Avatar
-                name={user.name}
-                size="lg"
-                src={user.image ?? ""}
-              />
-              <div className="flex min-w-0 flex-col">
-                <span className="text-secondary truncate text-lg font-semibold">
-                  {user.name}
-                </span>
-                <span className="text-secondary/70 truncate text-sm">
-                  {user.email}
-                </span>
-              </div>
+      {user ? (
+        <Card className="flex flex-col gap-6">
+          <div className="flex items-center gap-4">
+            <Avatar name={user.name} size="lg" src={user.image ?? ""} />
+            <div className="flex min-w-0 flex-col">
+              <span className="text-secondary truncate text-lg font-semibold">
+                {user.name}
+              </span>
+              <span className="text-secondary/70 truncate text-sm">
+                {user.email}
+              </span>
             </div>
+          </div>
 
-            <div className="border-border flex flex-col gap-3 border-t pt-5">
-              <Button
-                href={`${ACCOUNTS_SITE}/settings/profile`}
-                icon={<SquareArrowOutUpRight className="size-4" />}
-                label="Manage profile and security"
-                variant="secondary"
-              />
-              <Button
-                label="Sign out of Reiya"
-                onClick={signOut}
-                variant="ghost"
-              />
-              <p className="text-secondary/60 text-xs">
-                Signing out here ends the Reiya session only. Your Accounts
-                Center session stays alive for the other studio apps.
-              </p>
-            </div>
-          </Card>
-        )
-        : (
-          <Card className="flex flex-col items-start gap-4">
-            <p className="text-secondary text-sm">
-              You are not signed in. Sign in with your studio account to follow
-              artists and keep your lists in sync.
-            </p>
+          <div className="border-border flex flex-col gap-3 border-t pt-5">
             <Button
-              href="/"
-              label="Back to the gallery"
+              href={`${ACCOUNTS_SITE}/settings/profile`}
+              icon={<SquareArrowOutUpRight className="size-4" />}
+              label="Manage profile and security"
               variant="secondary"
             />
-          </Card>
-        )}
+            <Button
+              label="Sign out of Reiya"
+              onClick={signOut}
+              variant="ghost"
+            />
+            <p className="text-secondary/60 text-xs">
+              Signing out here ends the Reiya session only. Your Accounts Center
+              session stays alive for the other studio apps.
+            </p>
+          </div>
+        </Card>
+      ) : (
+        <Card className="flex flex-col items-start gap-4">
+          <p className="text-secondary text-sm">
+            You are not signed in. Sign in with your studio account to follow
+            artists and keep your lists in sync.
+          </p>
+          <Button href="/" label="Back to the gallery" variant="secondary" />
+        </Card>
+      )}
 
       <Link
         className="text-secondary/60 hover:text-secondary text-xs transition-colors"

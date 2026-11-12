@@ -2,7 +2,10 @@ import type { InputHTMLAttributes, ReactNode } from "react";
 import { Activity, useState } from "react";
 
 interface TabListProps {
-  children: (tab: { value: string; select: (value: string) => void }) => ReactNode;
+  children: (tab: {
+    value: string;
+    select: (value: string) => void;
+  }) => ReactNode;
   className?: string;
   defaultTab: string;
 }
@@ -72,9 +75,7 @@ export function TabContent({
 }: TabContentProps) {
   return (
     <div role="tabpanel" className={className}>
-      <Activity mode={active ? "visible" : "hidden"}>
-        {children}
-      </Activity>
+      <Activity mode={active ? "visible" : "hidden"}>{children}</Activity>
     </div>
   );
 }

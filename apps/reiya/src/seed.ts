@@ -167,57 +167,55 @@ async function main() {
     count: COUNT,
   });
 
-  await seed(seedDb, seedSchema, { count: COUNT, seed: 12345 }).refine(
-    (f) => ({
-      users: {
-        columns: {
-          name: f.fullName(),
-          email: f.email(),
-          image: f.valuesFromArray({ values: userAvatars }),
-        },
+  await seed(seedDb, seedSchema, { count: COUNT, seed: 12345 }).refine((f) => ({
+    users: {
+      columns: {
+        name: f.fullName(),
+        email: f.email(),
+        image: f.valuesFromArray({ values: userAvatars }),
       },
-      makers: {
-        columns: {
-          name: f.companyName(),
-          description: f.loremIpsum({ sentencesCount: 2 }),
-          avatarImageUrl: f.valuesFromArray({ values: makerAvatars }),
-          avatarImageWidth: f.int({ minValue: 128, maxValue: 128 }),
-          avatarImageHeight: f.int({ minValue: 128, maxValue: 128 }),
-          coverImageUrl: f.valuesFromArray({ values: makerCovers }),
-          coverImageWidth: f.int({ minValue: 800, maxValue: 800 }),
-          coverImageHeight: f.int({ minValue: 400, maxValue: 400 }),
-          links: f.valuesFromArray({ values: makerLinks }),
-        },
+    },
+    makers: {
+      columns: {
+        name: f.companyName(),
+        description: f.loremIpsum({ sentencesCount: 2 }),
+        avatarImageUrl: f.valuesFromArray({ values: makerAvatars }),
+        avatarImageWidth: f.int({ minValue: 128, maxValue: 128 }),
+        avatarImageHeight: f.int({ minValue: 128, maxValue: 128 }),
+        coverImageUrl: f.valuesFromArray({ values: makerCovers }),
+        coverImageWidth: f.int({ minValue: 800, maxValue: 800 }),
+        coverImageHeight: f.int({ minValue: 400, maxValue: 400 }),
+        links: f.valuesFromArray({ values: makerLinks }),
       },
-      licenses: {
-        columns: {
-          name: f.valuesFromArray({ values: licenseNames }),
-          description: f.loremIpsum({ sentencesCount: 3 }),
-          imageUrl: f.valuesFromArray({ values: licenseImages }),
-          imageWidth: f.int({ minValue: 400, maxValue: 400 }),
-          imageHeight: f.int({ minValue: 400, maxValue: 400 }),
-        },
+    },
+    licenses: {
+      columns: {
+        name: f.valuesFromArray({ values: licenseNames }),
+        description: f.loremIpsum({ sentencesCount: 3 }),
+        imageUrl: f.valuesFromArray({ values: licenseImages }),
+        imageWidth: f.int({ minValue: 400, maxValue: 400 }),
+        imageHeight: f.int({ minValue: 400, maxValue: 400 }),
       },
-      characters: {
-        columns: {
-          name: f.fullName(),
-          description: f.loremIpsum({ sentencesCount: 2 }),
-          imageUrl: f.valuesFromArray({ values: characterImages }),
-          imageWidth: f.int({ minValue: 300, maxValue: 300 }),
-          imageHeight: f.int({ minValue: 400, maxValue: 400 }),
-        },
+    },
+    characters: {
+      columns: {
+        name: f.fullName(),
+        description: f.loremIpsum({ sentencesCount: 2 }),
+        imageUrl: f.valuesFromArray({ values: characterImages }),
+        imageWidth: f.int({ minValue: 300, maxValue: 300 }),
+        imageHeight: f.int({ minValue: 400, maxValue: 400 }),
       },
-      // events: ... // Excluded
-      items: {
-        columns: {
-          name: f.valuesFromArray({ values: itemNames }),
-          description: f.loremIpsum({ sentencesCount: 2 }),
-          imageUrls: f.valuesFromArray({ values: itemImages }),
-          priceRange: f.valuesFromArray({ values: itemPrices }),
-        },
+    },
+    // events: ... // Excluded
+    items: {
+      columns: {
+        name: f.valuesFromArray({ values: itemNames }),
+        description: f.loremIpsum({ sentencesCount: 2 }),
+        imageUrls: f.valuesFromArray({ values: itemImages }),
+        priceRange: f.valuesFromArray({ values: itemPrices }),
       },
-    }),
-  );
+    },
+  }));
 
   // Manual relations
   console.error("Seeding relations...");

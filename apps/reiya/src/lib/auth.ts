@@ -53,4 +53,3 @@ export function createAuth(db: DrizzleD1Database<typeof schema>) {
     },
   });
 }
-
