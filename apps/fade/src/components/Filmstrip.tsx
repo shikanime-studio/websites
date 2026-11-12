@@ -33,7 +33,6 @@ export function Filmstrip() {
     overscan: width > 0 ? Math.ceil(width / ITEM_SIZE) : 5,
   });
 
-  // Scroll selected thumbnail into view
   useEffect(() => {
     virtualizer.scrollToIndex(selectedIndex, {
       align: "center",
