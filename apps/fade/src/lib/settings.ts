@@ -21,20 +21,23 @@ export const DEFAULT_KEYMAP: Readonly<Record<Command, string>> = {
   selectLast: "End",
 };
 
-export const settingsSchema = z
-  .object({
-    theme: themeSchema.optional(),
-    sidebarCollapsed: z.boolean().optional(),
-    filmstripCollapsed: z.boolean().optional(),
-    sidebarSectionCollapsedInfo: z.boolean().optional(),
-    sidebarSectionCollapsedLighting: z.boolean().optional(),
-    sidebarSectionCollapsedCamera: z.boolean().optional(),
-    sidebarSectionCollapsedGroupedFiles: z.boolean().optional(),
-  })
-  .partial();
+export const settingsSchema = z.object({
+  theme: themeSchema.optional(),
+  sidebarCollapsed: z.boolean().optional(),
+  filmstripCollapsed: z.boolean().optional(),
+  sidebarSectionCollapsedInfo: z.boolean().optional(),
+  sidebarSectionCollapsedLighting: z.boolean().optional(),
+  sidebarSectionCollapsedCamera: z.boolean().optional(),
+  sidebarSectionCollapsedGroupedFiles: z.boolean().optional(),
+});
 
-export type Settings = z.infer<typeof settingsSchema>;
+export type Settings = z.output<typeof settingsSchema>;
 export type SettingId = keyof Settings;
+
+/** The subset of settings holding booleans (panel collapse flags). */
+export type BooleanSettingId = {
+  [K in SettingId]: Settings[K] extends boolean | undefined ? K : never;
+}[SettingId];
 
 const keymapSchema = z.record(commandSchema, z.string());
 
@@ -125,11 +128,13 @@ function persist(key: string, value: unknown): void {
 
 export const settingsAtom = make<Settings>(readSettings());
 
-export interface SettingAction {
-  readonly _tag: "set";
-  readonly id: SettingId;
-  readonly value: Settings[SettingId];
-}
+export type SettingAction = {
+  readonly [K in SettingId]: {
+    readonly _tag: "set";
+    readonly id: K;
+    readonly value: Settings[K];
+  };
+}[SettingId];
 
 /** Every setting write goes through here, so persistence cannot be skipped. */
 export const settingActionAtom = writable(

@@ -1,5 +1,5 @@
 import type { FileItem } from "../lib/fs";
-import type { SettingId } from "../lib/settings";
+import type { BooleanSettingId } from "../lib/settings";
 import { Card } from "@astryxdesign/core/Card";
 import { Collapsible } from "@astryxdesign/core/Collapsible";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
@@ -455,22 +455,21 @@ function CollapsibleSection({
   className = "",
 }: {
   title: string;
-  id: string;
+  id: BooleanSettingId;
   icon?: React.ElementType;
   children: React.ReactNode;
   className?: string;
 }) {
   const settings = useAtomValue(settingsAtom);
   const setSetting = useAtomSet(settingActionAtom);
-  // `id` is a section identifier owned by this component's caller.
-  const isCollapsed = Boolean(settings[id as SettingId]);
+  const isCollapsed = Boolean(settings[id]);
 
   return (
     <div className={className}>
       <Collapsible
         isOpen={!isCollapsed}
         onOpenChange={(open) => {
-          setSetting({ _tag: "set", id: id as SettingId, value: !open });
+          setSetting({ _tag: "set", id, value: !open });
         }}
         trigger={
           <div className="border-border text-secondary mb-5 flex w-full items-center gap-2 border-b pb-3">

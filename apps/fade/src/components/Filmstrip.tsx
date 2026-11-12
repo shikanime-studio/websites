@@ -2,7 +2,7 @@ import type { FileItem } from "../lib/fs";
 import { EmptyState } from "@astryxdesign/core/EmptyState";
 import { IconButton } from "@astryxdesign/core/IconButton";
 import { Spinner } from "@astryxdesign/core/Spinner";
-import { useAtomSet, useAtomSuspense, useAtomValue  } from "@effect/atom-react";
+import { useAtomSet, useAtomSuspense, useAtomValue } from "@effect/atom-react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Image } from "@unpic/react";
 import { ChevronDown, ChevronUp } from "lucide-react";
