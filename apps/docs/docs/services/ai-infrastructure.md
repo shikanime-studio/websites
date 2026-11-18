@@ -44,7 +44,7 @@ flowchart TB
     HF -->|"port 8731 OpenAI schema<br/>session-affinity x-sks-session-id"| ENG
   end
   subgraph node["one Strix Halo node"]
-    ENG["engine container<br/>80Gi request"]
+    ENG["engine container<br/>80Gi request<br/>vision tower enabled"]
     ENG -->|"w4b checkpoint<br/>~68 GiB locked"| RAM["128 GiB unified GTT"]
     RAM --> WEIGHTS["weights"]
     RAM --> KV["KV pool"]
@@ -66,21 +66,24 @@ flowchart TB
    tokenizer. The engine
    container itself makes **no outbound connections**. No runtime
    downloads happen. The cache claim is mounted at the default HF path.
-2. **Weights lock** ~68 GiB of the node's unified memory from the w4b
+2. **Vision tower** runs inside the same engine: the StatefulSet sets
+   `HALOGEN_VISION_TOWER=1`, so the qwen3.8-flash engine serves image
+   inputs alongside text.
+3. **Weights lock** ~68 GiB of the node's unified memory from the w4b
    checkpoint plus the KV pool reservation. The k8s memory request is 80 GiB
    so the scheduler reserves practically the whole node. VPA was scoped
    to CPU only in #2711 — memory is pinned, not autoscaled. One engine
    per node: `podAntiAffinity` on `kubernetes.io/hostname` across the
    2-replica StatefulSet.
-3. **Decode** runs on the iGPU over ROCm (`/dev/kfd`, `/dev/dri`
+4. **Decode** runs on the iGPU over ROCm (`/dev/kfd`, `/dev/dri`
    device mounts). Unified memory means zero host→device copies: the
    GPU dereferences host RAM directly.
-4. **KV cache** shares what weights leave free — context length and
+5. **KV cache** shares what weights leave free — context length and
    concurrency trade directly against model size inside one pool.
    Sessions are pinned to a pod via `x-sks-session-id` header affinity
    (`BackendTrafficPolicy halogen-flash-affinity`) so a conversation's
    KV stays warm on the node that built it.
-5. **Requests** enter through the tailnet-only Gateway VIP, present a
+6. **Requests** enter through the tailnet-only Gateway VIP, present a
    client certificate — bare probes die at TLS with `000`, by design —
    plus a gateway-issued `sk-infer` key, and carry
    `x-ai-eg-model` for route selection.

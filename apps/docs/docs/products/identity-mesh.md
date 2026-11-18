@@ -5,9 +5,9 @@ sidebar_position: 2
 # Identity mesh
 
 The web properties are moving from per-app auth to a **central identity
-provider**: the `accounts` app, in flight as
+provider**: the `accounts` app, landed via
 [PR #366](https://github.com/shikanime-studio/websites/pull/366).
-The work rides branch `feat/accounts-sso` as stacked PRs #306–#327.
+The original work rode branch `feat/accounts-sso` as stacked PRs #306–#327.
 This is separate from the fleet-side SSO built on Authelia and LDAP.
 See [Catalog](../services/catalog). The web mesh is
 better-auth based and scoped to `*.shikanime.studio`.
@@ -68,6 +68,5 @@ broken on the remote. New work stacks as plain PRs with
 `--base gh/shikanime/<tip#>/base`. GitHub retargets to `main` as
 lower PRs land.
 
-`apps/accounts` is **not on main** — every main Workers build of it
-fails `root directory not found` until #366 lands. The other four
-apps deploy cleanly from `main`.
+`apps/accounts` is on `main` since PR #366 landed and deploys from
+`main` like the other apps.
