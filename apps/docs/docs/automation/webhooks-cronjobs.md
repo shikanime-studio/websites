@@ -91,7 +91,7 @@ inference gateway's measured zero-deferral night window.
 
 | Job | Schedule | Skills | Scope and caps |
 |---|---|---|---|
-| `daily-docs-sync` | `45 0 * * *` | `sks-wiki`, `sks-issue`, `sks-commit`, `sks-pr`, `sks-fastlane` | Recent org changes mirrored into the per-repo GitHub wikis, stalest first, at most 2 wiki syncs per run; then docs.shikanime.studio claims verified against manifests and live cluster state, drift filed in this repo. |
+| `daily-docs-sync` | `45 0 * * *` | `sks-doc`, `sks-issue`, `sks-commit`, `sks-pr`, `sks-fastlane` | Recent org changes mirrored into the per-repo GitHub wikis, stalest first, at most 2 wiki syncs per run; then docs.shikanime.studio claims verified against manifests and live cluster state, drift filed in this repo. |
 | `weekly-fleet-efficiency-audit` | `0 1 * * 1` | `sks-issue` | Efficiency proposals from A2A peers; top 3 filed as issues in `shikanime-labs/manifests`; proposals only, no PRs. |
 | `daily-fleet-health-audit` | `15 1 * * *` | `sks-audit`, `sks-issue`, `sks-commit`, `sks-pr`, `sks-fastlane` | Every `sks-audit` surface over the whole fleet and all three orgs: security alerts, perimeter redteam, CI failures, firing alerts, Flux health, Kubernetes warning events; max 3 issues; never closes or edits what it audits. |
 | `daily-github-triage` | `30 1 * * *` | `sks-triage`, `sks-issue` | Triage across shikanime-labs, shikanime-studio, and cloud-pi-native. |
