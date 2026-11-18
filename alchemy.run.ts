@@ -2,8 +2,8 @@ import * as Alchemy from "alchemy";
 import * as Cloudflare from "@alchemy.run/cloudflare";
 import * as Effect from "effect/Effect";
 
-// D1 databases consumed by the accounts/hikari/reiya wrangler configs —
-// migrated from infra/*.tf. Custom domains and DNS records are owned by each
+// D1 databases consumed by the accounts/hikari/reiya/transfert wrangler
+// configs — migrated from infra/*.tf. Custom domains and DNS records are owned by each
 // app's wrangler.jsonc routes (custom_domain: true creates and manages the
 // records); app deploys stay in wrangler too.
 export default Alchemy.Stack(
@@ -26,6 +26,10 @@ export default Alchemy.Stack(
         name: "reiya",
         primaryLocationHint: "weur",
       }),
+      transfert: yield* Cloudflare.D1.Database("transfert", {
+        name: "transfert",
+        primaryLocationHint: "weur",
+      }),
     };
 
     return {
@@ -33,6 +37,7 @@ export default Alchemy.Stack(
         accounts: databases.accounts.databaseId,
         hikari: databases.hikari.databaseId,
         reiya: databases.reiya.databaseId,
+        transfert: databases.transfert.databaseId,
       },
     };
   }),

@@ -1,0 +1,48 @@
+import antfu from "@antfu/eslint-config";
+
+export default antfu(
+  {
+    formatters: true,
+    stylistic: false,
+    jsx: {
+      a11y: true,
+    },
+    react: {
+      reactCompiler: true,
+    },
+  },
+  {
+    ignores: [
+      "dist/**",
+      ".wrangler/**",
+      ".tanstack/**",
+      "playwright-report/**",
+      "test-results/**",
+    ],
+  },
+  {
+    files: ["**/*.css", "**/*.json", "**/*.jsonc"],
+    rules: {
+      "format/prettier": "off",
+      "jsonc/sort-keys": "off",
+    },
+  },
+  {
+    files: ["**/*.ts", "**/*.tsx"],
+    rules: {
+      "unicorn/number-literal-case": "off",
+    },
+  },
+  {
+    files: ["**/routeTree.gen.ts"],
+    rules: {
+      "eslint-comments/no-unlimited-disable": "off",
+    },
+  },
+  {
+    files: ["**/routes/**/*.{ts,tsx}"],
+    rules: {
+      "react-refresh/only-export-components": "off",
+    },
+  },
+);
