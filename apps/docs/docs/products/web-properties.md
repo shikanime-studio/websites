@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # Products
 
-Shikanime Studio ships five public products, all built in the
+Shikanime Studio ships seven public products, all built in the
 `shikanime-studio/websites` pnpm monorepo and served by Cloudflare.
 
 | Product  | URL                      | What it is                          | Stack                |
@@ -13,20 +13,22 @@ Shikanime Studio ships five public products, all built in the
 | links    | links.shikanime.studio   | Link hub                            | Astro                |
 | fade     | fade.shikanime.studio    | Image viewer, WebGPU                | TanStack Start       |
 | reiya    | reiya.shikanime.studio   | Merch and community                 | TanStack Start, D1   |
+| hikari   | hikari.shikanime.studio  | Cosplay commission planner          | TanStack Start, D1   |
+| accounts | accounts.shikanime.studio| Accounts Center — see [Identity mesh](./identity-mesh) | TanStack Start, D1   |
 | docs     | docs.shikanime.studio    | This book                           | Docusaurus 3         |
 
-Every app has its own `wrangler.jsonc`. Four apps deploy through
-Workers Builds on merge to `main`. The docs app deploys by a manual
-`wrangler deploy` because it has no Builds configuration yet.
+Every app has its own `wrangler.jsonc`. Every app except `docs` deploys
+through Workers Builds on merge to `main`, path-filtered per app. The
+docs app deploys by a manual `wrangler deploy` because it has no Builds
+configuration yet.
 
-## The other two products
+## The other product
 
-Two products live outside this table:
+One product lives outside this table:
 
 | Product  | Where                               | What it is                               |
 | -------- | ----------------------------------- | ---------------------------------------- |
 | hakurei  | `shikanime-studio/hakurei` repo     | The MMO — see [Hakurei](./hakurei)      |
-| accounts | `websites` branch feat/accounts-sso  | The SSO provider — see [Identity mesh](./identity-mesh) |
 
 ## Monorepo schema
 
@@ -38,11 +40,13 @@ flowchart LR
       LINKS[links]
       FADE[fade]
       REIYA[reiya]
+      HIKARI[hikari]
+      ACCOUNTS[accounts]
       DOCS[docs]
     end
     subgraph packages
-      DARK[darkroom image processing]
-      FS[fs]
+      DESIGN[design]
+      FLAGS[flags]
     end
     CATALOG[pnpm-workspace.yaml catalogs]
   end
@@ -67,7 +71,9 @@ rule enforces it, so apps never pin plain specifiers:
 | `lint`    | @antfu/eslint-config, eslint plugins                          |
 | `types`   | typescript, @types/*                                          |
 | `test`    | vitest, playwright                                            |
-| `script`  | tsx, drizzle-kit, better-sqlite3                              |
+| `script`  | tsx, drizzle-kit, better-sqlite3, faker                       |
+| `infra`   | wrangler                                                      |
+| `format`  | prettier-plugin-astro                                         |
 
 `trustPolicy: no-downgrade` blocks packages whose newer version lost
 provenance evidence. Exceptions are explicit in `trustPolicyExclude`.
